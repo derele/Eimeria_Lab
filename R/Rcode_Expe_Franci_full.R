@@ -10,12 +10,13 @@ library(scales)
 
 ######### I Experiment design:
 # Info on the mouse genotype AND on the infection strain:
-ExpePlanDF <- read.csv("Experiment_Table_raw_Ploen_May2017.csv")
+ExpePlanDF <- read.csv("https://raw.githubusercontent.com/alicebalard/Eimeria_Lab/master/data_raw/Experiment_Table_raw_Ploen_May2017.csv")
+
 # Print the expe design:
 as.data.frame.matrix(table(ExpePlanDF$strain, ExpePlanDF$Inf_strain))
 
 # Load data:
-mydata_oocysts <- read.csv("Oocyst_coding_PloenEx_May2017.csv")
+mydata_oocysts <- read.csv("https://raw.githubusercontent.com/alicebalard/Eimeria_Lab/master/data_raw/Oocyst_coding_PloenEx_May2017.csv")
 
 # Remove LM_0104:
 mydata_oocysts <- mydata_oocysts[which(mydata_oocysts$X != "LM0104"),]
@@ -26,10 +27,10 @@ table(is.na(mydata_oocysts[grep("fec.weight", names(mydata_oocysts))]))
 ## Error corrected (same amount of fecal weight and oocysts counts)
 #######################################################################################!!!!!!!!!!!!!!!!!!!!!!!!!
 
-mydata_weight <- read.csv("mouse weight.csv")
+mydata_weight <- read.csv("https://raw.githubusercontent.com/alicebalard/Eimeria_Lab/master/data_raw/mouse%20weight.csv")
 
 # Weight of the feces separated for PCR:
-subsampleDF <- read.csv("Feces_kept_separated_for_PCR.csv")
+subsampleDF <- read.csv("https://raw.githubusercontent.com/alicebalard/Eimeria_Lab/master/data_raw/Feces_kept_separated_for_PCR.csv")
 subsampleDF <- na.omit(subsampleDF)
 
 # Calculate how many animals at start:
@@ -93,11 +94,10 @@ Oo_Df <- data.frame(EH_id = Oo_Df$EH_id,
                     oocysts.per.g = Oo_Df$oocysts.per.g, 
                     Inf_strain = Oo_Df$Inf_strain,
                     strain = Oo_Df$strain)
+# write.csv(x = Oo_Df, file = "/home/alice/Schreibtisch/git_projects/Eimeria_lab_local/Eimeria_Lab/data_clean/Oo_Df_First_cross_infection.csv")
 
 # Visual check-up:
 table(Oo_Df$EH_id, Oo_Df$dpi)
-
-
 
 ######### III. Weight of the mice:
 mydata_weight_long <- colnames(mydata_weight) <- gsub("mouse_weight.g.", "weight", colnames(mydata_weight))
@@ -124,73 +124,6 @@ Alldata <- merge(Alldata, ExpePlanDF, by.x="LM_id", by.y="EH_id", all=TRUE)
 
 Alldata$dpi <- reorder(Alldata$dpi, as.numeric(gsub("dpi", "", Alldata$dpi)))
 
-# Plot to follow the weight : if < 80% weight, mouse has to be sacrificed
-ggplot(data=Alldata,
-       aes(x=dpi, y=rel.weight, group=LM_id, color=LM_id)) +
-  geom_line()+
-  geom_point()+
-  theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
-  geom_hline(yintercept=80, linetype="dashed", color = "red", size=2)+
-  geom_text(data=subset(Alldata, dpi == "dpi9" | dpi == "dpi11" ),
-            aes(label=LM_id))+
-  theme(legend.position="none")
-
-# maximum weight lost before death
-max.loss <- do.call("rbind", by(Alldata, Alldata$LM_id, function (x){
-  m.loss <- which(x$rel.weight==min(x$rel.weight, na.rm=TRUE))
-  x[m.loss,]
-}))
-
-table(max.loss$dpi, max.loss$strain)
-
-table(max.loss$dpi, max.loss$Inf_strain)
-
-table(max.loss$dpi, max.loss$Inf_strain, max.loss$strain)
-
-tapply(max.loss$rel.weight, max.loss$Inf_strain:max.loss$strain, mean)
-
-ggplot(max.loss, aes(strain, rel.weight, color=Inf_strain)) +
-  ggtitle("Relative weight lost during 11 days of experiment, according to the mice genotype, for both Eimeria infection strains", 
-          subtitle = "PWD : HMHZ-eastern-like mice; WSB : HMHZ-west-like mice; WP : HMHZ-hybrids-like mice \n EI64 : wild 'eastern' Eimeria, Eflab : lab 'western-like' Eimeria")+
-  geom_violin(color = "black")+
-  facet_wrap(~Inf_strain) +
-  geom_jitter(width=0.1, size=7, pch = 21, color = "black", aes(fill = strain), alpha = 0.8) +
-  theme_alice
-
-summary(glm(rel.weight~strain + Inf_strain, data=max.loss))
-
-summary(glm(rel.weight~strain, data = max.loss[max.loss$Inf_strain == "EI64",]))
-
-## using offsets and real weight instead of relative weight for modeling
-
-###################
-## Plots weight and oocyst counts for E64:
-
-names(sum.oocysts)[1] <- "LM_id"
-E64DF <- merge(max.loss, sum.oocysts, by = "LM_id")
-E64DF <- E64DF[E64DF$Inf_strain.y == "EI64", ]
-E64DF$weight.loss.max <- 100 - E64DF$rel.weight
-
-p1 <- ggplot(E64DF, aes(strain.y, sum.oo)) +
-  ggtitle("Sum of oocysts shed during the experiment") +
-  geom_violin(color = "black") + 
-  geom_jitter(width=0.1, size=7, alpha = 0.8, pch = 21, aes(fill = strain.y)) +
-  scale_y_continuous(labels = scientific) +
-  labs(x = "", y = "") + 
-  theme_alice +
-  theme(legend.position="none")
-
-p2 <- ggplot(E64DF, aes(strain.y, weight.loss.max)) +
-  ggtitle("Max weight loss reached during the experiment (%)") +
-  geom_violin(color = "black") + 
-  geom_jitter(width=0.1, size=7, alpha = 0.8, pch = 21, aes(fill = strain.y)) +
-  labs(x = "", y = "") + 
-  theme_alice
-
-grid.arrange(p1, p2, ncol = 2)
-
-
-
+#write.csv(x = Alldata, file = "/home/alice/Schreibtisch/git_projects/Eimeria_lab_local/Eimeria_Lab/data_clean/Weight_Full_Data_First_cross_infection.csv")
 
 
