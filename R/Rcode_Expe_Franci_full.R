@@ -89,13 +89,6 @@ names(Oo_Df)[1] <- "EH_id"
 
 Oo_Df <- merge(Oo_Df, ExpePlanDF, by = "EH_id")
 
-Oo_Df <- data.frame(EH_id = Oo_Df$EH_id, 
-                    dpi = Oo_Df$dpi, 
-                    oocysts.per.g = Oo_Df$oocysts.per.g, 
-                    Inf_strain = Oo_Df$Inf_strain,
-                    strain = Oo_Df$strain)
-# write.csv(x = Oo_Df, file = "/home/alice/Schreibtisch/git_projects/Eimeria_lab_local/Eimeria_Lab/data_clean/Oo_Df_First_cross_infection.csv")
-
 # Visual check-up:
 table(Oo_Df$EH_id, Oo_Df$dpi)
 
@@ -124,6 +117,13 @@ Alldata <- merge(Alldata, ExpePlanDF, by.x="LM_id", by.y="EH_id", all=TRUE)
 
 Alldata$dpi <- reorder(Alldata$dpi, as.numeric(gsub("dpi", "", Alldata$dpi)))
 
-#write.csv(x = Alldata, file = "/home/alice/Schreibtisch/git_projects/Eimeria_lab_local/Eimeria_Lab/data_clean/Weight_Full_Data_First_cross_infection.csv")
+# Rename same mouse labels:
+names(Alldata)[1] <- names(Oo_Df)[1]
 
+# Rename correct dpi:
+Alldata$dpi <- gsub(pattern = "dpi", replacement = "", x = Alldata$dpi)
 
+Total_Franci <- merge(Alldata, Oo_Df)
+
+write.csv(x = Total_Franci, file = "First_crossing_infection.csv", row.names = F)
+## NB move this file in data clean!
