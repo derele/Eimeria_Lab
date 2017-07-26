@@ -13,12 +13,12 @@ theme_alice <- theme_bw() +
 
 ###############################
 # Input data recent:
-ExpeDF <- read.csv(file = "https://raw.githubusercontent.com/alicebalard/Eimeria_Lab/master/data_clean/May2017.csv")
+ExpeDF <- read.csv(file = "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data_clean/May2017_crossing_infection.csv")
 ###############################
 
 
 ## Part 1: West should always be left 
-ExpeDF$strain <- factor(EXpeDF$strain, levels = c("WSB", "WP", "PWD"))
+ExpeDF$strain <- factor(ExpeDF$strain, levels = c("WSB", "WP", "PWD"))
 
 
 ###############################
@@ -36,9 +36,9 @@ PlotWeightFollow <- ggplot(data=ExpeDF,
               aes(label=EH_id))+
     theme(legend.position="none")
 
-## pdf(file="./figures/May2017_weight_along.pdf")
-## PlotWeightFollow
-## dev.off()
+pdf(file="./figures/May2017_weight_along.pdf", width=12, height=8)
+PlotWeightFollow
+dev.off()
 
 
 ###############################
@@ -55,9 +55,9 @@ PlotOoFollow <- ggplot(ExpeDF, aes(x=dpi, y=oocysts.per.g, group = strain, col =
   scale_y_continuous(labels = scientific) +
   theme_alice
 
-## pdf(file="./figures/May2017_oocyst_along.pdf")
-## PlotOoFollow
-## dev.off()
+pdf(file="./figures/May2017_oocyst_along.pdf", width=12, height=8)
+PlotOoFollow
+dev.off()
 
 # Violin plots of the total sum of oocysts collected during 11 days: 
 sum.oocysts <- do.call("rbind", by(ExpeDF, ExpeDF$EH_id, function (x){
@@ -68,24 +68,31 @@ sum.oocysts <- do.call("rbind", by(ExpeDF, ExpeDF$EH_id, function (x){
 sum.oocysts <- sum.oocysts[!duplicated(sum.oocysts$EH_id),]
 # NB: some mice died before!!
 
+sum.oocysts$strain <- factor(sum.oocysts$strain,
+                             levels = c("WSB", "WP", "PWD"))
+
 PlotOoSum <- ggplot(sum.oocysts, aes(strain, sum.oo)) +
     ggtitle("Sum of oocysts shed during the experiment") + 
     geom_violin(color = "black")+
     facet_wrap(~Inf_strain) +
     geom_jitter(width=0.1, size=7, alpha = 0.8, pch = 21, aes(fill = strain)) +
-    labs(y = "Total number of Oocyst shed", x = "Mouse strain")
+    labs(y = "Total number of oocyst shed", x = "Mouse strain")
     scale_y_continuous(labels = scientific) +
     theme_alice
 
-## pdf(file="./figures/May2017_oocyst_sum.pdf")
-## PlotOoSum
-## dev.off()
+pdf(file="./figures/May2017_oocyst_sum.pdf", width=12, height=8)
+PlotOoSum
+dev.off()
 
 # maximum weight lost before death
 max.loss <- do.call("rbind", by(ExpeDF, ExpeDF$EH_id, function (x){
   m.loss <- which(x$rel.weight==min(x$rel.weight, na.rm=TRUE))
   x[m.loss,]
 }))
+
+max.loss$strain <- factor(max.loss$strain,
+                          levels = c("WSB", "WP", "PWD"))
+
 
 table(max.loss$dpi, max.loss$strain)
 
@@ -105,9 +112,9 @@ PlotWeightMax <- ggplot(max.loss, aes(strain, rel.weight, color=Inf_strain)) +
          x= "Mouse strain")+
   theme_alice
 
-## pdf(file="./figures/May2017_weight_max.pdf")
-## PlotWeightMax
-## dev.off()
+pdf(file="./figures/May2017_weight_max.pdf", width=12, height=8)
+PlotWeightMax
+dev.off()
 
 summary(glm(rel.weight~strain + Inf_strain, data=max.loss))
 
