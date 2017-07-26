@@ -36,8 +36,8 @@ PlotWeightFollow <- ggplot(data=ExpeDF,
               aes(label=EH_id))+
     theme(legend.position="none")
 
-pdf(file="./figures/May2017_weight_along.pdf", width=12, height=8)
-PlotWeightFollow
+pdf(file="figures/May2017_weight_along.pdf", width=12, height=8)
+plot(PlotWeightFollow)
 dev.off()
 
 
@@ -50,13 +50,15 @@ PlotOoFollow <- ggplot(ExpeDF, aes(x=dpi, y=oocysts.per.g, group = strain, col =
           subtitle = "Loess smoothing + 95% CI")+
   scale_x_continuous(breaks = 0:11) +
   facet_wrap(~Inf_strain)+
-  geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = strain), alpha = 0.78) +
+    geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = strain), alpha = 0.78) +
+    scale_color_manual(values=c("blue", "purple", "red"))+
+    scale_fill_manual(values=c("blue", "purple", "red"))+
   labs(y = "Oocyst per gram", x = "Day post infection (dpi)") +
   scale_y_continuous(labels = scientific) +
   theme_alice
 
 pdf(file="./figures/May2017_oocyst_along.pdf", width=12, height=8)
-PlotOoFollow
+plot(PlotOoFollow)
 dev.off()
 
 # Violin plots of the total sum of oocysts collected during 11 days: 
@@ -75,13 +77,16 @@ PlotOoSum <- ggplot(sum.oocysts, aes(strain, sum.oo)) +
     ggtitle("Sum of oocysts shed during the experiment") + 
     geom_violin(color = "black")+
     facet_wrap(~Inf_strain) +
-    geom_jitter(width=0.1, size=7, alpha = 0.8, pch = 21, aes(fill = strain)) +
+    geom_jitter(width=0.1, size=7, alpha = 0.8,
+                pch = 21, aes(fill = strain)) +
+    scale_color_manual(values=c("blue", "purple", "red"))+
+    scale_fill_manual(values=c("blue", "purple", "red"))+
     labs(y = "Total number of oocyst shed", x = "Mouse strain")
     scale_y_continuous(labels = scientific) +
     theme_alice
 
 pdf(file="./figures/May2017_oocyst_sum.pdf", width=12, height=8)
-PlotOoSum
+plot(PlotOoSum)
 dev.off()
 
 # maximum weight lost before death
@@ -110,10 +115,12 @@ PlotWeightMax <- ggplot(max.loss, aes(strain, rel.weight, color=Inf_strain)) +
                 color = "black", aes(fill = strain), alpha = 0.8) +
     labs(y= "Minimum weigth retained relative to weight at infection",
          x= "Mouse strain")+
+    scale_color_manual(values=c("blue", "purple", "red"))+
+    scale_fill_manual(values=c("blue", "purple", "red"))+
   theme_alice
 
 pdf(file="./figures/May2017_weight_max.pdf", width=12, height=8)
-PlotWeightMax
+plot(PlotWeightMax)
 dev.off()
 
 summary(glm(rel.weight~strain + Inf_strain, data=max.loss))
