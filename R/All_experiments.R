@@ -36,7 +36,7 @@ PlotWeightFollow <- ggplot(data=ExpeDF,
               aes(label=EH_id))+
     theme(legend.position="none")
 
-## pdf(file="./figures/FirstExpe_weight_along.pdf")
+## pdf(file="./figures/May2017_weight_along.pdf")
 ## PlotWeightFollow
 ## dev.off()
 
@@ -44,7 +44,7 @@ PlotWeightFollow <- ggplot(data=ExpeDF,
 ###############################
 ## Part 3: Plots:
 ## PLOT mice strains:
-PlotOo <- ggplot(ExpeDF, aes(x=dpi, y=oocysts.per.g, group = strain, col = strain))+
+PlotOoFollow <- ggplot(ExpeDF, aes(x=dpi, y=oocysts.per.g, group = strain, col = strain))+
   geom_smooth(aes(fill = strain), alpha = 0.2)+
   ggtitle("Oocyst count at different days post infection (dpi)", 
           subtitle = "Loess smoothing + 95% CI")+
@@ -55,8 +55,8 @@ PlotOo <- ggplot(ExpeDF, aes(x=dpi, y=oocysts.per.g, group = strain, col = strai
   scale_y_continuous(labels = scientific) +
   theme_alice
 
-## pdf(file="./figures/FirstExpe_oocyst_along.pdf")
-## PlotOo
+## pdf(file="./figures/May2017_oocyst_along.pdf")
+## PlotOoFollow
 ## dev.off()
 
 # Violin plots of the total sum of oocysts collected during 11 days: 
@@ -68,7 +68,7 @@ sum.oocysts <- do.call("rbind", by(ExpeDF, ExpeDF$EH_id, function (x){
 sum.oocysts <- sum.oocysts[!duplicated(sum.oocysts$EH_id),]
 # NB: some mice died before!!
 
-plot_oo <- ggplot(sum.oocysts, aes(strain, sum.oo)) +
+PlotOoSum <- ggplot(sum.oocysts, aes(strain, sum.oo)) +
     ggtitle("Sum of oocysts shed during the experiment") + 
     geom_violin(color = "black")+
     facet_wrap(~Inf_strain) +
@@ -77,8 +77,8 @@ plot_oo <- ggplot(sum.oocysts, aes(strain, sum.oo)) +
     scale_y_continuous(labels = scientific) +
     theme_alice
 
-## pdf(file="./figures/FirstExpe_violin_oocyst.pdf")
-## plot_oo
+## pdf(file="./figures/May2017_oocyst_sum.pdf")
+## PlotOoSum
 ## dev.off()
 
 # maximum weight lost before death
@@ -95,7 +95,7 @@ table(max.loss$dpi, max.loss$Inf_strain, max.loss$strain)
 
 tapply(max.loss$rel.weight, max.loss$Inf_strain:max.loss$strain, mean)
 
-plot_weight <- ggplot(max.loss, aes(strain, rel.weight, color=Inf_strain)) +
+PlotWeightMax <- ggplot(max.loss, aes(strain, rel.weight, color=Inf_strain)) +
   ggtitle("Relative weight retained") + 
   geom_violin(color = "black")+
   facet_wrap(~Inf_strain) +
@@ -105,9 +105,9 @@ plot_weight <- ggplot(max.loss, aes(strain, rel.weight, color=Inf_strain)) +
          x= "Mouse strain")+
   theme_alice
 
-pdf(file="./figures/FirstExpe_violin_weight.pdf")
-plot_weight
-dev.off()
+## pdf(file="./figures/May2017_weight_max.pdf")
+## PlotWeightMax
+## dev.off()
 
 summary(glm(rel.weight~strain + Inf_strain, data=max.loss))
 
