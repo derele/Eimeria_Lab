@@ -68,7 +68,7 @@ Newdata <- Newdata[!names(Newdata) %in% "dil"]
 Newdata <- na.omit(Newdata)
 
 # Merge the 2 dataframe by labels:
-names(subsampleDF)[1] <- "label"
+names(subsampleDF)[names(subsampleDF) %in% "Label"] <- "label"
 
 Oo_Df <- na.omit(merge(Newdata, subsampleDF, by = "label"))
 
@@ -82,10 +82,10 @@ Oo_Df$abscount <- Oo_Df$raw.count * 10000
 Oo_Df$oocysts.per.g <- Oo_Df$abscount / Oo_Df$fec.weight
 
 #Put my dataframe at the good format:
-Oo_Df <- Oo_Df[c("mouse.ID", "dpi", "oocysts.per.g")]
+Oo_Df <- Oo_Df[c("label", "mouse.ID", "dpi", "oocysts.per.g")]
 
 # Add the info on the mouse genotype AND on the infection strain:
-names(Oo_Df)[1] <- "EH_id"
+names(Oo_Df)[names(Oo_Df) %in% "mouse.ID"] <- "EH_id"
 
 Oo_Df <- merge(Oo_Df, ExpePlanDF, by = "EH_id")
 
@@ -118,12 +118,12 @@ Alldata <- merge(Alldata, ExpePlanDF, by.x="LM_id", by.y="EH_id", all=TRUE)
 Alldata$dpi <- reorder(Alldata$dpi, as.numeric(gsub("dpi", "", Alldata$dpi)))
 
 # Rename same mouse labels:
-names(Alldata)[1] <- names(Oo_Df)[1]
+names(Alldata)[names(Alldata) %in% "LM_id"] <- "EH_id"
 
 # Rename correct dpi:
 Alldata$dpi <- gsub(pattern = "dpi", replacement = "", x = Alldata$dpi)
 
 Total_Franci <- merge(Alldata, Oo_Df)
 
-write.csv(x = Total_Franci, file = "data_clean/May2017_crossing_infection.csv", row.names = F)
-## NB move this file in data clean!
+write.csv(x = Total_Franci, file = "../data_clean/May2017_crossing_infection.csv", row.names = F)
+
