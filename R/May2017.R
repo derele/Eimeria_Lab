@@ -76,13 +76,13 @@ Oo_Df <- na.omit(merge(Newdata, subsampleDF, by = "label"))
 Oo_Df$Total_feces <- Oo_Df$subsample_g + Oo_Df$fec.weight
 
 # Calculate the oocysts number in 1 mL:
-Oo_Df$abscount <- Oo_Df$raw.count * 10000
+Oo_Df$oocysts.per.tube <- Oo_Df$raw.count * 10000
 
 # Calculate the oocyst per gram in the processed part of the feces::
-Oo_Df$oocysts.per.g <- Oo_Df$abscount / Oo_Df$fec.weight
+Oo_Df$oocysts.per.g <- Oo_Df$oocysts.per.tube / Oo_Df$fec.weight
 
 #Put my dataframe at the good format:
-Oo_Df <- Oo_Df[c("label", "mouse.ID", "dpi", "oocysts.per.g")]
+Oo_Df <- Oo_Df[c("label", "mouse.ID", "dpi", "oocysts.per.g", "oocysts.per.tube")]
 
 # Add the info on the mouse genotype AND on the infection strain:
 names(Oo_Df)[names(Oo_Df) %in% "mouse.ID"] <- "EH_id"
@@ -126,4 +126,3 @@ Alldata$dpi <- gsub(pattern = "dpi", replacement = "", x = Alldata$dpi)
 Total_Franci <- merge(Alldata, Oo_Df)
 
 write.csv(x = Total_Franci, file = "../data_clean/May2017_crossing_infection.csv", row.names = F)
-
