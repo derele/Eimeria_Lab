@@ -36,9 +36,9 @@ PlotWeightFollow <- ggplot(data=ExpeDF,
               aes(label=EH_id))+
     theme(legend.position="none")
 
-pdf(file="figures/May2017_weight_along.pdf", width=12, height=8)
+#pdf(file="figures/May2017_weight_along.pdf", width=12, height=8)
 plot(PlotWeightFollow)
-dev.off()
+#dev.off()
 
 
 ###############################
@@ -57,9 +57,9 @@ PlotOoFollow <- ggplot(ExpeDF, aes(x=dpi, y=oocysts.per.g, group = strain, col =
   scale_y_continuous(labels = scientific) +
   theme_alice
 
-pdf(file="./figures/May2017_oocyst_along.pdf", width=12, height=8)
+#pdf(file="./figures/May2017_oocyst_along.pdf", width=12, height=8)
 plot(PlotOoFollow)
-dev.off()
+#dev.off()
 
 # Violin plots of the total sum of oocysts collected during 11 days: 
 sum.oocysts <- do.call("rbind", by(ExpeDF, ExpeDF$EH_id, function (x){
@@ -81,13 +81,21 @@ PlotOoSum <- ggplot(sum.oocysts, aes(strain, sum.oo)) +
                 pch = 21, aes(fill = strain)) +
     scale_color_manual(values=c("blue", "purple", "red"))+
     scale_fill_manual(values=c("blue", "purple", "red"))+
-    labs(y = "Total number of oocyst shed", x = "Mouse strain")
+    labs(y = "Total number of oocyst shed", x = "Mouse strain") +
     scale_y_continuous(labels = scientific) +
     theme_alice
 
-pdf(file="./figures/May2017_oocyst_sum.pdf", width=12, height=8)
+#pdf(file="./figures/May2017_oocyst_sum.pdf", width=12, height=8)
 plot(PlotOoSum)
-dev.off()
+#dev.off()
+
+## Some stats on the oocysts :
+sum.oocysts$sum.oo <- round(sum.oocysts$sum.oo, 0)
+levels(sum.oocysts$strain) <- c(0, 0.5, 1)
+sum.oocysts$strain
+sum.oocysts$strain <- as.numeric(as.character(sum.oocysts$strain))
+
+glm.hybrid::glm.hybrid(formula = sum.oo ~ strain, data = sum.oocysts, alpha.along = "strain")
 
 # maximum weight lost before death
 max.loss <- do.call("rbind", by(ExpeDF, ExpeDF$EH_id, function (x){
@@ -119,9 +127,9 @@ PlotWeightMax <- ggplot(max.loss, aes(strain, rel.weight, color=Inf_strain)) +
     scale_fill_manual(values=c("blue", "purple", "red"))+
   theme_alice
 
-pdf(file="./figures/May2017_weight_max.pdf", width=12, height=8)
+#pdf(file="./figures/May2017_weight_max.pdf", width=12, height=8)
 plot(PlotWeightMax)
-dev.off()
+#dev.off()
 
 summary(glm(rel.weight~strain + Inf_strain, data=max.loss))
 

@@ -125,4 +125,16 @@ Alldata$dpi <- gsub(pattern = "dpi", replacement = "", x = Alldata$dpi)
 
 Total_Franci <- merge(Alldata, Oo_Df)
 
-write.csv(x = Total_Franci, file = "../data_clean/May2017_crossing_infection.csv", row.names = F)
+# write.csv(x = Total_Franci, file = "../data_clean/May2017_crossing_infection.csv", row.names = F)
+
+
+## Extra for DNA extraction : tubes with maximum oocysts
+library(dplyr)
+
+tabhighoo <- function(inf){
+  al <- inf[which((inf$oocysts.per.tube) %in% tail(sort(inf$oocysts.per.tube), 20)), c(1,2,10,15,20,21,22), ]
+  arrange(al, -oocysts.per.tube)
+}
+
+tabhighoo(Total_Franci[which(Total_Franci$Inf_strain == "EI64"),])
+tabhighoo(Eflab <- Total_Franci[which(Total_Franci$Inf_strain == "Eflab"),])
