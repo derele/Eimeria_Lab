@@ -50,14 +50,28 @@ PlotOoFollow <- ggplot(ExpeDF, aes(x=dpi, y=oocysts.per.g, group = strain, col =
           subtitle = "Loess smoothing + 95% CI")+
   scale_x_continuous(breaks = 0:11) +
   facet_wrap(~Inf_strain)+
-    geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = strain), alpha = 0.78) +
-    scale_color_manual(values=c("blue", "purple", "red"))+
-    scale_fill_manual(values=c("blue", "purple", "red"))+
+  geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = strain), alpha = 0.78) +
+  scale_color_manual(values=c("blue", "purple", "red"),  
+                     name="Mice genotypes",
+                     breaks=c("WSB", "WP", "PWD"),
+                     labels=c("M.m.domesticus (West)", "Hybrid", "M.m.musculus (East)"))+
+  scale_fill_manual(values=c("blue", "purple", "red"),  
+                    name="Mice genotypes",
+                    breaks=c("WSB", "WP", "PWD"),
+                    labels=c("M.m.domesticus (West)", "Hybrid", "M.m.musculus (East)"))+
   labs(y = "Oocyst per gram", x = "Day post infection (dpi)") +
   scale_y_continuous(labels = scientific) +
-  theme_alice
+  theme_bw()+
+  theme(plot.title = element_text(size=22), plot.subtitle = element_text(size = 20),
+        legend.position=c(.2, .6), legend.title = element_text(size=20, face="bold"),
+        legend.text = element_text(size = 20),
+        axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold"),
+        legend.key = element_rect(size = 5),
+        legend.key.size = unit(1.5, 'lines'),
+        strip.text = element_text(size=25))
 
-#pdf(file="./figures/May2017_oocyst_along.pdf", width=12, height=8)
+#pdf(file="../figures/May2017_oocyst_along.pdf", width=12, height=8)
 plot(PlotOoFollow)
 #dev.off()
 
@@ -73,19 +87,23 @@ sum.oocysts <- sum.oocysts[!duplicated(sum.oocysts$EH_id),]
 sum.oocysts$strain <- factor(sum.oocysts$strain,
                              levels = c("WSB", "WP", "PWD"))
 
-PlotOoSum <- ggplot(sum.oocysts, aes(strain, sum.oo)) +
-    ggtitle("Sum of oocysts shed during the experiment") + 
-    geom_violin(color = "black")+
-    facet_wrap(~Inf_strain) +
-    geom_jitter(width=0.1, size=7, alpha = 0.8,
-                pch = 21, aes(fill = strain)) +
-    scale_color_manual(values=c("blue", "purple", "red"))+
-    scale_fill_manual(values=c("blue", "purple", "red"))+
-    labs(y = "Total number of oocyst shed", x = "Mouse strain") +
-    scale_y_continuous(labels = scientific) +
-    theme_alice
+PlotOoSum <- ggplot(sum.oocysts[sum.oocysts$Inf_strain == "EI64",], aes(strain, sum.oo)) +
+  ggtitle("Sum of oocysts shed during the experiment for EI64 infection") + 
+  geom_violin(color = "black")+
+  geom_jitter(width=0.1, size=7, alpha = 0.8,
+              pch = 21, aes(fill = strain)) +
+  labs(y = "Total number of oocyst shed", x = "Mouse strain") +
+  scale_y_continuous(labels = scientific) +
+  scale_color_manual(values=c("blue", "purple", "red"))+
+  scale_fill_manual(values=c("blue", "purple", "red"))+
+  theme_bw()+
+  theme(plot.title = element_text(size=22), plot.subtitle = element_text(size = 20),
+        axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold"),
+        strip.text = element_text(size=25),
+        legend.position="none")
 
-#pdf(file="./figures/May2017_oocyst_sum.pdf", width=12, height=8)
+#pdf(file="../figures/May2017_oocyst_sum.pdf", width=12, height=8)
 plot(PlotOoSum)
 #dev.off()
 
@@ -115,21 +133,26 @@ table(max.loss$dpi, max.loss$Inf_strain, max.loss$strain)
 
 tapply(max.loss$rel.weight, max.loss$Inf_strain:max.loss$strain, mean)
 
-PlotWeightMax <- ggplot(max.loss, aes(strain, rel.weight, color=Inf_strain)) +
-  ggtitle("Relative weight retained") + 
+PlotWeightMax <- ggplot(max.loss[max.loss$Inf_strain == "EI64",],
+                        aes(strain, rel.weight, color=Inf_strain)) +
+  ggtitle("Relative weight retained during the experiment for EI64 infection") + 
   geom_violin(color = "black")+
-  facet_wrap(~Inf_strain) +
-    geom_jitter(width=0.1, size=7, pch = 21,
+  geom_jitter(width=0.1, size=7, pch = 21,
                 color = "black", aes(fill = strain), alpha = 0.8) +
     labs(y= "Minimum weigth retained relative to weight at infection",
          x= "Mouse strain")+
     scale_color_manual(values=c("blue", "purple", "red"))+
     scale_fill_manual(values=c("blue", "purple", "red"))+
-  theme_alice
+  theme_bw()+
+  theme(plot.title = element_text(size=22), plot.subtitle = element_text(size = 20),
+        axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold"),
+        strip.text = element_text(size=25),
+        legend.position="none")
 
-#pdf(file="./figures/May2017_weight_max.pdf", width=12, height=8)
+pdf(file="../figures/May2017_weight_max.pdf", width=12, height=8)
 plot(PlotWeightMax)
-#dev.off()
+dev.off()
 
 summary(glm(rel.weight~strain + Inf_strain, data=max.loss))
 
