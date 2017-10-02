@@ -3,14 +3,6 @@ library(gridExtra)
 library(reshape2)
 library(scales)
 
-# To keep all plot with the same theme:
-theme_alice <- theme_bw() +
-  theme(plot.title = element_text(size = 20, face = "bold"),
-        plot.subtitle = element_text(size = 20),
-        legend.text = element_text(size=20),
-        legend.title = element_blank(),
-        text = element_text(size = 20))
-
 ###############################
 # Input data recent:
 ExpeDF <- read.csv(file = "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data_clean/May2017_crossing_infection.csv")
@@ -150,9 +142,9 @@ PlotWeightMax <- ggplot(max.loss[max.loss$Inf_strain == "EI64",],
         strip.text = element_text(size=25),
         legend.position="none")
 
-pdf(file="../figures/May2017_weight_max.pdf", width=12, height=8)
+#pdf(file="../figures/May2017_weight_max.pdf", width=12, height=8)
 plot(PlotWeightMax)
-dev.off()
+#dev.off()
 
 summary(glm(rel.weight~strain + Inf_strain, data=max.loss))
 
