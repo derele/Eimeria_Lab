@@ -129,7 +129,7 @@ Alldata$dpi <- gsub(pattern = "dpi", replacement = "", x = Alldata$dpi)
 
 Total_Franci <- merge(Alldata, Oo_Df)
 
-# write.csv(x = Total_Franci, file = "../data_clean/May2017_crossing_infection.csv", row.names = F)
+#write.csv(x = Total_Franci, file = "../data_clean/May2017_crossing_infection.csv", row.names = F)
 
 
 ## Extra for DNA extraction : tubes with maximum oocysts

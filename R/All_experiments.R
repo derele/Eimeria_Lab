@@ -16,30 +16,30 @@ theme_alice <- theme_bw() +
 ExpeDF <- read.csv(file = "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data_clean/May2017_crossing_infection.csv")
 ###############################
 
-
 ## Part 1: West should always be left 
 ExpeDF$strain <- factor(ExpeDF$strain, levels = c("WSB", "WP", "PWD"))
-
 
 ###############################
 ## Part 2: how to follow up on the experiment:
 # Plot to follow the weight : if < 80% weight, mouse has to be sacrificed
-PlotWeightFollow <- ggplot(data=ExpeDF,
-                           aes(x=dpi, y=rel.weight,
-                               group=EH_id, color=EH_id)) +
-    geom_line()+
-    geom_point()+
-    theme_bw()+
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))+
-    geom_hline(yintercept=80, linetype="dashed", color = "red", size=2)+
-    geom_text(data=subset(ExpeDF, dpi == "9" | dpi == "11" ),
-              aes(label=EH_id))+
-    theme(legend.position="none")
-
-#pdf(file="figures/May2017_weight_along.pdf", width=12, height=8)
+PlotWeightFollow <- ggplot(data=ExpeDF[ExpeDF$dpi > 0,], # from day 1
+                           aes(x=dpi, y=rel.weight)) +
+  geom_line(aes(group = EH_id, color = Inf_strain))+
+  geom_point(aes(color=Inf_strain), size = 3, alpha = 0.5)+
+  geom_hline(yintercept=80, linetype="dashed", color = "red", size=0.5)+
+  theme_bw()+
+  theme(legend.position=c(.15, .2), legend.title = element_text(size=20, face="bold"),
+        legend.text = element_text(size = 20),
+        axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold")) +
+  scale_color_manual(values=c("#999999", "#E69F00"), 
+                    name="Infection\nstrains")+
+  scale_x_continuous(breaks = 1:11, name = "Day post infection (dpi)" )+ 
+  scale_y_continuous(name = "Relative weight compared to dpi 1")
+  
+#pdf(file="../figures/May2017_weight_along.pdf", width=12, height=8)
 plot(PlotWeightFollow)
 #dev.off()
-
 
 ###############################
 ## Part 3: Plots:
