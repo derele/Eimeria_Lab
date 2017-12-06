@@ -40,7 +40,6 @@ PlotWeightFollow <- ggplot(data=ExpeDF,
 plot(PlotWeightFollow)
 #dev.off()
 
-
 ###############################
 ## Part 3: Plots:
 ## PLOT mice strains:
@@ -121,7 +120,7 @@ PlotWeightMax <- ggplot(max.loss, aes(strain, rel.weight, color=Inf_strain)) +
   facet_wrap(~Inf_strain) +
     geom_jitter(width=0.1, size=7, pch = 21,
                 color = "black", aes(fill = strain), alpha = 0.8) +
-    labs(y= "Minimum weigth retained relative to weight at infection",
+    labs(y= "Minimum weigth retained relative to weight at dpi1",
          x= "Mouse strain")+
     scale_color_manual(values=c("blue", "purple", "red"))+
     scale_fill_manual(values=c("blue", "purple", "red"))+
@@ -131,6 +130,12 @@ PlotWeightMax <- ggplot(max.loss, aes(strain, rel.weight, color=Inf_strain)) +
 plot(PlotWeightMax)
 #dev.off()
 
+# ranges of weight loss for different mice strains, for E. ferrisi infection:
+summary(max.loss$rel.weight[max.loss$Inf_strain == "EI64" & max.loss$strain == "WSB"])
+summary(max.loss$rel.weight[max.loss$Inf_strain == "EI64" & max.loss$strain == "WP"])
+summary(max.loss$rel.weight[max.loss$Inf_strain == "EI64" & max.loss$strain == "PWD"])
+
+# stat test
 summary(glm(rel.weight~strain + Inf_strain, data=max.loss))
 
 summary(glm(rel.weight~strain, data = max.loss[max.loss$Inf_strain == "EI64",]))
