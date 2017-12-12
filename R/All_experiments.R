@@ -5,7 +5,8 @@ library(scales)
 
 ###############################
 # Input data recent:
-ExpeDF <- read.csv(file = "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data_clean/May2017_crossing_infection.csv")
+ExpeDF <- read.csv("../data_clean/May2017_crossing_infection.csv")
+#ExpeDF <- read.csv(file = "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data_clean/May2017_crossing_infection.csv")
 ###############################
 
 ## Part 1: West should always be left 
@@ -80,7 +81,7 @@ sum.oocysts$strain <- factor(sum.oocysts$strain,
                              levels = c("WSB", "WP", "PWD"))
 
 PlotOoSum <- ggplot(sum.oocysts[sum.oocysts$Inf_strain == "EI64",], aes(strain, sum.oo)) +
-  ggtitle("Sum of oocysts shed during the experiment for EI64 infection") + 
+  ggtitle("Sum of oocysts shed during the experiment for E. ferrisi infection") + 
   geom_violin(color = "black")+
   geom_jitter(width=0.1, size=7, alpha = 0.8,
               pch = 21, aes(fill = strain)) +
@@ -93,11 +94,20 @@ PlotOoSum <- ggplot(sum.oocysts[sum.oocysts$Inf_strain == "EI64",], aes(strain, 
         axis.text=element_text(size=20),
         axis.title=element_text(size=20,face="bold"),
         strip.text = element_text(size=25),
-        legend.position="none")
+        legend.position="none") +
+  scale_x_discrete(labels=c("WSB" = "M.m.domesticus",
+                            "WP" = "hybrids",
+                            "PWD" = "M.m.musculus"))
 
 #pdf(file="../figures/May2017_oocyst_sum.pdf", width=12, height=8)
 plot(PlotOoSum)
 #dev.off()
+
+# mean and 95%CI
+data = sum.oocysts[sum.oocysts$Inf_strain == "EI64",]
+aggregate(data$sum.oo, list(data$strain), mean)
+library(Rmisc)
+aggregate(data$sum.oo, list(data$strain), CI, ci=0.95)
 
 ## Some stats on the oocysts :
 sum.oocysts$sum.oo <- round(sum.oocysts$sum.oo, 0)
@@ -105,7 +115,9 @@ levels(sum.oocysts$strain) <- c(0, 0.5, 1)
 sum.oocysts$strain
 sum.oocysts$strain <- as.numeric(as.character(sum.oocysts$strain))
 
-glm.hybrid::glm.hybrid(formula = sum.oo ~ strain, data = sum.oocysts, alpha.along = "strain")
+kruskal.test(sum.oo ~ strain, data = sum.oocysts[sum.oocysts$Inf_strain == "EI64",])
+
+# glm.hybrid::glm.hybrid(formula = sum.oo ~ strain, data = sum.oocysts, alpha.along = "strain")
 
 # maximum weight lost before death
 max.loss <- do.call("rbind", by(ExpeDF, ExpeDF$EH_id, function (x){
@@ -127,11 +139,11 @@ tapply(max.loss$rel.weight, max.loss$Inf_strain:max.loss$strain, mean)
 
 PlotWeightMax <- ggplot(max.loss[max.loss$Inf_strain == "EI64",],
                         aes(strain, rel.weight, color=Inf_strain)) +
-  ggtitle("Relative weight retained during the experiment for EI64 infection") + 
+  ggtitle("Minimum weight retained relative to dpi 1 for E. ferrisi infection") + 
   geom_violin(color = "black")+
   geom_jitter(width=0.1, size=7, pch = 21,
                 color = "black", aes(fill = strain), alpha = 0.8) +
-    labs(y= "Minimum weigth retained relative to weight at infection",
+    labs(y= "Minimum weigth retained relative to weight at dpi1 (%)",
          x= "Mouse strain")+
     scale_color_manual(values=c("blue", "purple", "red"))+
     scale_fill_manual(values=c("blue", "purple", "red"))+
@@ -140,7 +152,10 @@ PlotWeightMax <- ggplot(max.loss[max.loss$Inf_strain == "EI64",],
         axis.text=element_text(size=20),
         axis.title=element_text(size=20,face="bold"),
         strip.text = element_text(size=25),
-        legend.position="none")
+        legend.position="none") +
+  scale_x_discrete(labels=c("WSB" = "M.m.domesticus",
+                            "WP" = "hybrids",
+                            "PWD" = "M.m.musculus"))
 
 #pdf(file="../figures/May2017_weight_max.pdf", width=12, height=8)
 plot(PlotWeightMax)
@@ -149,5 +164,14 @@ plot(PlotWeightMax)
 summary(glm(rel.weight~strain + Inf_strain, data=max.loss))
 
 summary(glm(rel.weight~strain, data = max.loss[max.loss$Inf_strain == "EI64",]))
+
+kruskal.test(rel.weight ~ strain, data = max.loss[max.loss$Inf_strain == "EI64",])
+summary(aov(rel.weight ~ strain, data = max.loss[max.loss$Inf_strain == "EI64",]))
+
+summary(max.loss$rel.weight[max.loss$Inf_strain == "EI64" & 
+                              max.loss$strain == "WSB"])
+
+summary(max.loss$rel.weight[max.loss$Inf_strain == "EI64" & 
+                              max.loss$strain == "PWD"])
 
 ## using offsets and real weight instead of relative weight for modeling
