@@ -33,6 +33,10 @@ mydata_weight <- read.csv("https://raw.githubusercontent.com/alicebalard/Eimeria
 subsampleDF <- read.csv("https://raw.githubusercontent.com/alicebalard/Eimeria_Lab/master/data_raw/Feces_kept_separated_for_PCR.csv")
 subsampleDF <- na.omit(subsampleDF)
 
+# Manual correction
+subsampleDF[subsampleDF$subsample_g == 592, ]$subsample_g <- 0.592
+boxplot(subsampleDF$subsample_g)
+
 # Calculate how many animals at start:
 summary_table_at_dpi <- function(n){
   A = data.frame(mouse_number = ExpePlanDF$EH_id, ExpePlanDF$strain, ExpePlanDF$Inf_strain)
@@ -125,7 +129,7 @@ Alldata$dpi <- gsub(pattern = "dpi", replacement = "", x = Alldata$dpi)
 
 Total_Franci <- merge(Alldata, Oo_Df)
 
-# write.csv(x = Total_Franci, file = "../data_clean/May2017_crossing_infection.csv", row.names = F)
+#write.csv(x = Total_Franci, file = "../data_clean/May2017_crossing_infection.csv", row.names = F)
 
 
 ## Extra for DNA extraction : tubes with maximum oocysts
