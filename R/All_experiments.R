@@ -80,13 +80,16 @@ sum.oocysts <- sum.oocysts[!duplicated(sum.oocysts$EH_id),]
 sum.oocysts$strain <- factor(sum.oocysts$strain,
                              levels = c("WSB", "WP", "PWD"))
 
-PlotOoSum <- ggplot(sum.oocysts[sum.oocysts$Inf_strain == "EI64",], aes(strain, sum.oo)) +
-  ggtitle("Sum of oocysts shed during the experiment for E. ferrisi infection") + 
+my_title <- expression(paste("Sum of oocysts shed during experimental ", 
+                             italic("E. ferrisi"), " infection"))
+
+PlotOoSum <- ggplot(sum.oocysts[sum.oocysts$Inf_strain == "EI64",], #
+                    aes(strain, sum.oo/1000000)) +
+  ggtitle(my_title) + 
   geom_violin(color = "black")+
   geom_jitter(width=0.1, size=7, alpha = 0.8,
               pch = 21, aes(fill = strain)) +
-  labs(y = "Total number of oocyst shed", x = "Mouse strain") +
-  scale_y_continuous(labels = scientific) +
+  labs(y = "Oocyst count (millions)", x = "Mouse strain") +
   scale_color_manual(values=c("blue", "purple", "red"))+
   scale_fill_manual(values=c("blue", "purple", "red"))+
   theme_bw()+
@@ -95,9 +98,9 @@ PlotOoSum <- ggplot(sum.oocysts[sum.oocysts$Inf_strain == "EI64",], aes(strain, 
         axis.title=element_text(size=20,face="bold"),
         strip.text = element_text(size=25),
         legend.position="none") +
-  scale_x_discrete(labels=c("WSB" = "M.m.domesticus",
+  scale_x_discrete(labels=c("WSB" = expression(italic("M.m.domesticus")),
                             "WP" = "hybrids",
-                            "PWD" = "M.m.musculus"))
+                            "PWD" = expression(italic("M.m.musculus"))))
 
 #pdf(file="../figures/May2017_oocyst_sum.pdf", width=12, height=8)
 plot(PlotOoSum)
@@ -128,6 +131,7 @@ max.loss <- do.call("rbind", by(ExpeDF, ExpeDF$EH_id, function (x){
 max.loss$strain <- factor(max.loss$strain,
                           levels = c("WSB", "WP", "PWD"))
 
+max.loss$max_loss <- 100 - max.loss$rel.weight
 
 table(max.loss$dpi, max.loss$strain)
 
@@ -137,14 +141,16 @@ table(max.loss$dpi, max.loss$Inf_strain, max.loss$strain)
 
 tapply(max.loss$rel.weight, max.loss$Inf_strain:max.loss$strain, mean)
 
+my_title <- expression(paste("Maximum weight loss during experimental ", 
+                             italic("E. ferrisi"), " infection"))
+
 PlotWeightMax <- ggplot(max.loss[max.loss$Inf_strain == "EI64",],
-                        aes(strain, rel.weight, color=Inf_strain)) +
-  ggtitle("Minimum weight retained relative to dpi 1 for E. ferrisi infection") + 
+                        aes(strain, max_loss, color=Inf_strain)) +
+  ggtitle(my_title) +
   geom_violin(color = "black")+
   geom_jitter(width=0.1, size=7, pch = 21,
               color = "black", aes(fill = strain), alpha = 0.8) +
-  labs(y= "Minimum weigth retained relative to weight at dpi1 (%)",
-       x= "Mouse strain")+
+  labs(y= "Weight loss (%)", x= "Mouse strain")+
   scale_color_manual(values=c("blue", "purple", "red"))+
   scale_fill_manual(values=c("blue", "purple", "red"))+
   theme_bw()+
@@ -153,9 +159,9 @@ PlotWeightMax <- ggplot(max.loss[max.loss$Inf_strain == "EI64",],
         axis.title=element_text(size=20,face="bold"),
         strip.text = element_text(size=25),
         legend.position="none") +
-  scale_x_discrete(labels=c("WSB" = "M.m.domesticus",
+  scale_x_discrete(labels=c("WSB" = expression(italic("M.m.domesticus")),
                             "WP" = "hybrids",
-                            "PWD" = "M.m.musculus"))
+                            "PWD" = expression(italic("M.m.musculus"))))
 
 #pdf(file="../figures/May2017_weight_max.pdf", width=12, height=8)
 plot(PlotWeightMax)
