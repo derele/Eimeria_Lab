@@ -40,6 +40,9 @@ ggplot(Newdata, aes(x = dpi, y = weightloss, color = infection_isolate, group = 
   geom_line() +
   theme_bw()
 
+## REMOVING NON INFECTED (to do when the oocysts are counted)
+Newdata <- Newdata[Newdata$Mouse_ID != 14,]
+
 # Summary table & plot
 # summarySE provides the standard deviation, standard error of the mean, and a (default 95%) confidence interval
 summary_data <- summarySE(Newdata, measurevar="weightloss", groupvars=c("infection_isolate","dpi"))
