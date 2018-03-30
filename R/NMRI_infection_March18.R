@@ -33,6 +33,8 @@ Newdata$infection_isolate[Newdata$Mouse_ID %in% 13:18] <- "E88"
 Newdata$infection_isolate[Newdata$Mouse_ID %in% 19:23] <- "E139"
 
 # And sex
+Newdata$sex <- "male"
+Newdata$sex[Newdata$Mouse_ID %in% c(1,2,10,11,12,16,17,18,21,22,23)] <- "female"
 
 # Plot all mice
 ggplot(Newdata, aes(x = dpi, y = weightloss, color = infection_isolate, group = Mouse_ID )) +
@@ -61,3 +63,15 @@ ggplot(summary_data, aes(x = dpi, y = weightloss, colour = infection_isolate, gr
                      name="Infection\nstrains")+
   scale_x_continuous(breaks = 0:11, name = "Day post infection" )+ 
   scale_y_continuous(name = "Weight loss relative to infection day")
+
+## Oocysts shedding
+Newdata$Neubauer1 <- NA
+Newdata$Neubauer2 <- NA
+Newdata$Neubauer3 <- NA
+Newdata$Neubauer4 <- NA
+Newdata$mean <- NA
+Newdata$dilution_ml <- NA
+Newdata$oocysts_number <- NA
+Newdata$OPG <- NA
+
+write.csv(x = Newdata, file = "../data_raw/NMRIMarch2018/followUp.csv", row.names = F)
