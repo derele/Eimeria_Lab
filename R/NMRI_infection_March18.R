@@ -6,8 +6,8 @@ mydata <- read.csv(file = "../data_raw/NMRIMarch2018/NMRI_Mäuse.csv")
 
 # Calculate the weight loss compared to dpi0 automatically
 for(i in 0:11){
-  mydata[[paste0("dpi.",i,".weightloss")]] <- 
-    (1 - (mydata[[paste0("dpi.",i,".weight")]] / mydata$dpi.0.weight)) * 100
+  mydata[[paste0("dpi.",i,".weightRelativeToInfection(%)")]] <- 
+    (mydata[[paste0("dpi.",i,".weight")]] / mydata$dpi.0.weight) * 100
 }
 
 # Change to long format
@@ -37,29 +37,32 @@ Newdata$sex <- "male"
 Newdata$sex[Newdata$Mouse_ID %in% c(1,2,10,11,12,16,17,18,21,22,23)] <- "female"
 
 # Plot all mice
-ggplot(Newdata, aes(x = dpi, y = weightloss, color = infection_isolate, group = Mouse_ID )) +
-  geom_point() +
+ggplot(Newdata, aes(x = dpi, y = `weightRelativeToInfection(%)`, 
+                    color = infection_isolate, fill = infection_isolate, group = Mouse_ID )) +
   geom_line() +
+  geom_point(pch = 21, size = 4, col = "white") +
   theme_bw()
-
-## REMOVING NON INFECTED (to do when the oocysts are counted)
-Newdata <- Newdata[Newdata$Mouse_ID != 14,]
 
 # Summary table & plot
 # summarySE provides the standard deviation, standard error of the mean, and a (default 95%) confidence interval
-summary_data <- summarySE(Newdata, measurevar="weightloss", groupvars=c("infection_isolate","dpi"))
+summary_data <- summarySE(Newdata, measurevar="weightRelativeToInfection(%)", groupvars=c("infection_isolate","dpi"))
 summary_data
 
-ggplot(summary_data, aes(x = dpi, y = weightloss, colour = infection_isolate, group = infection_isolate)) + 
-  geom_errorbar(aes(ymin = weightloss-ci, ymax = weightloss+ci), width=1, position = position_dodge(0.2), size = 2) +
-  geom_line(position = position_dodge(0.2)) +
-  geom_point(position = position_dodge(0.2), size=3) +
+ggplot(summary_data, aes(x = dpi, y = `weightRelativeToInfection(%)`, 
+                         colour = infection_isolate, fill = infection_isolate, group = infection_isolate)) + 
+  geom_errorbar(aes(ymin = `weightRelativeToInfection(%)`-ci, 
+                    ymax = `weightRelativeToInfection(%)`+ci), 
+                width=0, position = position_dodge(0.2), size = 1, alpha = .5) +
+  geom_line(position = position_dodge(0.2), size = 2) +
+  geom_point(pch = 21, position = position_dodge(0.2), size=3, col = "white") +
   theme_bw() +
   theme(legend.position=c(.9, .2), legend.title = element_text(size=20, face="bold"),
         legend.text = element_text(size = 20),
         axis.text=element_text(size=20),
         axis.title=element_text(size=20,face="bold")) +
   scale_color_manual(values=c("#336600", "#66CC00", "#FF3300", "#660000"), 
+                     name="Infection\nstrains")+
+  scale_fill_manual(values=c("#336600", "#66CC00", "#FF3300", "#660000"), 
                      name="Infection\nstrains")+
   scale_x_continuous(breaks = 0:11, name = "Day post infection" )+ 
   scale_y_continuous(name = "Weight loss relative to infection day")
