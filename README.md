@@ -5,11 +5,12 @@ Record of infection experiments performed in AG Heitlinger
 
 ### 1.Information
 Fill the information table with known informations about the mice
-Template here: 
+
+Template here: https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/1_informationTables/template_INFO.csv
 
 ### 2. Experiment design
 Fill the experiment design with the help of the information table,
-with the help of R function "makeMouseTable.R"
+with the help of R function "makeDesignTable.R"
 
 ## Historic
 
