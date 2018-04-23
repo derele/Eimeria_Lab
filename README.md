@@ -21,5 +21,14 @@ name: **<span style="color:red">May2017_wildmicePloen_EFalciformisAndFerrisi</sp
 name: **<span style="color:red">April2018_wildmice_Eferrisi</span>**
 
 #### 2.1. First batch: 02/05/2018
+names: **April2018_wildmice_Eferrisi_Firstbatch_INFO**
 
 #### 2.2. Second batch:tba
+names: **April2018_wildmice_Eferrisi_Secondbatch_INFO**
+
+## Diverse R codes
+
+**makeDesignTable.R** is a general function taking as input an *INFO.csv* data.frame,
+and creating a DESIGN.csv one
+
+**selectBasedOnAge.R** was used in April 2018 to split our groups in 2. Hard coded.
