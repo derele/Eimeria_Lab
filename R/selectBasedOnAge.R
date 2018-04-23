@@ -43,19 +43,22 @@ x <- tail(sort(G1Tab$ageAtInfection[G1Tab$Mouse_strain %in% "STRA"]), 6)
 keepStra <- G1Tab$original_mouse_id[G1Tab$ageAtInfection %in% x & G1Tab$Mouse_strain %in% "STRA"]
 
 G1Tab <- G1Tab[G1Tab$original_mouse_id %in% keepStra | !G1Tab$Mouse_strain %in% "STRA",]
+
 table(G1Tab$sex, G1Tab$Mouse_strain)
 
 # Some plot
 library(ggplot2)
 library(ggrepel)
 
-ggplot(mytab, aes(x = Mouse_strain, y = ageAtInfection, col = sex,
+ggplot(G1Tab, aes(x = Mouse_strain, y = ageAtInfection, col = sex,
                   label = original_mouse_id)) +
   geom_boxplot() +
   geom_label_repel() +
   theme_bw()
 
-# Which STRA do we want?
-tail(sort(mytab$ageAtInfection[mytab$Mouse_strain %in% "STRA"]), 6)
+# Which labels do we begin with?
 
+# write.csv(G1Tab, file = "../data/1_informationTables/April2018_wildmice_Eferrisi_Firstbatch_INFO", row.names = F)
 
+G2Tab <- mytab[!mytab$original_mouse_id %in% G1Tab$original_mouse_id,]
+# write.csv(G2Tab, file = "../data/1_informationTables/April2018_wildmice_Eferrisi_Secondbatch_INFO", row.names = F)
