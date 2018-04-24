@@ -37,4 +37,4 @@ makeDesignTable <- function(myseed, pathToInfoTable, firstEH_Id, Inf_strains_lis
 myDesignTable1 <- makeDesignTable(myseed = 1234 , pathToInfoTable = "../data/1_informationTables/April2018_wildmice_Eferrisi_Firstbatch_INFO.csv", 
                                   firstEH_Id = "LM0122", Inf_strains_list = c("E64", "E139"))
 
-write.csv(myDesignTable1, file = "../data/2_designTables/April2018_wildmice_Eferrisi_Firstbatch_DESIGN", row.names = F)
+write.csv(myDesignTable1, file = "../data/2_designTables/April2018_wildmice_Eferrisi_Firstbatch_DESIGN.csv", row.names = F)
