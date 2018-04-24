@@ -27,4 +27,11 @@ makeRecordTable <- function(pathToDesignTable, myseed){
 # Experiment May 2018
 recordTable <- makeRecordTable("../data/2_designTables/April2018_wildmice_Eferrisi_Firstbatch_DESIGN.csv", myseed = 1344)
 
-write.csv(recordTable, file = "../data/3_recordingTables/April2018_wildmice_Eferrisi_Firstbatch_RECORD.csv", row.names = F)
+# 1. weight table
+write.csv(recordTable[names(recordTable) %in% c("labels", "EH_ID", "dpi", "weight", "weightloss",
+                                                "weightRelativeToInfection", "fecweight")], 
+          file = "../data/3_recordingTables/April2018_wildmice_Eferrisi_Firstbatch_RECORDweight.csv", row.names = F)
+# 2. oocysts table
+write.csv(recordTable[!names(recordTable) %in% c("EH_ID", "dpi", "weight", "weightloss",
+                                                "weightRelativeToInfection", "fecweight")], 
+          file = "../data/3_recordingTables/April2018_wildmice_Eferrisi_Firstbatch_RECORDoocysts.csv", row.names = F)
