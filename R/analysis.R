@@ -25,27 +25,41 @@ ExpeDF$OPG <- ExpeDF$mean_Neubauer * 10000 / ExpeDF$dilution_ml / ExpeDF$fecweig
 ExpeDF$oocystsTotal <- ExpeDF$mean_Neubauer * 10000 / ExpeDF$dilution_ml
 
 ## PLOT mice strains:
-PlotOoFollow <- ggplot(ExpeDF, aes(x=dpi, y=log10(OPG +1), group = Mouse_strain, col = Mouse_strain))+
+PlotOoFollow <- ggplot(ExpeDF, aes(x=dpi, y=OPG, group = Mouse_strain, col = Mouse_strain))+
   geom_smooth(aes(fill = Mouse_strain), alpha = 0.2)+
   ggtitle("Oocyst count at different days post infection (dpi)", 
           subtitle = "Loess smoothing + 95% CI")+
   scale_x_continuous(breaks = 0:11) +
-  facet_wrap(~infection_isolate) +
+  facet_wrap(~infection_isolate,  scales="free_y") +
   geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = Mouse_strain), alpha = 0.78) +
   scale_y_continuous(labels = scientific) +
   mytheme 
 plot(PlotOoFollow)
 
-PlotOoTotFollow <- ggplot(ExpeDF, aes(x=dpi, y=log10(oocystsTotal +1), group = Mouse_strain, col = Mouse_strain))+
+PlotOoTotFollow <- ggplot(ExpeDF, aes(x=dpi, y=oocystsTotal, group = Mouse_strain, col = Mouse_strain))+
   geom_smooth(aes(fill = Mouse_strain), alpha = 0.2)+
   ggtitle("Oocyst count at different days post infection (dpi)", 
           subtitle = "Loess smoothing + 95% CI")+
-  scale_x_continuous(breaks = 0:11) +
-  facet_wrap(~infection_isolate) +
+  # scale_x_continuous(breaks = 0:11) +
+  facet_wrap(~infection_isolate,  scales="free_y") +
   geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = Mouse_strain), alpha = 0.78) +
   scale_y_continuous(labels = scientific) +
   mytheme 
 plot(PlotOoTotFollow)
+
+# Mean + 95%CI
+source("summarySE.R")
+summaryOocysts <-summarySE(ExpeDF, measurevar="oocystsTotal", 
+                           groupvars=c("Mouse_strain","infection_isolate", "dpi"))
+
+ggplot(summaryOocysts, aes(x=dpi, y=oocystsTotal, group = Mouse_strain, col = Mouse_strain))+
+  geom_errorbar(aes(ymin=oocystsTotal-ci, ymax=oocystsTotal+ci), colour="black", width=.1, 
+                position=position_dodge(0.1)) +
+  geom_line(position=position_dodge(0.1)) +
+  geom_point(position=position_dodge(0.1), size=3) +
+  facet_wrap(~infection_isolate, scales="free_y") +
+  scale_x_continuous(breaks = 0:11) +
+  mytheme 
 
 # Weight
 
