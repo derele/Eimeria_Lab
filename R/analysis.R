@@ -16,6 +16,14 @@ mytheme <- theme_bw()+
 ExpeDF <- read.csv("../data/3_recordingTables/March2018_NMRI_4strains_RECORDweightAndOocysts.csv")
 # general
 ExpeDF$Mouse_strain <- "NMRI"
+
+## new expe May 2018 batch 1
+oo <- read.csv("../data/3_recordingTables/April2018_wildmice_Eferrisi_Firstbatch_RECORDoocysts.csv")
+we <- read.csv("../data/3_recordingTables/April2018_wildmice_Eferrisi_Firstbatch_RECORDweight.csv")
+info <- read.csv("../data/2_designTables/April2018_wildmice_Eferrisi_Firstbatch_DESIGN.csv")
+ExpeDF <-merge(merge(oo, we, all = T),info, all = T)
+ExpeDF$dpi <- as.factor(ExpeDF$dpi)
+
 # weight
 ExpeDF$weightloss <- ExpeDF$weight[ExpeDF$dpi %in% 0] - ExpeDF$weight
 ExpeDF$weightRelativeToInfection <- ExpeDF$weight/ExpeDF$weight[ExpeDF$dpi %in% 0] * 100
@@ -36,7 +44,7 @@ PlotOoFollow <- ggplot(ExpeDF, aes(x=dpi, y=OPG, group = Mouse_strain, col = Mou
   mytheme 
 plot(PlotOoFollow)
 
-PlotOoTotFollow <- ggplot(ExpeDF, aes(x=dpi, y=oocystsTotal, group = Mouse_strain, col = Mouse_strain))+
+PlotOoTotFollow <- ggplot(ExpeDF, aes(x=as.factor(dpi), y=oocystsTotal, group = Mouse_strain, col = Mouse_strain))+
   geom_smooth(aes(fill = Mouse_strain), alpha = 0.2)+
   ggtitle("Oocyst count at different days post infection (dpi)", 
           subtitle = "Loess smoothing + 95% CI")+
@@ -47,12 +55,19 @@ PlotOoTotFollow <- ggplot(ExpeDF, aes(x=dpi, y=oocystsTotal, group = Mouse_strai
   mytheme 
 plot(PlotOoTotFollow)
 
+PlotWeightFollow <- ggplot(ExpeDF, aes(x=dpi, y=weight))+
+  geom_line(aes(fill = EH_ID), alpha = 0.2) +
+  geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = EH_ID), alpha = 0.78) +
+# facet_wrap(~infection_isolate,  scales="free_y") +
+  mytheme 
+plot(PlotWeightFollow)
+
 # Mean + 95%CI
 source("summarySE.R")
 summaryOocysts <-summarySE(ExpeDF, measurevar="oocystsTotal", 
                            groupvars=c("Mouse_strain","infection_isolate", "dpi"))
 
-ggplot(summaryOocysts, aes(x=dpi, y=oocystsTotal, group = Mouse_strain, col = Mouse_strain))+
+ggplot(summaryOocysts, aes(x=as.factor(dpi), y=oocystsTotal, group = Mouse_strain, col = Mouse_strain))+
   geom_errorbar(aes(ymin=oocystsTotal-ci, ymax=oocystsTotal+ci), colour="black", width=.1, 
                 position=position_dodge(0.1)) +
   geom_line(position=position_dodge(0.1)) +
@@ -65,7 +80,7 @@ ggplot(summaryOocysts, aes(x=dpi, y=oocystsTotal, group = Mouse_strain, col = Mo
 
 PlotWeight <- ggplot(ExpeDF, aes(x=dpi, y=weightRelativeToInfection))+
   geom_smooth(aes(fill = Mouse_strain, col = infection_isolate), alpha = 0.2) +
-  scale_x_continuous(breaks = 0:11) +
+  #scale_x_continuous(breaks = 0:11) +
   facet_wrap(~infection_isolate) +
   geom_point(pch = 21, color = "black", size = 3) +
   mytheme 
