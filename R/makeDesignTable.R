@@ -22,13 +22,13 @@ makeDesignTable <- function(myseed, pathToInfoTable, firstEH_Id, Inf_strains_lis
   expe <- randomize(data = infoTable, group = Inf_strains_list,
                     indx = infoTable$EH_id, block = infoTable$Mouse_strain)
   
-  trt <- data.frame(Eimeria_isolate = expe$treatment)
+  trt <- data.frame(infection_isolate = expe$treatment)
   trt$EH_id <- rownames(trt)
   rownames(trt) <- NULL
   
   # Create design table
   designTable <- merge(trt, infoTable)
-  print(table(designTable$sex, designTable$Mouse_strain, designTable$Eimeria_isolate))
+  print(table(designTable$sex, designTable$Mouse_strain, designTable$infection_isolate))
   
   return(designTable)
 } 

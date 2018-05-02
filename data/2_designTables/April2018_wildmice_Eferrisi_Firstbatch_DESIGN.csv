@@ -1,4 +1,4 @@
-"EH_id","Eimeria_isolate","original_mouse_id","original_mouse_id_mother","original_mouse_id_father","sex","born","isolation","Mouse_strain","comment","ageAtInfection"
+"EH_id","infection_isolate","original_mouse_id","original_mouse_id_mother","original_mouse_id_father","sex","born","isolation","Mouse_strain","comment","ageAtInfection"
 "LM0123","E64","SY male 8249 G56 L2","SY fem 5825 G55",NA,"M","15/01/18","04/02/18","STRA","",15.2797619047619
 "LM0124","E64","SY male 8431 G44 L5","SY fem 7043 G43","SY male 7039 G43","M","06/02/18","26/02/18","PWD","",12.1369047619048
 "LM0125","E64","SY fem 7518 G37 P4","SY fem 5901 G36",NA,"F","31/12/17","10/01/18","SCHUNT","",17.422619047619
