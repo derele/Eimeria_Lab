@@ -55,12 +55,29 @@ PlotOoTotFollow <- ggplot(ExpeDF, aes(x=as.factor(dpi), y=oocystsTotal, group = 
   mytheme 
 plot(PlotOoTotFollow)
 
-PlotWeightFollow <- ggplot(ExpeDF, aes(x=dpi, y=weight))+
-  geom_line(aes(fill = EH_ID), alpha = 0.2) +
+PlotWeightFollow <- ggplot(ExpeDF[ExpeDF$dpi %in% c("-7", "-1"),], aes(x=dpi, y=weight))+
+  geom_line(aes(col = EH_ID, group = EH_ID)) +
   geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = EH_ID), alpha = 0.78) +
 # facet_wrap(~infection_isolate,  scales="free_y") +
   mytheme 
 plot(PlotWeightFollow)
+
+ExpeDF$weight[ExpeDF$dpi %in% "-1"]
+ExpeDF$weight[ExpeDF$dpi %in% "-7"]
+
+library(reshape2)
+
+df <- na.omit(melt(ExpeDF, id.vars = c("EH_ID", "dpi"), measure.vars = c("weight")))
+
+df <- df[df$variable == "weight",c("EH_ID", "dpi", "value")]
+
+df1 <- df[df$dpi =="-7", ]
+df2 <- df[df$dpi =="-1", ]
+df <- merge(df1, df2, by = "EH_ID", all = T)
+
+df$diff <- (df$value.x - df$value.y) / df$value.x * 100
+mean(df$diff)
+
 
 # Mean + 95%CI
 source("summarySE.R")
