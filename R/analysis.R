@@ -12,58 +12,59 @@ mytheme <- theme_bw()+
         legend.key.size = unit(1.5, 'lines'),
         strip.text = element_text(size=25))
 
-# Preparation (to split in a second R script)
-ExpeDF <- read.csv("../data/3_recordingTables/March2018_NMRI_4strains_RECORDweightAndOocysts.csv")
-# general
-ExpeDF$Mouse_strain <- "NMRI"
+########################### Data loading #######################################
+# ExpeDF need at least the following: 
+# "OPG", "EH_ID", "dpi", "weight", "EH_id", "infection_isolate"                   
 
-## new expe May 2018 batch 1
-oo <- read.csv("../data/3_recordingTables/April2018_wildmice_Eferrisi_Firstbatch_RECORDoocysts.csv")
-we <- read.csv("../data/3_recordingTables/April2018_wildmice_Eferrisi_Firstbatch_RECORDweight.csv")
-info <- read.csv("../data/2_designTables/April2018_wildmice_Eferrisi_Firstbatch_DESIGN.csv")
-ExpeDF <-merge(merge(oo, we, all = T),info, all = T)
-ExpeDF$dpi <- as.factor(ExpeDF$dpi)
+source("dataPreparation.R")
 
-# weight
-ExpeDF$weightloss <- ExpeDF$weight[ExpeDF$dpi %in% 0] - ExpeDF$weight
-ExpeDF$weightRelativeToInfection <- ExpeDF$weight/ExpeDF$weight[ExpeDF$dpi %in% 0] * 100
-# oocysts
-ExpeDF$mean_Neubauer <- (ExpeDF$Neubauer1 + ExpeDF$Neubauer2 + ExpeDF$Neubauer3 + ExpeDF$Neubauer4) / 4
-ExpeDF$OPG <- ExpeDF$mean_Neubauer * 10000 / ExpeDF$dilution_ml / ExpeDF$fecweight
-ExpeDF$oocystsTotal <- ExpeDF$mean_Neubauer * 10000 / ExpeDF$dilution_ml
+ExpeDF <- ExpeDFMay2018batch1
+
+## Weight evolution
+plotWeight <- ggplot(ExpeDF, 
+                     aes(x = dpi, y = weightRelativeToInfection))+
+  geom_line(aes(col = EH_ID, group = EH_ID)) +
+  geom_point(size=3, pch = 21, color = "black", aes(fill = EH_ID), alpha = 0.78) +
+  mytheme 
+plot(plotWeight)
+
+# If we have the weight at arrival
+if (!is.na(ExpeDF$weightAtAnthelminthicTrt)){
+  plotWeight2 <- ggplot(ExpeDFMay2018batch1, 
+                        aes(x = dpi, y = weightRelativeToAnthelmTrtDay))+
+    geom_line(aes(col = EH_ID, group = EH_ID)) +
+    geom_point(size=3, pch = 21, color = "black", aes(fill = EH_ID), alpha = 0.78) +
+    mytheme 
+  plot(plotWeight2)
+}
+
+
+
 
 ## PLOT mice strains:
-PlotOoFollow <- ggplot(ExpeDF, aes(x=dpi, y=OPG, group = Mouse_strain, col = Mouse_strain))+
-  geom_smooth(aes(fill = Mouse_strain), alpha = 0.2)+
-  ggtitle("Oocyst count at different days post infection (dpi)", 
-          subtitle = "Loess smoothing + 95% CI")+
-  scale_x_continuous(breaks = 0:11) +
-  facet_wrap(~infection_isolate,  scales="free_y") +
-  geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = Mouse_strain), alpha = 0.78) +
-  scale_y_continuous(labels = scientific) +
-  mytheme 
-plot(PlotOoFollow)
+# PlotOoFollow <- ggplot(ExpeDF, aes(x=dpi, y=OPG, group = Mouse_strain, col = Mouse_strain))+
+#   geom_smooth(aes(fill = Mouse_strain), alpha = 0.2)+
+#   ggtitle("Oocyst count at different days post infection (dpi)", 
+#           subtitle = "Loess smoothing + 95% CI")+
+#   scale_x_continuous(breaks = 0:11) +
+#   facet_wrap(~infection_isolate,  scales="free_y") +
+#   geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = Mouse_strain), alpha = 0.78) +
+#   scale_y_continuous(labels = scientific) +
+#   mytheme 
+# plot(PlotOoFollow)
+# 
+# PlotOoTotFollow <- ggplot(ExpeDF, aes(x=as.factor(dpi), y=oocystsTotal, group = Mouse_strain, col = Mouse_strain))+
+#   geom_smooth(aes(fill = Mouse_strain), alpha = 0.2)+
+#   ggtitle("Oocyst count at different days post infection (dpi)", 
+#           subtitle = "Loess smoothing + 95% CI")+
+#   # scale_x_continuous(breaks = 0:11) +
+#   facet_wrap(~infection_isolate,  scales="free_y") +
+#   geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = Mouse_strain), alpha = 0.78) +
+#   scale_y_continuous(labels = scientific) +
+#   mytheme 
+# plot(PlotOoTotFollow)
 
-PlotOoTotFollow <- ggplot(ExpeDF, aes(x=as.factor(dpi), y=oocystsTotal, group = Mouse_strain, col = Mouse_strain))+
-  geom_smooth(aes(fill = Mouse_strain), alpha = 0.2)+
-  ggtitle("Oocyst count at different days post infection (dpi)", 
-          subtitle = "Loess smoothing + 95% CI")+
-  # scale_x_continuous(breaks = 0:11) +
-  facet_wrap(~infection_isolate,  scales="free_y") +
-  geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = Mouse_strain), alpha = 0.78) +
-  scale_y_continuous(labels = scientific) +
-  mytheme 
-plot(PlotOoTotFollow)
 
-PlotWeightFollow <- ggplot(ExpeDF[ExpeDF$dpi %in% c("-7", "-1"),], aes(x=dpi, y=weight))+
-  geom_line(aes(col = EH_ID, group = EH_ID)) +
-  geom_jitter(width=0.1, size=5, pch = 21, color = "black", aes(fill = EH_ID), alpha = 0.78) +
-# facet_wrap(~infection_isolate,  scales="free_y") +
-  mytheme 
-plot(PlotWeightFollow)
-
-ExpeDF$weight[ExpeDF$dpi %in% "-1"]
-ExpeDF$weight[ExpeDF$dpi %in% "-7"]
 
 library(reshape2)
 
