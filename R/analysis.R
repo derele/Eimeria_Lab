@@ -32,13 +32,12 @@ plot(plotWeight)
 if (!is.na(ExpeDF$weightAtAnthelminthicTrt)){
   plotWeight2 <- ggplot(ExpeDFMay2018batch1, 
                         aes(x = dpi, y = weightRelativeToAnthelmTrtDay))+
-    geom_line(aes(col = EH_ID, group = EH_ID)) +
-    geom_point(size=3, pch = 21, color = "black", aes(fill = EH_ID), alpha = 0.78) +
-    mytheme 
-  plot(plotWeight2)
+#    geom_line(aes(col = EH_ID, group = EH_ID)) +
+    geom_point(size=3, aes(col = Mouse_strain, pch = infection_isolate), alpha = 0.78) +
+    mytheme +
+    geom_smooth(aes(col = Mouse_strain, group = Mouse_strain, fill = Mouse_strain)) 
+    plot(plotWeight2)
 }
-
-
 
 
 ## PLOT mice strains:
