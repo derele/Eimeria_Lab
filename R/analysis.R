@@ -21,6 +21,19 @@ source("dataPreparation.R")
 ExpeDF <- ExpeDFMay2018batch1
 
 ## Weight evolution
+plainWeight <- ggplot(ExpeDF, 
+                     aes(x = dpi, y = weight))+
+  geom_line(aes(col = EH_ID, group = EH_ID)) +
+  geom_point(size=3, pch = 21, color = "black", aes(fill = EH_ID), alpha = 0.78) +
+  mytheme 
+plot(plainWeight)
+
+
+
+
+
+
+
 plotWeight <- ggplot(ExpeDF, 
                      aes(x = dpi, y = weightRelativeToInfection))+
   geom_line(aes(col = EH_ID, group = EH_ID)) +
