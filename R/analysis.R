@@ -22,23 +22,30 @@ ExpeDF <- ExpeDFMay2018batch1
 
 ## Weight evolution
 plainWeight <- ggplot(ExpeDF, 
-                     aes(x = dpi, y = weight))+
+                      aes(x = dpi, y = weight))+
   geom_line(aes(col = EH_ID, group = EH_ID)) +
   geom_point(size=3, pch = 21, color = "black", aes(fill = EH_ID), alpha = 0.78) +
-  mytheme 
+  mytheme +
+  facet_wrap(~Mouse_strain, scales = "free_y")+
+  scale_x_continuous(breaks = -7:11, name = "Day post infection (dpi)" )
 plot(plainWeight)
 
+# smooth by Mouse_strain
+smoothplainWeight <- ggplot(ExpeDF, 
+                      aes(x = dpi, y = weight))+
+  geom_point(size=3, pch = 21, color = "black", aes(fill = Mouse_strain), alpha = 0.78) +
+  geom_smooth(aes(col = Mouse_strain)) +
+  mytheme +
+  scale_x_continuous(breaks = -7:11, name = "Day post infection (dpi)" )
+plot(smoothplainWeight)
 
-
-
-
-
-
+# compared to dpi 0
 plotWeight <- ggplot(ExpeDF, 
                      aes(x = dpi, y = weightRelativeToInfection))+
   geom_line(aes(col = EH_ID, group = EH_ID)) +
   geom_point(size=3, pch = 21, color = "black", aes(fill = EH_ID), alpha = 0.78) +
-  mytheme 
+  mytheme +
+  scale_x_continuous(breaks = -7:11, name = "Day post infection (dpi)" )
 plot(plotWeight)
 
 # If we have the weight at arrival
