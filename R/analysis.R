@@ -23,41 +23,24 @@ ExpeDF <- ExpeDFMay2018batch1
 ## Weight evolution
 plainWeight <- ggplot(ExpeDF, 
                       aes(x = dpi, y = weight))+
-  geom_line(aes(col = EH_ID, group = EH_ID)) +
-  geom_point(size=3, pch = 21, color = "black", aes(fill = EH_ID), alpha = 0.78) +
+  geom_line(col = "black", aes(group = EH_ID)) +
+  geom_point(size=3, pch = 21, color = "black", aes(fill = infection_isolate), alpha = 0.78) +
   mytheme +
   facet_wrap(~Mouse_strain, scales = "free_y")+
   scale_x_continuous(breaks = -7:11, name = "Day post infection (dpi)" )
 plot(plainWeight)
 
-# smooth by Mouse_strain
-smoothplainWeight <- ggplot(ExpeDF, 
-                      aes(x = dpi, y = weight))+
-  geom_point(size=3, pch = 21, color = "black", aes(fill = Mouse_strain), alpha = 0.78) +
-  geom_smooth(aes(col = Mouse_strain)) +
-  mytheme +
-  scale_x_continuous(breaks = -7:11, name = "Day post infection (dpi)" )
-plot(smoothplainWeight)
-
 # compared to dpi 0
 plotWeight <- ggplot(ExpeDF, 
                      aes(x = dpi, y = weightRelativeToInfection))+
-  geom_line(aes(col = EH_ID, group = EH_ID)) +
-  geom_point(size=3, pch = 21, color = "black", aes(fill = EH_ID), alpha = 0.78) +
+  geom_line(col = "black", aes(group = EH_ID), alpha = 0.5) +
+  geom_point(size=3, pch = 21, color = "black", aes(fill = infection_isolate), alpha = 0.78) +
   mytheme +
-  scale_x_continuous(breaks = -7:11, name = "Day post infection (dpi)" )
+  facet_wrap(~Mouse_strain, scales = "free_y")+
+  scale_x_continuous(breaks = -7:11, name = "Day post infection (dpi)" )+
+  geom_smooth(aes(col = infection_isolate)) +
+  annotate("rect", xmin=-Inf, xmax=0, ymin=-Inf, ymax=Inf, alpha=0.6, fill="grey") 
 plot(plotWeight)
-
-# If we have the weight at arrival
-if (!is.na(ExpeDF$weightAtAnthelminthicTrt)){
-  plotWeight2 <- ggplot(ExpeDFMay2018batch1, 
-                        aes(x = dpi, y = weightRelativeToAnthelmTrtDay))+
-#    geom_line(aes(col = EH_ID, group = EH_ID)) +
-    geom_point(size=3, aes(col = Mouse_strain, pch = infection_isolate), alpha = 0.78) +
-    mytheme +
-    geom_smooth(aes(col = Mouse_strain, group = Mouse_strain, fill = Mouse_strain)) 
-    plot(plotWeight2)
-}
 
 
 ## PLOT mice strains:
