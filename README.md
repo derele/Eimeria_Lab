@@ -1,4 +1,6 @@
 # Eimeria_Lab
+A. Balard
+
 Record of infection experiments performed in AG Heitlinger
 
 ## Protocol
@@ -6,25 +8,23 @@ Record of infection experiments performed in AG Heitlinger
 ### 1.Information
 Fill the information table with known informations about the mice
 
-Template here: https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/1_informationTables/template_INFO.csv
-
 ### 2. Experiment design
 Fill the experiment design with the help of the information table,
 with the help of R function "makeDesignTable.R"
 
 ## Historic
 
-### 1. Parental and F1 wild mice Ploen (x2) cross infection (Eflab, E64) (Francisca)
-name: **<span style="color:red">May2017_wildmicePloen_EFalciformisAndFerrisi</span>**
+### Exp001. Parental and F1 wild mice Ploen (x2) cross infection (Eflab, E64) (Francisca)
 
-### 2. Parental wild mice (x4) cross infection (E64, E139) (Vivian) 
-name: **<span style="color:red">April2018_wildmice_Eferrisi</span>**
+### **Pass001 Nov 2017, passaging 4 isolates (Eflab, E88, E139, E64) in NMRI. 2 mice per cage**
 
-#### 2.1. First batch: 02/05/2018
-names: **April2018_wildmice_Eferrisi_Firstbatch_INFO**
+### Exp002. NMRI 4 strains passaging, March 2018
 
-#### 2.2. Second batch:tba
-names: **April2018_wildmice_Eferrisi_Secondbatch_INFO**
+### Exp003 & Exp004 Parental wild mice (x4) cross infection (E64, E139) (Vivian) 
+
+#### Exp003 First batch: 02/05/2018
+
+#### Exp004 Second batch:tba
 
 ## Diverse R codes
 

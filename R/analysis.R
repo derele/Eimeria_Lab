@@ -1,5 +1,4 @@
 source("dataPreparation.R")
-source("summarySE.R")
 
 ###########################################
 # Choose the experiment:
@@ -9,6 +8,8 @@ source("summarySE.R")
 ExpeDF <- ExpeDF_001
 
 ##### Expe_002
+# March 2018 NMRI infected with 4 strains
+ExpeDF <- ExpeDF_002
 
 ##### Expe_003
 # April-May 2018, first batch. Parental strains (F0) BUSNA, STRA, SCHUNT, PWD
@@ -69,8 +70,10 @@ ggplot(max.loss,
   mytheme +
   theme(legend.position = "none")
 
-if (length(levels(ExpeDF$infection_isolate)) <2){
+if (length(levels(ExpeDF$infection_isolate)) < 2){
   summary(glm(data = max.loss, weightLossRelativeToInfection ~ Mouse_strain))
+} else if (length(levels(ExpeDF$Mouse_strain)) < 2){
+  summary(glm(data = max.loss, weightLossRelativeToInfection ~ infection_isolate))
 } else {
   summary(glm(data = max.loss, weightLossRelativeToInfection ~ Mouse_strain*infection_isolate))
 }
@@ -101,8 +104,7 @@ ggplot(summaryOocysts, aes(x = dpi, y = OPG))+
              size=3, pch = 21, color = "black") +
   mytheme +
   facet_wrap(~Mouse_strain)+
-  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  annotate("rect", xmin=-Inf, xmax=0, ymin=-Inf, ymax=Inf, alpha=0.6, fill="grey")
+  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)")
 
 # maximum OPG within expe
 all.max.shed <- do.call("rbind", 
@@ -123,8 +125,10 @@ ggplot(max.shed,
   mytheme +
   theme(legend.position = "none")
 
-if (length(levels(ExpeDF$infection_isolate)) <2){
+if (length(levels(ExpeDF$infection_isolate)) < 2){
   summary(glm(data = max.shed, OPG ~ Mouse_strain))
+} else if (length(levels(ExpeDF$Mouse_strain)) < 2){
+  summary(glm(data = max.shed, OPG ~ infection_isolate))
 } else {
   summary(glm(data = max.shed, OPG ~ Mouse_strain*infection_isolate))
 }
@@ -146,8 +150,10 @@ ggplot(sum.oocysts,
   mytheme +
   theme(legend.position = "none")
 
-if (length(levels(ExpeDF$infection_isolate)) <2){
+if (length(levels(ExpeDF$infection_isolate)) < 2){
   summary(glm(data = sum.oocysts, sum.oo ~ Mouse_strain))
+} else if (length(levels(ExpeDF$Mouse_strain)) < 2){
+  summary(glm(data = sum.oocysts, sum.oo ~ infection_isolate))
 } else {
   summary(glm(data = sum.oocysts, sum.oo ~ Mouse_strain*infection_isolate))
 }
@@ -177,6 +183,6 @@ ggplot(shedVsLossdpi, aes(x = diffMaxLossMaxShed,
            col = "red", alpha = .2) +
   annotate(geom = "rect", xmin = 0, xmax = Inf, ymin = -Inf, ymax = Inf,
            fill = "purple", alpha = .2) +
-  annotate(geom = "text", x = -1.5, y = 1, label = "max weight loss \n before shedding peak")+
-  annotate(geom = "text", x = 1.5, y = 1, label = "shedding peak \n before max weight loss")
+  annotate(geom = "text", x = -5, y = 3, label = "max weight loss \n before shedding peak")+
+  annotate(geom = "text", x = 3, y = 2, label = "shedding peak \n before max weight loss")
   

@@ -1,4 +1,6 @@
 ## Data preparation
+source("functions.R")
+
 library(ggplot2)
 library(gridExtra)
 library(reshape2)
@@ -12,19 +14,6 @@ mytheme <- theme_bw()+
         legend.key = element_rect(size = 5),
         legend.key.size = unit(1.5, 'lines'),
         strip.text = element_text(size=25))
-
-# functions used
-calculateWeightLoss <- function(ExpeDF){
-  A = ExpeDF[ExpeDF$dpi == 0, c("weight", "EH_ID")]
-  names(A)[1] = "weightAtInfection"
-  ExpeDF <- merge(ExpeDF, A)
-  rm(A)
-  ExpeDF$weightloss = ExpeDF$weightAtInfection - ExpeDF$weight
-  ExpeDF$weightRelativeToInfection <- ExpeDF$weight /
-    ExpeDF$weightAtInfection * 100
-  return(ExpeDF)
-}
-
 
 # ExpeDF need at least the following: 
 # "OPG", "EH_ID", "dpi", "weight", "EH_id", "infection_isolate", "Mouse_strain"  
@@ -46,10 +35,21 @@ ExpeDF_001$Mouse_strain <- factor(ExpeDF_001$Mouse_strain,
 survivors <- names(table(ExpeDF_001$EH_ID))[table(ExpeDF_001$EH_ID) %in% 12]
 ExpeDF_001 <- ExpeDF_001[ExpeDF_001$EH_ID %in% survivors,]
 
-########################### Exp002: March 2018 NMRI infected with
-# ExpeDF <- read.csv("../data/3_recordingTables/March2018_NMRI_4strains_RECORDweightAndOocysts.csv")
-# # general
-# ExpeDF$Mouse_strain <- "NMRI"
+########################### Pass001: Nov 2017, passaging 4 isolates
+# (Eflab, E88, E139, E64) in NMRI. 2 mice per cage. Only OPG recorded
+PassDF_002 <- read.csv("../data/3_recordingTables/passaging_extra/Pass001_oocystsonly_Nov2017_Passaging_4Eimeria.csv")
+PassDF_002$weightRelativeToInfection <- NA
+
+########################### Exp002: March 2018 NMRI infected with 4 strains
+ExpeDF_002 <- read.csv("../data/3_recordingTables/Exp002_March2018_NMRI_4strains_RECORDweightAndOocysts.csv")
+ExpeDF_002$Mouse_strain <- "NMRI"
+ExpeDF_002$EH_ID <- paste0("mouse_", ExpeDF_002$EH_ID)
+
+# Calculate weight loss
+ExpeDF_002 <- calculateWeightLoss(ExpeDF = ExpeDF_002)
+
+# Calculate OPG
+ExpeDF_002 <- calculateOPG(ExpeDF_002)
 
 ########################### Exp003 : May 2018 batch 1
 oo <- read.csv("../data/3_recordingTables/Exp003_April2018_wildmice_Eferrisi_Firstbatch_RECORDoocysts.csv")
@@ -74,7 +74,5 @@ ExpeDF_003$Mouse_strain <- factor(ExpeDF_003$Mouse_strain,
 # Calculate weight loss
 ExpeDF_003 <- calculateWeightLoss(ExpeDF = ExpeDF_003)
 
-# Calculate OPG
-# ExpeDFMay2018batch1$mean_Neubauer <- (ExpeDFMay2018batch1$Neubauer1 + ExpeDFMay2018batch1$Neubauer2 + ExpeDFMay2018batch1$Neubauer3 + ExpeDFMay2018batch1$Neubauer4) / 4
-# ExpeDFMay2018batch1$OPG <- ExpeDFMay2018batch1$mean_Neubauer * 10000 / ExpeDFMay2018batch1$dilution_ml / ExpeDFMay2018batch1$fecweight
-# ExpeDFMay2018batch1$oocystsTotal <- ExpeDFMay2018batch1$mean_Neubauer * 10000 / ExpeDFMay2018batch1$dilution_ml
+# Calculate OPG NOT DONE YET ;)
+# ExpeDF_003 <- calculateOPG(ExpeDF_003)
