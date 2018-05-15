@@ -13,9 +13,7 @@ ExpeDF <- ExpeDF_001
 ##### Expe_003
 # April-May 2018, first batch. Parental strains (F0) BUSNA, STRA, SCHUNT, PWD
 # Infection with Eferrisi (E64 and E139)
-ExpeDF <- ExpeDF_003
-# remove stabilisation period
-ExpeDF <- ExpeDF[ExpeDF$dpi %in% 0:11,]
+ExpeDF <- ExpeDF_003[ExpeDF_003$dpi %in% 0:11, ]# remove stabilisation period
 
 ###########################################
 ## Weight evolution compared to dpi 0
@@ -113,7 +111,25 @@ all.max.shed <- do.call("rbind",
                              m.loss <- which(x$OPG == max(x$OPG, na.rm=TRUE))
                              x[m.loss,]}))
 
-# Violin plots of the total OPG along 11 days: 
+max.shed <- all.max.shed[!duplicated(all.max.shed$EH_ID),]
+
+ggplot(max.shed,
+       aes(Mouse_strain, OPG/1000000)) +
+  geom_violin(color = "black")+
+  geom_jitter(width=0.1, size=7, alpha = 0.8,
+              pch = 21, aes(fill = Mouse_strain)) +
+  labs(y = "Maximum OPG at shedding peak (millions)", x = "Mouse strain") +
+  facet_grid(.~infection_isolate) +
+  mytheme +
+  theme(legend.position = "none")
+
+if (length(levels(ExpeDF$infection_isolate)) <2){
+  summary(glm(data = max.shed, OPG ~ Mouse_strain))
+} else {
+  summary(glm(data = max.shed, OPG ~ Mouse_strain*infection_isolate))
+}
+
+# Cumulative OPG along 11 days: 
 all.sum.oocysts <- do.call("rbind", by(ExpeDF, ExpeDF$EH_ID, function (x){
   x$sum.oo <- sum(x$OPG, na.rm = TRUE)
   x
@@ -125,16 +141,19 @@ ggplot(sum.oocysts,
   geom_violin(color = "black")+
   geom_jitter(width=0.1, size=7, alpha = 0.8,
               pch = 21, aes(fill = Mouse_strain)) +
-  labs(y = "Sum OPG along infection (millions)", x = "Mouse strain") +
+  labs(y = "Cumulative OPG along infection (millions)", x = "Mouse strain") +
   facet_grid(.~infection_isolate) +
   mytheme +
   theme(legend.position = "none")
 
-summary(glm(data = sum.oocysts, sum.oo ~ Mouse_strain))
+if (length(levels(ExpeDF$infection_isolate)) <2){
+  summary(glm(data = sum.oocysts, sum.oo ~ Mouse_strain))
+} else {
+  summary(glm(data = sum.oocysts, sum.oo ~ Mouse_strain*infection_isolate))
+}
 
 ############################
 # highest day of shedding vs highest weight loss?
-
 shedVsLossdpi <- merge(data.frame(EH_ID = all.max.loss$EH_ID, 
                                   dpi_maxLoss = all.max.loss$dpi),
                        data.frame(EH_ID = all.max.shed$EH_ID, 
@@ -148,11 +167,16 @@ shedVsLossdpi$diffMaxLossMaxShed <- shedVsLossdpi$dpi_maxLoss - shedVsLossdpi$dp
 table(shedVsLossdpi$diffMaxLossMaxShed, shedVsLossdpi$infection_isolate, shedVsLossdpi$Mouse_strain)
 
 ggplot(shedVsLossdpi, aes(x = diffMaxLossMaxShed,
-                          y = infection_isolate)) +
+                          y = EH_ID)) +
   geom_jitter(aes(fill = Mouse_strain), 
-              size=3, pch = 21, color = "black",
-              position = position_jitter(.1, .1)) +
+              size=5, pch = 21, color = "black",
+              position = position_jitter(height = .1, width = 0)) +
+  facet_grid(.~infection_isolate) +
   mytheme +
-  theme(legend.position = "none") +
-  annotate
+  annotate(geom = "rect", xmin = -Inf, xmax = 0, ymin = -Inf, ymax = Inf,
+           col = "red", alpha = .2) +
+  annotate(geom = "rect", xmin = 0, xmax = Inf, ymin = -Inf, ymax = Inf,
+           fill = "purple", alpha = .2) +
+  annotate(geom = "text", x = -1.5, y = 1, label = "max weight loss \n before shedding peak")+
+  annotate(geom = "text", x = 1.5, y = 1, label = "shedding peak \n before max weight loss")
   
