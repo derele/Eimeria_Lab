@@ -160,29 +160,24 @@ if (length(levels(ExpeDF$infection_isolate)) < 2){
 
 ############################
 # highest day of shedding vs highest weight loss?
-shedVsLossdpi <- merge(data.frame(EH_ID = all.max.loss$EH_ID, 
-                                  dpi_maxLoss = all.max.loss$dpi),
+shedVsLossdpi <- rbind(data.frame(EH_ID = all.max.loss$EH_ID, 
+                                  what = "max weight loss",
+                                  dpi = all.max.loss$dpi),
                        data.frame(EH_ID = all.max.shed$EH_ID, 
-                                  dpi_maxShed = all.max.shed$dpi), all = T)
+                                  what = "max oocyst shedding",
+                                  dpi = all.max.shed$dpi))
 
 shedVsLossdpi <- merge(shedVsLossdpi, 
                        unique(ExpeDF[c("EH_ID", "infection_isolate", "Mouse_strain")]), 
                        all = T)
-shedVsLossdpi$diffMaxLossMaxShed <- shedVsLossdpi$dpi_maxLoss - shedVsLossdpi$dpi_maxShed
 
-table(shedVsLossdpi$diffMaxLossMaxShed, shedVsLossdpi$infection_isolate, shedVsLossdpi$Mouse_strain)
-
-ggplot(shedVsLossdpi, aes(x = diffMaxLossMaxShed,
-                          y = EH_ID)) +
-  geom_jitter(aes(fill = Mouse_strain), 
-              size=5, pch = 21, color = "black",
-              position = position_jitter(height = .1, width = 0)) +
+ggplot(shedVsLossdpi, aes(x = what,
+                          y = dpi)) +
+  geom_point(aes(fill = Mouse_strain), 
+              size=5, pch = 21, color = "black") +
+  geom_line(aes(group = EH_ID)) +
   facet_grid(.~infection_isolate) +
   mytheme +
-  annotate(geom = "rect", xmin = -Inf, xmax = 0, ymin = -Inf, ymax = Inf,
-           col = "red", alpha = .2) +
-  annotate(geom = "rect", xmin = 0, xmax = Inf, ymin = -Inf, ymax = Inf,
-           fill = "purple", alpha = .2) +
-  annotate(geom = "text", x = -5, y = 3, label = "max weight loss \n before shedding peak")+
-  annotate(geom = "text", x = 3, y = 2, label = "shedding peak \n before max weight loss")
-  
+  scale_y_continuous(breaks = 1:11) +
+  theme(axis.text.x = element_text(angle = 90, size = 10),
+        axis.title.x = element_blank())
