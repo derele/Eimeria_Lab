@@ -35,10 +35,10 @@ ExpeDF_001$Mouse_strain <- factor(ExpeDF_001$Mouse_strain,
 survivors <- names(table(ExpeDF_001$EH_ID))[table(ExpeDF_001$EH_ID) %in% 12]
 ExpeDF_001 <- ExpeDF_001[ExpeDF_001$EH_ID %in% survivors,]
 
-########################### Pass001: Nov 2017, passaging 4 isolates
+########################### Pass001: Nov 2017, passaging 4 isolates (some missing data)
 # (Eflab, E88, E139, E64) in NMRI. 2 mice per cage. Only OPG recorded
-PassDF_002 <- read.csv("../data/3_recordingTables/passaging_extra/Pass001_oocystsonly_Nov2017_Passaging_4Eimeria.csv")
-PassDF_002$weightRelativeToInfection <- NA
+PassDF_001 <- read.csv("../data/3_recordingTables/passaging_extra/Pass001_oocystsonly_Nov2017_Passaging_4Eimeria.csv")
+PassDF_001$weightRelativeToInfection <- NA
 
 ########################### Exp002: March 2018 NMRI infected with 4 strains
 ExpeDF_002 <- read.csv("../data/3_recordingTables/Exp002_March2018_NMRI_4strains_RECORDweightAndOocysts.csv")

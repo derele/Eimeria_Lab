@@ -171,10 +171,28 @@ shedVsLossdpi <- merge(shedVsLossdpi,
                        unique(ExpeDF[c("EH_ID", "infection_isolate", "Mouse_strain")]), 
                        all = T)
 
+
+dirDF <- merge(data.frame(EH_ID = all.max.loss$EH_ID, 
+                          maxLoss = all.max.loss$dpi),
+               data.frame(EH_ID = all.max.shed$EH_ID, 
+                          maxShed = all.max.shed$dpi))
+
+if (dirDF$maxShed - dirDF$maxLoss > 0){
+  dirDF$dir <- "darkred"
+} else if {dirDF$maxShed - dirDF$maxLoss < 0){
+  dirDF$dir <- "darkgreen"
+} else {
+  dirDF$dir <- "black"
+}
+
+## TBC...
+shedVsLossdpi
+
 ggplot(shedVsLossdpi, aes(x = what,
                           y = dpi)) +
-  geom_point(aes(fill = Mouse_strain), 
-              size=5, pch = 21, color = "black") +
+  geom_jitter(aes(fill = Mouse_strain), 
+              size=5, pch = 21, color = "black", alpha = .7, 
+              position = position_jitter(.1, .1)) +
   geom_line(aes(group = EH_ID)) +
   facet_grid(.~infection_isolate) +
   mytheme +
