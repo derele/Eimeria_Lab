@@ -79,6 +79,35 @@ if (length(levels(ExpeDF$infection_isolate)) < 2){
 }
 ## using offsets and real weight instead of relative weight for modeling
 
+### Other approach : weight difference between 2 days
+ExpeDF$weightNormal[ExpeDF$dpi %in% 0] <- 1
+for (i in 1:10){
+  for (j in ExpeDF$EH_ID){
+    ExpeDF$weightNormal[ExpeDF$dpi %in% i & ExpeDF$EH_ID %in% j] <-
+      1 - (
+        (ExpeDF$weight[ExpeDF$dpi %in% i + 1 & ExpeDF$EH_ID %in% j] -
+           ExpeDF$weight[ExpeDF$dpi %in% i & ExpeDF$EH_ID %in% j]) /
+          ExpeDF$weight[ExpeDF$dpi %in% i & ExpeDF$EH_ID %in% j])
+  }
+}
+
+# Mean + 95%CI
+summary <-summarySE(ExpeDF, measurevar = "weightNormal",
+                          groupvars=c("Mouse_strain", "infection_isolate", "dpi"))
+
+ggplot(summary, aes(x = dpi, y = weightNormal))+
+  geom_errorbar(aes(ymin = weightNormal - ci,
+                    ymax = weightNormal + ci,
+                    col = infection_isolate)) +
+  geom_line(aes(group = infection_isolate)) +
+  geom_point(aes(fill = infection_isolate),
+             size=3, pch = 21, color = "black") +
+  mytheme +
+  facet_wrap(~Mouse_strain)+
+  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
+  scale_y_continuous(name = "Weight loss between 2 days, normalised") +
+  coord_cartesian(ylim = c(.9, 1.1))
+  
 ###########################################
 # oocyst shedding evolution
 ggplot(ExpeDF, aes(x = dpi, y = OPG))+

@@ -78,4 +78,17 @@ ExpeDF_003 <- calculateWeightLoss(ExpeDF = ExpeDF_003)
 # ExpeDF_003 <- calculateOPG(ExpeDF_003)
 
 ########################### Exp004 : May 2018 batch 2
-ExpeDF_004 <- read.csv("../da")
+ExpeDF_004 <- read.csv("../data/3_recordingTables/Preliminary_April2018_wildmice_Eferrisi_second_RECORDweight.csv")
+
+# merge with info table
+info <- read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch.csv")
+ExpeDF_004 <- merge(info, ExpeDF_004, by = "original.label", all.y = T)
+
+# Calculate ratio of weight
+ExpeDF_004 <- calculateWeightLossBeforeInf(ExpeDF_004)
+
+ggplot(ExpeDF_004, aes(x = dayFollowWeight, y = weightRelativeToStart)) +
+  geom_point() +
+  geom_line(aes(group = original.label, col = Strain), size = 2) +
+  facet_grid(~Strain) +
+  theme_alice
