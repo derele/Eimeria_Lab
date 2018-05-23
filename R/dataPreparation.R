@@ -76,3 +76,6 @@ ExpeDF_003 <- calculateWeightLoss(ExpeDF = ExpeDF_003)
 
 # Calculate OPG NOT DONE YET ;)
 # ExpeDF_003 <- calculateOPG(ExpeDF_003)
+
+########################### Exp004 : May 2018 batch 2
+ExpeDF_004 <- read.csv("../da")

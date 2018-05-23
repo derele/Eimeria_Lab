@@ -17,6 +17,18 @@ calculateOPG <- function(ExpeDF){
   return(ExpeDF)
 }
 
+# For following before the infection the weight of mice
+calculateWeightLossBeforeInf <- function(ExpeDF){
+  A = ExpeDF[ExpeDF$dayFollowWeight == 0, c("weight", "original.label")]
+  names(A)[1] = "weightAtStart"
+  ExpeDF <- merge(ExpeDF, A)
+  rm(A)
+  ExpeDF$weightlossBeforeInf = ExpeDF$weightAtStart - ExpeDF$weight
+  ExpeDF$weightRelativeToStart <- ExpeDF$weight /
+    ExpeDF$weightAtStart * 100
+  return(ExpeDF)
+}
+
 ## Source: http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper functions
 ## Gives count, mean, standard deviation, standard error of the mean, and confidence interval (default 95%).
 ##   data: a data frame.
