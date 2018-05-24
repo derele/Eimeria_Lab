@@ -24,8 +24,7 @@ calculateWeightLossBeforeInf <- function(ExpeDF){
   ExpeDF <- merge(ExpeDF, A)
   rm(A)
   ExpeDF$weightlossBeforeInf = ExpeDF$weightAtStart - ExpeDF$weight
-  ExpeDF$weightRelativeToStart <- ExpeDF$weight /
-    ExpeDF$weightAtStart * 100
+  ExpeDF$weightRelativeToStart <- ExpeDF$weight / ExpeDF$weightAtStart * 100
   return(ExpeDF)
 }
 
