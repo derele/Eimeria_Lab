@@ -23,7 +23,7 @@ ggplot(ExpeDF, aes(x = dpi, y = weightRelativeToInfection))+
   geom_point(aes(fill = infection_isolate), 
               size=3, pch = 21, color = "black") +
   mytheme +
-  facet_wrap(~Mouse_strain)+
+  facet_wrap(~Mouse_strain*infection_isolate)+
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)" )+
   geom_smooth(aes(col = infection_isolate)) 
 
@@ -39,7 +39,7 @@ ggplot(summaryWeight, aes(x = dpi, y = weightRelativeToInfection))+
   geom_point(aes(fill = infection_isolate), 
              size=3, pch = 21, color = "black") +
   mytheme +
-  facet_wrap(~Mouse_strain)+
+  facet_wrap(~Mouse_strain*infection_isolate)+
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
   scale_y_continuous(name = "Weight relative to infection (%)" )
 
@@ -103,7 +103,7 @@ ggplot(summary, aes(x = dpi, y = weightNormal))+
   geom_point(aes(fill = infection_isolate),
              size=3, pch = 21, color = "black") +
   mytheme +
-  facet_wrap(~Mouse_strain)+
+  facet_wrap(~Mouse_strain*infection_isolate)+
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
   scale_y_continuous(name = "Weight loss between 2 days, normalised") +
   coord_cartesian(ylim = c(.9, 1.1))
@@ -115,7 +115,7 @@ ggplot(ExpeDF, aes(x = dpi, y = OPG))+
   geom_point(aes(fill = infection_isolate), 
              size=3, pch = 21, color = "black", alpha = 0.78) +
   mytheme +
-  facet_wrap(~Mouse_strain)+
+  facet_wrap(~Mouse_strain*infection_isolate, scales = "free")+
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)" )+
   geom_smooth(aes(col = infection_isolate)) +
   scale_y_continuous(labels = scientific)
