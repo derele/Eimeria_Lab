@@ -103,7 +103,7 @@ ggplot(ExpeDF_004, aes(x = date, y = weightRelativeToStart)) +
   geom_line(aes(group = original.label, col = Strain), size = 1) +
   geom_point() +
   facet_grid(~Strain) +
-  theme_alice +
+  mytheme +
   theme_linedraw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))+
   geom_vline(xintercept = as.Date("15-05-18"), size =2) + # 10g seeds
@@ -114,10 +114,6 @@ ggplot(ExpeDF_004, aes(x = date, y = weightRelativeToStart)) +
   geom_vline(xintercept = as.Date("28-05-18"), size =0.25) # 1g seeds in petri dish
 
 # Calculate relative weight increase per day, per host strain
-try <- ExpeDF_004[c("dayFollowWeight", "prelim_labels.x", "weightRelativeToStart")]
-
-data <- ExpeDF_004
-
 f1 <- function(data){
   I <- unique(data$prelim_labels.x)
   J <- unique(data$dayFollowWeigh[order(try$dayFollowWeigh)])
@@ -132,4 +128,12 @@ f1 <- function(data){
   return(data)
 }
   
-f1(ExpeDF_004)  
+ExpeDF_004 <- f1(ExpeDF_004)  
+
+ggplot(ExpeDF_004, aes(x = date, y = weightRelDiff)) +
+  geom_line(aes(group = original.label, col = Strain), size = 1) +
+  geom_point() +
+  facet_grid(~Strain) +
+  mytheme +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
