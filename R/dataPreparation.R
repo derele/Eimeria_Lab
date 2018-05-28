@@ -76,3 +76,60 @@ ExpeDF_003 <- calculateWeightLoss(ExpeDF = ExpeDF_003)
 
 # Calculate OPG NOT DONE YET ;)
 # ExpeDF_003 <- calculateOPG(ExpeDF_003)
+
+########################### Exp004 : May 2018 batch 2
+ExpeDF_004 <- read.csv("../data/3_recordingTables/Preliminary_April2018_wildmice_Eferrisi_second_RECORDweight.csv")
+
+# merge with info table
+info <- read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv")
+
+ExpeDF_004 <- merge(info, ExpeDF_004, by = "original.label", all.y = T)
+ExpeDF_004 <- ExpeDF_004[!is.na(ExpeDF_004$dayFollowWeight),]
+
+# Calculate ratio of weight
+ExpeDF_004 <- calculateWeightLossBeforeInf(ExpeDF_004)
+
+# Mouse_strain: West should always be left 
+ExpeDF_004$Strain <- factor(ExpeDF_004$Strain,
+                                  levels = c("STRA", "BUSNA", "SCHUNT", "PWD"),
+                                  labels = c("M.m.domesticus \n(STRA)", 
+                                             "M.m.musculus \n(BUSNA)", 
+                                             "M.m.domesticus \n(SCHUNT)",
+                                             "M.m.musculus \n(PWD)"))
+
+ExpeDF_004$date <- as.Date(ExpeDF_004$date)
+
+ggplot(ExpeDF_004, aes(x = date, y = weightRelativeToStart)) +
+  geom_line(aes(group = original.label, col = Strain), size = 1) +
+  geom_point() +
+  facet_grid(~Strain) +
+  theme_alice +
+  theme_linedraw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  geom_vline(xintercept = as.Date("15-05-18"), size =2) + # 10g seeds
+  geom_vline(xintercept = as.Date("7-05-18"), size =1) + # 4g seeds
+  geom_vline(xintercept = as.Date("23-05-18"), size =2) +  # 10g seeds
+  geom_vline(xintercept = as.Date("24-05-18"), size =.5) + # 2g seeds
+  geom_vline(xintercept = as.Date("25-05-18"), size =0.5) + # 2g seeds
+  geom_vline(xintercept = as.Date("28-05-18"), size =0.25) # 1g seeds in petri dish
+
+# Calculate relative weight increase per day, per host strain
+try <- ExpeDF_004[c("dayFollowWeight", "prelim_labels.x", "weightRelativeToStart")]
+
+data <- ExpeDF_004
+
+f1 <- function(data){
+  I <- unique(data$prelim_labels.x)
+  J <- unique(data$dayFollowWeigh[order(try$dayFollowWeigh)])
+  for (i in I){
+    for (j in 2:length(J)){
+      a <- data$weightRelativeToStart[data$prelim_labels.x %in% i & data$dayFollowWeight %in% J[j]] 
+      b <- data$weightRelativeToStart[data$prelim_labels.x %in% i & data$dayFollowWeight %in% J[j - 1]] 
+      c <-   J[j] - J[j-1]
+      data$weightRelDiff[data$prelim_labels.x %in% i & data$dayFollowWeight %in% J[j]] <- (a-b) /c
+    }
+  }
+  return(data)
+}
+  
+f1(ExpeDF_004)  
