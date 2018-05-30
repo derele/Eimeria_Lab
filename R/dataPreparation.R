@@ -116,7 +116,7 @@ ggplot(ExpeDF_004, aes(x = date, y = weightRelativeToStart)) +
 # Calculate relative weight increase per day, per host strain
 f1 <- function(data){
   I <- unique(data$prelim_labels.x)
-  J <- unique(data$dayFollowWeigh[order(try$dayFollowWeigh)])
+  J <- unique(data$dayFollowWeigh[order(data$dayFollowWeigh)])
   for (i in I){
     for (j in 2:length(J)){
       a <- data$weightRelativeToStart[data$prelim_labels.x %in% i & data$dayFollowWeight %in% J[j]] 
@@ -127,7 +127,7 @@ f1 <- function(data){
   }
   return(data)
 }
-  
+
 ExpeDF_004 <- f1(ExpeDF_004)  
 
 ggplot(ExpeDF_004, aes(x = date, y = weightRelDiff)) +
