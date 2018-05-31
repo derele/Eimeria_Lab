@@ -102,18 +102,20 @@ ExpeDF_004$date <- as.Date(ExpeDF_004$date)
 ggplot(ExpeDF_004, aes(x = date, y = weightRelativeToStart)) +
   geom_line(aes(group = original.label, col = Strain), size = 1) +
   geom_point() +
-  facet_grid(~Strain) +
+  facet_grid(Strain~., scales = "free_y", space = "free") +
   mytheme +
   theme_linedraw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   geom_vline(xintercept = as.Date("15-05-18"), size =2) + # 10g seeds
   geom_vline(xintercept = as.Date("7-05-18"), size =1) + # 4g seeds
   geom_vline(xintercept = as.Date("23-05-18"), size =2) +  # 10g seeds
   geom_vline(xintercept = as.Date("24-05-18"), size =.5) + # 2g seeds
   geom_vline(xintercept = as.Date("25-05-18"), size =0.5) + # 2g seeds
-  geom_vline(xintercept = as.Date("28-05-18"), size =0.25) # 1g seeds in petri dish
+  geom_vline(xintercept = as.Date("28-05-18"), size =0.25) + # 1g seeds in petri dish
+  geom_vline(xintercept = as.Date("29-05-18"), size =0.25) + # 1g seeds in petri dish
+  geom_vline(xintercept = as.Date("30-05-18"), size =0.25) # 1g seeds in petri dish
 
-# Calculate relative weight increase per day, per host strain
+#Calculate relative weight increase per day, per host strain
 f1 <- function(data){
   I <- unique(data$prelim_labels.x)
   J <- unique(data$dayFollowWeigh[order(data$dayFollowWeigh)])

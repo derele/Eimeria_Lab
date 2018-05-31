@@ -23,7 +23,7 @@ ggplot(ExpeDF, aes(x = dpi, y = weightRelativeToInfection))+
   geom_point(aes(fill = infection_isolate), 
               size=3, pch = 21, color = "black") +
   mytheme +
-  facet_wrap(~Mouse_strain*infection_isolate)+
+  facet_grid(~Mouse_strain, scales = "free_y", space = "free")+
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)" )+
   geom_smooth(aes(col = infection_isolate)) 
 
