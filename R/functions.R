@@ -89,7 +89,7 @@ getAgeAtInfection <- function(mytab = read.csv("../data/1_informationTables/Exp0
   return(age)
 }
 
-mytab$ageAtInfection <- getAgeAtInfection()
+# mytab$ageAtInfection <- getAgeAtInfection()
 # write.csv(mytab, "../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv", row.names = F)
 
 # Histogrammes to visualise

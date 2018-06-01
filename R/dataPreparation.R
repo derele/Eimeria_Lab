@@ -80,16 +80,6 @@ ExpeDF_003 <- calculateWeightLoss(ExpeDF = ExpeDF_003)
 ########################### Exp004 : May 2018 batch 2
 ExpeDF_004 <- read.csv("../data/3_recordingTables/Preliminary_April2018_wildmice_Eferrisi_second_RECORDweight.csv")
 
-# ExpeDF_004$original.label <- gsub(" ", "", substring(substring(ExpeDF_004$original.label, 6), 1, 4))
-# 
-# ExpeDF_004$original.label
-# 
-# write.csv(ExpeDF_004, "../data/3_recordingTables/Preliminary_April2018_wildmice_Eferrisi_second_RECORDweight.csv", row.names = F)
-# 
-# Info004 <- read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv")
-# 
-#  ExpeDF_004$original.label %in% Info004$PIN 
-
 # merge with info table
 info <- read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv")
 
