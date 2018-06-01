@@ -68,3 +68,29 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
   
   return(datac)
 }
+
+getCorrectedDates <- function(mytab = read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv")){
+  goodDates <- as.Date(mytab$Born)
+  # # goodDates[which(is.na(goodDates))] <- as.Date(mytab$Born[is.na(goodDates)], format = "%d/%m/%Y")
+  # # goodDates <- sub("2018-", replacement = "18-", goodDates)
+  # goodDates <- sub("2017-", replacement = "17-", goodDates)
+  return(data.frame(original = mytab$Born, 
+                    corrected = goodDates))
+}
+
+getCorrectedDates()
+
+# write.csv(correctedTable) once checked
+
+# calculate age at infection
+getAgeAtInfection <- function(mytab = read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv"),
+                              infectionDate = "18-06-05"){
+  age <- difftime(infectionDate, mytab$Born, units = "weeks")
+  return(age)
+}
+
+mytab$ageAtInfection <- getAgeAtInfection()
+# write.csv(mytab, "../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv", row.names = F)
+
+# Histogrammes to visualise
+hist(as.numeric(getAgeAtInfection()), breaks = 50)

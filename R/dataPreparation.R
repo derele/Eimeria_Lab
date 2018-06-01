@@ -80,10 +80,23 @@ ExpeDF_003 <- calculateWeightLoss(ExpeDF = ExpeDF_003)
 ########################### Exp004 : May 2018 batch 2
 ExpeDF_004 <- read.csv("../data/3_recordingTables/Preliminary_April2018_wildmice_Eferrisi_second_RECORDweight.csv")
 
+# ExpeDF_004$original.label <- gsub(" ", "", substring(substring(ExpeDF_004$original.label, 6), 1, 4))
+# 
+# ExpeDF_004$original.label
+# 
+# write.csv(ExpeDF_004, "../data/3_recordingTables/Preliminary_April2018_wildmice_Eferrisi_second_RECORDweight.csv", row.names = F)
+# 
+# Info004 <- read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv")
+# 
+#  ExpeDF_004$original.label %in% Info004$PIN 
+
 # merge with info table
 info <- read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv")
 
-ExpeDF_004 <- merge(info, ExpeDF_004, by = "original.label", all.y = T)
+ExpeDF_004$PIN <- ExpeDF_004$original.label
+
+ExpeDF_004 <- merge(info, ExpeDF_004, by = "PIN", all.y = T)
+
 ExpeDF_004 <- ExpeDF_004[!is.na(ExpeDF_004$dayFollowWeight),]
 
 # Calculate ratio of weight
@@ -114,28 +127,3 @@ ggplot(ExpeDF_004, aes(x = date, y = weightRelativeToStart)) +
   geom_vline(xintercept = as.Date("28-05-18"), size =0.25) + # 1g seeds in petri dish
   geom_vline(xintercept = as.Date("29-05-18"), size =0.25) + # 1g seeds in petri dish
   geom_vline(xintercept = as.Date("30-05-18"), size =0.25) # 1g seeds in petri dish
-
-#Calculate relative weight increase per day, per host strain
-f1 <- function(data){
-  I <- unique(data$prelim_labels.x)
-  J <- unique(data$dayFollowWeigh[order(data$dayFollowWeigh)])
-  for (i in I){
-    for (j in 2:length(J)){
-      a <- data$weightRelativeToStart[data$prelim_labels.x %in% i & data$dayFollowWeight %in% J[j]] 
-      b <- data$weightRelativeToStart[data$prelim_labels.x %in% i & data$dayFollowWeight %in% J[j - 1]] 
-      c <-   J[j] - J[j-1]
-      data$weightRelDiff[data$prelim_labels.x %in% i & data$dayFollowWeight %in% J[j]] <- (a-b) /c
-    }
-  }
-  return(data)
-}
-
-ExpeDF_004 <- f1(ExpeDF_004)  
-
-ggplot(ExpeDF_004, aes(x = date, y = weightRelDiff)) +
-  geom_line(aes(group = original.label, col = Strain), size = 1) +
-  geom_point() +
-  facet_grid(~Strain) +
-  mytheme +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  
