@@ -78,19 +78,13 @@ ExpeDF_003 <- calculateWeightLoss(ExpeDF = ExpeDF_003)
 # ExpeDF_003 <- calculateOPG(ExpeDF_003)
 
 ########################### Exp004 : May 2018 batch 2
-ExpeDF_004 <- read.csv("../data/3_recordingTables/Preliminary_April2018_wildmice_Eferrisi_second_RECORDweight.csv")
+oo <- read.csv("../data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDoocysts.csv")
+we <- read.csv("../data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDweight.csv")
+design <- read.csv("../data/2_designTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_DESIGN.csv")
 
-# merge with info table
-info <- read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv")
-
-ExpeDF_004$PIN <- ExpeDF_004$original.label
-
-ExpeDF_004 <- merge(info, ExpeDF_004, by = "PIN", all.y = T)
-
-ExpeDF_004 <- ExpeDF_004[!is.na(ExpeDF_004$dayFollowWeight),]
-
-# Calculate ratio of weight
-ExpeDF_004 <- calculateWeightLossBeforeInf(ExpeDF_004)
+ExpeDF_004 <- merge(oo, we, all = T)
+ExpeDF_004 <- merge(ExpeDF_004, design, by = "EH_ID", all = T)
+rm(design, oo, we)
 
 # Mouse_strain: West should always be left 
 ExpeDF_004$Strain <- factor(ExpeDF_004$Strain,
@@ -99,21 +93,36 @@ ExpeDF_004$Strain <- factor(ExpeDF_004$Strain,
                                              "M.m.musculus \n(BUSNA)", 
                                              "M.m.domesticus \n(SCHUNT)",
                                              "M.m.musculus \n(PWD)"))
+names(ExpeDF_004)[names(ExpeDF_004) == "Strain"] <- "Mouse_strain"
 
-ExpeDF_004$date <- as.Date(ExpeDF_004$date)
+# Calculate weight loss
+ExpeDF_004 <- calculateWeightLoss(ExpeDF = ExpeDF_004) 
 
-ggplot(ExpeDF_004, aes(x = date, y = weightRelativeToStart)) +
-  geom_line(aes(group = original.label, col = Strain), size = 1) +
-  geom_point() +
-  facet_grid(Strain~., scales = "free_y", space = "free") +
-  mytheme +
-  theme_linedraw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_vline(xintercept = as.Date("15-05-18"), size =2) + # 10g seeds
-  geom_vline(xintercept = as.Date("7-05-18"), size =1) + # 4g seeds
-  geom_vline(xintercept = as.Date("23-05-18"), size =2) +  # 10g seeds
-  geom_vline(xintercept = as.Date("24-05-18"), size =.5) + # 2g seeds
-  geom_vline(xintercept = as.Date("25-05-18"), size =0.5) + # 2g seeds
-  geom_vline(xintercept = as.Date("28-05-18"), size =0.25) + # 1g seeds in petri dish
-  geom_vline(xintercept = as.Date("29-05-18"), size =0.25) + # 1g seeds in petri dish
-  geom_vline(xintercept = as.Date("30-05-18"), size =0.25) # 1g seeds in petri dish
+# Calculate OPG NOT DONE YET ;)
+# ExpeDF_003 <- calculateOPG(ExpeDF_003)
+
+# These lines were used to follow the weight stabilisation before experiment
+# preExpeDF_004 <- read.csv("../data/3_recordingTables/Preliminary_April2018_wildmice_Eferrisi_second_RECORDweight.csv")
+# # merge with info table
+# info <- read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv")
+# preExpeDF_004$PIN <- preExpeDF_004$original.label
+# preExpeDF_004 <- merge(info, preExpeDF_004, by = "PIN", all.y = T)
+# preExpeDF_004 <- preExpeDF_004[!is.na(preExpeDF_004$dayFollowWeight),]
+# Calculate ratio of weight
+# preExpeDF_004 <- calculateWeightLossBeforeInf(preExpeDF_004)
+# Mouse_strain: West should always be left 
+# preExpeDF_004$Strain <- factor(preExpeDF_004$Strain,
+#                                   levels = c("STRA", "BUSNA", "SCHUNT", "PWD"),
+#                                   labels = c("M.m.domesticus \n(STRA)", 
+#                                              "M.m.musculus \n(BUSNA)", 
+#                                              "M.m.domesticus \n(SCHUNT)",
+#                                              "M.m.musculus \n(PWD)"))
+# preExpeDF_004$date <- as.Date(preExpeDF_004$date) 
+# ggplot(preExpeDF_004, aes(x = date, y = weightRelativeToStart)) +
+#   geom_line(aes(group = original.label, col = Strain), size = 1) +
+#   geom_point() +
+#   facet_grid(Strain~., scales = "free_y", space = "free") +
+#   mytheme +
+#   theme_linedraw() +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+

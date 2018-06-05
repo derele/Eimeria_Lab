@@ -12,9 +12,14 @@ ExpeDF <- ExpeDF_001
 ExpeDF <- ExpeDF_002
 
 ##### Expe_003
-# April-May 2018, first batch. Parental strains (F0) BUSNA, STRA, SCHUNT, PWD
+# April-May 2018, first batch Parental strains (F0) BUSNA, STRA, SCHUNT, PWD
 # Infection with Eferrisi (E64 and E139)
 ExpeDF <- ExpeDF_003[ExpeDF_003$dpi %in% 0:11, ]# remove stabilisation period
+
+##### Expe_004
+# June 2018, second batch Parental strains (F0) BUSNA, STRA, SCHUNT, PWD
+# Infection with Eferrisi (E64 and E139)
+ExpeDF <- ExpeDF_004
 
 ###########################################
 ## Weight evolution compared to dpi 0
@@ -25,7 +30,8 @@ ggplot(ExpeDF, aes(x = dpi, y = weightRelativeToInfection))+
   mytheme +
   facet_grid(~Mouse_strain, scales = "free_y", space = "free")+
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)" )+
-  geom_smooth(aes(col = infection_isolate)) 
+  geom_smooth(aes(col = infection_isolate)) +
+  geom_hline(yintercept = 80, col = "red")
 
 # Mean + 95%CI
 summaryWeight <-summarySE(ExpeDF, measurevar = "weightRelativeToInfection", 
