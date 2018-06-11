@@ -24,11 +24,11 @@ ExpeDF <- ExpeDF_004
 ###########################################
 ## Weight evolution compared to dpi 0
 ggplot(ExpeDF, aes(x = dpi, y = weightRelativeToInfection))+
-  geom_line(col = "black", aes(group = EH_ID), alpha = 0.5) +
+  geom_line(aes(group = EH_ID), col = "black", alpha = 0.5) +
   geom_point(aes(fill = infection_isolate), 
-              size=3, pch = 21, color = "black") +
+              size=3, pch = 21, color = "black")+
   mytheme +
-  facet_grid(~Mouse_strain, scales = "free_y", space = "free")+
+  facet_grid(~Mouse_strain, scales = "free_y", space = "free") +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)" )+
   geom_smooth(aes(col = infection_isolate)) +
   geom_hline(yintercept = 80, col = "red")
