@@ -101,6 +101,11 @@ ExpeDF_004 <- calculateWeightLoss(ExpeDF = ExpeDF_004)
 # Calculate OPG NOT DONE YET ;)
 # ExpeDF_003 <- calculateOPG(ExpeDF_003)
 
+# Remove animals that died before the end of the experiment
+table(ExpeDF_004$EH_ID[!is.na(ExpeDF_004$weight)])
+
+ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% c("LM0160", "LM0155"),]
+
 # These lines were used to follow the weight stabilisation before experiment
 # preExpeDF_004 <- read.csv("../data/3_recordingTables/Preliminary_April2018_wildmice_Eferrisi_second_RECORDweight.csv")
 # # merge with info table
