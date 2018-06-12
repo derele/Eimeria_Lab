@@ -135,33 +135,67 @@ ggplot(ExpeDF_E64, aes(dpi, csWeightGainNormal)) +
 summary(ExpeDF)
 
 # The first step is to create a third-order polynomial in the range of dpi
-t <- poly((unique(TargetFix$timeBin)), 3)
+ExpeDF$timebin <- ExpeDF$dpi + 1
 
-poly(unique(TargetFix$timeBin), 3)
-
-t <- poly(unique(ExpeDF$dpi),3)
+t <- poly(unique(ExpeDF$timebin),3)
 
 # The next step is to create variables ot1, ot2, ot3 corresponding to the orthogonal polynomial time terms and populate their values with the timeBin-appropriate orthogonal polynomial values:
-ExpeDF[ ,paste("ot", 1:3, sep="")] <- t[ExpeDF$dpi, 1:3]
+ExpeDF[ ,paste0("ot", 1:3)] <- t[ExpeDF$timebin, 1:3]
 
-# ExpeDF[,c(paste("ot", 1:3, sep=""))] <- t[ExpeDF$dpi, 1:3]
+# Since this is a simple case with just one within-subjects fixed effect that has only two levels, we can skip to the full model and examine its parameter estimates:
+m.full <- lmer(weightNormal ~ (ot1+ot2+ot3) * Mouse_strain + 
+                     (ot1+ot2+ot3 | EH_ID) + 
+                     (ot1+ot2 | EH_ID:Mouse_strain), 
+                   control = lmerControl(optimizer="bobyqa"),
+                   data=ExpeDF, REML=F)
 
-# t
-# c(paste("ot", 1:4, sep=""))
+coef(summary(m.full))
 
-TargetFix
+# Notice that the parameter estimates do not have p-values. 
+# There are good reasons for that (see this FAQ for more information),
+# but this is cold comfort to most experimental psychologists, who need to report p-values. 
+# The quick and easy solution is to assume that, because we have relatively many
+# observations, the t-distribution converges to the z-distribution, so we can use a
+# normal approximation:
+coefs <- data.frame(coef(summary(m.full))) 
+coefs$p <- format.pval(2*(1-pnorm(abs(coefs$t.value))), digits=2, eps=0.0001) #also make the p-values a bit more readable
+coefs
 
-fit <- lm( y~poly(x,7) )
+ExpeDF$mfit <- fitted(m.full)
 
-subdata <- ExpeDF_E64[ExpeDF_E64$Mouse_strain == "M.m.musculus \n(BUSNA)",]
+ggplot(ExpeDF, aes(dpi, weightNormal, color = Mouse_strain)) + 
+  theme_bw() + facet_wrap(~ Mouse_strain) +
+  stat_summary(fun.y=mean, geom="point") +
+  stat_summary(aes(y=mfit), fun.y=mean, geom="line") +
+  labs(y="Fixation Proportion", x="Time since word onset (ms)")
 
-m <- lm(csWeightGainNormal ~ poly(dpi,5), data = subdata)
+# fourth order?
+# The first step is to create a third-order polynomial in the range of dpi
+ExpeDF$timebin <- ExpeDF$dpi + 1
 
-summary(m, corr = F)
+t <- poly(unique(ExpeDF$timebin),4)
 
-subdata$m <- fitted(m)
+# The next step is to create variables ot1, ot2, ot3 corresponding to the orthogonal polynomial time terms and populate their values with the timeBin-appropriate orthogonal polynomial values:
+ExpeDF[ ,paste0("ot", 1:4)] <- t[ExpeDF$timebin, 1:4]
 
-plot(subdata$m ~ subdata$dpi)
+# Since this is a simple case with just one within-subjects fixed effect that has only two levels, we can skip to the full model and examine its parameter estimates:
+m4 <- lmer(weightNormal ~ (ot1+ot2+ot3) * Mouse_strain + 
+                 (1+ot1+ot2+ot3+ot4 | EH_ID) + 
+                 (1+ot1+ot2 | EH_ID:Mouse_strain), 
+               control = lmerControl(optimizer="bobyqa"),
+               data=ExpeDF, REML=F)
+
+coefs <- data.frame(coef(summary(m4))) 
+coefs$p <- format.pval(2*(1-pnorm(abs(coefs$t.value))), digits=2, eps=0.0001) #also make the p-values a bit more readable
+coefs
+
+ExpeDF$mfit <- fitted(m4)
+
+ggplot(ExpeDF, aes(dpi, weightNormal, color = Mouse_strain)) + 
+  theme_bw() + facet_wrap(~ Mouse_strain) +
+  stat_summary(fun.y=mean, geom="point") +
+  stat_summary(aes(y=mfit), fun.y=mean, geom="line") +
+  labs(y="Fixation Proportion", x="Time since word onset (ms)")
 
 ###########################################
 # oocyst shedding evolution
