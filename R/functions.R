@@ -7,22 +7,16 @@ calculateWeightLoss <- function(x){
   A = x[x$dpi == 0, c("weight", "EH_ID")]
   names(A)[1] = "weightAtInfection"
   x = merge(x, A)
-  
-  x$weightloss = x$weightAtInfection - x$weight
-  x$weightLossRelativeToInfection = x$weightloss / x$weightAtInfection * 100
-  x$weightRelativeToInfection = x$weight / x$weightAtInfection * 100
+  # Cumulative sum of our weight loss
   x = x %>% 
-    replace_na(list(weightLossRelativeToInfection = 0)) %>%
     group_by(EH_ID) %>% 
-    arrange(dpi) %>% 
-    mutate(cumsumWeightLosRelToInfPercent = cumsum(weightLossRelativeToInfection))
+    dplyr::arrange(dpi, .by_group = TRUE) %>%
+    dplyr::mutate(weightNormal = weight / weightAtInfection) %>%
+    dplyr::mutate(weightGainNormal = weightNormal - c(1, weightNormal[-length(weightNormal)])) %>%
+    dplyr::mutate(csWeightGainNormal = cumsum(weightGainNormal)) 
   x = data.frame(x)
-  # correct the NA back to zeros
-  x$weightLossRelativeToInfection[is.na(x$weightloss)] <- NA
   return(x)
 }
-
-
 
 calculateOPG <- function(ExpeDF){
   ExpeDF$mean_Neubauer <- 

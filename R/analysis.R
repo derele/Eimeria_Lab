@@ -27,58 +27,39 @@ ExpeDF <- ExpeDF_004
 # ExpeDF <- ExpeDF[ExpeDF$dpi %in% 0:11, ]
 
 ###########################################
-## Weight evolution compared to dpi 0
-ggplot(ExpeDF, aes(x = dpi, y = weightRelativeToInfection, fill = infection_isolate))+
+## Weight evolution along the infection
+ggplot(ExpeDF, aes(x = dpi, y = weightNormal, fill = infection_isolate))+
   geom_smooth(aes(col = infection_isolate), alpha = 0.3) +
   geom_line(aes(group = EH_ID), col = "black", alpha = 0.5) +
   geom_point(size=3, pch = 21, color = "black")+
   mytheme +
   facet_grid(~Mouse_strain, scales = "free_y", space = "free") +
-  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)" ) #+
-  # geom_hline(yintercept = 80, col = "red")
+  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)" ) 
 
 # Mean + 95%CI
 summaryWeight <-summarySE(ExpeDF, measurevar = "weightRelativeToInfection", 
                            groupvars=c("Mouse_strain", "infection_isolate", "dpi"))
 
-ggplot(summaryWeight, aes(x = dpi, y = weightRelativeToInfection))+
-  geom_errorbar(aes(ymin = weightRelativeToInfection - ci,
-                    ymax = weightRelativeToInfection + ci,
-                    col = infection_isolate)) +
-  geom_line(aes(group = infection_isolate)) +
-  geom_point(aes(fill = infection_isolate), 
-             size=3, pch = 21, color = "black") +
-  mytheme +
-  facet_wrap(~Mouse_strain)+
-  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  scale_y_continuous(name = "Weight relative to infection (%)" )
+# ggplot(summaryWeight, aes(x = dpi, y = weightRelativeToInfection))+
+#   geom_errorbar(aes(ymin = weightRelativeToInfection - ci,
+#                     ymax = weightRelativeToInfection + ci,
+#                     col = infection_isolate)) +
+#   geom_line(aes(group = infection_isolate)) +
+#   geom_point(aes(fill = infection_isolate), 
+#              size=3, pch = 21, color = "black") +
+#   mytheme +
+#   facet_wrap(~Mouse_strain)+
+#   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
+#   scale_y_continuous(name = "Weight relative to infection (%)" )
 
 # Now, using the CUMULATIVE weight loss
-ggplot(ExpeDF, aes(x = dpi, y = cumsumWeightLosRelToInfPercent))+
-#  geom_smooth(aes(col = infection_isolate), alpha = 0.3) +
-  geom_line(aes(group = EH_ID), alpha = 0.5) +
- # scale_color_gradient(low = "pink", high = "black") +
+ggplot(ExpeDF, aes(x = dpi, y = csWeightGainNormal, fill = infection_isolate))+
+  geom_smooth(aes(col = infection_isolate), alpha = 0.3) +
+  geom_line(aes(group = EH_ID), col = "black", alpha = 0.5) +
   geom_point(size=3, pch = 21, color = "black")+
   mytheme +
-#  facet_grid(~Mouse_strain, scales = "free_y", space = "free") +
-  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)" ) #+
-# geom_hline(yintercept = 80, col = "red")
-
-hist(ExpeDF$ageAtInfection)
-
-
-ggplot(ExpeDF, aes(x=dpi, y = weighlosstRelativeToInfection)) +
-  geom_line(aes(group = EH_ID)) +
-  geom_point(aes(col = infection_isolate)) +
-
-ggplot(ExpeDF, aes(dpi, -cumsumWeightLosRelToInfPercent, color = Mouse_strain)) +
-  stat_summary(fun.y = mean, geom = "line") +
-  stat_summary(fun.data = mean_se, geom = "pointrange")
-
-
-
-
-
+  facet_grid(~Mouse_strain, scales = "free_y", space = "free") +
+  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)" ) 
 
 # maximum weight lost along experiment
 all.max.loss <- do.call("rbind", by(ExpeDF,
@@ -116,35 +97,71 @@ if (length(levels(ExpeDF$infection_isolate)) < 2){
 }
 ## using offsets and real weight instead of relative weight for modeling
 
-# Try Kolmogorv-smirnov approach to compare curves
+# ?? Try Kolmogorv-smirnov approach to compare curves
 # https://stats.stackexchange.com/questions/129449/package-of-r-for-comparing-graphs-of-daily-activity-of-birds
 
-## 1. get cumulative weight of the mice
-library(dplyr)
-
-df <- ExpeDF_004 %>% 
-  group_by(dpi, Mouse_strain, infection_isolate) %>%
-  summarise(weightLossRelativeToInfection = sum(weightLossRelativeToInfection)) %>%
-  mutate(csum = cumsum(weightLossRelativeToInfection))
-df <- data.frame(df)
-  
-df$group <- paste0(df$Mouse_strain, df$infection_isolate)
-
-ggplot(df, aes(x = dpi, y = csum, 
-               group = group)) +
-  geom_point(aes(fill = infection_isolate), pch =21, size = 5) + 
-  geom_line(aes(color = Mouse_strain)) +
+# Calculate cumulative weight loss
+ggplot(ExpeDF, aes(dpi, ExpeDF$csWeightGainNormal, color = Mouse_strain)) +
+  stat_summary(fun.y = mean, geom = "line") +
+  stat_summary(fun.data = mean_se, geom = "pointrange") +
+  facet_grid(.~ infection_isolate) +
   mytheme
 
-# not working!!
-
-# Calculate cumulative weight loss
-ExpeDF$
-
-ExpeDF$group <- paste0(ExpeDF$Mouse_strain, ExpeDF$infection_isolate)
+# install.packages("lme4", dependencies=TRUE, INSTALL_opts = c('--no-lock'))
 library(lme4)
-m.0 <- lmer(ExpeDF$weightRelativeToInfection ~ dpi + group + (1 | EH_ID), data=ExpeDF, REML=F)
 
+# we study the two strains separetely, as we can't compare within (possible different inoculate)
+ExpeDF_E64 <- ExpeDF[ExpeDF$infection_isolate == "E64",]
+ExpeDF_E139 <- ExpeDF[ExpeDF$infection_isolate == "E139",]
+
+m <- lmer(csWeightGainNormal ~ dpi * Mouse_strain + 
+            (1 | EH_ID), data = ExpeDF_E64, REML = F)
+summary(m, corr = F)
+
+ExpeDF_E64$m <- fitted(m)
+
+ggplot(ExpeDF_E64, aes(dpi, csWeightGainNormal)) + 
+  facet_wrap(~ Mouse_strain) + theme_bw() + 
+  stat_summary(fun.y=mean, geom="point") +
+  stat_summary(aes(y=m), fun.y=mean, geom="line") +
+  labs(y="Fixation Proportion", x="Time since word onset (ms)") + 
+  scale_color_manual(values=c("red", "blue"))
+
+# This fit is SHEIT
+
+# https://www.sciencedirect.com/science/article/pii/S2468042717300234#bib14
+
+# To which order should it fit?
+summary(ExpeDF)
+
+# The first step is to create a third-order polynomial in the range of dpi
+t <- poly((unique(TargetFix$timeBin)), 3)
+
+poly(unique(TargetFix$timeBin), 3)
+
+t <- poly(unique(ExpeDF$dpi),3)
+
+# The next step is to create variables ot1, ot2, ot3 corresponding to the orthogonal polynomial time terms and populate their values with the timeBin-appropriate orthogonal polynomial values:
+ExpeDF[ ,paste("ot", 1:3, sep="")] <- t[ExpeDF$dpi, 1:3]
+
+# ExpeDF[,c(paste("ot", 1:3, sep=""))] <- t[ExpeDF$dpi, 1:3]
+
+# t
+# c(paste("ot", 1:4, sep=""))
+
+TargetFix
+
+fit <- lm( y~poly(x,7) )
+
+subdata <- ExpeDF_E64[ExpeDF_E64$Mouse_strain == "M.m.musculus \n(BUSNA)",]
+
+m <- lm(csWeightGainNormal ~ poly(dpi,5), data = subdata)
+
+summary(m, corr = F)
+
+subdata$m <- fitted(m)
+
+plot(subdata$m ~ subdata$dpi)
 
 ###########################################
 # oocyst shedding evolution
