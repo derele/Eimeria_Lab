@@ -14,7 +14,7 @@ ExpeDF <- ExpeDF_002
 ##### Expe_003
 # April-May 2018, first batch Parental strains (F0) BUSNA, STRA, SCHUNT, PWD
 # Infection with Eferrisi (E64 and E139)
-ExpeDF <- ExpeDF_003[ExpeDF_003$dpi %in% 0:11, ]# remove stabilisation period
+ExpeDF <- ExpeDF_003
 
 ##### Expe_004
 # June 2018, second batch Parental strains (F0) BUSNA, STRA, SCHUNT, PWD
@@ -22,8 +22,8 @@ ExpeDF <- ExpeDF_003[ExpeDF_003$dpi %in% 0:11, ]# remove stabilisation period
 ExpeDF <- ExpeDF_004
 
 ## Full F0s?
-# ExpeDF <- rbind(ExpeDF_003[c("EH_ID", "dpi", "weight", "weightRelativeToInfection", "infection_isolate", "Mouse_strain")], 
-#                 ExpeDF_004[c("EH_ID", "dpi", "weight", "weightRelativeToInfection", "infection_isolate", "Mouse_strain")])
+# ExpeDF <- rbind(ExpeDF_003[c("EH_ID", "dpi", "weight", "weightRelativeToInfection", "cumsumWeightLosRelToInfPercent", "infection_isolate", "Mouse_strain")],
+#                 ExpeDF_004[c("EH_ID", "dpi", "weight", "weightRelativeToInfection", "cumsumWeightLosRelToInfPercent", "infection_isolate", "Mouse_strain")])
 # ExpeDF <- ExpeDF[ExpeDF$dpi %in% 0:11, ]
 
 ###########################################
@@ -52,6 +52,33 @@ ggplot(summaryWeight, aes(x = dpi, y = weightRelativeToInfection))+
   facet_wrap(~Mouse_strain)+
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
   scale_y_continuous(name = "Weight relative to infection (%)" )
+
+# Now, using the CUMULATIVE weight loss
+ggplot(ExpeDF, aes(x = dpi, y = cumsumWeightLosRelToInfPercent))+
+#  geom_smooth(aes(col = infection_isolate), alpha = 0.3) +
+  geom_line(aes(group = EH_ID), alpha = 0.5) +
+ # scale_color_gradient(low = "pink", high = "black") +
+  geom_point(size=3, pch = 21, color = "black")+
+  mytheme +
+#  facet_grid(~Mouse_strain, scales = "free_y", space = "free") +
+  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)" ) #+
+# geom_hline(yintercept = 80, col = "red")
+
+hist(ExpeDF$ageAtInfection)
+
+
+ggplot(ExpeDF, aes(x=dpi, y = weighlosstRelativeToInfection)) +
+  geom_line(aes(group = EH_ID)) +
+  geom_point(aes(col = infection_isolate)) +
+
+ggplot(ExpeDF, aes(dpi, -cumsumWeightLosRelToInfPercent, color = Mouse_strain)) +
+  stat_summary(fun.y = mean, geom = "line") +
+  stat_summary(fun.data = mean_se, geom = "pointrange")
+
+
+
+
+
 
 # maximum weight lost along experiment
 all.max.loss <- do.call("rbind", by(ExpeDF,
@@ -95,10 +122,10 @@ if (length(levels(ExpeDF$infection_isolate)) < 2){
 ## 1. get cumulative weight of the mice
 library(dplyr)
 
-df <- ExpeDF %>% 
-  group_by(Mouse_strain, infection_isolate, dpi) %>%
-  summarise(weightRelativeToInfection = sum(weightRelativeToInfection)) %>%
-  mutate(csum = cumsum(weightRelativeToInfection))
+df <- ExpeDF_004 %>% 
+  group_by(dpi, Mouse_strain, infection_isolate) %>%
+  summarise(weightLossRelativeToInfection = sum(weightLossRelativeToInfection)) %>%
+  mutate(csum = cumsum(weightLossRelativeToInfection))
 df <- data.frame(df)
   
 df$group <- paste0(df$Mouse_strain, df$infection_isolate)
@@ -108,6 +135,16 @@ ggplot(df, aes(x = dpi, y = csum,
   geom_point(aes(fill = infection_isolate), pch =21, size = 5) + 
   geom_line(aes(color = Mouse_strain)) +
   mytheme
+
+# not working!!
+
+# Calculate cumulative weight loss
+ExpeDF$
+
+ExpeDF$group <- paste0(ExpeDF$Mouse_strain, ExpeDF$infection_isolate)
+library(lme4)
+m.0 <- lmer(ExpeDF$weightRelativeToInfection ~ dpi + group + (1 | EH_ID), data=ExpeDF, REML=F)
+
 
 ###########################################
 # oocyst shedding evolution

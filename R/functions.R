@@ -1,14 +1,28 @@
+library(dplyr)
+library(tidyr)
+
 # functions used for data preparation 
-calculateWeightLoss <- function(ExpeDF){
-  A = ExpeDF[ExpeDF$dpi == 0, c("weight", "EH_ID")]
+calculateWeightLoss <- function(x){
+  # define weight at infection
+  A = x[x$dpi == 0, c("weight", "EH_ID")]
   names(A)[1] = "weightAtInfection"
-  ExpeDF <- merge(ExpeDF, A)
-  rm(A)
-  ExpeDF$weightloss = ExpeDF$weightAtInfection - ExpeDF$weight
-  ExpeDF$weightRelativeToInfection <- ExpeDF$weight /
-    ExpeDF$weightAtInfection * 100
-  return(ExpeDF)
+  x = merge(x, A)
+  
+  x$weightloss = x$weightAtInfection - x$weight
+  x$weightLossRelativeToInfection = x$weightloss / x$weightAtInfection * 100
+  x$weightRelativeToInfection = x$weight / x$weightAtInfection * 100
+  x = x %>% 
+    replace_na(list(weightLossRelativeToInfection = 0)) %>%
+    group_by(EH_ID) %>% 
+    arrange(dpi) %>% 
+    mutate(cumsumWeightLosRelToInfPercent = cumsum(weightLossRelativeToInfection))
+  x = data.frame(x)
+  # correct the NA back to zeros
+  x$weightLossRelativeToInfection[is.na(x$weightloss)] <- NA
+  return(x)
 }
+
+
 
 calculateOPG <- function(ExpeDF){
   ExpeDF$mean_Neubauer <- 
@@ -93,4 +107,4 @@ getAgeAtInfection <- function(mytab = read.csv("../data/1_informationTables/Exp0
 # write.csv(mytab, "../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv", row.names = F)
 
 # Histogrammes to visualise
-hist(as.numeric(getAgeAtInfection()), breaks = 50)
+# hist(as.numeric(getAgeAtInfection()), breaks = 50)

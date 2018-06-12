@@ -35,6 +35,8 @@ ExpeDF_001$Mouse_strain <- factor(ExpeDF_001$Mouse_strain,
 survivors <- names(table(ExpeDF_001$EH_ID))[table(ExpeDF_001$EH_ID) %in% 12]
 ExpeDF_001 <- ExpeDF_001[ExpeDF_001$EH_ID %in% survivors,]
 
+ExpeDF_001 <- calculateWeightLoss(ExpeDF_001)
+
 ########################### Pass001: Nov 2017, passaging 4 isolates (some missing data)
 # (Eflab, E88, E139, E64) in NMRI. 2 mice per cage. Only OPG recorded
 PassDF_001 <- read.csv("../data/3_recordingTables/passaging_extra/Pass001_oocystsonly_Nov2017_Passaging_4Eimeria.csv")
@@ -46,7 +48,7 @@ ExpeDF_002$Mouse_strain <- "NMRI"
 ExpeDF_002$EH_ID <- paste0("mouse_", ExpeDF_002$EH_ID)
 
 # Calculate weight loss
-ExpeDF_002 <- calculateWeightLoss(ExpeDF = ExpeDF_002)
+ExpeDF_002 <- calculateWeightLoss(ExpeDF_002)
 
 # Calculate OPG
 ExpeDF_002 <- calculateOPG(ExpeDF_002)
@@ -60,6 +62,9 @@ ExpeDF_003 <- merge(oo, we, all = T)
 ExpeDF_003 <- merge(ExpeDF_003, design, by = "EH_ID", all = T)
 rm(design, oo, we)
 
+# Keep for dpi 0
+ExpeDF_003 <- ExpeDF_003[ExpeDF_003$dpi %in% 0:11, ]# remove stabilisation period
+
 # correct abherante value
 ExpeDF_003[ExpeDF_003$EH_ID %in% "LM0137" & ExpeDF_003$weight %in% 17.6, "weight"] <- NA
 
@@ -72,9 +77,9 @@ ExpeDF_003$Mouse_strain <- factor(ExpeDF_003$Mouse_strain,
                                              "M.m.musculus \n(PWD)"))
 
 # Calculate weight loss
-ExpeDF_003 <- calculateWeightLoss(ExpeDF = ExpeDF_003)
+ExpeDF_003 <- calculateWeightLoss(ExpeDF_003)
 
-# Calculate OPG NOT DONE YET ;)
+#Calculate OPG NOT DONE YET ;)
 # ExpeDF_003 <- calculateOPG(ExpeDF_003)
 
 ########################### Exp004 : May 2018 batch 2
@@ -96,38 +101,12 @@ ExpeDF_004$Strain <- factor(ExpeDF_004$Strain,
 names(ExpeDF_004)[names(ExpeDF_004) == "Strain"] <- "Mouse_strain"
 
 # Calculate weight loss
-ExpeDF_004 <- calculateWeightLoss(ExpeDF = ExpeDF_004) 
+ExpeDF_004 <- calculateWeightLoss(ExpeDF_004) 
 
 # Calculate OPG NOT DONE YET ;)
-# ExpeDF_003 <- calculateOPG(ExpeDF_003)
+# ExpeDF_004 <- calculateOPG(ExpeDF_004)
 
 # Remove animals that died before the end of the experiment
 table(ExpeDF_004$EH_ID[!is.na(ExpeDF_004$weight)])
 
 ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% c("LM0160", "LM0155"),]
-
-# These lines were used to follow the weight stabilisation before experiment
-# preExpeDF_004 <- read.csv("../data/3_recordingTables/Preliminary_April2018_wildmice_Eferrisi_second_RECORDweight.csv")
-# # merge with info table
-# info <- read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv")
-# preExpeDF_004$PIN <- preExpeDF_004$original.label
-# preExpeDF_004 <- merge(info, preExpeDF_004, by = "PIN", all.y = T)
-# preExpeDF_004 <- preExpeDF_004[!is.na(preExpeDF_004$dayFollowWeight),]
-# Calculate ratio of weight
-# preExpeDF_004 <- calculateWeightLossBeforeInf(preExpeDF_004)
-# Mouse_strain: West should always be left 
-# preExpeDF_004$Strain <- factor(preExpeDF_004$Strain,
-#                                   levels = c("STRA", "BUSNA", "SCHUNT", "PWD"),
-#                                   labels = c("M.m.domesticus \n(STRA)", 
-#                                              "M.m.musculus \n(BUSNA)", 
-#                                              "M.m.domesticus \n(SCHUNT)",
-#                                              "M.m.musculus \n(PWD)"))
-# preExpeDF_004$date <- as.Date(preExpeDF_004$date) 
-# ggplot(preExpeDF_004, aes(x = date, y = weightRelativeToStart)) +
-#   geom_line(aes(group = original.label, col = Strain), size = 1) +
-#   geom_point() +
-#   facet_grid(Strain~., scales = "free_y", space = "free") +
-#   mytheme +
-#   theme_linedraw() +
-#   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
