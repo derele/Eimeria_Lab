@@ -107,6 +107,6 @@ ExpeDF_004 <- calculateWeightLoss(ExpeDF_004)
 # ExpeDF_004 <- calculateOPG(ExpeDF_004)
 
 # Remove animals that died before the end of the experiment
-table(ExpeDF_004$EH_ID[!is.na(ExpeDF_004$weight)])
+tab <- table(ExpeDF_004$EH_ID[!is.na(ExpeDF_004$weight)])
 
-ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% c("LM0160", "LM0155"),]
+ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% names(tab)[tab < 12],]
