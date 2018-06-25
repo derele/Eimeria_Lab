@@ -21,9 +21,21 @@ mytheme <- theme_bw()+
 ########################### Exp001 : April 2017 PWD, WSD and hybrids infection 
 # by E.falciformis (Eflab) and E.ferrisi (E64)
 ExpeDF_001 <- read.csv("../data/3_recordingTables/Exp001_May2017_crossing_infection.csv")
+
 # Remove Eflab, mice suffered too much and had to be sacrificed earlier
-ExpeDF_001 <- ExpeDF_001[ExpeDF_001$infection_isolate %in% "EI64",]
-ExpeDF_001$infection_isolate <- droplevels(ExpeDF_001$infection_isolate)
+# ExpeDF_001 <- ExpeDF_001[ExpeDF_001$infection_isolate %in% "EI64",]
+# ExpeDF_001$infection_isolate <- droplevels(ExpeDF_001$infection_isolate)
+
+# Add transect info
+ExpeDF_001$transect <- "Commercial mice strains"
+
+# Add mice subspecies info
+ExpeDF_001$Mouse_subspecies <- "F1 hybrids"
+ExpeDF_001$Mouse_subspecies[ExpeDF_001$Mouse_strain == "PWD"] <- "M.m.musculus"
+ExpeDF_001$Mouse_subspecies[ExpeDF_001$Mouse_strain == "WSB"] <- "M.m.domesticus"
+
+ExpeDF_001$Mouse_subspecies <- factor(ExpeDF_001$Mouse_subspecies, 
+                                      levels = c("M.m.domesticus", "F1 hybrids", "M.m.musculus"))
 
 # Mouse_strain: West should always be left 
 ExpeDF_001$Mouse_strain <- factor(ExpeDF_001$Mouse_strain, 
@@ -31,11 +43,11 @@ ExpeDF_001$Mouse_strain <- factor(ExpeDF_001$Mouse_strain,
                                   labels = c("M.m.domesticus \n(WSB)", 
                                              "F1 hybrids \n(WP)", 
                                              "M.m.musculus \n(PWD)"))
-# Keep only mice that survived 11 days
-survivors <- names(table(ExpeDF_001$EH_ID))[table(ExpeDF_001$EH_ID) %in% 12]
-ExpeDF_001 <- ExpeDF_001[ExpeDF_001$EH_ID %in% survivors,]
 
-ExpeDF_001 <- calculateWeightLoss(ExpeDF_001)
+# Keep only mice that survived 11 days
+# survivors <- names(table(ExpeDF_001$EH_ID))[table(ExpeDF_001$EH_ID) %in% 12]
+# ExpeDF_001 <- ExpeDF_001[ExpeDF_001$EH_ID %in% survivors,]
+ExpeDF_001 <- calculateWeightLoss(ExpeDF_001, infectionDay = 1)
 
 ########################### Pass001: Nov 2017, passaging 4 isolates (some missing data)
 # (Eflab, E88, E139, E64) in NMRI. 2 mice per cage. Only OPG recorded
@@ -62,11 +74,19 @@ ExpeDF_003 <- merge(oo, we, all = T)
 ExpeDF_003 <- merge(ExpeDF_003, design, by = "EH_ID", all = T)
 rm(design, oo, we)
 
-# Keep for dpi 0
+# Keep for dpi 0 to 11
 ExpeDF_003 <- ExpeDF_003[ExpeDF_003$dpi %in% 0:11, ]# remove stabilisation period
 
 # correct abherante value
 ExpeDF_003[ExpeDF_003$EH_ID %in% "LM0137" & ExpeDF_003$weight %in% 17.6, "weight"] <- NA
+
+# Add transect
+ExpeDF_003$transect <- "Commercial mice strains"
+ExpeDF_003$transect[ExpeDF_003$Mouse_strain %in% c("BUSNA", "STRA")] <- "HMHZ"
+
+# Add mice subspecies
+ExpeDF_003$Mouse_subspecies <- "M.m.domesticus"
+ExpeDF_003$Mouse_subspecies[ExpeDF_003$Mouse_strain %in% c("BUSNA", "PWD")] <- "M.m.musculus"
 
 # Mouse_strain: West should always be left 
 ExpeDF_003$Mouse_strain <- factor(ExpeDF_003$Mouse_strain,
@@ -80,7 +100,10 @@ ExpeDF_003$Mouse_strain <- factor(ExpeDF_003$Mouse_strain,
 ExpeDF_003 <- calculateWeightLoss(ExpeDF_003)
 
 #Calculate OPG NOT DONE YET ;)
-# ExpeDF_003 <- calculateOPG(ExpeDF_003)
+names(ExpeDF_003)[names(ExpeDF_003) %in% paste0("oocyst_sq", 1:4)] <- paste0("Neubauer", 1:4)
+names(ExpeDF_003)[names(ExpeDF_003) %in% "dilution"] <- "dilution_ml"
+
+ExpeDF_003 <- calculateOPG(ExpeDF_003)
 
 ########################### Exp004 : May 2018 batch 2
 oo <- read.csv("../data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDoocysts.csv")
@@ -91,14 +114,24 @@ ExpeDF_004 <- merge(oo, we, all = T)
 ExpeDF_004 <- merge(ExpeDF_004, design, by = "EH_ID", all = T)
 rm(design, oo, we)
 
+# Correct name
+names(ExpeDF_004)[names(ExpeDF_004) == "Strain"] <- "Mouse_strain"
+
+# Add transect
+ExpeDF_004$transect <- "Commercial mice strains"
+ExpeDF_004$transect[ExpeDF_004$Mouse_strain %in% c("BUSNA", "STRA")] <- "HMHZ"
+
+# Add mice subspecies
+ExpeDF_004$Mouse_subspecies <- "M.m.domesticus"
+ExpeDF_004$Mouse_subspecies[ExpeDF_004$Mouse_strain %in% c("BUSNA", "PWD")] <- "M.m.musculus"
+
 # Mouse_strain: West should always be left 
-ExpeDF_004$Strain <- factor(ExpeDF_004$Strain,
+ExpeDF_004$Mouse_strain <- factor(ExpeDF_004$Mouse_strain,
                                   levels = c("STRA", "BUSNA", "SCHUNT", "PWD"),
                                   labels = c("M.m.domesticus \n(STRA)", 
                                              "M.m.musculus \n(BUSNA)", 
                                              "M.m.domesticus \n(SCHUNT)",
                                              "M.m.musculus \n(PWD)"))
-names(ExpeDF_004)[names(ExpeDF_004) == "Strain"] <- "Mouse_strain"
 
 # Calculate weight loss
 ExpeDF_004 <- calculateWeightLoss(ExpeDF_004) 
