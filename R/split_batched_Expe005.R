@@ -65,4 +65,4 @@ ggplot(selectedMice,
   scale_x_continuous(breaks = 0 : 100) +
   theme_bw()
 
-table(selectedMice$Strain, selectedMice$Batch, selectedMice$InfectionStrain, selectedMice$ageAtdpi0expe1a)
+write.csv(selectedMice, "../data/1_informationTables/Exp005_WDS_21.6.18.csv", row.names = F)
