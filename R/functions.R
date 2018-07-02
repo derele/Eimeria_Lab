@@ -94,9 +94,16 @@ getAgeAtInfection <- function(mytab = read.csv("../data/1_informationTables/Exp0
 
 ## Weight evolution along the infection
 plotWeightAlongInf <- function(ExpeDF, ylim = c(85, 115)){
-  ggplot(ExpeDF, aes(x = dpi, y = weightNormalized, fill = infection_isolate))+
+  # Code by OPG
+  ExpeDF$OPG_plot[is.na(ExpeDF$OPG)] = "na"
+  ExpeDF$OPG_plot[!is.na(ExpeDF$OPG) & ExpeDF$OPG > 0] = "positive"
+  ExpeDF$OPG_plot[!is.na(ExpeDF$OPG) & ExpeDF$OPG == 0] = "negative"
+  ExpeDF$OPG_plot = as.factor(ExpeDF$OPG_plot)
+  
+  ggplot(ExpeDF, aes(x = dpi, y = weightNormalized, fill = OPG_plot)) +
+    scale_fill_discrete(c("grey", "green", "purple")) +
     geom_line(aes(group = EH_ID, col = infection_isolate), alpha = 0.5) +
-    geom_point(size=3, pch = 21, color = "black")+
+    geom_point(size=4, pch = 21, color = "black")+
     mytheme +
     facet_grid(transect ~ Mouse_subspecies, scales = "free_y", space = "free") +
     scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
