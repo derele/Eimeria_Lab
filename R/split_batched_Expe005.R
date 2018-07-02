@@ -1,7 +1,7 @@
 mydata <- read.csv("../data/1_informationTables/Exp005_WDS_21.6.18.csv")
 
 # first date : "04/20/2018"
-mydata$Born <- as.Date(mydata$Born, "%m/%d/%Y")
+mydata$Born <- as.Date(mydata$Born)
 
 # dates of each infection experiment: 
 dpi0expe1a <- as.Date("2018-07-09")
@@ -49,7 +49,6 @@ selectedMice <- lapply(
 
 # plop <- sample(1:nrow(df), size = 3, replace = FALSE)
 
-
 library(dplyr)
 aggData <- selectedMice %>% 
   dplyr::group_by(Strain, ageAtdpi0expe1a, Batch) %>%
@@ -65,4 +64,35 @@ ggplot(selectedMice,
   scale_x_continuous(breaks = 0 : 100) +
   theme_bw()
 
-write.csv(selectedMice, "../data/1_informationTables/Exp005_WDS_21.6.18.csv", row.names = F)
+# write.csv(selectedMice, "../data/1_informationTables/Exp005_WDS_21.6.18.csv", row.names = F)
+
+## Label
+Inf1a = selectedMice[selectedMice$Batch == 1 & selectedMice$InfectionStrain == "E88",]
+Inf1b = selectedMice[selectedMice$Batch == 1 & selectedMice$InfectionStrain == "E64",]
+Inf2a = selectedMice[selectedMice$Batch == 2 & selectedMice$InfectionStrain == "E88",]
+Inf2b = selectedMice[selectedMice$Batch == 2 & selectedMice$InfectionStrain == "E64",]
+
+labelMice <- function (lastEH_Id, df, myseed){
+  Nmice = nrow(df)
+  # Give EH_ids
+  num = as.numeric(sub("LM", "", lastEH_Id))
+  num = num + (1:(Nmice))
+  EH_id = paste0("LM", sprintf("%04d", num))
+  
+  # Spread names randomly among mice
+  set.seed(myseed)
+  df$EH_id = sample(EH_id)
+  print("the last EH_id was :")
+  print(max(num))
+  return(df)
+}
+
+Inf1a <- labelMice("LM0178", Inf1a, 1234)
+Inf1b <- labelMice("LM0203", Inf1b, 1234)
+Inf2a <- labelMice("LM0226", Inf2a, 1234)
+Inf2b <- labelMice("LM0257", Inf2b, 1234)
+
+write.csv(Inf1a, "../data/2_designTables/Inf1a_Exp005.DESIGN.csv", row.names = F)
+write.csv(Inf1b, "../data/2_designTables/Inf1b_Exp005.DESIGN.csv", row.names = F)
+write.csv(Inf2a, "../data/2_designTables/Inf2a_Exp005.DESIGN.csv", row.names = F)
+write.csv(Inf2b, "../data/2_designTables/Inf2b_Exp005.DESIGN.csv", row.names = F)
