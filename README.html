@@ -123,35 +123,58 @@ $(document).ready(function () {
 
 <div id="eimeria_lab" class="section level1">
 <h1>Eimeria_Lab</h1>
+<p>A. Balard</p>
 <p>Record of infection experiments performed in AG Heitlinger</p>
 <div id="protocol" class="section level2">
 <h2>Protocol</h2>
 <div id="information" class="section level3">
 <h3>1.Information</h3>
 <p>Fill the information table with known informations about the mice</p>
-<p>Template here: <a href="https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/1_informationTables/template_INFO.csv" class="uri">https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/1_informationTables/template_INFO.csv</a></p>
 </div>
 <div id="experiment-design" class="section level3">
 <h3>2. Experiment design</h3>
 <p>Fill the experiment design with the help of the information table, with the help of R function “makeDesignTable.R”</p>
+<p>ex:</p>
+<pre class="r"><code>
+myDesignTable2 &lt;- makeDesignTable(myseed = 1234 ,
+                                  pathToInfoTable = &quot;../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv&quot;,
+                                  firstEH_Id = &quot;LM0145&quot;)
+
+# Separate equally between Mouse_strains
+library(experiment)
+
+expe &lt;- randomize(data = myDesignTable2, group = c(&quot;E64&quot;, &quot;E139&quot;),
+                   indx = myDesignTable2$EH_id, block = myDesignTable2$Strain)
+
+trt &lt;- data.frame(infection_isolate = expe$treatment)
+trt$EH_id &lt;- rownames(trt)
+rownames(trt) &lt;- NULL
+
+# Create design table
+designTable &lt;- merge(trt, myDesignTable2)
+print(table(designTable$Sex, designTable$Strain, designTable$infection_isolate))
+
+write.csv(designTable,     &quot;../data/2_designTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_DESIGN.csv&quot;, row.names = F)</code></pre>
 </div>
 </div>
 <div id="historic" class="section level2">
 <h2>Historic</h2>
-<div id="parental-and-f1-wild-mice-ploen-x2-cross-infection-eflab-e64-francisca" class="section level3">
-<h3>1. Parental and F1 wild mice Ploen (x2) cross infection (Eflab, E64) (Francisca)</h3>
-<p>name: <strong><span style="color:red">May2017_wildmicePloen_EFalciformisAndFerrisi</span></strong></p>
+<div id="exp001.-parental-and-f1-wild-mice-ploen-x2-cross-infection-eflab-e64-francisca" class="section level3">
+<h3>Exp001. Parental and F1 wild mice Ploen (x2) cross infection (Eflab, E64) (Francisca)</h3>
 </div>
-<div id="parental-wild-mice-x4-cross-infection-e64-e139-vivian" class="section level3">
-<h3>2. Parental wild mice (x4) cross infection (E64, E139) (Vivian)</h3>
-<p>name: <strong><span style="color:red">April2018_wildmice_Eferrisi</span></strong></p>
-<div id="first-batch-02052018" class="section level4">
-<h4>2.1. First batch: 02/05/2018</h4>
-<p>names: <strong>April2018_wildmice_Eferrisi_Firstbatch_INFO</strong></p>
+<div id="pass001-nov-2017-passaging-4-isolates-eflab-e88-e139-e64-in-nmri.-2-mice-per-cage" class="section level3">
+<h3>Pass001 Nov 2017, passaging 4 isolates (Eflab, E88, E139, E64) in NMRI. 2 mice per cage</h3>
 </div>
-<div id="second-batchtba" class="section level4">
-<h4>2.2. Second batch:tba</h4>
-<p>names: <strong>April2018_wildmice_Eferrisi_Secondbatch_INFO</strong></p>
+<div id="exp002.-nmri-4-strains-passaging-march-2018" class="section level3">
+<h3>Exp002. NMRI 4 strains passaging, March 2018</h3>
+</div>
+<div id="exp003-exp004-parental-wild-mice-x4-cross-infection-e64-e139-vivian" class="section level3">
+<h3>Exp003 &amp; Exp004 Parental wild mice (x4) cross infection (E64, E139) (Vivian)</h3>
+<div id="exp003-first-batch-02052018" class="section level4">
+<h4>Exp003 First batch: 02/05/2018</h4>
+</div>
+<div id="exp004-second-batchtba" class="section level4">
+<h4>Exp004 Second batch:tba</h4>
 </div>
 </div>
 </div>
