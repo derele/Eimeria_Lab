@@ -49,6 +49,8 @@ ExpeDF_001$Mouse_strain <- factor(ExpeDF_001$Mouse_strain,
 # ExpeDF_001 <- ExpeDF_001[ExpeDF_001$EH_ID %in% survivors,]
 ExpeDF_001 <- calculateWeightLoss(ExpeDF_001, infectionDay = 1)
 
+ExpeDF_001$infection_isolate
+
 ########################### Pass001: Nov 2017, passaging 4 isolates (some missing data)
 # (Eflab, E88, E139, E64) in NMRI. 2 mice per cage. Only OPG recorded
 PassDF_001 <- read.csv("../data/3_recordingTables/passaging_extra/Pass001_oocystsonly_Nov2017_Passaging_4Eimeria.csv")
@@ -59,11 +61,24 @@ ExpeDF_002 <- read.csv("../data/3_recordingTables/Exp002_March2018_NMRI_4strains
 ExpeDF_002$Mouse_strain <- "NMRI"
 ExpeDF_002$EH_ID <- paste0("mouse_", ExpeDF_002$EH_ID)
 
+ExpeDF_002$Mouse_subspecies = ExpeDF_002$Mouse_strain
+
 # Calculate weight loss
 ExpeDF_002 <- calculateWeightLoss(ExpeDF_002)
 
 # Calculate OPG
 ExpeDF_002 <- calculateOPG(ExpeDF_002)
+
+ExpeDF_002$infection_isolate
+
+# WRONG OPG just for plotting, for dpi 11 (we forgot to weight the feces...)
+ExpeDF_002$OPG_temp[
+  !is.na(ExpeDF_002$mean_Neubauer) & is.na(ExpeDF_002$OPG)] = 0
+
+ExpeDF_002$OPG_temp[
+  !is.na(ExpeDF_002$mean_Neubauer) & is.na(ExpeDF_002$OPG) & ExpeDF_002$mean_Neubauer > 0] = 1
+
+ExpeDF_002$OPG[is.na(ExpeDF_002$OPG)] = ExpeDF_002$OPG_temp[is.na(ExpeDF_002$OPG)]
 
 ########################### Exp003 : May 2018 batch 1
 oo <- read.csv("../data/3_recordingTables/Exp003_April2018_wildmice_Eferrisi_Firstbatch_RECORDoocysts.csv")

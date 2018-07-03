@@ -50,6 +50,33 @@ plotOPGAlongInfSUM(ExpeDF_001)
 plotCompOPGWeight(ExpeDF_001)
 ```
 
+# Expe_002: March 2018, NMRI mice infected with 4 *Eimeria* strains (Eflab, E88, E139, E64)
+
+## 1. Weight loss
+```{r weightalong2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 5, fig.cap="\\label{fig:weightalong2} Weight along the infection experiment"}
+plotWeightAlongInf(ExpeDF_002, ylim = c(88, 108))
+```
+
+```{r weightalongsum2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 5, fig.cap="\\label{fig:weightalongsum2} Weight along the infection experiment, mean and 95% CI"}
+plotWeightAlongInfSUM(ExpeDF_002, ylim = c(88, 108))
+```
+
+## 2. Parasite shedding
+
+```{r OPGalong2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalong2} Oocysts shedding along the infection experiment"}
+plotOPGAlongInf(ExpeDF_002)
+```
+
+```{r OPGalongsum2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalongsum2} Oocysts shedding along the infection experiment, mean and 95% CI"}
+plotOPGAlongInfSUM(ExpeDF_002)
+```
+
+## 3. Comparison host/parasite proxy
+
+```{r plotComp2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:plotComp2} Weight as a function of OPG"}
+plotCompOPGWeight(ExpeDF_002)
+```
+
 # Expe_003, April-May 2018, first batch Parental strains (F0) BUSNA, STRA, SCHUNT, PWD, infection with Eferrisi (E64 and E139)
 
 ## 1. Weight loss
