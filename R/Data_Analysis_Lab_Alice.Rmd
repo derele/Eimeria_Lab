@@ -26,11 +26,11 @@ source("../R/functions.R")
 # Expe_001, March 2017, Francisca's experiment. infection with E64 and Eflab
 
 ## 1. Weight loss
-```{r weightalong, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 5, fig.cap="\\label{fig:weightalong} Weight along the infection experiment"}
+```{r weightalong, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong} Weight along the infection experiment"}
 plotWeightAlongInf(ExpeDF_001, ylim = c(80, 110))
 ```
 
-```{r weightalongsum, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 5, fig.cap="\\label{fig:weightalongsum} Weight along the infection experiment, mean and 95% CI"}
+```{r weightalongsum, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum} Weight along the infection experiment, mean and 95% CI"}
 plotWeightAlongInfSUM(ExpeDF_001, ylim = c(80, 110))
 ```
 
@@ -53,11 +53,11 @@ plotCompOPGWeight(ExpeDF_001)
 # Expe_002: March 2018, NMRI mice infected with 4 *Eimeria* strains (Eflab, E88, E139, E64)
 
 ## 1. Weight loss
-```{r weightalong2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 5, fig.cap="\\label{fig:weightalong2} Weight along the infection experiment"}
+```{r weightalong2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong2} Weight along the infection experiment"}
 plotWeightAlongInf(ExpeDF_002, ylim = c(88, 108))
 ```
 
-```{r weightalongsum2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 5, fig.cap="\\label{fig:weightalongsum2} Weight along the infection experiment, mean and 95% CI"}
+```{r weightalongsum2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum2} Weight along the infection experiment, mean and 95% CI"}
 plotWeightAlongInfSUM(ExpeDF_002, ylim = c(88, 108))
 ```
 

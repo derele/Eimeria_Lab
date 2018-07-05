@@ -120,6 +120,8 @@ names(ExpeDF_003)[names(ExpeDF_003) %in% "dilution"] <- "dilution_ml"
 
 ExpeDF_003 <- calculateOPG(ExpeDF_003)
 
+ExpeDF_003$infection_isolate
+
 ########################### Exp004 : May 2018 batch 2
 oo <- read.csv("../data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDoocysts.csv")
 we <- read.csv("../data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDweight.csv")
@@ -158,3 +160,5 @@ ExpeDF_004 <- calculateWeightLoss(ExpeDF_004)
 tab <- table(ExpeDF_004$EH_ID[!is.na(ExpeDF_004$weight)])
 
 ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% names(tab)[tab < 12],]
+
+ExpeDF_004$infection_isolate
