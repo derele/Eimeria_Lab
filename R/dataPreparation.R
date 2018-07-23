@@ -161,4 +161,85 @@ tab <- table(ExpeDF_004$EH_ID[!is.na(ExpeDF_004$weight)])
 
 ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% names(tab)[tab < 12],]
 
-ExpeDF_004$infection_isolate
+
+########################### Exp004 : May 2018 batch 2
+oo <- read.csv("../data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDoocysts.csv")
+we <- read.csv("../data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDweight.csv")
+design <- read.csv("../data/2_designTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_DESIGN.csv")
+
+ExpeDF_004 <- merge(oo, we, all = T)
+ExpeDF_004 <- merge(ExpeDF_004, design, by = "EH_ID", all = T)
+rm(design, oo, we)
+
+# Correct name
+names(ExpeDF_004)[names(ExpeDF_004) == "Strain"] <- "Mouse_strain"
+
+# Add transect
+ExpeDF_004$transect <- "Commercial mice strains"
+ExpeDF_004$transect[ExpeDF_004$Mouse_strain %in% c("BUSNA", "STRA")] <- "HMHZ"
+
+# Add mice subspecies
+ExpeDF_004$Mouse_subspecies <- "M.m.domesticus"
+ExpeDF_004$Mouse_subspecies[ExpeDF_004$Mouse_strain %in% c("BUSNA", "PWD")] <- "M.m.musculus"
+
+# Mouse_strain: West should always be left 
+ExpeDF_004$Mouse_strain <- factor(ExpeDF_004$Mouse_strain,
+                                  levels = c("STRA", "BUSNA", "SCHUNT", "PWD"),
+                                  labels = c("M.m.domesticus \n(STRA)", 
+                                             "M.m.musculus \n(BUSNA)", 
+                                             "M.m.domesticus \n(SCHUNT)",
+                                             "M.m.musculus \n(PWD)"))
+
+# Calculate weight loss
+ExpeDF_004 <- calculateWeightLoss(ExpeDF_004) 
+
+# Calculate OPG NOT DONE YET ;)
+# ExpeDF_004 <- calculateOPG(ExpeDF_004)
+
+# Remove animals that died before the end of the experiment
+tab <- table(ExpeDF_004$EH_ID[!is.na(ExpeDF_004$weight)])
+
+ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% names(tab)[tab < 12],]
+
+########################### Exp005 : Full expe including hybrids, July 2018 
+oo <- read.csv("../data/3_recordingTables/Exp005_full_RECORDoocysts.csv", stringsAsFactors = F)
+we <- read.csv("../data/3_recordingTables/Exp005_full_RECORDweight.csv", stringsAsFactors = F)
+design <- rbind(read.csv("../data/2_designTables/Inf1a_Exp005.DESIGN.csv", stringsAsFactors = F),
+                read.csv("../data/2_designTables/Inf2a_Exp005.DESIGN.csv", stringsAsFactors = F),
+                read.csv("../data/2_designTables/Inf1b_Exp005.DESIGN.csv", stringsAsFactors = F),
+                read.csv("../data/2_designTables/Inf2b_Exp005.DESIGN.csv", stringsAsFactors = F))
+
+# Correct error
+names(design)[names(design) == "EH_id"] <- "EH_ID"
+
+ExpeDF_005 <- merge(oo, we, all = T)
+ExpeDF_005 <- merge(ExpeDF_005, design, by = "EH_ID", all = T)
+
+rm(design, oo, we)
+
+# Add transect
+ExpeDF_005$transect <- "Commercial mice strains"
+ExpeDF_005$transect[ExpeDF_005$Mouse_strain %in% c("BUSNA", "STRA")] <- "HMHZ"
+
+# Add mice subspecies
+ExpeDF_004$Mouse_subspecies <- "M.m.domesticus"
+ExpeDF_004$Mouse_subspecies[ExpeDF_004$Mouse_strain %in% c("BUSNA", "PWD")] <- "M.m.musculus"
+
+# Mouse_strain: West should always be left 
+ExpeDF_004$Mouse_strain <- factor(ExpeDF_004$Mouse_strain,
+                                  levels = c("STRA", "BUSNA", "SCHUNT", "PWD"),
+                                  labels = c("M.m.domesticus \n(STRA)", 
+                                             "M.m.musculus \n(BUSNA)", 
+                                             "M.m.domesticus \n(SCHUNT)",
+                                             "M.m.musculus \n(PWD)"))
+
+# Calculate weight loss
+ExpeDF_004 <- calculateWeightLoss(ExpeDF_004) 
+
+# Calculate OPG NOT DONE YET ;)
+# ExpeDF_004 <- calculateOPG(ExpeDF_004)
+
+# Remove animals that died before the end of the experiment
+tab <- table(ExpeDF_004$EH_ID[!is.na(ExpeDF_004$weight)])
+
+ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% names(tab)[tab < 12],]
