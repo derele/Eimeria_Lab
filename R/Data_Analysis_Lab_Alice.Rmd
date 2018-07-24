@@ -118,3 +118,19 @@ plotWeightAlongInfSUM(ExpeDF_004, ylim = c(85, 120))
 ```
 
 ## 2. Parasite shedding
+
+
+# Expe_005, July 2018, FULL experiment (parents, intra specific and inter species hybrids) BUSNA, STRA, SCHUNT, PWD, infection with Eferrisi (E64 and E139)
+
+## 1. Weight loss
+
+```{r weightalong5, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong4} Weight along the infection experiment"}
+plotWeightAlongInf(ExpeDF_005, ylim = c(75, 120))
+```
+
+```{r weightalongsum5, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum4} Weight along the infection experiment, mean and 95% CI"}
+# plotWeightAlongInfSUM(ExpeDF_005, ylim = c(85, 120))
+```
+
+## 2. Parasite shedding
+

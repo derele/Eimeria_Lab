@@ -202,44 +202,47 @@ tab <- table(ExpeDF_004$EH_ID[!is.na(ExpeDF_004$weight)])
 ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% names(tab)[tab < 12],]
 
 ########################### Exp005 : Full expe including hybrids, July 2018 
-oo <- read.csv("../data/3_recordingTables/Exp005_full_RECORDoocysts.csv", stringsAsFactors = F)
-we <- read.csv("../data/3_recordingTables/Exp005_full_RECORDweight.csv", stringsAsFactors = F)
-design <- rbind(read.csv("../data/2_designTables/Inf1a_Exp005.DESIGN.csv", stringsAsFactors = F),
-                read.csv("../data/2_designTables/Inf2a_Exp005.DESIGN.csv", stringsAsFactors = F),
-                read.csv("../data/2_designTables/Inf1b_Exp005.DESIGN.csv", stringsAsFactors = F),
-                read.csv("../data/2_designTables/Inf2b_Exp005.DESIGN.csv", stringsAsFactors = F))
+oo <- read.csv("../data/3_recordingTables/Exp005_full_RECORDoocysts.csv", na.strings = c("NA", " "))
+we <- read.csv("../data/3_recordingTables/Exp005_full_RECORDweight.csv", na.strings = c("NA", " "))
+design <- rbind(read.csv("../data/2_designTables/Inf1a_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
+                read.csv("../data/2_designTables/Inf2a_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
+                read.csv("../data/2_designTables/Inf1b_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
+                read.csv("../data/2_designTables/Inf2b_Exp005.DESIGN.csv", na.strings = c("NA", " ")))
 
 # Correct error
 names(design)[names(design) == "EH_id"] <- "EH_ID"
+# Correct space error
+design$EH_ID <- gsub(" ", "", design$EH_ID)
 
 ExpeDF_005 <- merge(oo, we, all = T)
 ExpeDF_005 <- merge(ExpeDF_005, design, by = "EH_ID", all = T)
+## Correct error space
+ExpeDF_005$Strain <- gsub(" ", "", ExpeDF_005$Strain)
 
-rm(design, oo, we)
+ExpeDF_005$infection_isolate <- ExpeDF_005$Eimeria
+# remove uninfected mice 
+ExpeDF_005 <- ExpeDF_005[-which(is.na(ExpeDF_005$infection_isolate)),]
 
-# Add transect
-ExpeDF_005$transect <- "Commercial mice strains"
-ExpeDF_005$transect[ExpeDF_005$Mouse_strain %in% c("BUSNA", "STRA")] <- "HMHZ"
+# Correct error non numeric
+ExpeDF_005$weight <- as.numeric(as.character(ExpeDF_005$weight))
+ExpeDF_005$weight_dpi0 <- as.numeric(as.character(ExpeDF_005$weight_dpi0))
+
+# Calculate weight Normalized to dpi0
+ExpeDF_005$weightNormalized <- ExpeDF_005$weight / ExpeDF_005$weight_dpi0 * 100
 
 # Add mice subspecies
-ExpeDF_004$Mouse_subspecies <- "M.m.domesticus"
-ExpeDF_004$Mouse_subspecies[ExpeDF_004$Mouse_strain %in% c("BUSNA", "PWD")] <- "M.m.musculus"
+ExpeDF_005$Mouse_subspecies <- ExpeDF_005$HybridStatus
+
+# tapply(as.numeric(ExpeDF_005$weightloss), list(ExpeDF_005$dpi, ExpeDF_005$HybridStatus), FUN = function(x)mean(x, na.rm = T))
 
 # Mouse_strain: West should always be left 
-ExpeDF_004$Mouse_strain <- factor(ExpeDF_004$Mouse_strain,
-                                  levels = c("STRA", "BUSNA", "SCHUNT", "PWD"),
-                                  labels = c("M.m.domesticus \n(STRA)", 
-                                             "M.m.musculus \n(BUSNA)", 
-                                             "M.m.domesticus \n(SCHUNT)",
-                                             "M.m.musculus \n(PWD)"))
-
-# Calculate weight loss
-ExpeDF_004 <- calculateWeightLoss(ExpeDF_004) 
-
-# Calculate OPG NOT DONE YET ;)
-# ExpeDF_004 <- calculateOPG(ExpeDF_004)
-
-# Remove animals that died before the end of the experiment
-tab <- table(ExpeDF_004$EH_ID[!is.na(ExpeDF_004$weight)])
-
-ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% names(tab)[tab < 12],]
+ExpeDF_005$Mouse_strain <- factor(as.factor(ExpeDF_005$Strain),
+                                  levels = c("BUSNA_BUSNA","BUSNA_PWD","BUSNA_STRA","PWD_BUSNA",
+                                             "PWD_PWD","PWD_SCHUNT","SCHUNT_PWD","SCHUNT_SCHUNT",
+                                             "SCHUNT_STRA","STRA_BUSNA","STRA_SCHUNT","STRA_STRA"),
+                                  labels = c("M.m.musculus P", "M.m.musculus F1",
+                                             "Hybrid", "M.m.musculus F1",
+                                             "M.m.musculus P","Hybrid",
+                                             "Hybrid", "M.m.domesticus P",
+                                             "M.m.domesticus F1","Hybrid",
+                                             "M.m.domesticus F1","M.m.domesticus P"))

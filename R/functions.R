@@ -112,7 +112,8 @@ plotWeightAlongInf <- function(ExpeDF, ylim = c(85, 115)){
     facet_grid(Mouse_strain ~ Eimeria_species, scales = "free_y", space = "free") +
     scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
     scale_y_continuous(name = "Weight relative to infection (%)") +
-    coord_cartesian(ylim = ylim)
+    coord_cartesian(ylim = ylim) +
+    theme(strip.text.y = element_text(size = 15))
 }
 
 # Mean + 95%CI
