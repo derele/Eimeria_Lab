@@ -213,6 +213,7 @@ design <- rbind(read.csv("../data/2_designTables/Inf1a_Exp005.DESIGN.csv", na.st
 names(design)[names(design) == "EH_id"] <- "EH_ID"
 # Correct space error
 design$EH_ID <- gsub(" ", "", design$EH_ID)
+design$HybridStatus <- gsub(" ", "", design$HybridStatus)
 
 ExpeDF_005 <- merge(oo, we, all = T)
 ExpeDF_005 <- merge(ExpeDF_005, design, by = "EH_ID", all = T)
@@ -226,6 +227,9 @@ ExpeDF_005 <- ExpeDF_005[-which(is.na(ExpeDF_005$infection_isolate)),]
 # Correct error non numeric
 ExpeDF_005$weight <- as.numeric(as.character(ExpeDF_005$weight))
 ExpeDF_005$weight_dpi0 <- as.numeric(as.character(ExpeDF_005$weight_dpi0))
+
+# Correct weight loss
+ExpeDF_005$weightloss <- ExpeDF_005$weight_dpi0 - ExpeDF_005$weight
 
 # Calculate weight Normalized to dpi0
 ExpeDF_005$weightNormalized <- ExpeDF_005$weight / ExpeDF_005$weight_dpi0 * 100
@@ -246,3 +250,54 @@ ExpeDF_005$Mouse_strain <- factor(as.factor(ExpeDF_005$Strain),
                                              "Hybrid", "M.m.domesticus P",
                                              "M.m.domesticus F1","Hybrid",
                                              "M.m.domesticus F1","M.m.domesticus P"))
+
+# Age at infection
+ExpeDF_005$ageAtInfection[ExpeDF_005$Batch == 1] <- ExpeDF_005$ageAtdpi0expe1a
+ExpeDF_005$ageAtInfection[ExpeDF_005$Batch == 2] <- ExpeDF_005$ageAtdpi0expe1a +2
+
+########## Exclude potential covariates ########
+dfcov <- ExpeDF_005[ExpeDF_005$dpi == 0,]
+
+# age
+ggplot(dfcov, aes(y = ageAtInfection, x = HybridStatus)) +
+  geom_boxplot(col = "grey") +
+  geom_point(position=position_dodge(width=0.5), 
+             aes(group=EH_ID, col = HybridStatus), 
+             size = 3) + mytheme
+
+# original weight
+ggplot(dfcov, aes(y = weight_dpi0, x = HybridStatus)) +
+  geom_boxplot(col = "grey") +
+  geom_point(position=position_dodge(width=0.5), 
+             aes(group=EH_ID, col = HybridStatus), 
+             size = 3) + mytheme
+
+########## Plot weight ########
+ExpeDF_005$OPG_plot[is.na(ExpeDF_005$OPG)] = "na"
+ExpeDF_005$OPG_plot[!is.na(ExpeDF_005$OPG) & ExpeDF_005$OPG > 0] = "positive"
+ExpeDF_005$OPG_plot[!is.na(ExpeDF_005$OPG) & ExpeDF_005$OPG == 0] = "negative"
+ExpeDF_005$OPG_plot = as.factor(ExpeDF_005$OPG_plot)
+  
+# Enter Eimeria species
+ExpeDF_005$Eimeria_species[ExpeDF_005$infection_isolate %in% c("E88", "Eflab", "EfLab")] = "E.falciformis"
+ExpeDF_005$Eimeria_species[ExpeDF_005$infection_isolate %in% c("E64", "EI64", "E139")] = "E.ferrisi"
+  
+mysum005 <- summarySE(ExpeDF_005[!is.na(ExpeDF_005$weightloss),], measurevar="weightloss", 
+                      groupvars=c("Eimeria_species", "HybridStatus","dpi"))
+
+pd <- position_dodge(0.2) # move them .05 to the left and right
+
+plot005we <- ggplot(mysum005, aes(x=dpi, y=-weightloss, colour=HybridStatus)) + 
+  geom_errorbar(aes(ymin=-weightloss-ci, ymax=-weightloss+ci), 
+                width=1, position=pd) +
+  geom_line(position=pd, size = 2) +
+  geom_point(position=pd) +
+  mytheme +
+  facet_grid(. ~ Eimeria_species) +
+  theme(strip.text.y = element_text(size = 15))
+
+########## Stats weight ########
+library(lme4)
+myfit <- lmer(weight ~ HybridStatus * dpi + 
+                (1+dpi|EH_ID), ExpeDF_005[ExpeDF_005$infection_isolate =="E88",])
+#https://stats.stackexchange.com/questions/58745/using-lmer-for-repeated-measures-linear-mixed-effect-model

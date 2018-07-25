@@ -124,8 +124,8 @@ plotWeightAlongInfSUM(ExpeDF_004, ylim = c(85, 120))
 
 ## 1. Weight loss
 
-```{r weightalong5, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong4} Weight along the infection experiment"}
-plotWeightAlongInf(ExpeDF_005, ylim = c(75, 120))
+```{r weightalong5, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong4} Weight loss the infection experiment (mean +95% CI"}
+plot005we
 ```
 
 ```{r weightalongsum5, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum4} Weight along the infection experiment, mean and 95% CI"}
