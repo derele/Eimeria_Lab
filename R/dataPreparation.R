@@ -215,14 +215,14 @@ names(design)[names(design) == "EH_id"] <- "EH_ID"
 design$EH_ID <- gsub(" ", "", design$EH_ID)
 design$HybridStatus <- gsub(" ", "", design$HybridStatus)
 
-ExpeDF_005 <- merge(oo, we, all = T)
-ExpeDF_005 <- merge(ExpeDF_005, design, by = "EH_ID", all = T)
+ExpeDF_005 <- merge(oo, we, by = c("labels", "Expe"))
+
+ExpeDF_005 <- merge(ExpeDF_005, design, by = "EH_ID", all.x = T)
+
 ## Correct error space
 ExpeDF_005$Strain <- gsub(" ", "", ExpeDF_005$Strain)
 
 ExpeDF_005$infection_isolate <- ExpeDF_005$Eimeria
-# remove uninfected mice 
-ExpeDF_005 <- ExpeDF_005[-which(is.na(ExpeDF_005$infection_isolate)),]
 
 # Correct error non numeric
 ExpeDF_005$weight <- as.numeric(as.character(ExpeDF_005$weight))
@@ -282,12 +282,21 @@ ExpeDF_005$OPG_plot = as.factor(ExpeDF_005$OPG_plot)
 ExpeDF_005$Eimeria_species[ExpeDF_005$infection_isolate %in% c("E88", "Eflab", "EfLab")] = "E.falciformis"
 ExpeDF_005$Eimeria_species[ExpeDF_005$infection_isolate %in% c("E64", "EI64", "E139")] = "E.ferrisi"
   
+ExpeDF_005[is.na(ExpeDF_005$Eimeria_species),]
+
+ggplot(ExpeDF_005, aes(x=dpi, y=weight, colour=HybridStatus)) + 
+  geom_line(aes(group=EH_ID)) +
+  geom_point(aes(pch = Expe), size = 5) +
+  mytheme +
+  facet_grid(. ~ Eimeria_species) +
+  theme(strip.text.y = element_text(size = 15))
+
 mysum005 <- summarySE(ExpeDF_005[!is.na(ExpeDF_005$weightloss),], measurevar="weightloss", 
                       groupvars=c("Eimeria_species", "HybridStatus","dpi"))
 
 pd <- position_dodge(0.2) # move them .05 to the left and right
 
-plot005we <- ggplot(mysum005, aes(x=dpi, y=-weightloss, colour=HybridStatus)) + 
+plot005we <- ggplot(mysum005, aes(x = dpi, y = -weightloss, colour=HybridStatus)) + 
   geom_errorbar(aes(ymin=-weightloss-ci, ymax=-weightloss+ci), 
                 width=1, position=pd) +
   geom_line(position=pd, size = 2) +
@@ -295,6 +304,11 @@ plot005we <- ggplot(mysum005, aes(x=dpi, y=-weightloss, colour=HybridStatus)) +
   mytheme +
   facet_grid(. ~ Eimeria_species) +
   theme(strip.text.y = element_text(size = 15))
+
+plot005we
+
+## And if we take the same starting weight?
+mysum005
 
 ########## Stats weight ########
 library(lme4)
