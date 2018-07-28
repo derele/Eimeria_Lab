@@ -252,8 +252,8 @@ ExpeDF_005$Mouse_strain <- factor(as.factor(ExpeDF_005$Strain),
                                              "M.m.domesticus F1","M.m.domesticus P"))
 
 # Age at infection
-ExpeDF_005$ageAtInfection[ExpeDF_005$Batch == 1] <- ExpeDF_005$ageAtdpi0expe1a
-ExpeDF_005$ageAtInfection[ExpeDF_005$Batch == 2] <- ExpeDF_005$ageAtdpi0expe1a +2
+ExpeDF_005$ageAtInfection[ExpeDF_005$Batch == 1] <- round(ExpeDF_005$ageAtdpi0expe1a)
+ExpeDF_005$ageAtInfection[ExpeDF_005$Batch == 2] <- round(ExpeDF_005$ageAtdpi0expe1a +2)
 
 ########## Exclude potential covariates ########
 dfcov <- ExpeDF_005[ExpeDF_005$dpi == 0,]
@@ -310,8 +310,25 @@ plot005we
 ## And if we take the same starting weight?
 mysum005
 
+ExpeDF_005$HybridStatus <- as.factor(ExpeDF_005$HybridStatus)
+
 ########## Stats weight ########
 library(lme4)
-myfit <- lmer(weight ~ HybridStatus * dpi + 
-                (1+dpi|EH_ID), ExpeDF_005[ExpeDF_005$infection_isolate =="E88",])
-#https://stats.stackexchange.com/questions/58745/using-lmer-for-repeated-measures-linear-mixed-effect-model
+library(lmerTest)
+# Add age and sex
+myfitE88 <- lmer(weight ~ HybridStatus * dpi + 
+                (1|EH_ID) + (1|ageAtInfection) + (1|Sex), ExpeDF_005[ExpeDF_005$infection_isolate =="E88",])
+anova(myfitE88)
+
+# Plot
+library(effects)
+plot(Effect(c("dpi", "HybridStatus"),myfitE88))
+
+
+myfitE64 <- lmer(weight ~ HybridStatus * dpi + 
+                (1|EH_ID) + (1|ageAtInfection) + (1|Sex), ExpeDF_005[ExpeDF_005$infection_isolate =="E64",])
+anova(myfitE64)
+
+# Plot
+library(effects)
+plot(Effect(c("dpi", "HybridStatus"),myfitE64))
