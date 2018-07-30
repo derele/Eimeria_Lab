@@ -324,11 +324,22 @@ anova(myfitE88)
 library(effects)
 plot(Effect(c("dpi", "HybridStatus"),myfitE88))
 
+# 
+# myfitE64 <- glmer(weight ~ HybridStatus * dpi + 
+#                 (1|EH_ID) + (1|ageAtInfection) + (1|Sex) + (1|dpi), 
+#                 family = poisson, 
+#                 data = ExpeDF_005[ExpeDF_005$infection_isolate =="E64",])
 
-myfitE64 <- lmer(weight ~ HybridStatus * dpi + 
-                (1|EH_ID) + (1|ageAtInfection) + (1|Sex), ExpeDF_005[ExpeDF_005$infection_isolate =="E64",])
+myfitE64 <- glmer(weight ~ HybridStatus * dpi + 
+                    (1|EH_ID), 
+                  family = poisson, 
+                  data = ExpeDF_005[ExpeDF_005$infection_isolate =="E64",])
 anova(myfitE64)
 
 # Plot
 library(effects)
 plot(Effect(c("dpi", "HybridStatus"),myfitE64))
+
+
+#http://lme4.r-forge.r-project.org/slides/2011-01-11-Madison/6NLMMH.pdf
+# https://uknowledge.uky.edu/cgi/viewcontent.cgi?article=1006&context=epb_etds
