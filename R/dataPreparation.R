@@ -342,4 +342,167 @@ plot(Effect(c("dpi", "HybridStatus"),myfitE64))
 
 
 #http://lme4.r-forge.r-project.org/slides/2011-01-11-Madison/6NLMMH.pdf
+
 # https://uknowledge.uky.edu/cgi/viewcontent.cgi?article=1006&context=epb_etds
+# Non linear mixed effect model!!!
+library(nlme)
+
+# Repeated measurements on a group of individuals: to account for within subject
+# as well as between subject variation simultaneously hierarchical modeling approach is necessary 
+# To estimate biologically meaningful parameters in a longitudinal design, mixed-effects model =
+# within and between subjects variation
+
+Ex005Grouped_ferrisi <- groupedData(weight ~ dpi|EH_ID, 
+                                    ExpeDF_005[ExpeDF_005$Eimeria_species == "E.ferrisi",])
+
+plot(Ex005Grouped_ferrisi)
+
+# Model fitting for the normal-errors NLMM was accomplished with the ‘nlme’
+# package in R (R core team 2012). Initial parameter estimates for ‘nlme’ were set to their
+# true values from the data generating model.
+
+# "All models were fit using R version 2.15 interfaced with JAGS through the
+# R2JAGS package (R core team 2012, Plummer 2003)"
+
+# https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/JAGS-4.3.0.tar.gz/download
+
+
+
+# sudo apt-get install jags 
+# sudo aptitude update
+# sudo aptitude upgrade
+install.packages("rjags") 
+
+install.packages("rjags",
+                 configure.args="--with-jags-modules=/usr/local/JAGS/modules")
+
+install.packages("R2jags") 
+
+# Observed subject-specific core body temperature profiles for eight stallions
+# experimentally challenged with the KY-84 strain of EAV 
+
+# Estimated subject-specific febrile response functions
+
+# Composite residual plot
+
+myModel <- function() {
+  
+  for (i in 1:n) {
+    
+    Response[i] ~ dnorm(f[i], pow(s.e,-2))
+    
+    f[i] <- step(
+      p[Subject[i]]-DPI[i])*
+      (B[Subject[i]]+I[Subject[i]]*exp(-pow(DPI[i]-p[Subject[i]],2)/(2*pow(l[Subject[i]],2)))) +
+      step(DPI[i]-p[Subject[i]])*(B[Subject[i]]+I[Subject[i]]*exp(-pow(DPI[i]-p[Subject[i]],2)/(2*pow(r[Subject[i]],2))))
+    res[i] <- Response[i] - f[i]
+  } 
+  
+  
+  #example
+  
+  N <- 1000
+  x <- rnorm(N, 0, 5)
+  
+  write.table(x,
+              file = 'example1.data',
+              row.names = FALSE,
+              col.names = FALSE)
+# In every model specification file, you have to start out by telling JAGS that you’re specifying a model.
+ # Then we , which are meant to be constant across the loop. We tell JAGS that mu is distributed normally with mean 0 and standard deviation 100. This is meant to serve as a non-informative prior, since our data set was designed to have all measurements substantially below 100. Then we specify tau in a slightly round-about way. We say that tau is a deterministic function (hence the deterministic <- instead of the distributional ~) of sigma, after raising sigma to the -2 power. Then we say that sigma has a uniform prior over the interval [0,100].
+
+  model {
+    for (i in 1:N) { # set up the model for every single data point using a for loop
+      x[i] ~ dnorm(mu, tau) # response x[i] is distributed normally with mean mu and precision (reciprocal of the variance) tau
+    }
+    # specify our priors for mu and tau, constant across the loop
+    # mu is distributed normally with mean 0 and standard deviation 100. non-informative prior, since our data set was designed to have all measurements substantially below 100
+    mu ~ dnorm(0, .0001) 
+    # tau is a deterministic function (= non random response) of sigma, after raising sigma to the -2 power
+    tau <- pow(sigma, -2) 
+    #  Then we say that sigma has a uniform prior over the interval [0,100].
+    sigma ~ dunif(0, 100)
+  }
+  
+  
+  
+  myModel <- function() {
+    
+    for (i in 1:n) {
+      Response[i] ~ dnorm(f[i], pow(s.e,-2))
+      f[i] <- step(p[Subject[i]]-DPI[i])*(B[Subject[i]]+I[Subject[i]]*exp(-
+                                                                            pow(DPI[i]-p[Subject[i]],2)/(2*pow(l[Subject[i]],2)))) +
+        step(DPI[i]-p[Subject[i]])*(B[Subject[i]]+I[Subject[i]]*exp(-
+                                                                      pow(DPI[i]-p[Subject[i]],2)/(2*pow(r[Subject[i]],2))))
+      res[i] <- Response[i] - f[i]
+    }
+    
+    # Hyperparameters for mean, standard deviation, baseline and intensity
+    for (j in 1:8) {
+      B[j] ~ dnorm(m.B,pow(s.B,-2))
+      I[j] ~ dnorm(m.I,pow(s.I,-2))
+      p[j] ~ dnorm(m.p,pow(s.p,-2))
+      l[j] ~ dlnorm(m.log_l,pow(s.log_l,-2))
+      r[j] ~ dlnorm(m.log_r,pow(s.log_r,-2))
+    }
+    
+    # Hyperpriors
+    m.B ~ dunif(0,5)
+    m.I ~ dunif(-10,0)
+    m.p ~ dunif(0,42)
+    m.log_l ~ dunif(0,5)
+    m.log_r ~ dunif(0,5)
+    
+    s.e ~ dunif(0,100)
+    s.B ~ dunif(0,6)
+    s.I ~ dunif(0,6)
+    s.p ~ dunif(0,22)
+    s.log_l ~ dunif(0,2)
+    s.log_r ~ dunif(0,2)
+    
+    # FWHM
+    HWHM.o <- 2.355*0.5*exp(m.log_l)
+    HWHM.r <- 2.355*0.5*exp(m.log_r)
+    FWHM <- HWHM.l + HWHM.r
+  } 
+  
+  pow(3, -2)
+  
+  
+  
+  
+  # modeling single-peaked, longitudinal EI data that incorporates recent developments in
+  # nonlinear hierarchical models and Bayesian statistics.
+  
+  # Model a post-challenge incubation, then an onset phase, then recovery (return to basal state) = pattern of
+  # single-peaked response
+  
+  # WEIGHT: nonlinear mixed model (NLMM) for a symmetric infection response variable. We
+  # employ a standard NLMM assuming normally distributed errors and a Gaussian mean
+  # response function. The parameters of the model correspond directly to biologically
+  # meaningful properties of the infection response, including baseline, peak intensity, time
+  # to peak and spread. 
+   
+  # OOCYST LOAD: For several reasons, a normal-errors model is not appropriate for viral load. We propose and
+  # illustrate a Bayesian NLHM with the individual responses at each time point modeled as
+  # a Poisson random variable with the means across time points related through a Tricube
+  # mean response function. 
+  
+  # WEIGHT
+  We modeled the weight responses using the
+  NLHM in (2.1)-(2.7) with 𝑔 ∈ {1,2}
+  
+  
+  # We model the individual response profiles with the modified Gaussian function (1.6).
+  # Level 1 (model of intra-individual variability)
+  # 𝑦𝑖𝑗~𝑁(𝜇 , 𝜎2) (2.1)
+  # 𝜇𝑖𝑗 = 𝐵𝑖 + 𝐼𝑖𝑒𝑥𝑝   2𝑠𝑖
+  # )
+  # 2
+  # ] (2.2)
+  # Bi: baseline response level for individual 𝑖
+  # Pi: time to peak response
+  # Ii:peak response intensity𝑖
+  # si: can be interpreted as a measure of
+  # response duration.
+  # 
