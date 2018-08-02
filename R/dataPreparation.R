@@ -366,18 +366,12 @@ plot(Ex005Grouped_ferrisi)
 
 # https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/JAGS-4.3.0.tar.gz/download
 
+# sudo aptitude install r-cran-rjags
 
-
-# sudo apt-get install jags 
-# sudo aptitude update
-# sudo aptitude upgrade
-install.packages("rjags") 
-
-install.packages("rjags",
-                 configure.args="--with-jags-modules=/usr/local/JAGS/modules")
-
-install.packages("R2jags") 
-
+library(rjags)
+# install.packages("R2jags") 
+library(R2jags)
+R2jags::
 # Observed subject-specific core body temperature profiles for eight stallions
 # experimentally challenged with the KY-84 strain of EAV 
 
@@ -385,32 +379,34 @@ install.packages("R2jags")
 
 # Composite residual plot
 
-myModel <- function() {
-  
-  for (i in 1:n) {
-    
-    Response[i] ~ dnorm(f[i], pow(s.e,-2))
-    
-    f[i] <- step(
-      p[Subject[i]]-DPI[i])*
-      (B[Subject[i]]+I[Subject[i]]*exp(-pow(DPI[i]-p[Subject[i]],2)/(2*pow(l[Subject[i]],2)))) +
-      step(DPI[i]-p[Subject[i]])*(B[Subject[i]]+I[Subject[i]]*exp(-pow(DPI[i]-p[Subject[i]],2)/(2*pow(r[Subject[i]],2))))
-    res[i] <- Response[i] - f[i]
-  } 
-  
+# myModel <- function() {
+#   
+#   for (i in 1:n) {
+#     
+#     Response[i] ~ dnorm(f[i], pow(s.e,-2))
+#     
+#     f[i] <- step(
+#       p[Subject[i]]-DPI[i])*
+#       (B[Subject[i]]+I[Subject[i]]*exp(-pow(DPI[i]-p[Subject[i]],2)/(2*pow(l[Subject[i]],2)))) +
+#       step(DPI[i]-p[Subject[i]])*(B[Subject[i]]+I[Subject[i]]*exp(-pow(DPI[i]-p[Subject[i]],2)/(2*pow(r[Subject[i]],2))))
+#     res[i] <- Response[i] - f[i]
+#   } 
+#   
   
   #example
   
   N <- 1000
   x <- rnorm(N, 0, 5)
   
-  write.table(x,
-              file = 'example1.data',
-              row.names = FALSE,
-              col.names = FALSE)
-# In every model specification file, you have to start out by telling JAGS that you’re specifying a model.
+#   write.table(x,
+#               file = 'example1.data',
+#               row.names = FALSE,
+#               col.names = FALSE)
+# # In every model specification file, you have to start out by telling JAGS that you’re specifying a model.
  # Then we , which are meant to be constant across the loop. We tell JAGS that mu is distributed normally with mean 0 and standard deviation 100. This is meant to serve as a non-informative prior, since our data set was designed to have all measurements substantially below 100. Then we specify tau in a slightly round-about way. We say that tau is a deterministic function (hence the deterministic <- instead of the distributional ~) of sigma, after raising sigma to the -2 power. Then we say that sigma has a uniform prior over the interval [0,100].
 
+  # http://www.johnmyleswhite.com/notebook/2010/08/20/using-jags-in-r-with-the-rjags-package/
+  
   model {
     for (i in 1:N) { # set up the model for every single data point using a for loop
       x[i] ~ dnorm(mu, tau) # response x[i] is distributed normally with mean mu and precision (reciprocal of the variance) tau
