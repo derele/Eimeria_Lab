@@ -501,4 +501,68 @@ R2jags::
   # Ii:peak response intensity𝑖
   # si: can be interpreted as a measure of
   # response duration.
+  
+  
+  # ###############################
+  # # Input data recent:
+  # ExpeDF <- ExpeDF_005
+  # ###############################
+  # 
+  # ##### my theme #####
+  # theme_alice <- theme_bw() +
+  #   theme(plot.title = element_text(size = 20, face = "bold"),
+  #         plot.subtitle = element_text(size = 20),
+  #         legend.text = element_text(size=20),
+  #         legend.title = element_blank(),
+  #         text = element_text(size = 20))
+  # ##### end my theme #####
+  # 
+  # # Violin plots of the total sum of oocysts collected during 11 days: 
+  # sum.oocysts <- do.call("rbind", by(ExpeDF, ExpeDF$EH_ID, function (x){
+  #   x$sum.oo <- sum(x$OPG, na.rm=TRUE)
+  #   x
+  # }))
+  # 
+  # ggplot(unique(sum.oocysts[c("sum.oo", "Mouse_strain", "infection_isolate")]), 
+  #        aes(Mouse_strain, sum.oo)) +
+  #   ggtitle("Sum of oocysts shed during the experiment") + 
+  #   geom_boxplot(color = "black")+
+  #   facet_wrap(~infection_isolate) +
+  #   geom_jitter(width=0.1, size=7, alpha = 0.5, pch = 21, aes(fill = Mouse_strain)) +
+  #   # scale_fill_manual(values = c("blue", "purple", "red")) +
+  #   labs(y = "Total number of oocyst shed", x = "Mouse strain") +
+  #   scale_y_continuous(labels = scientific) +
+  #   theme_alice +
+  #   theme(legend.position="none")
+  # 
+  # summary(lm(sum.oo~Mouse_strain, 
+  #            data = sum.oocysts[sum.oocysts$infection_isolate == "EI64",]))
+  # 
+  # # maximum weight lost before death
+  # ExpeDF$weightRelativeToInfection <- NA
+  # ExpeDF$weightRelativeToInfection <- ExpeDF$weightloss / ExpeDF$weight_dpi0
+  # 
+  # max.loss <- do.call("rbind", by(ExpeDF, ExpeDF$EH_ID, function (x){
+  #   m.loss <- which(x$weightRelativeToInfection==min(x$weightRelativeToInfection, na.rm=TRUE))
+  #   x[m.loss,]
+  # }))
+  # 
+  # tapply(max.loss$weightRelativeToInfection, 
+  #        max.loss$infection_isolate:max.loss$Mouse_strain, mean)
+  # 
+  # ggplot(max.loss, aes(Mouse_strain,100-weightRelativeToInfection, color=infection_isolate)) +
+  #   geom_boxplot(color = "black")+
+  #   ggtitle("Maximum weigth loss during the experiment") + 
+  #   facet_wrap(~infection_isolate) +
+  #   geom_jitter(width=0.1, size=7, pch = 21,
+  #               color = "black", aes(fill = Mouse_strain), alpha = 0.8) +
+  #   labs(y= "Maximum weigth loss relative to weight at infection",
+  #        x= "Mouse strain")+
+  #   # scale_fill_manual(values = c("blue", "purple", "red")) +
+  #   theme_alice +
+  #   theme(legend.position="none")
+  # 
+  # summary(glm(weightRelativeToInfection~Mouse_strain, 
+  #             data = max.loss[max.loss$infection_isolate == "E64",]))
+  # 
   # 
