@@ -6,19 +6,7 @@ library(tidyr)
 library(plyr)
 
 ####### Part 1 : functions used for data preparation ####### 
-calculateWeightLoss <- function(x, infectionDay = 0){
-  # define weight at infection
-  A = x[x$dpi == infectionDay, c("weight", "EH_ID")]
-  names(A)[1] = "weightAtInfection"
-  x = merge(x, A)
-  # Cumulative sum of our weight loss
-  x = x %>% 
-    group_by(EH_ID) %>% 
-    dplyr::arrange(dpi, .by_group = TRUE) %>%
-    dplyr::mutate(weightNormalized = weight / weightAtInfection * 100)
-  x = data.frame(x)
-  return(x)
-}
+
 
 calculateOPG <- function(ExpeDF){
   ExpeDF$mean_Neubauer <- 
@@ -93,53 +81,7 @@ getAgeAtInfection <- function(mytab = read.csv("../data/1_informationTables/Exp0
 ####### Part 2: functions used for data analysis, plot, stats, etc. ####### 
 
 ## Weight evolution along the infection
-plotWeightAlongInf <- function(ExpeDF, ylim = c(85, 115)){
-  # Code by OPG
-  ExpeDF$OPG_plot[is.na(ExpeDF$OPG)] = "na"
-  ExpeDF$OPG_plot[!is.na(ExpeDF$OPG) & ExpeDF$OPG > 0] = "positive"
-  ExpeDF$OPG_plot[!is.na(ExpeDF$OPG) & ExpeDF$OPG == 0] = "negative"
-  ExpeDF$OPG_plot = as.factor(ExpeDF$OPG_plot)
-
-  # Enter Eimeria species
-  ExpeDF$Eimeria_species[ExpeDF$infection_isolate %in% c("E88", "Eflab", "EfLab")] = "E.falciformis"
-  ExpeDF$Eimeria_species[ExpeDF$infection_isolate %in% c("E64", "EI64", "E139")] = "E.ferrisi"
-  
-  ggplot(ExpeDF, aes(x = dpi, y = weightNormalized, fill = OPG_plot)) +
-    geom_line(aes(group = EH_ID, col = infection_isolate), size = 2, alpha = 0.5) +
-    geom_point(size=4, pch = 21, color = "black")+
-    scale_fill_manual(values = c("lightgrey", "black", "red")) +
-    mytheme +
-    facet_grid(Mouse_strain ~ Eimeria_species, scales = "free_y", space = "free") +
-    scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-    scale_y_continuous(name = "Weight relative to infection (%)") +
-    coord_cartesian(ylim = ylim) +
-    theme(strip.text.y = element_text(size = 15))
-}
-
 # Mean + 95%CI
-plotWeightAlongInfSUM <- function(ExpeDF, ylim = c(85, 115)){
- 
-  # Enter Eimeria species
-  ExpeDF$Eimeria_species[ExpeDF$infection_isolate %in% c("E88", "Eflab", "EfLab")] = "E.falciformis"
-  ExpeDF$Eimeria_species[ExpeDF$infection_isolate %in% c("E64", "EI64", "E139")] = "E.ferrisi"
-  
-  summaryWeight <- summarySE(ExpeDF, measurevar = "weightNormalized",
-                             groupvars=c("Mouse_strain", "Mouse_subspecies", "Eimeria_species",
-                                         "infection_isolate", "dpi"))
-  summaryWeight$ci[is.na(summaryWeight$ci)] <- 0
-  
-  ggplot(summaryWeight, aes(x = dpi, y = weightNormalized, fill = infection_isolate))+
-    geom_errorbar(aes(ymin = weightNormalized - ci,
-                      ymax = weightNormalized + ci,
-                      col = infection_isolate)) +
-    geom_line(aes(group = infection_isolate, col = infection_isolate), size = 2, alpha = 0.5) +
-    geom_point(aes(fill = infection_isolate), size=4, pch = 21, color = "black") +
-    # scale_fill_manual(values = c("lightgrey", "black", "red")) +
-    mytheme +
-    facet_grid(Mouse_strain ~ Eimeria_species, scales = "free_y", space = "free") +
-    scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-    scale_y_continuous(name = "Weight relative to infection (%)") +
-    coord_cartesian(ylim = ylim)
 }
 
 ## OPG evolution along the infection

@@ -19,118 +19,237 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-source("../R/dataPreparation.R")
+# source("../R/dataPreparation.R")
 source("../R/functions.R")
+library(ggplot2)
+library(gridExtra)
+library(reshape2)
+library(scales)
+mytheme <- theme_bw()+
+  theme(plot.title = element_text(size=22), plot.subtitle = element_text(size = 20),
+        legend.text = element_text(size = 20),
+        axis.text=element_text(size=20),
+        axis.title=element_text(size=20,face="bold"),
+        legend.key = element_rect(size = 5),
+        legend.key.size = unit(1.5, 'lines'),
+        strip.text = element_text(size=25))
+
+calculateWeightLoss <- function(x, startingDay = 0){
+  # define weight at infection
+  A = x[x$dpi == startingDay, c("weight", "EH_ID")]
+  names(A)[1] = "startingWeight"
+  x = merge(x, A)
+  # Cumulative sum of our weight loss
+  x = x %>% 
+    group_by(EH_ID) %>% 
+    dplyr::arrange(dpi, .by_group = TRUE) %>%
+    dplyr::mutate(relativeWeight = weight / startingWeight * 100)
+  x = data.frame(x)
+  return(x)
+}
 ```
 
 # Expe_001, March 2017, Francisca's experiment. infection with E64 and Eflab
 
-## 1. Weight loss
-```{r weightalong, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong} Weight along the infection experiment"}
-plotWeightAlongInf(ExpeDF_001, ylim = c(80, 110))
+```{r setupExpe1, echo=FALSE}
+# ExpeDF need at least the following:
+# "OPG", "EH_ID", "dpi", "weight", "EH_ID", "infection_isolate", "Mouse_strain"
+ExpeDF_001 <- read.csv("../data/3_recordingTables/Exp001_May2017_crossing_infection.csv")
+
+# Add mice subspecies info
+ExpeDF_001$Mouse_subspecies <- "F1 hybrids"
+ExpeDF_001$Mouse_subspecies[ExpeDF_001$Mouse_strain == "PWD"] <- "M.m.musculus"
+ExpeDF_001$Mouse_subspecies[ExpeDF_001$Mouse_strain == "WSB"] <- "M.m.domesticus"
+ExpeDF_001$Mouse_subspecies <- factor(ExpeDF_001$Mouse_subspecies,
+                                      levels = c("M.m.domesticus", "F1 hybrids", "M.m.musculus"))
+
+# Mouse_strain: West should always be left
+ExpeDF_001$Mouse_strain <- factor(ExpeDF_001$Mouse_strain,
+                                  levels = c("WSB", "WP", "PWD"),
+                                  labels = c("M.m.domesticus \n(WSB)",
+                                             "F1 hybrids \n(WP)",
+                                             "M.m.musculus \n(PWD)"))
+
+# Enter Eimeria species
+ExpeDF_001$Eimeria_species[ExpeDF_001$infection_isolate %in% c("E88", "Eflab", "EfLab")] = "E.falciformis"
+ExpeDF_001$Eimeria_species[ExpeDF_001$infection_isolate %in% c("E64", "EI64", "E139")] = "E.ferrisi"
+
+# Keep only mice that survived 11 days
+survivors <- names(table(ExpeDF_001$EH_ID))[table(ExpeDF_001$EH_ID) %in% 12]
+ExpeDF_001 <- ExpeDF_001[ExpeDF_001$EH_ID %in% survivors,]
+
+# calculate relative weight loss compared to dpi0
+ExpeDF_001 <- calculateWeightLoss(ExpeDF_001, startingDay = 3)
+
+# calculate summary statistics on weight loss
+ summaryWeight <- summarySE(ExpeDF_001, measurevar = "relativeWeight",
+                             groupvars=c("Mouse_strain", "Mouse_subspecies", "Eimeria_species",
+                                         "infection_isolate", "dpi"))
+  summaryWeight$ci[is.na(summaryWeight$ci)] <- 0
+
+# Add OPG status
+ExpeDF_001$OPGstatus[is.na(ExpeDF_001$OPG)] = "na"
+ExpeDF_001$OPGstatus[!is.na(ExpeDF_001$OPG) & ExpeDF_001$OPG > 0] = "positive"
+ExpeDF_001$OPGstatus[!is.na(ExpeDF_001$OPG) & ExpeDF_001$OPG == 0] = "negative"
+ExpeDF_001$OPGstatus = as.factor(ExpeDF_001$OPGstatus)
 ```
-
-```{r weightalongsum, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum} Weight along the infection experiment, mean and 95% CI"}
-plotWeightAlongInfSUM(ExpeDF_001, ylim = c(80, 110))
-```
-
-## 2. Parasite shedding
-
-```{r OPGalong1, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalong1} Oocysts shedding along the infection experiment"}
-plotOPGAlongInf(ExpeDF_001)
-```
-
-```{r OPGalongsum1, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalongsum1} Oocysts shedding along the infection experiment, mean and 95% CI"}
-plotOPGAlongInfSUM(ExpeDF_001)
-```
-
-## 3. Comparison host/parasite proxy
-
-```{r plotComp1, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:plotComp1} Weight as a function of OPG"}
-plotCompOPGWeight(ExpeDF_001)
-```
-
-# Expe_002: March 2018, NMRI mice infected with 4 *Eimeria* strains (Eflab, E88, E139, E64)
-
-## 1. Weight loss
-```{r weightalong2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong2} Weight along the infection experiment"}
-plotWeightAlongInf(ExpeDF_002, ylim = c(88, 108))
-```
-
-```{r weightalongsum2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum2} Weight along the infection experiment, mean and 95% CI"}
-plotWeightAlongInfSUM(ExpeDF_002, ylim = c(88, 108))
-```
-
-## 2. Parasite shedding
-
-```{r OPGalong2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalong2} Oocysts shedding along the infection experiment"}
-plotOPGAlongInf(ExpeDF_002)
-```
-
-```{r OPGalongsum2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalongsum2} Oocysts shedding along the infection experiment, mean and 95% CI"}
-plotOPGAlongInfSUM(ExpeDF_002)
-```
-
-## 3. Comparison host/parasite proxy
-
-```{r plotComp2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:plotComp2} Weight as a function of OPG"}
-plotCompOPGWeight(ExpeDF_002)
-```
-
-# Expe_003, April-May 2018, first batch Parental strains (F0) BUSNA, STRA, SCHUNT, PWD, infection with Eferrisi (E64 and E139)
 
 ## 1. Weight loss
-
-```{r weightalong3, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong3} Weight along the infection experiment"}
-plotWeightAlongInf(ExpeDF_003, ylim = c(85, 120))
+```{r weightalong, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10}
+ggplot(ExpeDF_001, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
+  geom_rect(aes(xmin = 3, xmax = 8, ymin = 80, ymax = 110), fill = "lightgrey", alpha = .5) +
+  geom_line(aes(group = EH_ID, col = Mouse_strain), size = 2, alpha = 0.5) +
+  scale_color_manual(values = c("blue", "purple", "red")) +
+  geom_point(size=4, pch = 21, color = "black")+
+  scale_fill_manual(values = c("lightgrey", "yellow")) +
+  mytheme +
+  facet_grid(Mouse_strain ~ infection_isolate, scales = "free_y", space = "free") +
+  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
+  scale_y_continuous(name = "Weight relative to dpi3 (%)") +
+  coord_cartesian(ylim = c(80, 110)) +
+  theme(strip.text.y = element_text(size = 15)) +
+  theme(legend.position="none") +
+  ggtitle("Relative weight along experiment compared to dpi3", subtitle = "yellow : oocysts detected in feces")
 ```
 
-```{r weightalongsum3, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum3} Weight along the infection experiment, mean and 95% CI"}
-plotWeightAlongInfSUM(ExpeDF_003, ylim = c(85, 120))
+```{r weightalongsum, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10}
+ggplot(summaryWeight, aes(x = dpi, y = relativeWeight))+
+  geom_rect(aes(xmin = 3, xmax = 8, ymin = 85, ymax = 115), fill = "lightgrey", alpha = .5) +
+  geom_errorbar(aes(ymin = relativeWeight - ci, ymax = relativeWeight + ci)) +
+  geom_line(aes(group = Mouse_strain, col = Mouse_strain), size = 2, alpha = 0.5) +
+  geom_point(aes(fill = Mouse_strain), size=4, pch = 21, color = "black") +
+  scale_color_manual(values = c("blue", "purple", "red")) +
+  scale_fill_manual(values = c("blue", "purple", "red")) +
+  mytheme +
+  facet_grid(Mouse_strain ~ infection_isolate, scales = "free_y", space = "free") +
+  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
+  scale_y_continuous(name = "Weight relative to dpi3 (%)") +
+  coord_cartesian(ylim = c(85, 115)) +
+  theme(legend.position="none") +
+  ggtitle("Mean relative weight along experiment compared to dpi3")
 ```
 
-## 2. Parasite shedding
+For statistical analysis, we compare the maximum relative weight loss between the different groups. We limit our analysis to the period : dpi3 to dpi8 (symptomatic period for E64 strain).
 
-```{r OPGalong3, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalong3} Oocysts shedding along the infection experiment"}
-plotOPGAlongInf(ExpeDF_003)
+```{r stats1, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10}
+max.loss <- do.call("rbind", by(ExpeDF_001, ExpeDF_001$EH_ID, function (x){
+  m.loss <- which(x$relativeWeight==min(x$relativeWeight, na.rm=TRUE))
+  x[m.loss,]
+}))
+
+# tapply(max.loss$relativeWeight, max.loss$infection_isolate:max.loss$Mouse_strain, mean)
+ 
+ggplot(max.loss, aes(Mouse_strain,100-relativeWeight, color=infection_isolate)) +
+  geom_boxplot(color = "black")+
+  ggtitle("Maximum weigth loss during the symptomatic phase") +
+  facet_wrap(~infection_isolate) +
+  geom_jitter(width=0.1, size=7, pch = 21,
+              color = "black", aes(fill = Mouse_strain), alpha = 0.8) +
+  labs(y= "Maximum weigth loss relative to weight at dpi 3", x= "Mouse strain")+
+  scale_fill_manual(values = c("blue", "purple", "red")) +
+  mytheme +
+  theme(legend.position="none")
+
+summary(lm(relativeWeight~Mouse_strain, data = max.loss))
 ```
 
-```{r OPGalongsum3, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalongsum3} Oocysts shedding along the infection experiment, mean and 95% CI"}
-plotOPGAlongInfSUM(ExpeDF_003)
-```
+<!-- ## 2. Parasite shedding -->
 
-## 3. Comparison host/parasite proxy
+<!-- ```{r OPGalong1, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalong1} Oocysts shedding along the infection experiment"} -->
+<!-- plotOPGAlongInf(ExpeDF_001) -->
+<!-- ``` -->
 
-```{r plotComp3, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:plotComp3} Weight as a function of OPG"}
-plotCompOPGWeight(ExpeDF_003, ylim = c(90, 115))
-```
+<!-- ```{r OPGalongsum1, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalongsum1} Oocysts shedding along the infection experiment, mean and 95% CI"} -->
+<!-- plotOPGAlongInfSUM(ExpeDF_001) -->
+<!-- ``` -->
 
-# Expe_004, June 2018, second batch Parental strains (F0) BUSNA, STRA, SCHUNT, PWD, infection with Eferrisi (E64 and E139)
+<!-- ## 3. Comparison host/parasite proxy -->
 
-## 1. Weight loss
+<!-- ```{r plotComp1, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:plotComp1} Weight as a function of OPG"} -->
+<!-- plotCompOPGWeight(ExpeDF_001) -->
+<!-- ``` -->
 
-```{r weightalong4, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong4} Weight along the infection experiment"}
-plotWeightAlongInf(ExpeDF_004, ylim = c(90, 115))
-```
+<!-- # Expe_002: March 2018, NMRI mice infected with 4 *Eimeria* strains (Eflab, E88, E139, E64) -->
 
-```{r weightalongsum4, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum4} Weight along the infection experiment, mean and 95% CI"}
-plotWeightAlongInfSUM(ExpeDF_004, ylim = c(85, 120))
-```
+<!-- ## 1. Weight loss -->
+<!-- ```{r weightalong2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong2} Weight along the infection experiment"} -->
+<!-- plotWeightAlongInf(ExpeDF_002, ylim = c(88, 108)) -->
+<!-- ``` -->
 
-## 2. Parasite shedding
+<!-- ```{r weightalongsum2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum2} Weight along the infection experiment, mean and 95% CI"} -->
+<!-- plotWeightAlongInfSUM(ExpeDF_002, ylim = c(88, 108)) -->
+<!-- ``` -->
+
+<!-- ## 2. Parasite shedding -->
+
+<!-- ```{r OPGalong2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalong2} Oocysts shedding along the infection experiment"} -->
+<!-- plotOPGAlongInf(ExpeDF_002) -->
+<!-- ``` -->
+
+<!-- ```{r OPGalongsum2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalongsum2} Oocysts shedding along the infection experiment, mean and 95% CI"} -->
+<!-- plotOPGAlongInfSUM(ExpeDF_002) -->
+<!-- ``` -->
+
+<!-- ## 3. Comparison host/parasite proxy -->
+
+<!-- ```{r plotComp2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:plotComp2} Weight as a function of OPG"} -->
+<!-- plotCompOPGWeight(ExpeDF_002) -->
+<!-- ``` -->
+
+<!-- # Expe_003, April-May 2018, first batch Parental strains (F0) BUSNA, STRA, SCHUNT, PWD, infection with Eferrisi (E64 and E139) -->
+
+<!-- ## 1. Weight loss -->
+
+<!-- ```{r weightalong3, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong3} Weight along the infection experiment"} -->
+<!-- plotWeightAlongInf(ExpeDF_003, ylim = c(85, 120)) -->
+<!-- ``` -->
+
+<!-- ```{r weightalongsum3, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum3} Weight along the infection experiment, mean and 95% CI"} -->
+<!-- plotWeightAlongInfSUM(ExpeDF_003, ylim = c(85, 120)) -->
+<!-- ``` -->
+
+<!-- ## 2. Parasite shedding -->
+
+<!-- ```{r OPGalong3, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalong3} Oocysts shedding along the infection experiment"} -->
+<!-- plotOPGAlongInf(ExpeDF_003) -->
+<!-- ``` -->
+
+<!-- ```{r OPGalongsum3, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:OPGalongsum3} Oocysts shedding along the infection experiment, mean and 95% CI"} -->
+<!-- plotOPGAlongInfSUM(ExpeDF_003) -->
+<!-- ``` -->
+
+<!-- ## 3. Comparison host/parasite proxy -->
+
+<!-- ```{r plotComp3, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:plotComp3} Weight as a function of OPG"} -->
+<!-- plotCompOPGWeight(ExpeDF_003, ylim = c(90, 115)) -->
+<!-- ``` -->
+
+<!-- # Expe_004, June 2018, second batch Parental strains (F0) BUSNA, STRA, SCHUNT, PWD, infection with Eferrisi (E64 and E139) -->
+
+<!-- ## 1. Weight loss -->
+
+<!-- ```{r weightalong4, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong4} Weight along the infection experiment"} -->
+<!-- plotWeightAlongInf(ExpeDF_004, ylim = c(90, 115)) -->
+<!-- ``` -->
+
+<!-- ```{r weightalongsum4, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum4} Weight along the infection experiment, mean and 95% CI"} -->
+<!-- plotWeightAlongInfSUM(ExpeDF_004, ylim = c(85, 120)) -->
+<!-- ``` -->
+
+<!-- ## 2. Parasite shedding -->
 
 
-# Expe_005, July 2018, FULL experiment (parents, intra specific and inter species hybrids) BUSNA, STRA, SCHUNT, PWD, infection with Eferrisi (E64 and E139)
+<!-- # Expe_005, July 2018, FULL experiment (parents, intra specific and inter species hybrids) BUSNA, STRA, SCHUNT, PWD, infection with Eferrisi (E64 and E139) -->
 
-## 1. Weight loss
+<!-- ## 1. Weight loss -->
 
-```{r weightalong5, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong4} Weight loss the infection experiment (mean +95% CI"}
-plot005we
-```
+<!-- ```{r weightalong5, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalong4} Weight loss the infection experiment (mean +95% CI"} -->
+<!-- plot005we -->
+<!-- ``` -->
 
-```{r weightalongsum5, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum4} Weight along the infection experiment, mean and 95% CI"}
-# plotWeightAlongInfSUM(ExpeDF_005, ylim = c(85, 120))
-```
+<!-- ```{r weightalongsum5, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:weightalongsum4} Weight along the infection experiment, mean and 95% CI"} -->
+<!-- # plotWeightAlongInfSUM(ExpeDF_005, ylim = c(85, 120)) -->
+<!-- ``` -->
 
-## 2. Parasite shedding
+<!-- ## 2. Parasite shedding -->
 

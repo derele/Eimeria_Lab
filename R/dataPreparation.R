@@ -1,55 +1,4 @@
-## Data preparation
-source("functions.R")
 
-library(ggplot2)
-library(gridExtra)
-library(reshape2)
-library(scales)
-
-mytheme <- theme_bw()+
-  theme(plot.title = element_text(size=22), plot.subtitle = element_text(size = 20),
-        legend.text = element_text(size = 20),
-        axis.text=element_text(size=20),
-        axis.title=element_text(size=20,face="bold"),
-        legend.key = element_rect(size = 5),
-        legend.key.size = unit(1.5, 'lines'),
-        strip.text = element_text(size=25))
-
-# ExpeDF need at least the following: 
-# "OPG", "EH_ID", "dpi", "weight", "EH_id", "infection_isolate", "Mouse_strain"  
-
-########################### Exp001 : April 2017 PWD, WSD and hybrids infection 
-# by E.falciformis (Eflab) and E.ferrisi (E64)
-ExpeDF_001 <- read.csv("../data/3_recordingTables/Exp001_May2017_crossing_infection.csv")
-
-# Remove Eflab, mice suffered too much and had to be sacrificed earlier
-# ExpeDF_001 <- ExpeDF_001[ExpeDF_001$infection_isolate %in% "EI64",]
-# ExpeDF_001$infection_isolate <- droplevels(ExpeDF_001$infection_isolate)
-
-# Add transect info
-ExpeDF_001$transect <- "Commercial mice strains"
-
-# Add mice subspecies info
-ExpeDF_001$Mouse_subspecies <- "F1 hybrids"
-ExpeDF_001$Mouse_subspecies[ExpeDF_001$Mouse_strain == "PWD"] <- "M.m.musculus"
-ExpeDF_001$Mouse_subspecies[ExpeDF_001$Mouse_strain == "WSB"] <- "M.m.domesticus"
-
-ExpeDF_001$Mouse_subspecies <- factor(ExpeDF_001$Mouse_subspecies, 
-                                      levels = c("M.m.domesticus", "F1 hybrids", "M.m.musculus"))
-
-# Mouse_strain: West should always be left 
-ExpeDF_001$Mouse_strain <- factor(ExpeDF_001$Mouse_strain, 
-                                  levels = c("WSB", "WP", "PWD"),
-                                  labels = c("M.m.domesticus \n(WSB)", 
-                                             "F1 hybrids \n(WP)", 
-                                             "M.m.musculus \n(PWD)"))
-
-# Keep only mice that survived 11 days
-# survivors <- names(table(ExpeDF_001$EH_ID))[table(ExpeDF_001$EH_ID) %in% 12]
-# ExpeDF_001 <- ExpeDF_001[ExpeDF_001$EH_ID %in% survivors,]
-ExpeDF_001 <- calculateWeightLoss(ExpeDF_001, infectionDay = 1)
-
-ExpeDF_001$infection_isolate
 
 ########################### Pass001: Nov 2017, passaging 4 isolates (some missing data)
 # (Eflab, E88, E139, E64) in NMRI. 2 mice per cage. Only OPG recorded
@@ -111,8 +60,28 @@ ExpeDF_003$Mouse_strain <- factor(ExpeDF_003$Mouse_strain,
                                              "M.m.domesticus \n(SCHUNT)",
                                              "M.m.musculus \n(PWD)"))
 
+# first, plot the mean of weight along time to remove the variations during prepatent and post-infection period
+
+mysum003 <- summarySE(ExpeDF_003[!is.na(ExpeDF_003$weight),], measurevar="weight", 
+                      groupvars=c("infection_isolate", "Mouse_strain","dpi"))
+
+ggplot(mysum003, aes(dpi, weight)) +
+  geom_point() +
+  facet_grid(Mouse_strain~infection_isolate, scales = "free") +
+  geom_line() +
+  scale_x_continuous(breaks = 0:11)+
+  geom_vline(xintercept = 3) +
+  geom_vline(xintercept = 9) +
+  theme_bw() +
+  ggtitle("Expe003, weight along infection")
+
+# Stats 
+
+
+
+
 # Calculate weight loss
-ExpeDF_003 <- calculateWeightLoss(ExpeDF_003)
+ExpeDF_003 <- calculateWeightLoss(ExpeDF_003, infectionDay = 3)
 
 #Calculate OPG NOT DONE YET ;)
 names(ExpeDF_003)[names(ExpeDF_003) %in% paste0("oocyst_sq", 1:4)] <- paste0("Neubauer", 1:4)
@@ -120,7 +89,10 @@ names(ExpeDF_003)[names(ExpeDF_003) %in% "dilution"] <- "dilution_ml"
 
 ExpeDF_003 <- calculateOPG(ExpeDF_003)
 
-ExpeDF_003$infection_isolate
+
+
+
+
 
 ########################### Exp004 : May 2018 batch 2
 oo <- read.csv("../data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDoocysts.csv")
@@ -357,150 +329,6 @@ Ex005Grouped_ferrisi <- groupedData(weight ~ dpi|EH_ID,
 
 plot(Ex005Grouped_ferrisi)
 
-# Model fitting for the normal-errors NLMM was accomplished with the ‘nlme’
-# package in R (R core team 2012). Initial parameter estimates for ‘nlme’ were set to their
-# true values from the data generating model.
-
-# "All models were fit using R version 2.15 interfaced with JAGS through the
-# R2JAGS package (R core team 2012, Plummer 2003)"
-
-# https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/JAGS-4.3.0.tar.gz/download
-
-# sudo aptitude install r-cran-rjags
-
-library(rjags)
-# install.packages("R2jags") 
-library(R2jags)
-R2jags::
-# Observed subject-specific core body temperature profiles for eight stallions
-# experimentally challenged with the KY-84 strain of EAV 
-
-# Estimated subject-specific febrile response functions
-
-# Composite residual plot
-
-# myModel <- function() {
-#   
-#   for (i in 1:n) {
-#     
-#     Response[i] ~ dnorm(f[i], pow(s.e,-2))
-#     
-#     f[i] <- step(
-#       p[Subject[i]]-DPI[i])*
-#       (B[Subject[i]]+I[Subject[i]]*exp(-pow(DPI[i]-p[Subject[i]],2)/(2*pow(l[Subject[i]],2)))) +
-#       step(DPI[i]-p[Subject[i]])*(B[Subject[i]]+I[Subject[i]]*exp(-pow(DPI[i]-p[Subject[i]],2)/(2*pow(r[Subject[i]],2))))
-#     res[i] <- Response[i] - f[i]
-#   } 
-#   
-  
-  #example
-  
-  N <- 1000
-  x <- rnorm(N, 0, 5)
-  
-#   write.table(x,
-#               file = 'example1.data',
-#               row.names = FALSE,
-#               col.names = FALSE)
-# # In every model specification file, you have to start out by telling JAGS that you’re specifying a model.
- # Then we , which are meant to be constant across the loop. We tell JAGS that mu is distributed normally with mean 0 and standard deviation 100. This is meant to serve as a non-informative prior, since our data set was designed to have all measurements substantially below 100. Then we specify tau in a slightly round-about way. We say that tau is a deterministic function (hence the deterministic <- instead of the distributional ~) of sigma, after raising sigma to the -2 power. Then we say that sigma has a uniform prior over the interval [0,100].
-
-  # http://www.johnmyleswhite.com/notebook/2010/08/20/using-jags-in-r-with-the-rjags-package/
-  
-  model {
-    for (i in 1:N) { # set up the model for every single data point using a for loop
-      x[i] ~ dnorm(mu, tau) # response x[i] is distributed normally with mean mu and precision (reciprocal of the variance) tau
-    }
-    # specify our priors for mu and tau, constant across the loop
-    # mu is distributed normally with mean 0 and standard deviation 100. non-informative prior, since our data set was designed to have all measurements substantially below 100
-    mu ~ dnorm(0, .0001) 
-    # tau is a deterministic function (= non random response) of sigma, after raising sigma to the -2 power
-    tau <- pow(sigma, -2) 
-    #  Then we say that sigma has a uniform prior over the interval [0,100].
-    sigma ~ dunif(0, 100)
-  }
-  
-  
-  
-  myModel <- function() {
-    
-    for (i in 1:n) {
-      Response[i] ~ dnorm(f[i], pow(s.e,-2))
-      f[i] <- step(p[Subject[i]]-DPI[i])*(B[Subject[i]]+I[Subject[i]]*exp(-
-                                                                            pow(DPI[i]-p[Subject[i]],2)/(2*pow(l[Subject[i]],2)))) +
-        step(DPI[i]-p[Subject[i]])*(B[Subject[i]]+I[Subject[i]]*exp(-
-                                                                      pow(DPI[i]-p[Subject[i]],2)/(2*pow(r[Subject[i]],2))))
-      res[i] <- Response[i] - f[i]
-    }
-    
-    # Hyperparameters for mean, standard deviation, baseline and intensity
-    for (j in 1:8) {
-      B[j] ~ dnorm(m.B,pow(s.B,-2))
-      I[j] ~ dnorm(m.I,pow(s.I,-2))
-      p[j] ~ dnorm(m.p,pow(s.p,-2))
-      l[j] ~ dlnorm(m.log_l,pow(s.log_l,-2))
-      r[j] ~ dlnorm(m.log_r,pow(s.log_r,-2))
-    }
-    
-    # Hyperpriors
-    m.B ~ dunif(0,5)
-    m.I ~ dunif(-10,0)
-    m.p ~ dunif(0,42)
-    m.log_l ~ dunif(0,5)
-    m.log_r ~ dunif(0,5)
-    
-    s.e ~ dunif(0,100)
-    s.B ~ dunif(0,6)
-    s.I ~ dunif(0,6)
-    s.p ~ dunif(0,22)
-    s.log_l ~ dunif(0,2)
-    s.log_r ~ dunif(0,2)
-    
-    # FWHM
-    HWHM.o <- 2.355*0.5*exp(m.log_l)
-    HWHM.r <- 2.355*0.5*exp(m.log_r)
-    FWHM <- HWHM.l + HWHM.r
-  } 
-  
-  pow(3, -2)
-  
-  
-  
-  
-  # modeling single-peaked, longitudinal EI data that incorporates recent developments in
-  # nonlinear hierarchical models and Bayesian statistics.
-  
-  # Model a post-challenge incubation, then an onset phase, then recovery (return to basal state) = pattern of
-  # single-peaked response
-  
-  # WEIGHT: nonlinear mixed model (NLMM) for a symmetric infection response variable. We
-  # employ a standard NLMM assuming normally distributed errors and a Gaussian mean
-  # response function. The parameters of the model correspond directly to biologically
-  # meaningful properties of the infection response, including baseline, peak intensity, time
-  # to peak and spread. 
-   
-  # OOCYST LOAD: For several reasons, a normal-errors model is not appropriate for viral load. We propose and
-  # illustrate a Bayesian NLHM with the individual responses at each time point modeled as
-  # a Poisson random variable with the means across time points related through a Tricube
-  # mean response function. 
-  
-  # WEIGHT
-  We modeled the weight responses using the
-  NLHM in (2.1)-(2.7) with 𝑔 ∈ {1,2}
-  
-  
-  # We model the individual response profiles with the modified Gaussian function (1.6).
-  # Level 1 (model of intra-individual variability)
-  # 𝑦𝑖𝑗~𝑁(𝜇 , 𝜎2) (2.1)
-  # 𝜇𝑖𝑗 = 𝐵𝑖 + 𝐼𝑖𝑒𝑥𝑝   2𝑠𝑖
-  # )
-  # 2
-  # ] (2.2)
-  # Bi: baseline response level for individual 𝑖
-  # Pi: time to peak response
-  # Ii:peak response intensity𝑖
-  # si: can be interpreted as a measure of
-  # response duration.
   
   
   # ###############################
@@ -537,32 +365,4 @@ R2jags::
   # 
   # summary(lm(sum.oo~Mouse_strain, 
   #            data = sum.oocysts[sum.oocysts$infection_isolate == "EI64",]))
-  # 
-  # # maximum weight lost before death
-  # ExpeDF$weightRelativeToInfection <- NA
-  # ExpeDF$weightRelativeToInfection <- ExpeDF$weightloss / ExpeDF$weight_dpi0
-  # 
-  # max.loss <- do.call("rbind", by(ExpeDF, ExpeDF$EH_ID, function (x){
-  #   m.loss <- which(x$weightRelativeToInfection==min(x$weightRelativeToInfection, na.rm=TRUE))
-  #   x[m.loss,]
-  # }))
-  # 
-  # tapply(max.loss$weightRelativeToInfection, 
-  #        max.loss$infection_isolate:max.loss$Mouse_strain, mean)
-  # 
-  # ggplot(max.loss, aes(Mouse_strain,100-weightRelativeToInfection, color=infection_isolate)) +
-  #   geom_boxplot(color = "black")+
-  #   ggtitle("Maximum weigth loss during the experiment") + 
-  #   facet_wrap(~infection_isolate) +
-  #   geom_jitter(width=0.1, size=7, pch = 21,
-  #               color = "black", aes(fill = Mouse_strain), alpha = 0.8) +
-  #   labs(y= "Maximum weigth loss relative to weight at infection",
-  #        x= "Mouse strain")+
-  #   # scale_fill_manual(values = c("blue", "purple", "red")) +
-  #   theme_alice +
-  #   theme(legend.position="none")
-  # 
-  # summary(glm(weightRelativeToInfection~Mouse_strain, 
-  #             data = max.loss[max.loss$infection_isolate == "E64",]))
-  # 
   # 
