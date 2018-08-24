@@ -1,4 +1,7 @@
 
+## Expe 001 on Rmd document already
+
+## TO DO : put all on this document
 
 ########################### Pass001: Nov 2017, passaging 4 isolates (some missing data)
 # (Eflab, E88, E139, E64) in NMRI. 2 mice per cage. Only OPG recorded
@@ -77,9 +80,6 @@ ggplot(mysum003, aes(dpi, weight)) +
 
 # Stats 
 
-
-
-
 # Calculate weight loss
 ExpeDF_003 <- calculateWeightLoss(ExpeDF_003, infectionDay = 3)
 
@@ -89,11 +89,6 @@ names(ExpeDF_003)[names(ExpeDF_003) %in% "dilution"] <- "dilution_ml"
 
 ExpeDF_003 <- calculateOPG(ExpeDF_003)
 
-
-
-
-
-
 ########################### Exp004 : May 2018 batch 2
 oo <- read.csv("../data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDoocysts.csv")
 we <- read.csv("../data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDweight.csv")
@@ -173,59 +168,8 @@ tab <- table(ExpeDF_004$EH_ID[!is.na(ExpeDF_004$weight)])
 
 ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% names(tab)[tab < 12],]
 
-########################### Exp005 : Full expe including hybrids, July 2018 
-oo <- read.csv("../data/3_recordingTables/Exp005_full_RECORDoocysts.csv", na.strings = c("NA", " "))
-we <- read.csv("../data/3_recordingTables/Exp005_full_RECORDweight.csv", na.strings = c("NA", " "))
-design <- rbind(read.csv("../data/2_designTables/Inf1a_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
-                read.csv("../data/2_designTables/Inf2a_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
-                read.csv("../data/2_designTables/Inf1b_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
-                read.csv("../data/2_designTables/Inf2b_Exp005.DESIGN.csv", na.strings = c("NA", " ")))
 
-# Correct error
-names(design)[names(design) == "EH_id"] <- "EH_ID"
-# Correct space error
-design$EH_ID <- gsub(" ", "", design$EH_ID)
-design$HybridStatus <- gsub(" ", "", design$HybridStatus)
 
-ExpeDF_005 <- merge(oo, we, by = c("labels", "Expe"))
-
-ExpeDF_005 <- merge(ExpeDF_005, design, by = "EH_ID", all.x = T)
-
-## Correct error space
-ExpeDF_005$Strain <- gsub(" ", "", ExpeDF_005$Strain)
-
-ExpeDF_005$infection_isolate <- ExpeDF_005$Eimeria
-
-# Correct error non numeric
-ExpeDF_005$weight <- as.numeric(as.character(ExpeDF_005$weight))
-ExpeDF_005$weight_dpi0 <- as.numeric(as.character(ExpeDF_005$weight_dpi0))
-
-# Correct weight loss
-ExpeDF_005$weightloss <- ExpeDF_005$weight_dpi0 - ExpeDF_005$weight
-
-# Calculate weight Normalized to dpi0
-ExpeDF_005$weightNormalized <- ExpeDF_005$weight / ExpeDF_005$weight_dpi0 * 100
-
-# Add mice subspecies
-ExpeDF_005$Mouse_subspecies <- ExpeDF_005$HybridStatus
-
-# tapply(as.numeric(ExpeDF_005$weightloss), list(ExpeDF_005$dpi, ExpeDF_005$HybridStatus), FUN = function(x)mean(x, na.rm = T))
-
-# Mouse_strain: West should always be left 
-ExpeDF_005$Mouse_strain <- factor(as.factor(ExpeDF_005$Strain),
-                                  levels = c("BUSNA_BUSNA","BUSNA_PWD","BUSNA_STRA","PWD_BUSNA",
-                                             "PWD_PWD","PWD_SCHUNT","SCHUNT_PWD","SCHUNT_SCHUNT",
-                                             "SCHUNT_STRA","STRA_BUSNA","STRA_SCHUNT","STRA_STRA"),
-                                  labels = c("M.m.musculus P", "M.m.musculus F1",
-                                             "Hybrid", "M.m.musculus F1",
-                                             "M.m.musculus P","Hybrid",
-                                             "Hybrid", "M.m.domesticus P",
-                                             "M.m.domesticus F1","Hybrid",
-                                             "M.m.domesticus F1","M.m.domesticus P"))
-
-# Age at infection
-ExpeDF_005$ageAtInfection[ExpeDF_005$Batch == 1] <- round(ExpeDF_005$ageAtdpi0expe1a)
-ExpeDF_005$ageAtInfection[ExpeDF_005$Batch == 2] <- round(ExpeDF_005$ageAtdpi0expe1a +2)
 
 ########## Exclude potential covariates ########
 dfcov <- ExpeDF_005[ExpeDF_005$dpi == 0,]
