@@ -5,25 +5,6 @@ library(dplyr)
 library(tidyr)
 library(plyr)
 
-####### Part 1 : functions used for data preparation ####### 
-calculateOPG <- function(ExpeDF){
-  ExpeDF$mean_Neubauer <- 
-    (ExpeDF$Neubauer1 + ExpeDF$Neubauer2 + ExpeDF$Neubauer3 + ExpeDF$Neubauer4) / 4
-  ExpeDF$OPG <- ExpeDF$mean_Neubauer * 10000 / ExpeDF$dilution_ml / ExpeDF$fecweight
-  return(ExpeDF)
-}
-
-# For following before the infection the weight of mice
-calculateWeightLossBeforeInf <- function(ExpeDF){
-  A = ExpeDF[ExpeDF$dayFollowWeight == 0, c("weight", "original.label")]
-  names(A)[1] = "weightAtStart"
-  ExpeDF <- merge(ExpeDF, A)
-  rm(A)
-  ExpeDF$weightlossBeforeInf = ExpeDF$weightAtStart - ExpeDF$weight
-  ExpeDF$weightRelativeToStart <- ExpeDF$weight / ExpeDF$weightAtStart * 100
-  return(ExpeDF)
-}
-
 ## Source: http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper functions
 summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
                       conf.interval=.95, .drop=TRUE) {
@@ -95,46 +76,3 @@ plotCompOPGWeight <- function(ExpeDF, ylim = c(80,110)){
     coord_cartesian(ylim = ylim) +
     mytheme
 }
-
-# ############################
-# # highest day of shedding vs highest weight loss?
-# shedVsLossdpi <- rbind(data.frame(EH_ID = all.max.loss$EH_ID, 
-#                                   what = "max weight loss",
-#                                   dpi = all.max.loss$dpi),
-#                        data.frame(EH_ID = all.max.shed$EH_ID, 
-#                                   what = "max oocyst shedding",
-#                                   dpi = all.max.shed$dpi))
-# 
-# shedVsLossdpi <- merge(shedVsLossdpi, 
-#                        unique(ExpeDF[c("EH_ID", "infection_isolate", "Mouse_strain")]), 
-#                        all = T)
-# 
-# 
-# dirDF <- merge(data.frame(EH_ID = all.max.loss$EH_ID, 
-#                           maxLoss = all.max.loss$dpi),
-#                data.frame(EH_ID = all.max.shed$EH_ID, 
-#                           maxShed = all.max.shed$dpi))
-# 
-# if (dirDF$maxShed - dirDF$maxLoss > 0){
-#   dirDF$dir <- "darkred"
-# } else if {dirDF$maxShed - dirDF$maxLoss < 0){
-#   dirDF$dir <- "darkgreen"
-# } else {
-#   dirDF$dir <- "black"
-# }
-# 
-# ## TBC...
-# shedVsLossdpi
-# 
-# ggplot(shedVsLossdpi, aes(x = what,
-#                           y = dpi)) +
-#   geom_jitter(aes(fill = Mouse_strain), 
-#               size=5, pch = 21, color = "black", alpha = .7, 
-#               position = position_jitter(.1, .1)) +
-#   geom_line(aes(group = EH_ID)) +
-#   facet_grid(.~infection_isolate) +
-#   mytheme +
-#   scale_y_continuous(breaks = 1:11) +
-#   theme(axis.text.x = element_text(angle = 90, size = 10),
-#         axis.title.x = element_blank())
-
