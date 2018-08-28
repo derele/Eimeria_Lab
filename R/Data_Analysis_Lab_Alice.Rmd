@@ -26,6 +26,7 @@ library(gridExtra)
 library(reshape2)
 library(scales)
 library(lme4)
+library(lmerTest)
 mytheme <- theme_bw()+
   theme(plot.title = element_text(size=22), plot.subtitle = element_text(size = 20),
         legend.text = element_text(size = 20),
@@ -86,7 +87,7 @@ ExpeDF_001$Eimeria_species[ExpeDF_001$infection_isolate %in% c("E64", "EI64", "E
 survivors <- names(table(ExpeDF_001$EH_ID))[table(ExpeDF_001$EH_ID) %in% 12]
 ExpeDF_001 <- ExpeDF_001[ExpeDF_001$EH_ID %in% survivors,]
 
-# calculate relative weight loss compared to dpi0
+# calculate relative weight loss compared to dpi3
 ExpeDF_001 <- calculateWeightLoss(ExpeDF_001, startingDay = 3)
 
 # calculate summary statistics on weight loss
@@ -119,10 +120,10 @@ ggplot(ExpeDF_001, aes(x = dpi, y = weight, fill = OPGstatus)) +
   mytheme +
   facet_grid(Mouse_strain ~ infection_isolate, scales = "free_y", space = "free") +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  scale_y_continuous(name = "Weight relative to dpi3 (%)") +
+  scale_y_continuous(name = "Weight (g)") +
   theme(strip.text.y = element_text(size = 15)) +
   theme(legend.position="none") +
-  ggtitle("Weight along experiment compared to dpi3", subtitle = "yellow : oocysts detected in feces")
+  ggtitle("Weight along experiment per individual", subtitle = "yellow : oocysts detected in feces")
 
 ggplot(ExpeDF_001, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
   geom_rect(aes(xmin = 3, xmax = 8, ymin = 80, ymax = 110), fill = "lightgrey", alpha = .5) +
@@ -179,6 +180,10 @@ ggplot(max.loss_001, aes(Mouse_strain,100-relativeWeight, color=infection_isolat
   mytheme +
   theme(legend.position="none")
 
+max.loss_001$Mouse_strain <- factor(max.loss_001$Mouse_strain, 
+                                    levels = c("F1 hybrids \n(WP)",
+                                               "M.m.domesticus \n(WSB)",
+                                               "M.m.musculus \n(PWD)"))
 summary(lm(relativeWeight~Mouse_strain, data = max.loss_001))
 ```
 
@@ -234,14 +239,28 @@ ggplot(sum.oocysts_001, aes(Mouse_strain, sum.oo, color=infection_isolate)) +
   mytheme +
   theme(legend.position="none")
 
+sum.oocysts_001$Mouse_strain <- factor(sum.oocysts_001$Mouse_strain, 
+                                    levels = c("F1 hybrids \n(WP)",
+                                               "M.m.domesticus \n(WSB)",
+                                               "M.m.musculus \n(PWD)"))
 summary(lm(sum.oo~Mouse_strain, data = sum.oocysts_001))
 ```
 
-<!-- ## 3. Comparison host/parasite proxy -->
+## 3. Comparison host/parasite proxy
 
-<!-- ```{r plotComp1, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:plotComp1} Weight as a function of OPG"} -->
-<!-- plotCompOPGWeight(ExpeDF_001) -->
-<!-- ``` -->
+```{r plotComp1, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:plotComp1} Weight as a function of OPG"}
+## Plot comparison weightloss vs OPG, all day counfounded
+ggplot(ExpeDF_001Symptomatic, 
+       aes(x = OPG+1, y = relativeWeight, group = Mouse_strain, fill = Mouse_strain)) +
+  geom_point(pch = 21, size=3)  +
+  facet_grid(Eimeria_species ~ infection_isolate, scales = "free_y", space = "free") +
+  geom_smooth(method = "lm", col = "grey") +
+  scale_y_continuous(name = "Weight relative to infection (%)") +
+  scale_x_log10() +
+  coord_cartesian(ylim =  c(80,110)) +
+  ggtitle("Relative weight loss compared to dpi3, during the symptomatic phase, vs parasite outcome") +
+  mytheme
+```
 
 # Pass001: Nov 2017, passaging 4 isolates (some missing data)
 # (Eflab, E88, E139, E64) in NMRI. 2 mice per cage. Only OPG recorded
@@ -322,10 +341,10 @@ ggplot(ExpeDF_002, aes(x = dpi, y = weight, fill = OPGstatus)) +
   mytheme +
   facet_grid(Mouse_strain ~ infection_isolate, scales = "free_y", space = "free") +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  scale_y_continuous(name = "Weight relative to dpi3 (%)") +
+  scale_y_continuous(name = "Weight (g)") +
   theme(strip.text.y = element_text(size = 15)) +
   # theme(legend.position="none") +
-  ggtitle("Weight along experiment compared to dpi3", subtitle = "yellow : oocysts detected in feces")
+  ggtitle("Weight along experiment per individual", subtitle = "yellow : oocysts detected in feces")
 
 ggplot(ExpeDF_002, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
   geom_line(aes(group = EH_ID, col = Mouse_strain), size = 2, alpha = 0.5) +
@@ -335,11 +354,11 @@ ggplot(ExpeDF_002, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
   mytheme +
   facet_grid(Mouse_strain ~ infection_isolate, scales = "free_y", space = "free") +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  scale_y_continuous(name = "Weight relative to dpi3 (%)") +
+  scale_y_continuous(name = "Weight relative to dpi0 (%)") +
   coord_cartesian(ylim = c(80, 110)) +
   theme(strip.text.y = element_text(size = 15)) +
   # theme(legend.position="none") +
-  ggtitle("Relative weight along experiment compared to dpi3", subtitle = "yellow : oocysts detected in feces")
+  ggtitle("Relative weight along experiment compared to dpi0", subtitle = "yellow : oocysts detected in feces")
 ```
 
 ```{r weightalongsum2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10}
@@ -352,7 +371,7 @@ ggplot(summaryWeight_002, aes(x = dpi, y = relativeWeight))+
   mytheme +
   facet_grid(Mouse_strain ~ infection_isolate, scales = "free_y", space = "free") +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  scale_y_continuous(name = "Weight relative to dpi3 (%)") +
+  scale_y_continuous(name = "Weight relative to dpi0 (%)") +
   coord_cartesian(ylim = c(85, 115)) +
   theme(legend.position="none") +
   ggtitle("Mean relative weight along experiment compared to dpi0")
@@ -387,6 +406,22 @@ ggplot(summaryOocysts_002, aes(x = dpi, y = OPG))+
   scale_y_continuous(name = "Oocysts shedding along infection (OPG)") +
   theme(legend.position="none") +
   ggtitle("Mean oocysts shedding along experiment")
+```
+
+## 3. Comparison host/parasite proxy
+
+```{r plotComp2, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:plotComp1} Weight as a function of OPG"}
+## Plot comparison weightloss vs OPG, all day counfounded
+ggplot(ExpeDF_002, 
+       aes(x = OPG+1, y = relativeWeight, group = infection_isolate, fill = infection_isolate)) +
+  geom_point(pch = 21, size=3)  +
+  facet_grid(. ~ Eimeria_species, scales = "free_y", space = "free") +
+  geom_smooth(method = "lm", col = "grey") +
+  scale_y_continuous(name = "Weight relative to infection (%)") +
+  scale_x_log10() +
+  coord_cartesian(ylim =  c(80,110)) +
+  ggtitle("Relative weight loss compared to dpi0, during the symptomatic phase, vs parasite outcome") +
+  mytheme
 ```
 
 # Expe_003 & Expe_004, April-May 2018, first batch Parental strains (F0) BUSNA, STRA, SCHUNT, PWD, infection with Eferrisi (E64 and E139) [2 batches]
@@ -464,12 +499,12 @@ ggplot(ExpeDF_003_4, aes(x = dpi, y = weight, fill = OPGstatus)) +
   geom_point(size=4, pch = 21, color = "black")+
   scale_fill_manual(values = c("lightgrey", "yellow")) +
   mytheme +
-  facet_grid(Mouse_strain ~ infection_isolate) +
+  facet_grid(Mouse_strain ~ infection_isolate, scales = "free") +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  scale_y_continuous(name = "Weight relative to dpi3 (%)") +
+  scale_y_continuous(name = "Weight (g)") +
   theme(strip.text.y = element_text(size = 15)) +
   theme(legend.position="none") +
-  ggtitle("Weight along experiment compared to dpi3", subtitle = "yellow : oocysts detected in feces")
+  ggtitle("Weight along experiment per indiidual", subtitle = "yellow : oocysts detected in feces")
 
 ggplot(ExpeDF_003_4, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
   geom_rect(aes(xmin = 3, xmax = 8, ymin = 80, ymax = 110), fill = "lightgrey", alpha = .5) +
@@ -582,12 +617,6 @@ ggplot(sum.oocysts_003_4, aes(Mouse_strain, sum.oo, color=infection_isolate)) +
 summary(lm(sum.oo~Mouse_strain, data = sum.oocysts_003_4))
 ```
 
-<!-- ## 3. Comparison host/parasite proxy -->
-
-<!-- ```{r plotComp3, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, fig.cap="\\label{fig:plotComp3} Weight as a function of OPG"} -->
-<!-- plotCompOPGWeight(ExpeDF_003, ylim = c(90, 115)) -->
-<!-- ``` -->
-
 # Expe_005, July 2018, FULL experiment (parents, intra specific and inter species hybrids) BUSNA, STRA, SCHUNT, PWD, infection with Eferrisi and Efalciformis (E64 and E88)
 
 ```{r setupExpe5, echo=FALSE, warning=FALSE}
@@ -639,6 +668,11 @@ ExpeDF_005$Mouse_strain <- factor(as.factor(ExpeDF_005$Strain),
                                              "M.m.domesticus F1 \n(SCHUNT_STRA)","Hybrid \n(STRA_BUSNA)",
                                              "M.m.domesticus F1 \n(STRA_SCHUNT)","M.m.domesticus P \n(STRA_STRA)"))
 
+# Correct hybrid status
+ExpeDF_005$HybridStatus <- factor(ExpeDF_005$HybridStatus,
+                                  levels = c("intersubsp.hybrids", "outbredhybrids", "parentalstrains"),
+                                  labels = c("hybrids", "outbred", "parents"))
+
 # Add infection isolate
 ExpeDF_005$infection_isolate <- ExpeDF_005$Eimeria
 
@@ -660,7 +694,6 @@ ExpeDF_005$OPGstatus = as.factor(ExpeDF_005$OPGstatus)
 ExpeDF_005_E88 <- ExpeDF_005[ExpeDF_005$infection_isolate %in% "E88",]
 ExpeDF_005_E64 <- ExpeDF_005[ExpeDF_005$infection_isolate %in% "E64",]
 
-
 ### TO CORRECT!!
 # Keep only mice that survived 11 days for E. falciformis, and 8 days for E. ferrisi
 survivors88 <- names(table(ExpeDF_005_E88$EH_ID))[table(ExpeDF_005_E88$EH_ID) %in% 12]
@@ -673,26 +706,24 @@ ExpeDF_ExpeDF_005_E64 <- ExpeDF_005_E64[ExpeDF_005_E64$EH_ID %in% survivors64,]
 ExpeDF_005_E64 <- calculateWeightLoss(ExpeDF_005_E64, startingDay = 3)
 ExpeDF_005_E64$relativeWeight <- as.numeric(as.character(ExpeDF_005_E64$relativeWeight))
 
-# calculate relative weight loss compared to dpi0 for E88
-ExpeDF_005_E88 <- calculateWeightLoss(ExpeDF_005_E88, startingDay = 6)
+# calculate relative weight loss compared to dpi7 for E88
+ExpeDF_005_E88 <- calculateWeightLoss(ExpeDF_005_E88, startingDay = 7)
 ExpeDF_005_E88$relativeWeight <- as.numeric(as.character(ExpeDF_005_E88$relativeWeight))
 
 # calculate summary statistics on weight loss
 summaryWeight_005_E64 <- summarySE(ExpeDF_005_E64, measurevar = "relativeWeight",
-                           groupvars=c("Mouse_subspecies", "Eimeria_species",
-                                       "dpi"))
+                           groupvars=c("HybridStatus", "dpi"))
 summaryWeight_005_E64$ci[is.na(summaryWeight_005_E64$ci)] <- 0
 
 summaryWeight_005_E88 <- summarySE(ExpeDF_005_E88, measurevar = "relativeWeight",
-                           groupvars=c("Mouse_subspecies", "Eimeria_species",
-                                       "dpi"))
+                           groupvars=c("HybridStatus", "dpi"))
 summaryWeight_005_E88$ci[is.na(summaryWeight_005_E88$ci)] <- 0
 
 # calculate summary statistics on oocysts shedding
-summaryOocysts_001 <-summarySE(ExpeDF_001, measurevar="OPG",
-                           groupvars=c("Mouse_strain", "Mouse_subspecies", "Eimeria_species",
-                                       "infection_isolate", "dpi"))
-summaryOocysts_001$ci[is.na(summaryOocysts_001$ci)] <- 0
+# summaryOocysts_001 <-summarySE(ExpeDF_001, measurevar="OPG",
+#                            groupvars=c("Mouse_strain", "Mouse_subspecies", "Eimeria_species",
+#                                        "infection_isolate", "dpi"))
+# summaryOocysts_001$ci[is.na(summaryOocysts_001$ci)] <- 0
 ```
 
 ## 1. Weight loss
@@ -707,12 +738,12 @@ ggplot(ExpeDF_005_E64, aes(x = dpi, y = weight, fill = OPGstatus)) +
   geom_point(size=4, pch = 21, color = "black")+
   scale_fill_manual(values = c("lightgrey", "yellow")) +
   mytheme +
-  facet_grid(Mouse_subspecies ~ .) +
+  facet_grid(Mouse_subspecies ~ ., scales = "free") +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  scale_y_continuous(name = "Weight relative to dpi3 (%)") +
+  scale_y_continuous(name = "Weight (g)") +
   theme(strip.text.y = element_text(size = 15)) +
   theme(legend.position="none") +
-  ggtitle("Weight along experiment compared to dpi3 (E64)", subtitle = "yellow : oocysts detected in feces")
+  ggtitle("Weight along experiment per individual (E64)", subtitle = "yellow : oocysts detected in feces")
 
 ggplot(ExpeDF_005_E64, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
   geom_rect(aes(xmin = 3, xmax = 8, ymin = 80, ymax = 110), fill = "lightgrey", alpha = .5) +
@@ -732,14 +763,14 @@ ggplot(ExpeDF_005_E64, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
 
 ```{r weightalongsum5_E64, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10}
 ggplot(summaryWeight_005_E64, aes(x = dpi, y = relativeWeight))+
-  geom_rect(aes(xmin = 3, xmax = 8, ymin = 85, ymax = 115), fill = "lightgrey", alpha = .5) +
+  geom_rect(aes(xmin = 3, xmax = 8, ymin = -Inf, ymax = Inf), fill = "lightgrey", alpha = .5) +
   geom_errorbar(aes(ymin = relativeWeight - ci, ymax = relativeWeight + ci)) +
-  geom_line(aes(group = Mouse_subspecies, col = Mouse_subspecies), size = 2, alpha = 0.5) +
-  geom_point(aes(fill = Mouse_subspecies), size=4, pch = 21, color = "black") +
-  # scale_color_manual(values = c("blue", "purple", "red")) +
-  # scale_fill_manual(values = c("blue", "purple", "red")) +
+  geom_line(aes(group = HybridStatus, col = HybridStatus), size = 2, alpha = 0.5) +
+  geom_point(aes(fill = HybridStatus), size=4, pch = 21, color = "black") +
+  scale_color_manual(values = c("blue", "purple", "red")) +
+  scale_fill_manual(values = c("blue", "purple", "red")) +
   mytheme +
-  facet_grid(Mouse_subspecies ~ .) +
+  facet_grid(HybridStatus ~ .) +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
   scale_y_continuous(name = "Weight relative to dpi3 (%)") +
   # coord_cartesian(ylim = c(85, 115)) +
@@ -770,37 +801,31 @@ ggplot(max.loss_005_E64, aes(HybridStatus,100-relativeWeight, color=infection_is
   theme(legend.position="none")
 
 summary(lm(relativeWeight~HybridStatus, data = max.loss_005_E64))
-
-ggplot(max.loss_005_E64, aes(Mouse_subspecies,100-relativeWeight, color=Mouse_subspecies)) +
-  geom_boxplot(color = "black")+
-  ggtitle("Maximum weigth loss during the symptomatic phase") +
-  geom_jitter(width=0.1, size=7, pch = 21,
-              color = "black", aes(fill = HybridStatus), alpha = 0.8) +
-  labs(y= "Maximum weigth loss relative to weight at dpi 3", x= "Mouse subspecies")+
-  mytheme +
-  theme(legend.position="none")
-# summary(glmer(relativeWeight ~ HybridStatus + 1|Mouse_subspecies, data = max.loss_005_E64))
+summary(lmer(relativeWeight ~ HybridStatus + 1|Mouse_strain, data = max.loss_005_E64))
+ 
+# library(nlme)
+# lme(fixed = max.loss_005_E64$HybridStatus, data = max.loss_005_E64, random = max.loss_005_E64$Mouse_strain)
 ```
 
 ### Eimeria falciformis
 
 ```{r weightalong5_E88, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10}
 ggplot(ExpeDF_005_E88, aes(x = dpi, y = weight, fill = OPGstatus)) +
-  geom_rect(aes(xmin = 6, xmax = 11, ymin = -Inf, ymax = Inf), fill = "lightgrey", alpha = .5) +
+  geom_rect(aes(xmin = 7, xmax = 11, ymin = -Inf, ymax = Inf), fill = "lightgrey", alpha = .5) +
   geom_line(aes(group = EH_ID, col = Mouse_strain), size = 2, alpha = 0.5) +
   # scale_color_manual(values = c("blue", "purple", "red")) +
   geom_point(size=4, pch = 21, color = "black")+
   scale_fill_manual(values = c("lightgrey", "yellow")) +
   mytheme +
-  facet_grid(Mouse_subspecies ~ .) +
+  facet_grid(Mouse_subspecies ~ ., scales = "free") +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  scale_y_continuous(name = "Weight relative to dpi3 (%)") +
+  scale_y_continuous(name = "Weight (g)") +
   theme(strip.text.y = element_text(size = 15)) +
   theme(legend.position="none") +
-  ggtitle("Weight along experiment compared to dpi3 (E88)", subtitle = "yellow : oocysts detected in feces")
+  ggtitle("Weight along experiment per individual (E88)", subtitle = "yellow : oocysts detected in feces")
 
 ggplot(ExpeDF_005_E88, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
-  geom_rect(aes(xmin = 6, xmax = 11, ymin = 80, ymax = 110), fill = "lightgrey", alpha = .5) +
+  geom_rect(aes(xmin = 7, xmax = 11, ymin = 80, ymax = 110), fill = "lightgrey", alpha = .5) +
   geom_line(aes(group = EH_ID, col = Mouse_strain), size = 2, alpha = 0.5) +
   # scale_color_manual(values = c("blue", "purple", "red")) +
   geom_point(size=4, pch = 21, color = "black")+
@@ -808,28 +833,28 @@ ggplot(ExpeDF_005_E88, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
   mytheme +
   facet_grid(Mouse_subspecies ~ .) +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  scale_y_continuous(name = "Weight relative to dpi3 (%)") +
+  scale_y_continuous(name = "Weight relative to dpi7 (%)") +
   coord_cartesian(ylim = c(80, 110)) +
   theme(strip.text.y = element_text(size = 15)) +
   theme(legend.position="none") +
-  ggtitle("Relative weight along experiment compared to dpi3 (E88)", subtitle = "yellow : oocysts detected in feces")
+  ggtitle("Relative weight along experiment compared to dpi7 (E88)", subtitle = "yellow : oocysts detected in feces")
 ```
 
 ```{r weightalongsum5_E88, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10}
 ggplot(summaryWeight_005_E88, aes(x = dpi, y = relativeWeight))+
-  geom_rect(aes(xmin = 6, xmax = 11, ymin = 85, ymax = 115), fill = "lightgrey", alpha = .5) +
+  geom_rect(aes(xmin = 7, xmax = 11, ymin = -Inf, ymax = Inf), fill = "lightgrey", alpha = .5) +
   geom_errorbar(aes(ymin = relativeWeight - ci, ymax = relativeWeight + ci)) +
-  geom_line(aes(group = Mouse_subspecies, col = Mouse_subspecies), size = 2, alpha = 0.5) +
-  geom_point(aes(fill = Mouse_subspecies), size=4, pch = 21, color = "black") +
-  # scale_color_manual(values = c("blue", "purple", "red")) +
-  # scale_fill_manual(values = c("blue", "purple", "red")) +
+  geom_line(aes(group = HybridStatus, col = HybridStatus), size = 2, alpha = 0.5) +
+  geom_point(aes(fill = HybridStatus), size=4, pch = 21, color = "black") +
+  scale_color_manual(values = c("blue", "purple", "red")) +
+  scale_fill_manual(values = c("blue", "purple", "red")) +
   mytheme +
-  facet_grid(Mouse_subspecies ~ .) +
+  facet_grid(HybridStatus ~ .) +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  scale_y_continuous(name = "Weight relative to dpi3 (%)") +
+  scale_y_continuous(name = "Weight relative to dpi7 (%)") +
   # coord_cartesian(ylim = c(85, 115)) +
   theme(legend.position="none", strip.text = element_text(size = 15)) +
-  ggtitle("Mean relative weight along experiment compared to dpi3")
+  ggtitle("Mean relative weight along experiment compared to dpi7")
 ```
 
 For statistical analysis, we compare the maximum relative weight loss between the different groups. We limit our analysis to the period : dpi7 to dpi11 (symptomatic period for E88 strain).
@@ -849,25 +874,22 @@ ggplot(max.loss_005_E88, aes(HybridStatus,100-relativeWeight, color=infection_is
   # facet_wrap(~infection_isolate) +
   geom_jitter(width=0.1, size=7, pch = 21,
               color = "black", aes(fill = HybridStatus), alpha = 0.8) +
-  labs(y= "Maximum weigth loss relative to weight at dpi 6", x= "Mouse strain")+
+  labs(y= "Maximum weigth loss relative to weight at dpi 7", x= "Mouse strain")+
   # scale_fill_manual(values = c("blue", "purple", "red")) +
   mytheme +
   theme(legend.position="none")
 
 summary(lm(relativeWeight ~ HybridStatus, data = max.loss_005_E88))
-
-ggplot(max.loss_005_E88, aes(Mouse_subspecies,100-relativeWeight, color=Mouse_subspecies)) +
-  geom_boxplot(color = "black")+
-  ggtitle("Maximum weigth loss during the symptomatic phase") +
-  geom_jitter(width=0.1, size=7, pch = 21,
-              color = "black", aes(fill = HybridStatus), alpha = 0.8) +
-  labs(y= "Maximum weigth loss relative to weight at dpi 6", x= "Mouse subspecies")+
-  mytheme +
-  theme(legend.position="none")
 # summary(glmer(relativeWeight ~ HybridStatus + 1|Mouse_strain, data = max.loss_005_E88))
 
-# 
-# library(lme4)
+
 # myfitE88 <- lmer(weight ~ HybridStatus + 1|dpi + 1|EH_ID + 1|Sex, data = ExpeDF_005_E88)
-# anova(myfitE88)
+
+print("Along all experiment:")
+
+# lmer(weight ~ HybridStatus, data = ExpeDF_005_E88)
+
+# myfitE88 <- lmer(weight ~ HybridStatus + 1|dpi, data = ExpeDF_005_E88)
+# myfitE88
+# summary(myfitE88)
 ```

@@ -1,6 +1,3 @@
-## Part 1: functions used for data preparation of each experiment
-## Part 2: functions used for data analysis, plot, stats, etc.
-
 library(dplyr)
 library(tidyr)
 library(plyr)
@@ -48,31 +45,9 @@ getCorrectedDates <- function(mytab = read.csv("../data/1_informationTables/Exp0
                     corrected = goodDates))
 }
 
-getCorrectedDates()
-
 # calculate age at infection
 getAgeAtInfection <- function(mytab = read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv"),
                               infectionDate = "18-06-05"){
   age <- difftime(infectionDate, mytab$Born, units = "weeks")
   return(age)
-}
-
-####### Part 2: functions used for data analysis, plot, stats, etc. ####### 
-
-## Plot comparison weightloss vs OPG, all day counfounded
-plotCompOPGWeight <- function(ExpeDF, ylim = c(80,110)){
-  
-  # Enter Eimeria species
-  ExpeDF$Eimeria_species[ExpeDF$infection_isolate %in% c("E88", "Eflab", "EfLab")] = "E.falciformis"
-  ExpeDF$Eimeria_species[ExpeDF$infection_isolate %in% c("E64", "EI64", "E139")] = "E.ferrisi"
-  
-  ggplot(ExpeDF, 
-         aes(x = OPG+1, y = weightNormalized, group = Mouse_strain, fill = Mouse_strain)) +
-    geom_point(pch = 21, size=3)  +
-    facet_grid(Eimeria_species ~ infection_isolate, scales = "free_y", space = "free") +
-    geom_smooth(method = "lm", col = "grey") +
-    scale_y_continuous(name = "Weight relative to infection (%)") +
-    scale_x_log10() +
-    coord_cartesian(ylim = ylim) +
-    mytheme
 }
