@@ -166,8 +166,6 @@ max.loss_001 <- do.call("rbind", by(ExpeDF_001Symptomatic, ExpeDF_001Symptomatic
   x[m.loss,]
 }))
 
-# tapply(max.loss$relativeWeight, max.loss$infection_isolate:max.loss$Mouse_strain, mean)
- 
 ggplot(max.loss_001, aes(Mouse_strain,100-relativeWeight, color=infection_isolate)) +
   geom_boxplot(color = "black")+
   ggtitle("Maximum weigth loss during the symptomatic phase") +
@@ -183,7 +181,10 @@ max.loss_001$Mouse_strain <- factor(max.loss_001$Mouse_strain,
                                     levels = c("F1 hybrids \n(WP)",
                                                "M.m.domesticus \n(WSB)",
                                                "M.m.musculus \n(PWD)"))
-summary(lm(relativeWeight~Mouse_strain, data = max.loss_001))
+
+kruskal.test(relativeWeight ~ Mouse_strain, data = max.loss_001)
+pairwise.wilcox.test(max.loss_001$relativeWeight, max.loss_001$Mouse_strain,
+                 p.adjust.method = "BH")
 ```
 
 ## 2. Parasite shedding
@@ -241,7 +242,10 @@ sum.oocysts_001$Mouse_strain <- factor(sum.oocysts_001$Mouse_strain,
                                     levels = c("F1 hybrids \n(WP)",
                                                "M.m.domesticus \n(WSB)",
                                                "M.m.musculus \n(PWD)"))
-summary(lm(sum.oo~Mouse_strain, data = sum.oocysts_001))
+
+kruskal.test(sum.oo ~ Mouse_strain, data = sum.oocysts_001)
+pairwise.wilcox.test(sum.oocysts_001$sum.oo, sum.oocysts_001$Mouse_strain,
+                 p.adjust.method = "BH")
 ```
 
 ## 3. Comparison host/parasite proxy
@@ -557,7 +561,9 @@ ggplot(max.loss_003_4, aes(Mouse_strain,100-relativeWeight, color=infection_isol
   mytheme +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-summary(lm(relativeWeight~Mouse_strain, data = max.loss_003_4))
+kruskal.test(relativeWeight ~ Mouse_strain, data = max.loss_003_4)
+pairwise.wilcox.test(max.loss_003_4$relativeWeight, max.loss_003_4$Mouse_strain,
+                 p.adjust.method = "BH")
 ```
 
 ## 2. Parasite shedding
@@ -609,7 +615,9 @@ ggplot(sum.oocysts_003_4, aes(Mouse_strain, sum.oo, color=infection_isolate)) +
   mytheme +
   theme(legend.position="none")
 
-summary(lm(sum.oo~Mouse_strain, data = sum.oocysts_003_4))
+kruskal.test(sum.oo ~ Mouse_strain, data = sum.oocysts_003_4)
+pairwise.wilcox.test(sum.oocysts_003_4$sum.oo, sum.oocysts_003_4$Mouse_strain,
+                 p.adjust.method = "BH")
 ```
 
 # Expe_005, July 2018, FULL experiment (parents, intra specific and inter species hybrids) BUSNA, STRA, SCHUNT, PWD, infection with Eferrisi and Efalciformis (E64 and E88)
@@ -678,7 +686,15 @@ ExpeDF_005$Eimeria_species[ExpeDF_005$infection_isolate %in% c("E64", "EI64", "E
 # # Age at infection
 # ExpeDF_005$ageAtInfection[ExpeDF_005$Batch == 1] <- round(ExpeDF_005$ageAtdpi0expe1a)
 # ExpeDF_005$ageAtInfection[ExpeDF_005$Batch == 2] <- round(ExpeDF_005$ageAtdpi0expe1a +2)
- 
+
+# calculate OPG 
+# rename 
+names(ExpeDF_005) <- gsub("oocyst_sq", "Neubauer", names(ExpeDF_005))
+names(ExpeDF_005) <- gsub("dilution", "dilution_ml", names(ExpeDF_005))
+ExpeDF_005$fecweight <- as.numeric(as.character(ExpeDF_005$fecweight))
+
+ExpeDF_005 <- calculateOPG(ExpeDF = ExpeDF_005)
+
 # Add OPG status
 ExpeDF_005$OPGstatus[is.na(ExpeDF_005$OPG)] = "na"
 ExpeDF_005$OPGstatus[!is.na(ExpeDF_005$OPG) & ExpeDF_005$OPG > 0] = "positive"
@@ -707,18 +723,21 @@ ExpeDF_005_E88$relativeWeight <- as.numeric(as.character(ExpeDF_005_E88$relative
 
 # calculate summary statistics on weight loss
 summaryWeight_005_E64 <- summarySE(ExpeDF_005_E64, measurevar = "relativeWeight",
-                           groupvars=c("HybridStatus", "dpi"), na.rm = T)
+                           groupvars=c("HybridStatus", "dpi", "Expe"), na.rm = T)
 summaryWeight_005_E64$ci[is.na(summaryWeight_005_E64$ci)] <- 0
 
 summaryWeight_005_E88 <- summarySE(ExpeDF_005_E88, measurevar = "relativeWeight",
-                           groupvars=c("HybridStatus", "dpi"), na.rm = T)
+                           groupvars=c("HybridStatus", "dpi", "Expe"), na.rm = T)
 summaryWeight_005_E88$ci[is.na(summaryWeight_005_E88$ci)] <- 0
 
 # calculate summary statistics on oocysts shedding
-# summaryOocysts_001 <-summarySE(ExpeDF_001, measurevar="OPG",
-#                            groupvars=c("Mouse_strain", "Mouse_subspecies", "Eimeria_species",
-#                                        "infection_isolate", "dpi"))
-# summaryOocysts_001$ci[is.na(summaryOocysts_001$ci)] <- 0
+summaryOocysts_005_E64 <-summarySE(ExpeDF_005_E64, measurevar="OPG",
+                           groupvars=c("HybridStatus", "dpi", "Expe"), na.rm = T)
+summaryOocysts_005_E64$ci[is.na(summaryOocysts_005_E64$ci)] <- 0
+
+summaryOocysts_005_E88 <-summarySE(ExpeDF_005_E88, measurevar="OPG",
+                           groupvars=c("HybridStatus", "dpi", "Expe"), na.rm = T)
+summaryOocysts_005_E88$ci[is.na(summaryOocysts_005_E88$ci)] <- 0
 ```
 
 ## 1. Weight loss
@@ -731,13 +750,13 @@ ggplot(ExpeDF_005_E64, aes(x = dpi, y = weight, fill = OPGstatus)) +
   geom_line(aes(group = EH_ID, col = Mouse_strain), size = 2, alpha = 0.5) +
   # scale_color_manual(values = c("blue", "purple", "red")) +
   geom_point(size=4, pch = 21, color = "black")+
-  scale_fill_manual(values = c("lightgrey", "yellow")) +
+  scale_fill_manual(values = c("lightgrey", "black", "yellow")) +
   mytheme +
-  facet_grid(HybridStatus ~ .) +
+  facet_grid(HybridStatus ~ Expe) +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
   scale_y_continuous(name = "Weight (g)") +
   theme(strip.text.y = element_text(size = 15)) +
-  theme(legend.position="none") +
+  # theme(legend.position="none") +
   ggtitle("Weight along experiment per individual (E64)", subtitle = "yellow : oocysts detected in feces")
 
 ggplot(ExpeDF_005_E64, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
@@ -745,7 +764,7 @@ ggplot(ExpeDF_005_E64, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
   geom_line(aes(group = EH_ID, col = Mouse_strain), size = 2, alpha = 0.5) +
   # scale_color_manual(values = c("blue", "purple", "red")) +
   geom_point(size=4, pch = 21, color = "black")+
-  scale_fill_manual(values = c("lightgrey", "yellow")) +
+  scale_fill_manual(values = c("lightgrey", "black", "yellow")) +
   mytheme +
   facet_grid(HybridStatus ~ Expe) +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
@@ -764,6 +783,7 @@ ggplot(summaryWeight_005_E64, aes(x = dpi, y = relativeWeight))+
   scale_color_manual(values = c("blue", "purple", "red")) +
   scale_fill_manual(values = c("blue", "purple", "red")) +
   mytheme +
+  facet_grid(.~Expe) +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
   scale_y_continuous(name = "Weight relative to dpi3 (%)") +
   # coord_cartesian(ylim = c(85, 115)) +
@@ -785,7 +805,7 @@ max.loss_005_E64 <- do.call("rbind", by(ExpeDF_005_E64_Symptomatic, ExpeDF_005_E
 ggplot(max.loss_005_E64, aes(HybridStatus,100-relativeWeight, color=infection_isolate)) +
   geom_boxplot(color = "black")+
   ggtitle("Maximum weigth loss during the symptomatic phase") +
-  # facet_wrap(~infection_isolate) +
+  facet_wrap(~Expe) +
   geom_jitter(width=0.1, size=7, pch = 21,
               color = "black", aes(fill = HybridStatus), alpha = 0.8) +
   labs(y= "Maximum weigth loss relative to weight at dpi 3", x= "Hybrid status")+
@@ -793,8 +813,21 @@ ggplot(max.loss_005_E64, aes(HybridStatus,100-relativeWeight, color=infection_is
   mytheme +
   theme(legend.position="none")
 
-summary(lm(relativeWeight~HybridStatus, data = max.loss_005_E64))
-summary(lmer(relativeWeight ~ HybridStatus + 1|Mouse_strain, data = max.loss_005_E64))
+# non-parametric tests
+# first batch
+maxloss_E64B1 <- max.loss_005_E64[max.loss_005_E64$Expe == "Expe005_1b",]
+
+kruskal.test(relativeWeight ~ HybridStatus, data = maxloss_E64B1)
+pairwise.wilcox.test(maxloss_E64B1$relativeWeight, maxloss_E64B1$HybridStatus,
+                 p.adjust.method = "BH")
+# second batch
+maxloss_E64B2 <- max.loss_005_E64[max.loss_005_E64$Expe == "Expe005_2b",]
+
+kruskal.test(relativeWeight ~ HybridStatus, data = maxloss_E64B2)
+pairwise.wilcox.test(maxloss_E64B2$relativeWeight, maxloss_E64B2$HybridStatus,
+                 p.adjust.method = "BH")
+
+# summary(lmer(relativeWeight ~ HybridStatus + 1|Mouse_strain, data = max.loss_005_E64))
  
 # library(nlme)
 # lme(fixed = max.loss_005_E64$HybridStatus, data = max.loss_005_E64, random = max.loss_005_E64$Mouse_strain)
@@ -808,13 +841,13 @@ ggplot(ExpeDF_005_E88, aes(x = dpi, y = weight, fill = OPGstatus)) +
   geom_line(aes(group = EH_ID, col = Mouse_strain), size = 2, alpha = 0.5) +
   # scale_color_manual(values = c("blue", "purple", "red")) +
   geom_point(size=4, pch = 21, color = "black")+
-  scale_fill_manual(values = c("lightgrey", "yellow")) +
+  scale_fill_manual(values = c("lightgrey", "black", "yellow")) +
   mytheme +
-  facet_grid(Mouse_subspecies ~ ., scales = "free") +
+  facet_grid(Mouse_subspecies ~ Expe, scales = "free") +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
   scale_y_continuous(name = "Weight (g)") +
   theme(strip.text.y = element_text(size = 15)) +
-  theme(legend.position="none") +
+  # theme(legend.position="none") +
   ggtitle("Weight along experiment per individual (E88)", subtitle = "yellow : oocysts detected in feces")
 
 ggplot(ExpeDF_005_E88, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
@@ -822,14 +855,14 @@ ggplot(ExpeDF_005_E88, aes(x = dpi, y = relativeWeight, fill = OPGstatus)) +
   geom_line(aes(group = EH_ID, col = Mouse_strain), size = 2, alpha = 0.5) +
   # scale_color_manual(values = c("blue", "purple", "red")) +
   geom_point(size=4, pch = 21, color = "black")+
-  scale_fill_manual(values = c("lightgrey", "yellow")) +
+  scale_fill_manual(values = c("lightgrey", "black", "yellow")) +
   mytheme +
-  facet_grid(Mouse_subspecies ~ .) +
+  facet_grid(Mouse_subspecies ~ Expe) +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
   scale_y_continuous(name = "Weight relative to dpi7 (%)") +
   coord_cartesian(ylim = c(80, 110)) +
   theme(strip.text.y = element_text(size = 15)) +
-  theme(legend.position="none") +
+  # theme(legend.position="none") +
   ggtitle("Relative weight along experiment compared to dpi7 (E88)", subtitle = "yellow : oocysts detected in feces")
 ```
 
@@ -841,6 +874,7 @@ ggplot(summaryWeight_005_E88, aes(x = dpi, y = relativeWeight))+
   geom_point(aes(fill = HybridStatus), size=4, pch = 21, color = "black") +
   scale_color_manual(values = c("blue", "purple", "red")) +
   scale_fill_manual(values = c("blue", "purple", "red")) +
+  facet_grid(.~Expe) +
   mytheme +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
   scale_y_continuous(name = "Weight relative to dpi7 (%)") +
@@ -863,7 +897,7 @@ max.loss_005_E88 <- do.call("rbind", by(ExpeDF_005_E88_Symptomatic, ExpeDF_005_E
 ggplot(max.loss_005_E88, aes(HybridStatus,100-relativeWeight, color=infection_isolate)) +
   geom_boxplot(color = "black")+
   ggtitle("Maximum weigth loss during the symptomatic phase") +
-  # facet_wrap(~infection_isolate) +
+  facet_wrap(~Expe) +
   geom_jitter(width=0.1, size=7, pch = 21,
               color = "black", aes(fill = HybridStatus), alpha = 0.8) +
   labs(y= "Maximum weigth loss relative to weight at dpi 7", x= "Mouse strain")+
@@ -871,17 +905,171 @@ ggplot(max.loss_005_E88, aes(HybridStatus,100-relativeWeight, color=infection_is
   mytheme +
   theme(legend.position="none")
 
-summary(lm(relativeWeight ~ HybridStatus, data = max.loss_005_E88))
+# non-parametric tests
+# first batch
+maxloss_E88B1 <- max.loss_005_E88[max.loss_005_E88$Expe == "Expe005_1a",]
+
+kruskal.test(relativeWeight ~ HybridStatus, data = maxloss_E88B1)
+pairwise.wilcox.test(maxloss_E88B1$relativeWeight, maxloss_E88B1$HybridStatus,
+                 p.adjust.method = "BH")
+
+# second batch
+maxloss_E88B2 <- max.loss_005_E88[max.loss_005_E88$Expe == "Expe005_2a",]
+
+kruskal.test(relativeWeight ~ HybridStatus, data = maxloss_E88B2)
+pairwise.wilcox.test(maxloss_E88B2$relativeWeight, maxloss_E88B2$HybridStatus,
+                 p.adjust.method = "BH")
+
 # summary(glmer(relativeWeight ~ HybridStatus + 1|Mouse_strain, data = max.loss_005_E88))
-
-
 # myfitE88 <- lmer(weight ~ HybridStatus + 1|dpi + 1|EH_ID + 1|Sex, data = ExpeDF_005_E88)
-
-print("Along all experiment:")
-
+# print("Along all experiment:")
 # lmer(weight ~ HybridStatus, data = ExpeDF_005_E88)
-
 # myfitE88 <- lmer(weight ~ HybridStatus + 1|dpi, data = ExpeDF_005_E88)
 # myfitE88
 # summary(myfitE88)
 ```
+
+## 2. Parasite shedding
+
+```{r OPGalong5_64, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, cache=TRUE}
+ggplot(ExpeDF_005_E64, aes(x = dpi, y = OPG, fill = infection_isolate))+
+  geom_rect(aes(xmin = 3, xmax = 8, ymin = -Inf, ymax = Inf), fill = "lightgrey", alpha = .5) +
+  geom_line(aes(group = EH_ID, col = Mouse_strain), alpha = 0.5, size = 2) +
+  geom_point(size=3, aes(color = Mouse_strain))+
+  # scale_color_manual(values = c("blue", "purple", "red")) +
+  facet_grid(HybridStatus ~ Expe) +
+  mytheme +
+  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
+  ylab("Oocysts shedding along infection (OPG)") +
+  ggtitle("Oocyst shedding along experiment (E64)") +
+  theme(legend.position="none") 
+```
+
+```{r OPGalongsum5_64, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, cache=TRUE}
+ggplot(summaryOocysts_005_E64, aes(x = dpi, y = OPG))+
+  geom_rect(aes(xmin = 3, xmax = 8, ymin = -Inf, ymax = Inf), fill = "lightgrey", alpha = .5) +
+  geom_errorbar(aes(ymin = OPG - ci, ymax = OPG + ci,  col= HybridStatus)) +
+  geom_line(aes(group = HybridStatus, col = HybridStatus), size = 2, alpha = 0.5) +
+  geom_point(aes(fill = HybridStatus), size=4, pch = 21, color = "black") +
+  # scale_color_manual(values = c("blue", "purple", "red")) +
+  # scale_fill_manual(values = c("blue", "purple", "red")) +
+  mytheme +
+  facet_grid(HybridStatus ~ Expe) +
+  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
+  scale_y_continuous(name = "Oocysts shedding along infection (OPG)") +
+  ggtitle("Mean oocysts shedding along experiment")
+```
+
+```{r stats5_64opg, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, cache=TRUE}
+# Cumulative OPG along experiment
+all.sum.oocysts_005_64 <- do.call("rbind", by(ExpeDF_005_E64, ExpeDF_005_E64$EH_ID, function (x){
+  x$sum.oo <- sum(x$OPG, na.rm = TRUE)
+  x
+}))
+sum.oocysts_005_64 <- all.sum.oocysts_005_64[!duplicated(all.sum.oocysts_005_64$EH_ID),]
+
+ggplot(sum.oocysts_005_64, aes(HybridStatus, sum.oo, color=infection_isolate)) +
+  geom_boxplot(color = "black")+
+  ggtitle("Sum of oocysts shed along the experiment") +
+  facet_wrap(~infection_isolate) +
+  geom_jitter(width=0.1, size=7, pch = 21,
+              color = "black", aes(fill = Mouse_strain), alpha = 0.8) +
+  labs(y= "Sum of oocysts shed along experiment, OPG (oocysts per gram)", x= "Mouse strain")+
+  # scale_fill_manual(values = c("blue", "purple", "red")) +
+  mytheme +
+  facet_grid(.~ Expe) +
+  theme(legend.position="none")
+
+kruskal.test(sum.oo ~ HybridStatus, data = sum.oocysts_005_64)
+pairwise.wilcox.test(sum.oocysts_005_64$sum.oo, sum.oocysts_005_64$HybridStatus,
+                 p.adjust.method = "BH")
+```
+
+Eimeria falciformis
+
+```{r OPGalong5_88, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, cache=TRUE}
+ggplot(ExpeDF_005_E88, aes(x = dpi, y = OPG, fill = infection_isolate))+
+  geom_rect(aes(xmin = 7, xmax = 11, ymin = -Inf, ymax = Inf), fill = "lightgrey", alpha = .5) +
+  geom_line(aes(group = EH_ID, col = Mouse_strain), alpha = 0.5, size = 2) +
+  geom_point(size=3, aes(color = Mouse_strain))+
+  # scale_color_manual(values = c("blue", "purple", "red")) +
+  facet_grid(HybridStatus ~ Expe) +
+  mytheme +
+  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
+  ylab("Oocysts shedding along infection (OPG)") +
+  ggtitle("Oocyst shedding along experiment (E88)") +
+  theme(legend.position="none") 
+```
+
+```{r OPGalongsum5_88, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, cache=TRUE}
+ggplot(summaryOocysts_005_E88, aes(x = dpi, y = OPG))+
+  geom_rect(aes(xmin = 7, xmax = 11, ymin = -Inf, ymax = Inf), fill = "lightgrey", alpha = .5) +
+  geom_errorbar(aes(ymin = OPG - ci, ymax = OPG + ci,  col= HybridStatus)) +
+  geom_line(aes(group = HybridStatus, col = HybridStatus), size = 2, alpha = 0.5) +
+  geom_point(aes(fill = HybridStatus), size=4, pch = 21, color = "black") +
+  # scale_color_manual(values = c("blue", "purple", "red")) +
+  # scale_fill_manual(values = c("blue", "purple", "red")) +
+  mytheme +
+  facet_grid(HybridStatus ~ Expe) +
+  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
+  scale_y_continuous(name = "Oocysts shedding along infection (OPG)") +
+  ggtitle("Mean oocysts shedding along experiment (E88)")
+```
+
+
+```{r stats5_88opg, echo=FALSE, warning=FALSE, fig.width = 12, fig.height = 10, cache=TRUE}
+# Cumulative OPG along experiment
+all.sum.oocysts_005_88 <- do.call("rbind", by(ExpeDF_005_E88, ExpeDF_005_E88$EH_ID, function (x){
+  x$sum.oo <- sum(x$OPG, na.rm = TRUE)
+  x
+}))
+sum.oocysts_005_88 <- all.sum.oocysts_005_88[!duplicated(all.sum.oocysts_005_88$EH_ID),]
+
+ggplot(sum.oocysts_005_88, aes(HybridStatus, sum.oo, color=infection_isolate)) +
+  geom_boxplot(color = "black")+
+  ggtitle("Sum of oocysts shed along the experiment") +
+  facet_wrap(~infection_isolate) +
+  geom_jitter(width=0.1, size=7, pch = 21,
+              color = "black", aes(fill = Mouse_strain), alpha = 0.8) +
+  labs(y= "Sum of oocysts shed along experiment, OPG (oocysts per gram)", x= "Mouse strain")+
+  # scale_fill_manual(values = c("blue", "purple", "red")) +
+  mytheme +
+  facet_grid(.~ Expe) +
+  theme(legend.position="none")
+
+kruskal.test(sum.oo ~ HybridStatus, data = sum.oocysts_005_88)
+pairwise.wilcox.test(sum.oocysts_005_88$sum.oo, sum.oocysts_005_88$HybridStatus,
+                 p.adjust.method = "BH")
+```
+
+
+Ideas:
+
+* Add variable for each 4 parents and test the linear relationships for each of these variables set to 0 (copy of DNA), 1 (copy of DNA) (2 we can remove as we want outbred vs hybrids) + another variable HybridStatus : hybrid or outbred. + mixed effect (1|EH_ID, 1|Expe)
+
+* Depend on the angle, but could be really interesting to quantify this for each mouse strain (outbreeding effet + hybrid effect) and show that it is highly strain specific. The focus on the article could be on that.
+
+* Internal collaborators:
+Alice Balard, 
+Vivian Mittné, 
+Francisca Böhning, 
+Emanuel Heitlinger
+
+* External collaborators:
+Stuart J. Baird, 
+Jaroslav Piálek, 
+Ľudovít Ďureje, 
+Joëlle Goüy de Bellocq, 
+Milos Macholán.
+
+* Aknowledgements: 
+Victor Jarquin, 
+Jenny Jost, 
+Deborah Dymke, 
+Lubomír Bednář, 
+Parnika Mukherjee, 
+Julia Murata, 
+Clément Vollet, 
+Tabea Roth von Szepesbéla, 
+Yasmin Schickel, 
+Gordon Mählis
