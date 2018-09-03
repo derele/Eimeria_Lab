@@ -1,0 +1,12 @@
+base
+dplyr
+tidyr
+plyr
+ggplot2
+gridExtra
+reshape2
+scales
+Matrix
+lme4
+lmerTest
+bindrcpp
