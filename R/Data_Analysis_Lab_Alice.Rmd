@@ -534,6 +534,10 @@ ExpeDF_003_4$Mouse_strain <- factor(ExpeDF_003_4$Mouse_strain,
 ExpeDF_003_4$Eimeria_species[ExpeDF_003_4$infection_isolate %in% c("E88", "Eflab", "EfLab")] = "E.falciformis"
 ExpeDF_003_4$Eimeria_species[ExpeDF_003_4$infection_isolate %in% c("E64", "EI64", "E139")] = "E.ferrisi"
 
+# Eimeria 64 "west" should always be left
+ExpeDF_003_4$infection_isolate <- factor(ExpeDF_003_4$infection_isolate,
+                                       levels = c("E64", "E139"))
+
 # calculate relative weight loss compared to dpi3
 ExpeDF_003_4 <- calculateWeightLoss(ExpeDF_003_4, startingDay = 3)
 
@@ -881,13 +885,14 @@ ggplot(max.loss_005_E64, aes(HybridStatus,100-relativeWeight, color=infection_is
   theme(legend.position="none")
 
 # non-parametric tests
-# first batch
+print("first batch")
 maxloss_E64B1 <- max.loss_005_E64[max.loss_005_E64$Expe == "Expe005_1b",]
 
 kruskal.test(relativeWeight ~ HybridStatus, data = maxloss_E64B1)
 pairwise.wilcox.test(maxloss_E64B1$relativeWeight, maxloss_E64B1$HybridStatus,
                  p.adjust.method = "BH")
-# second batch
+
+print("second batch")
 maxloss_E64B2 <- max.loss_005_E64[max.loss_005_E64$Expe == "Expe005_2b",]
 
 kruskal.test(relativeWeight ~ HybridStatus, data = maxloss_E64B2)
@@ -973,14 +978,14 @@ ggplot(max.loss_005_E88, aes(HybridStatus,100-relativeWeight, color=infection_is
   theme(legend.position="none")
 
 # non-parametric tests
-# first batch
+print("first batch")
 maxloss_E88B1 <- max.loss_005_E88[max.loss_005_E88$Expe == "Expe005_1a",]
 
 kruskal.test(relativeWeight ~ HybridStatus, data = maxloss_E88B1)
 pairwise.wilcox.test(maxloss_E88B1$relativeWeight, maxloss_E88B1$HybridStatus,
                  p.adjust.method = "BH")
 
-# second batch
+print("second batch")
 maxloss_E88B2 <- max.loss_005_E88[max.loss_005_E88$Expe == "Expe005_2a",]
 
 kruskal.test(relativeWeight ~ HybridStatus, data = maxloss_E88B2)
