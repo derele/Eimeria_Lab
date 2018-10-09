@@ -700,7 +700,7 @@ pairwise.wilcox.test(sum.oocysts_003_4$sum.oo, sum.oocysts_003_4$Mouse_strain,
 
 ```{r setupExpe5, echo=FALSE, warning=FALSE}
 ########################### Exp005 : Full expe including hybrids, July 2018 
-oo <- read.csv("../data/3_recordingTables/Exp005_full_RECORDoocysts.csv", na.strings = c("NA", " "))
+oo <- read.csv("../data/3_recordingTables/Exp005_full_RECORDoocysts.csv", na.strings = c("NA", " ", "n.a."))
 we <- read.csv("../data/3_recordingTables/Exp005_full_RECORDweight.csv", na.strings = c("NA", " "))
 design <- rbind(read.csv("../data/2_designTables/Inf1a_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
                 read.csv("../data/2_designTables/Inf2a_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
