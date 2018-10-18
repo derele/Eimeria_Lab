@@ -1,0 +1,9 @@
+eimeriaIsolate,eimeriaSpecies,tubeName,Exp_ID,EH_ID,weight,dpi,Noocysts,labels,sex,datePassaging,howManyPassaging,mouseGenotype
+EfLab,E.falciformis,b,Exp_002,4,39,9,2092500,NA,male,March2018,loads,NMRI
+EfLab,E.falciformis,a,Exp_002,5,40.1,9,2202500,NA,male,March2018,loads,NMRI
+E88,E.falciformis,a,Expe005_1a,LM0196,20.66,8,1810000,DLZ,male,July2018,4,STRA_SCHUNT 
+E88,E.falciformis,b,Expe005_1a,LM0199,27.05,8,1215000,FKS,male,July2018,4,STRA_STRA 
+E139,E.ferrisi,b,Exp_003,LM0126,23.5,6,570000,GU,male,April2018,3,STRA
+E139,E.ferrisi,a,Exp_003,LM0132,12.9,7,1497500,BZ,male,April2018,3,PWD
+E64,E.ferrisi,a,Exp_003,LM0134,26.9,7,3087500,MV,male,April2018,3,STRA
+E64,E.ferrisi,b,Exp_003,LM0136,29.9,6,2047500,FS,male,April2018,3,STRA
