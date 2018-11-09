@@ -780,6 +780,13 @@ ExpeDF_005$OPGstatus[!is.na(ExpeDF_005$OPG) & ExpeDF_005$OPG > 0] = "positive"
 ExpeDF_005$OPGstatus[!is.na(ExpeDF_005$OPG) & ExpeDF_005$OPG == 0] = "negative"
 ExpeDF_005$OPGstatus = as.factor(ExpeDF_005$OPGstatus)
 
+# ERROR one fecal sample has Inf as value for OPG (cause 0g as fecal weight)
+ExpeDF_005[ExpeDF_005$OPG %in% Inf, "OPG"] <- NA
+
+# Export
+write.csv2(file = "../data/3_recordingTables/Exp005_complete.csv",
+          x = ExpeDF_005, row.names = F, fileEncoding = "UTF-8")
+
 # Split in 2 infection batches (Efalciformis and Eferrisi are studied separetely)
 ExpeDF_005_E88 <- ExpeDF_005[ExpeDF_005$infection_isolate %in% "E88",]
 ExpeDF_005_E64 <- ExpeDF_005[ExpeDF_005$infection_isolate %in% "E64",]
@@ -1113,7 +1120,6 @@ kruskal.test(sum.oo ~ HybridStatus, data = sum.oocysts_005_88)
 pairwise.wilcox.test(sum.oocysts_005_88$sum.oo, sum.oocysts_005_88$HybridStatus,
                  p.adjust.method = "BH")
 ```
-
 
 Ideas:
 
