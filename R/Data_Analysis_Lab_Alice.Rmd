@@ -1056,8 +1056,7 @@ ggplot(sum.oocysts_005_64, aes(HybridStatus, sum.oo, color=infection_isolate)) +
   labs(y= "Sum of oocysts shed along experiment, OPG (oocysts per gram)", x= "Mouse strain")+
   # scale_fill_manual(values = c("blue", "purple", "red")) +
   mytheme +
-  facet_grid(.~ Expe) +
-  theme(legend.position="none")
+  facet_grid(.~ Expe) 
 
 kruskal.test(sum.oo ~ HybridStatus, data = sum.oocysts_005_64)
 pairwise.wilcox.test(sum.oocysts_005_64$sum.oo, sum.oocysts_005_64$HybridStatus,
