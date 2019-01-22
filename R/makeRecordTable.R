@@ -1,6 +1,6 @@
 makeRecordTable <- function(designTable, myseed){
   set.seed(myseed)
-  recordTable = data.frame(EH_ID = rep(designTable$EH_id, 12),
+  recordTable = data.frame(EH_ID = rep(designTable$EH_ID, 12),
                            dpi = rep(0:11, each=nrow(designTable)),
                            weight = "",
                            weight_dpi0 = "",
@@ -14,13 +14,17 @@ makeRecordTable <- function(designTable, myseed){
                            oocyst_mean = "",
                            dilution = "",
                            OPG = "")
-  labels = sample(combn(LETTERS, 3, paste, collapse = ""), nrow(recordTable))
+  labels = sample(combn(LETTERS, 2, paste, collapse = ""), nrow(recordTable))
   #recordTable$labels = labels
   
   recordTable = cbind(labels = labels, recordTable)
   
   return(recordTable)
 }
+
+designTableExpe008 <- read.csv("../data/2_designTables/Exp008_NMRI_DESIGN_jan2019.csv")
+recordTableExpe008 <- makeRecordTable(designTableExpe008, 1234)
+write.csv(recordTableExpe008, file = "../data/3_recordingTables/Exp008_Jan2019_NMRI_4isolatespassaging.csv", row.names = F)
 # 
 # # Experiment May 2018
 # recordTable <- makeRecordTable("../data/2_designTables/April2018_wildmice_Eferrisi_Firstbatch_DESIGN.csv", myseed = 1344)
