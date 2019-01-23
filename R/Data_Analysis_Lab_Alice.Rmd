@@ -316,6 +316,7 @@ ggplot(ExpeDF_001Symptomatic_64,
   scale_x_log10() +
   coord_cartesian(ylim =  c(80,110)) +
   ggtitle("Relative weight loss compared to dpi3, during the symptomatic phase, vs parasite outcome (E64)") +
+  scale_fill_manual(values = c("blue", "purple", "red")) +
   mytheme
 ```
 
