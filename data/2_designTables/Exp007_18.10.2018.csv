@@ -1,4 +1,4 @@
-EH_id,HybridStatus,Strain,Sex,first_infection,Reinfection.plan
+EH_id,HybridStatus,Strain,Sex,Exp006,Exp007
 LM0295,Hybrid,SCHUNT_PWD,F,E64,E64
 LM0294,Inbred,PWD_PWD,M,E64,E64
 LM0293,Inbred,BUSNA_BUSNA,M,E64,E88
