@@ -13,6 +13,9 @@ Expe008 <- merge(Expe008_design, Expe008_record)
 # Calculate weight loss
 Expe008 <- calculateWeightLoss(Expe008, startingDay = 0)
 
+Expe008$EimeriaSpecies[Expe008$Isolate %in% c("E64", "E139")] <- "E. ferrisi"
+Expe008$EimeriaSpecies[Expe008$Isolate %in% c("E88", "Eflab")] <- "E. falciformis"
+
 # Plot follow weight
 ggplot(Expe008, aes(x = dpi, y = relativeWeight)) +
   geom_line(aes(group = EH_ID, col = Isolate)) +
@@ -21,4 +24,5 @@ ggplot(Expe008, aes(x = dpi, y = relativeWeight)) +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
   scale_y_continuous(name = "Weight (g)") +
   theme(strip.text.y = element_text(size = 15)) +
-  ggtitle("Weight along experiment per individual") 
+  ggtitle("Weight along experiment per individual") +
+  facet_grid(.~EimeriaSpecies)
