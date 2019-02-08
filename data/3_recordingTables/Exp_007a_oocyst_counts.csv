@@ -1,4 +1,4 @@
-labels,EH_ID,dpi,oocyst_1,oocyst_2,oocyst_3,oocyst_4,average,OPG,comment,dilution_mL
+labels,EH_ID,dpi,oocyst_1,oocyst_2,oocyst_3,oocyst_4,average,OPG,comment,volume_PBS_mL
 INO,LM0227,0,0.00,0.00,0.00,0.00,0.00,,,1
 EJN,LM0228,0,0.00,0.00,0.00,0.00,0.00,,,1
 DKR,LM0229,0,0.00,0.00,0.00,0.00,0.00,,,1
