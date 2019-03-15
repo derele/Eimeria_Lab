@@ -112,6 +112,7 @@ ExpeDF_003_4 <-
   ExpeDF_003_4[!ExpeDF_003_4$EH_ID %in% "LM0193",]
 # make tolerance table
 tolerance_003_4 <- makeToleranceTable(ExpeDF_003_4)
+
 #### Expe_005
 # load all tables of all experiments, 
 oo <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp005_full_RECORDoocysts.csv", na.strings = c("NA", " ", "n.a."))
@@ -191,5 +192,8 @@ ExpeDF_005[ExpeDF_005$OPG %in% Inf, "OPG"] <- NA
 # calculate relative weight loss 
 ExpeDF_005 <- calculateWeightLoss(ExpeDF_005, startingDay = 0)
 ExpeDF_005$relativeWeight <- as.numeric(as.character(ExpeDF_005$relativeWeight))
+
+## Keep ONLY first batch!!! Contamination in the second one...
+ExpeDF_005 <- ExpeDF_005[ExpeDF_005$Batch %in% 1,]
 # make tolerance table
 tolerance_005 <- makeToleranceTable(ExpeDF_005)

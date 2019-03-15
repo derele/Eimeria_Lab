@@ -8,38 +8,71 @@ source("myFunctions.R")
 #### Load data ####
 source("loadExpe001toExpe005.R")
 
+############## IDEAS block
+# align by day +1 -1 weight loss and shedding
+# tolerance / resistance / host impact
+# change def tol cf raseberg 2015
+##############
+
 ### Part 1: Franci, preliminary experiment
 plotsExpe1 <- makeIntermPlots(ExpeDF_001)
 plotsExpe1[[1]]
 plotsExpe1[[2]]
-
 ## Passaging in NMRI
 plotsExpe2 <- makeIntermPlots(ExpeDF_002)
 plotsExpe2[[1]]
 plotsExpe2[[2]]
-
 ## Parental inbred
 plotsExpe3_4 <- makeIntermPlots(ExpeDF_003_4)
 plotsExpe3_4[[1]]
 plotsExpe3_4[[2]]
-
 ## Full design (F0, F1 outbred, F1 hybrids)
 plotsExpe5 <- makeIntermPlots(ExpeDF_005[ExpeDF_005$Batch == 1,])
-plotsExpe5[[1]]
+plotsExpe5[[1]]+ coord_cartesian(ylim = c(-10,20))
 plotsExpe5[[2]]
 
 ## ALL TOGETHER
 ALL_Expe <- merge(ExpeDF_001, ExpeDF_002, all = T)
 ALL_Expe <- merge(ALL_Expe, ExpeDF_003_4, all = T)
-ALL_Expe <- merge(ALL_Expe, ExpeDF_005[ExpeDF_005$Batch == 1,], all = T)
+ALL_Expe <- merge(ALL_Expe, ExpeDF_005, all = T)
 
 plotsALL <- makeIntermPlots(ALL_Expe)
 plotsALL[[1]] + coord_cartesian(ylim = c(-10,20))
-makeIntermPlots
+plotsALL[[2]]# + coord_cartesian(ylim = c(-10,20))
+
+## ALL TOGETHER FOR STATS 
+toleranceTable <- merge(tolerance_001, tolerance_002, all = T)
+toleranceTable <- merge(toleranceTable, tolerance_003_4, all = T)
+toleranceTable <- merge(toleranceTable, tolerance_005, all = T)
+
+toleranceTable$diff_maxWL_maxOPG <- 
+  toleranceTable$dpi_maxweightloss - toleranceTable$dpi_maxOPG
+
+diffDaysDf <- data.frame(table(toleranceTable$diff_maxWL_maxOPG, 
+                               toleranceTable$infection_isolate))
+
+names(diffDaysDf) <- c("diff_maxWL_maxOPG", 
+                       "infection_isolate", "Freq")
+
+pdf("figures/fig1.pdf", width = 10, height = 6)
+ggplot(toleranceTable, aes(x = infection_isolate, 
+                       y = diff_maxWL_maxOPG, fill = infection_isolate ))+
+  geom_violin() +
+  geom_dotplot(dotsize = 0.5, binaxis = "y", stackdir = "center", fill = "black") +
+  scale_y_continuous(breaks = -9:6) +
+  geom_hline(yintercept = 1, linetype = "dotted") +
+  geom_hline(yintercept = -1, linetype = "dotted") +
+  ylab("Days between shedding peak and maximum weight loss") +
+  xlab("")
+dev.off()
+  
+## Results --> Eferrisi max shedding peak can be shifted of -1 day,
+## Efalci of +1 day
+## Then we align and compare
 
 
 
-tolerance_001 <- prepFinalTolComp(tolerance_001)
+## Separated ##
 
 ## Test of hybrid effect
 tolerance_001$HybridStatus <- "inbred"
@@ -122,8 +155,6 @@ tolerance_comparison <- tolerance_comparison[tolerance_comparison$sum.opg != 0,]
 # Let's remove double infections (Exp_005_2a and Exp_005_2b)
 tolerance_comparison <- tolerance_comparison[
   !tolerance_comparison$Exp_ID %in% c("Exp_005_2a", "Exp_005_2b"),]
-# clean table
-tolerance_comparison <- prepFinalTolComp(tolerance_comparison)
 
 ## Check first strain
 ggplot(tolerance_comparison, aes(maxOPG_inmillion, maxweightloss)) +

@@ -140,10 +140,6 @@ makeToleranceTable <- function(ExpeDF,
   # tolerance (slope of a regression of minimum weight retained against peak parasite load)
   tol = -(tolerance$maxweightloss / tolerance$maxOPG_inmillion)
   tolerance$toleranceFactor = tol + abs(min(tol))
-  return(tolerance)
-}
-
-prepFinalTolComp <- function(tolerance){
   # erase useless level (Eflab)
   tolerance$infection_isolate <- droplevels(tolerance$infection_isolate)
   # NB. Let's not consider which parent is which, but make A_B mouse = B_A mouse
@@ -180,6 +176,7 @@ prepFinalTolComp <- function(tolerance){
                                                    "E.falciformis (EfLab)"))
   return(tolerance)
 }
+
 # Make groups boxplots
 myboxPlot <- 
   function(tolerance, response, respName, group, groupName){
