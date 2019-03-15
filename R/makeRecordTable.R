@@ -1,7 +1,21 @@
-makeRecordTable <- function(designTable, myseed){
+makeRecordTable <- function(designTable, myseed, ndays = 12){
   set.seed(myseed)
+  # recordTable = data.frame(EH_ID = rep(designTable$EH_ID, ndays),
+  #                          dpi = rep(0:(ndays-1), each=nrow(designTable)),
+  #                          weight = "",
+  #                          weight_dpi0 = "",
+  #                          weightloss = "",
+  #                          weightRelativeToInfection = "",
+  #                          fecweight = "",
+  #                          oocyst_sq1 = "",
+  #                          oocyst_sq2 = "",
+  #                          oocyst_sq3 = "",
+  #                          oocyst_sq4 = "",
+  #                          oocyst_mean = "",
+  #                          dilution = "",
+  #                          OPG = "")
   recordTable = data.frame(EH_ID = rep(designTable$EH_ID, 12),
-                           dpi = rep(0:11, each=nrow(designTable)),
+                           dpi = rep(c(0,2,4,7,9,11,14,16,18,21,23,25), each=nrow(designTable)),
                            weight = "",
                            weight_dpi0 = "",
                            weightloss = "",
@@ -16,15 +30,17 @@ makeRecordTable <- function(designTable, myseed){
                            OPG = "")
   labels = sample(combn(LETTERS, 2, paste, collapse = ""), nrow(recordTable))
   #recordTable$labels = labels
-  
   recordTable = cbind(labels = labels, recordTable)
-  
   return(recordTable)
 }
 
-designTableExpe008 <- read.csv("../data/2_designTables/Exp008_NMRI_DESIGN_jan2019.csv")
-recordTableExpe008 <- makeRecordTable(designTableExpe008, 1234)
-write.csv(recordTableExpe008, file = "../data/3_recordingTables/Exp008_Jan2019_NMRI_4isolatespassaging.csv", row.names = F)
+designTableExpe009 <- read.csv("../data/2_designTables/Exp009_CRYPTO_design.csv")
+recordTableExpe009 <- makeRecordTable(designTableExpe009, 1234, ndays = 26)
+# write.csv(recordTableExpe009, "../data/3_recordingTables/Exp009_CRYPTO.csv",
+#           row.names = F, quote = F)
+# designTableExpe008 <- read.csv("../data/2_designTables/Exp008_NMRI_DESIGN_jan2019.csv")
+# recordTableExpe008 <- makeRecordTable(designTableExpe008, 1234)
+# write.csv(recordTableExpe008, file = "../data/3_recordingTables/Exp008_Jan2019_NMRI_4isolatespassaging.csv", row.names = F)
 # 
 # # Experiment May 2018
 # recordTable <- makeRecordTable("../data/2_designTables/April2018_wildmice_Eferrisi_Firstbatch_DESIGN.csv", myseed = 1344)

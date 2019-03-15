@@ -1,0 +1,17 @@
+EH_ID,Species,Mouse_strain,K_ID,date_of_birth,N.passaging.before,sex,infection_isolate
+LM0304,Cryptosporidium spp.,NMRI,K7,20_08_18,0,M,Cry1
+LM0305,Cryptosporidium spp.,NMRI,K5,16_08_18,0,M,Cry1
+LM0306,Cryptosporidium spp.,NMRI,K7,20_08_18,0,M,Cry1
+LM0307,Cryptosporidium spp.,NMRI,K6,17_08_18,0,M,Cry1
+LM0308,Cryptosporidium spp.,NMRI,K7,20_08_18,0,M,Cry2
+LM0309,Cryptosporidium spp.,NMRI,K6,17_08_18,0,M,Cry2
+LM0310,Cryptosporidium spp.,NMRI,K6,17_08_18,0,M,Cry2
+LM0311,Cryptosporidium spp.,NMRI,K6,17_08_18,0,M,Cry2
+LM0312,Cryptosporidium spp.,NMRI,K5,16_08_18,0,M,Cry3
+LM0313,Cryptosporidium spp.,NMRI,K3,12_08_18,0,M,Cry3
+LM0314,Cryptosporidium spp.,NMRI,K7,20_08_18,0,M,Cry3
+LM0315,Cryptosporidium spp.,NMRI,K5,16_08_18,0,M,Cry3
+LM0316,Cryptosporidium spp.,NMRI,K3,12_08_18,0,M,Cry4
+LM0317,Cryptosporidium spp.,NMRI,K3,12_08_18,0,M,Cry4
+LM0318,Cryptosporidium spp.,NMRI,K5,16_08_18,0,M,Cry4
+LM0319,Cryptosporidium spp.,NMRI,K3,12_08_18,0,M,Cry4

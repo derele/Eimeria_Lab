@@ -1,14 +1,43 @@
 # code Vivian & Franci & Alice's experiments
 # March 2019
+## INFO
+# Mouse AA_0088, HI = 0.2
+# Mouse AA_0064, HI = 0.08
+# Mouse AA_0139, HI = 0.85
 source("myFunctions.R")
-
 #### Load data ####
 source("loadExpe001toExpe005.R")
 
-### Part 1: Franci
+### Part 1: Franci, preliminary experiment
 plotsExpe1 <- makeIntermPlots(ExpeDF_001)
 plotsExpe1[[1]]
 plotsExpe1[[2]]
+
+## Passaging in NMRI
+plotsExpe2 <- makeIntermPlots(ExpeDF_002)
+plotsExpe2[[1]]
+plotsExpe2[[2]]
+
+## Parental inbred
+plotsExpe3_4 <- makeIntermPlots(ExpeDF_003_4)
+plotsExpe3_4[[1]]
+plotsExpe3_4[[2]]
+
+## Full design (F0, F1 outbred, F1 hybrids)
+plotsExpe5 <- makeIntermPlots(ExpeDF_005[ExpeDF_005$Batch == 1,])
+plotsExpe5[[1]]
+plotsExpe5[[2]]
+
+## ALL TOGETHER
+ALL_Expe <- merge(ExpeDF_001, ExpeDF_002, all = T)
+ALL_Expe <- merge(ALL_Expe, ExpeDF_003_4, all = T)
+ALL_Expe <- merge(ALL_Expe, ExpeDF_005[ExpeDF_005$Batch == 1,], all = T)
+
+plotsALL <- makeIntermPlots(ALL_Expe)
+plotsALL[[1]] + coord_cartesian(ylim = c(-10,20))
+makeIntermPlots
+
+
 
 tolerance_001 <- prepFinalTolComp(tolerance_001)
 
@@ -127,6 +156,9 @@ tolerance_comparison[
   tolerance_comparison$infection_isolate %in% 
     c("E.ferrisi (E64)", "E.ferrisi (E139)"), "infection_isolate"] <- "E.ferrisi (E64|E139)"
 
+table(tolerance_comparison$HybridStatus,
+      tolerance_comparison$infection_isolate)
+
 ## Part 1. Hybrid effect
 
 ### 1.1 On weight loss
@@ -159,6 +191,9 @@ myMod(mydata = tolerance_comparison,
 
 ## Part 2. Strain effect
 
+table(tolerance_comparison$Mouse_genotype,
+      tolerance_comparison$infection_isolate)
+
 ### 1.1 On weight loss
 myboxPlot(tolerance = tolerance_comparison,
           response = "maxweightloss", respName = "Maximum relative weight loss (%)",
@@ -185,25 +220,5 @@ myMod(mydata = tolerance_comparison,
       response = tolerance_comparison$toleranceFactor, 
            group = tolerance_comparison$Mouse_genotype)
 
-## INFO
-# Mouse AA_0088, HI = 0.2
-# Mouse AA_0064, HI = 0.08
-# Mouse AA_0139, HI = 0.85
 
-## Other plots 
-plotsExpe2 <- makeIntermPlots(ExpeDF_002)
-plotsExpe2[[1]]
-plotsExpe2[[2]]
-
-plotsExpe3_4 <- makeIntermPlots(ExpeDF_003_4)
-plotsExpe3_4[[1]]
-plotsExpe3_4[[2]]
-# 
-# ExpeDF_003_4[ExpeDF_003_4$infection_isolate == "E64" &
-#                ExpeDF_003_4$dpi == 1 &
-#                ExpeDF_003_4$Mouse_strain == "STRA_STRA",]
-
-plotsExpe5 <- makeIntermPlots(ExpeDF_005[ExpeDF_005$Batch == 1,])
-plotsExpe5[[1]]
-plotsExpe5[[2]]
 

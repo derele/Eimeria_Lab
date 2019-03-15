@@ -26,7 +26,11 @@ ExpeDF_001$OPG[ExpeDF_001$EH_ID %in% "LM0106" & ExpeDF_001$dpi %in% 4] <- 0
 ExpeDF_001 <- calculateWeightLoss(ExpeDF_001, startingDay = 1)
 # Set mice that died before the end of experiment at 20% weight loss (maximum) on last day
 ExpeDF_001[is.na(ExpeDF_001$relativeWeight) & ExpeDF_001$dpi != 0, "relativeWeight"] <- 80
-
+# Add hybrid status
+ExpeDF_001$HybridStatus <- "inbred"
+ExpeDF_001[ExpeDF_001$Mouse_strain == "WP", "HybridStatus"] <- "hybrids"
+# Call PWD --> PWD1 (other origin)
+ExpeDF_001$Mouse_strain[ExpeDF_001$Mouse_strain == "PWD"] <- "PWD1"
 # make tolerance table
 tolerance_001 <- makeToleranceTable(ExpeDF_001)
 
