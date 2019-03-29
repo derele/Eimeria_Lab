@@ -14,7 +14,9 @@ source("loadExpe001toExpe005.R")
 # change def tol cf raseberg 2015
 ##############
 
-### Part 1: Franci, preliminary experiment
+# Part 1: general course of experiment
+
+## Franci, preliminary experiment
 plotsExpe1 <- makeIntermPlots(ExpeDF_001)
 plotsExpe1[[1]]
 plotsExpe1[[2]]
@@ -40,13 +42,126 @@ plotsALL <- makeIntermPlots(ALL_Expe)
 plotsALL[[1]] + coord_cartesian(ylim = c(-10,20))
 plotsALL[[2]]# + coord_cartesian(ylim = c(-10,20))
 
-## ALL TOGETHER FOR STATS 
+# Part 2. Which is, by experiment, dpimaxOPG / dpimaxweightloss, 
+# by host strain, by parasite isolate
+
 toleranceTable <- merge(tolerance_001, tolerance_002, all = T)
 toleranceTable <- merge(toleranceTable, tolerance_003_4, all = T)
 toleranceTable <- merge(toleranceTable, tolerance_005, all = T)
 
 toleranceTable$diff_maxWL_maxOPG <- 
   toleranceTable$dpi_maxweightloss - toleranceTable$dpi_maxOPG
+
+## Experimental design
+expedesign <- toleranceTable %>% group_by(infection_isolate, Mouse_genotype)
+expedesign <- expedesign %>% summarise(n = n())
+expedesign <- expedesign %>% data.frame()
+expedesign
+
+## mean of peak day by host and parasite
+by_host_parasite_peak <- toleranceTable %>% 
+  group_by(infection_isolate) %>% 
+  summarise(
+    meanPeakParasite = mean(dpi_maxOPG),
+    medianPeakParasite = median(dpi_maxOPG),
+    sdPeakParasite = sd(dpi_maxOPG),
+    meanPeakHost = mean(dpi_maxweightloss),
+    medianPeakHost = median(dpi_maxweightloss),
+    sdPeakHost = sd(dpi_maxweightloss)
+    ) %>% 
+  data.frame()
+by_host_parasite_peak
+# infection_isolate meanPeakParasite medianPeakParasite
+# 1      E.ferrisi (E139)         6.066667                  6
+# 2       E.ferrisi (E64)         6.142857                  6
+# 3   E.falciformis (E88)         8.266667                  8
+# 4 E.falciformis (EfLab)         8.705882                  9
+# sdPeakParasite meanPeakHost medianPeakHost sdPeakHost
+# 1      0.6914918     5.700000              5   3.302559
+# 2      0.4900670     5.057143              5   2.564449
+# 3      0.5208305     7.600000              9   3.529189
+# 4      0.4696682     8.764706              9   2.537947
+
+# Shift all according to median peak, and keep equal window
+mydataShifted <- data.frame(EH_ID = ALL_Expe$EH_ID,
+                            infection_isolate = ALL_Expe$infection_isolate,
+                            Mouse_strain = ALL_Expe$Mouse_strain,
+                            dpi = ALL_Expe$dpi)
+
+originalWeightDF <- ALL_Expe[ALL_Expe$dpi %in% 0, c("weight", "EH_ID")]
+dpi1WeightDF <- ALL_Expe[ALL_Expe$dpi %in% 1, c("weight", "EH_ID")]
+allOriginalWeightDF <- rbind(originalWeightDF[complete.cases(originalWeightDF$weight),],
+                             dpi1WeightDF[
+                               dpi1WeightDF$EH_ID %in% 
+                                 originalWeightDF[is.na(originalWeightDF$weight),"EH_ID"],])
+names(allOriginalWeightDF) <- c("originalWeight", "EH_ID")
+
+mydataShifted <- merge(mydataShifted, allOriginalWeightDF, by = "EH_ID")
+
+# shift all centered on dpi 9 (centered around Eflab)
+
+## weight
+W_Eflab <- ALL_Expe[ALL_Expe$infection_isolate == "EfLab", c("dpi", "weight", "EH_ID")]
+W_E88 <- ALL_Expe[ALL_Expe$infection_isolate == "E88", c("dpi", "weight", "EH_ID")]
+W_E64 <- ALL_Expe[ALL_Expe$infection_isolate == "E64", c("dpi", "weight", "EH_ID")]
+W_E64$dpi <- W_E64$dpi + 4 
+W_E139 <- ALL_Expe[ALL_Expe$infection_isolate == "E139", c("dpi", "weight", "EH_ID")]
+W_E139$dpi <- W_E139$dpi + 4 
+
+weightShifted <- rbind(W_Eflab, W_E88, W_E64, W_E139)
+
+mydataShifted <- merge(mydataShifted, weightShifted)
+
+## oocysts (TO CORRECT FOR MISSING DATA FRANCI NB)
+O_Eflab <- ALL_Expe[ALL_Expe$infection_isolate == "EfLab", c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
+O_E88 <- ALL_Expe[ALL_Expe$infection_isolate == "E88", c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
+O_E88$dpi <- O_E88$dpi +1 
+O_E64 <- ALL_Expe[ALL_Expe$infection_isolate == "E64", c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
+O_E64$dpi <- O_E64$dpi + 3 
+O_E139 <- ALL_Expe[ALL_Expe$infection_isolate == "E139", c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
+O_E139$dpi <- O_E139$dpi + 3 
+
+oocystsShifted <- rbind(O_Eflab, O_E88, O_E64, O_E139)
+
+mydataShifted <- merge(mydataShifted, oocystsShifted)
+
+## Statistical models along dpi
+
+# OFFSET: 
+#https://stats.stackexchange.com/questions/237963/how-to-formulate-the-offset-of-a-glm
+
+### Resistance
+glmmer(data = mydataShifted, 
+       oocysts ~ infection_isolate * Mouse_genotype + 1|dpi + offset(grams))
+
+### Host suffering
+glmmer(data = mydataShifted, 
+       weight ~ infection_isolate * Mouse_genotype + 1|dpi + offset(originalWeight))
+
+### Tolerance (slope) To think harder better faster stronger...
+glmmer(data = mydataShifted, 
+       weight ~ infection_isolate * Mouse_genotype + 
+         (Mouse_genotype : oocysts) + (infection_isolate : oocysts) +
+         1|dpi + offset(originalWeight))
+
+## End statistical models along dpi
+
+
+ggplot(toleranceTable, aes(y = dpi_maxOPG, x = infection_isolate))+
+  geom_violin() +
+  geom_jitter(aes(fill = Mouse_genotype),
+              pch = 21, height = 0.1, width = 0.2, size = 4, alpha = 0.9) 
+
+ggplot(toleranceTable, aes(y = dpi_maxweightloss, x = infection_isolate))+
+  geom_violin() +
+  geom_jitter(aes(fill = Mouse_genotype),
+              pch = 21, height = 0.1, width = 0.2, size = 4, alpha = 0.9) 
+
+## CCL --> here already, host genotype seems to not influence the parasite
+## reproductive output; But the peak of weight loss seems highly influenced by host!
+
+## 
+
 
 diffDaysDf <- data.frame(table(toleranceTable$diff_maxWL_maxOPG, 
                                toleranceTable$infection_isolate))
