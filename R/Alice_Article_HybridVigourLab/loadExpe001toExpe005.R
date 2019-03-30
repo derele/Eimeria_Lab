@@ -5,8 +5,17 @@
 # "OPG", "EH_ID", "dpi", "weight", "EH_ID", "infection_isolate", "Mouse_strain"
 ExpeDF_001 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp001_May2017_crossing_infection.csv")
 
+ExpeDF_001$Exp_ID <- "Exp_001" 
+
+# correct names
+names(ExpeDF_001)[names(ExpeDF_001) %in% "strain"] <- "Mouse_strain"
+names(ExpeDF_001)[names(ExpeDF_001) %in% "Inf_strain"]  <- "infection_isolate"
+names(ExpeDF_001)[names(ExpeDF_001) %in% "EH_id"]  <- "EH_ID"
+names(ExpeDF_001)[names(ExpeDF_001) %in% "oocysts.per.g"]  <- "OPG"
+names(ExpeDF_001)[names(ExpeDF_001) %in% "rel.weight"]  <- "relativeWeight"
+names(ExpeDF_001)[names(ExpeDF_001) %in% "fec.weight"]  <- "fecweight"
+
 # Add mice subspecies info
-ExpeDF_001$Mouse_subspecies <- "F1 hybrids"
 ExpeDF_001$Mouse_subspecies[ExpeDF_001$Mouse_strain == "PWD"] <- "M.m.musculus"
 ExpeDF_001$Mouse_subspecies[ExpeDF_001$Mouse_strain == "WSB"] <- "M.m.domesticus"
 ExpeDF_001$Mouse_subspecies <- factor(ExpeDF_001$Mouse_subspecies,
@@ -24,8 +33,8 @@ ExpeDF_001$OPG[ExpeDF_001$EH_ID %in% "LM0106" & ExpeDF_001$dpi %in% 4] <- 0
 
 # weight loss NB compared to dpi1
 ExpeDF_001 <- calculateWeightLoss(ExpeDF_001, startingDay = 1)
-# Set mice that died before the end of experiment at 20% weight loss (maximum) on last day
-ExpeDF_001[is.na(ExpeDF_001$relativeWeight) & ExpeDF_001$dpi != 0, "relativeWeight"] <- 80
+# # Set mice that died before the end of experiment at 20% weight loss (maximum) on last day WRONG
+# ExpeDF_001[is.na(ExpeDF_001$relativeWeight) & ExpeDF_001$dpi != 0, "relativeWeight"] <- 80
 # Add hybrid status
 ExpeDF_001$HybridStatus <- "inbred"
 ExpeDF_001[ExpeDF_001$Mouse_strain == "WP", "HybridStatus"] <- "hybrids"
@@ -71,7 +80,8 @@ design <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/
 ExpeDF_004 <- merge(oo, we, all = T)
 ExpeDF_004 <- merge(ExpeDF_004, design, by = "EH_ID", all = T)
 # rm dead
-ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% "LM0155",]
+ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% c("LM0155", "LM0160"),]
+
 # rename column with "strain" for Expe_004 and merge BIG files into one for both experiments: ExpeDF_003_4
 rm(design, oo, we)
 ExpeDF_004$Mouse_strain <- ExpeDF_004$Strain
