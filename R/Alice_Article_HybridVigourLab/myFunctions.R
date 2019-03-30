@@ -67,8 +67,10 @@ calculateOPG <- function(ExpeDF){
     (ExpeDF$Neubauer1 + ExpeDF$Neubauer2 + ExpeDF$Neubauer3 + ExpeDF$Neubauer4) / 4
   # NB! Limit of detection = 1 oocysts
   ExpeDF$mean_Neubauer[ExpeDF$Neubauer1 + ExpeDF$Neubauer2 + ExpeDF$Neubauer3 + ExpeDF$Neubauer4 == 1] <- 0
-  ExpeDF$OPG <- ExpeDF$mean_Neubauer * 10000 * ExpeDF$dilution_ml / ExpeDF$fecweight
+  ExpeDF$oocysts.per.tube <- ExpeDF$mean_Neubauer * 10000 * ExpeDF$dilution_ml
+  ExpeDF$OPG <- ExpeDF$oocysts.per.tube / ExpeDF$fecweight
   ## If we don't have the fecal weight BUT we counted in Neubauer chamber 0, then OPG = 0
+  ExpeDF$oocysts.per.tube[ExpeDF$fecweight == 0 & ExpeDF$mean_Neubauer == 0] <- 0
   ExpeDF$OPG[ExpeDF$fecweight == 0 & ExpeDF$mean_Neubauer == 0] <- 0
   return(ExpeDF)
 }

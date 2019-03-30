@@ -34,8 +34,10 @@ plotsExpe5[[1]]+ coord_cartesian(ylim = c(-10,20))
 plotsExpe5[[2]]
 
 ## ALL TOGETHER
-ALL_Expe <- merge(ExpeDF_001, ExpeDF_002, all = T)
-ALL_Expe <- merge(ALL_Expe, ExpeDF_003_4, all = T)
+# BEFORE cleaning Expe001, we remove it cause weird values, different from all others
+
+# ALL_Expe <- merge(ExpeDF_001, ExpeDF_002, all = T)
+ALL_Expe <- merge(ExpeDF_002, ExpeDF_003_4, all = T)
 ALL_Expe <- merge(ALL_Expe, ExpeDF_005, all = T)
 
 plotsALL <- makeIntermPlots(ALL_Expe)
@@ -45,8 +47,9 @@ plotsALL[[2]]# + coord_cartesian(ylim = c(-10,20))
 # Part 2. Which is, by experiment, dpimaxOPG / dpimaxweightloss, 
 # by host strain, by parasite isolate
 
-toleranceTable <- merge(tolerance_001, tolerance_002, all = T)
-toleranceTable <- merge(toleranceTable, tolerance_003_4, all = T)
+# BEFORE cleaning Expe001, we remove it cause weird values, different from all others
+# toleranceTable <- merge(tolerance_001, tolerance_002, all = T)
+toleranceTable <- merge(tolerance_002, tolerance_003_4, all = T)
 toleranceTable <- merge(toleranceTable, tolerance_005, all = T)
 
 toleranceTable$diff_maxWL_maxOPG <- 
@@ -83,20 +86,12 @@ by_host_parasite_peak
 # 4      0.4696682     8.764706              9   2.537947
 
 # Shift all according to median peak, and keep equal window
-mydataShifted <- data.frame(EH_ID = ALL_Expe$EH_ID,
+mydataShifted <- data.frame(Exp_ID = ALL_Expe$Exp_ID,
+                            EH_ID = ALL_Expe$EH_ID,
                             infection_isolate = ALL_Expe$infection_isolate,
                             Mouse_strain = ALL_Expe$Mouse_strain,
-                            dpi = ALL_Expe$dpi)
-
-originalWeightDF <- ALL_Expe[ALL_Expe$dpi %in% 0, c("weight", "EH_ID")]
-dpi1WeightDF <- ALL_Expe[ALL_Expe$dpi %in% 1, c("weight", "EH_ID")]
-allOriginalWeightDF <- rbind(originalWeightDF[complete.cases(originalWeightDF$weight),],
-                             dpi1WeightDF[
-                               dpi1WeightDF$EH_ID %in% 
-                                 originalWeightDF[is.na(originalWeightDF$weight),"EH_ID"],])
-names(allOriginalWeightDF) <- c("originalWeight", "EH_ID")
-
-mydataShifted <- merge(mydataShifted, allOriginalWeightDF, by = "EH_ID")
+                            dpi = ALL_Expe$dpi,
+                            startingWeight = ALL_Expe$startingWeight)
 
 # shift all centered on dpi 9 (centered around Eflab)
 
@@ -115,7 +110,7 @@ mydataShifted <- merge(mydataShifted, weightShifted)
 ## oocysts (TO CORRECT FOR MISSING DATA FRANCI NB)
 O_Eflab <- ALL_Expe[ALL_Expe$infection_isolate == "EfLab", c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
 O_E88 <- ALL_Expe[ALL_Expe$infection_isolate == "E88", c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
-O_E88$dpi <- O_E88$dpi +1 
+O_E88$dpi <- O_E88$dpi + 1 
 O_E64 <- ALL_Expe[ALL_Expe$infection_isolate == "E64", c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
 O_E64$dpi <- O_E64$dpi + 3 
 O_E139 <- ALL_Expe[ALL_Expe$infection_isolate == "E139", c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
@@ -125,12 +120,65 @@ oocystsShifted <- rbind(O_Eflab, O_E88, O_E64, O_E139)
 
 mydataShifted <- merge(mydataShifted, oocystsShifted)
 
+## restrict window to get same info on all
+table(oocystsShifted$dpi)
+table(weightShifted$dpi)
+table(ALL_Expe$dpi)
+table(mydataShifted$dpi)
+
+mydataShifted <- mydataShifted[mydataShifted$dpi >= 4,]
+
 ## Statistical models along dpi
 
 # OFFSET: 
 #https://stats.stackexchange.com/questions/237963/how-to-formulate-the-offset-of-a-glm
 
+### Which distribution?
+hist(mydataShifted$weight) # not normal if NMRI are included, bimodal. Can we approx Normal?
+hist(mydataShifted$oocysts.per.tube, breaks = 100) # clearly negbin here :) 
+
+x <- as.numeric(na.omit(mydataShifted$oocysts.per.tube))
+x <- x[x>0]
+library(fitdistrplus)
+
+plot(x, pch = 20)
+plotdist(x, histo = TRUE, demp = TRUE)
+descdist(x, discrete=FALSE, boot=500)
+
+fit_no  <- fitdist(x, "norm")
+fit_po  <- fitdist(x, "pois")
+fit_ne <- fitdist(x, "nbinom")
+summary(fit_no)
+summary(fit_po)
+summary(fit_ne)
+
+par(mfrow=c(2,2))
+plot.legend <- c("normal", "poisson", "negbin")
+denscomp(list(fit_no, fit_po, fit_ne), legendtext = plot.legend)
+cdfcomp(list(fit_no, fit_po, fit_ne), legendtext = plot.legend)
+qqcomp(list(fit_no, fit_po, fit_ne), legendtext = plot.legend)
+ppcomp(list(fit_no, fit_po, fit_ne), legendtext = plot.legend)
+par(mfrow=c(1,1))
+
+# The density plot and the CDF plot may be considered as the basic classical 
+# goodness-of-fits plots. The Q-Q plot emphasizes the lack-of-fit at the 
+# distribution tails while the P-P plot emphasizes the lack-of-fit at the 
+# distribution center. The nbinom distribution could be prefered for its better
+# description of the tail of the empirical distribution.
+# The negative binomial distribution seems to describe parasite load well 
+
 ### Resistance
+library(lme4)
+
+mydataShifted$oocysts.per.tube.million <- mydataShifted$oocysts.per.tube / 1e6
+
+glmer.nb(oocysts.per.tube.million ~ infection_isolate * Mouse_strain +
+           (1|dpi), data = mydataShifted[!is.na(mydataShifted$oocysts.per.tube.million),])
+
+         # + offset(log(fecweight)), 
+
+
+
 glmmer(data = mydataShifted, 
        oocysts ~ infection_isolate * Mouse_genotype + 1|dpi + offset(grams))
 
