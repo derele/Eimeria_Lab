@@ -10,15 +10,15 @@ library(scales)
 
 ######### I Experiment design:
 # Info on the mouse genotype AND on the infection strain:
-ExpePlanDF <- read.csv("https://raw.githubusercontent.com/alicebalard/Eimeria_Lab/master/data_raw/Experiment_Table_raw_Ploen_May2017.csv")
+ExpePlanDF <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/1_informationTables/Exp001_May2017_crossing_infection_INFO.csv")
 
 # Print the expe design:
 as.data.frame.matrix(table(ExpePlanDF$strain, ExpePlanDF$Inf_strain))
 
 # Load data:
-mydata_oocysts <- read.csv("https://raw.githubusercontent.com/alicebalard/Eimeria_Lab/master/data_raw/Oocyst_coding_PloenEx_May2017.csv")
+mydata_oocysts <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/raw/Exp001_RAW_May2017_WildPloen_crossInfection_RECORDoocysts.csv")
 
-# Remove LM_0104:
+# Remove LM_0104 (died before)
 mydata_oocysts <- mydata_oocysts[which(mydata_oocysts$X != "LM0104"),]
 
 # Check:
@@ -27,15 +27,7 @@ table(is.na(mydata_oocysts[grep("fec.weight", names(mydata_oocysts))]))
 ## Error corrected (same amount of fecal weight and oocysts counts)
 #######################################################################################!!!!!!!!!!!!!!!!!!!!!!!!!
 
-mydata_weight <- read.csv("https://raw.githubusercontent.com/alicebalard/Eimeria_Lab/master/data_raw/mouse%20weight.csv")
-
-# Weight of the feces separated for PCR:
-subsampleDF <- read.csv("https://raw.githubusercontent.com/alicebalard/Eimeria_Lab/master/data_raw/Feces_kept_separated_for_PCR.csv")
-subsampleDF <- na.omit(subsampleDF)
-
-# Manual correction
-subsampleDF[subsampleDF$subsample_g == 592, ]$subsample_g <- 0.592
-boxplot(subsampleDF$subsample_g)
+mydata_weight <- read.csv("../../../data/3_recordingTables/raw/Expe001_RAW_mouse weight.csv")
 
 # Calculate how many animals at start:
 summary_table_at_dpi <- function(n){
@@ -45,13 +37,13 @@ summary_table_at_dpi <- function(n){
   C = na.omit(C)
   table(C$ExpePlanDF.strain, C$ExpePlanDF.Inf_strain)
 }
-
+summary_table_at_dpi(1)
 summary_table_at_dpi(11)
  
 ######### II Oocysts shedding:
 
 # Initialise Newdata
-Newdata <- data.frame(NULL)
+Oo_Df <- data.frame(NULL)
 
 # Run on all the dpi in 1 go!
 for (DPI in 0:11){
@@ -59,25 +51,20 @@ for (DPI in 0:11){
   names(mydata_oocyststemp)<- c("mouse.ID","label","fec.weight","dil", "raw.count")
   # add column
   mydata_oocyststemp$dpi<- DPI
-  Newdata <- rbind(Newdata, mydata_oocyststemp)
+  Oo_Df <- rbind(Oo_Df, mydata_oocyststemp)
 }
 
 # Remove useless objects:
 rm(mydata_oocyststemp, DPI)
 
 # Rm the dil column, useless:
-Newdata <- Newdata[!names(Newdata) %in% "dil"]
+Oo_Df <- Oo_Df[!names(Oo_Df) %in% "dil"]
 
 # Rm empty lines (when the mice died, no more counting) :
-Newdata <- na.omit(Newdata)
+Oo_Df <- na.omit(Oo_Df)
 
-# Merge the 2 dataframe by labels:
-names(subsampleDF)[names(subsampleDF) %in% "Label"] <- "label"
-
-Oo_Df <- na.omit(merge(Newdata, subsampleDF, by = "label"))
-
-## Calculate the oocysts in the subsampling:
-Oo_Df$Total_feces <- Oo_Df$subsample_g + Oo_Df$fec.weight
+# Correct error
+Oo_Df[Oo_Df$fec.weight > 10, "fec.weight"] <- Oo_Df[Oo_Df$fec.weight > 10, "fec.weight"] / 1000
 
 # Calculate the oocysts number in 1 mL:
 Oo_Df$oocysts.per.tube <- Oo_Df$raw.count * 10000
@@ -86,7 +73,7 @@ Oo_Df$oocysts.per.tube <- Oo_Df$raw.count * 10000
 Oo_Df$oocysts.per.g <- Oo_Df$oocysts.per.tube / Oo_Df$fec.weight
 
 #Put my dataframe at the good format:
-Oo_Df <- Oo_Df[c("label", "mouse.ID", "dpi", "oocysts.per.g", "oocysts.per.tube")]
+Oo_Df <- Oo_Df[c("label", "mouse.ID", "dpi", "oocysts.per.g", "oocysts.per.tube", "fec.weight")]
 
 # Add the info on the mouse genotype AND on the infection strain:
 names(Oo_Df)[names(Oo_Df) %in% "mouse.ID"] <- "EH_id"
@@ -130,6 +117,6 @@ Alldata$dpi <- gsub(pattern = "dpi", replacement = "", x = Alldata$dpi)
 Total_Franci <- merge(Alldata, Oo_Df)
 
 ## HERE careful change names if rerun
-#write.csv(x = Total_Franci, 
-          # file = "../data/3_recordingTables/Exp001_May2017_crossing_infection_oldnames.csv", 
-          # row.names = F)
+write.csv(x = Total_Franci,
+          file = "../../../data/3_recordingTables/Exp001_May2017_crossing_infection.csv",
+          row.names = F)
