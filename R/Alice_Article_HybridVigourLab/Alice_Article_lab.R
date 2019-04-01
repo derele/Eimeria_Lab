@@ -170,27 +170,147 @@ par(mfrow=c(1,1))
 ### Resistance
 library(lme4)
 
-mydataShifted$oocysts.per.tube.million <- mydataShifted$oocysts.per.tube / 1e6
+# negative binomial requires INTEGER 
+range(mydataShifted$oocysts.per.tube[mydataShifted$oocysts.per.tube > 0], na.rm = T)
+mydataShifted$oocysts.per.tube.tsd <- as.integer(mydataShifted$oocysts.per.tube / 1000)
 
-glmer.nb(oocysts.per.tube.million ~ infection_isolate * Mouse_strain +
-           (1|dpi), data = mydataShifted[!is.na(mydataShifted$oocysts.per.tube.million),])
+# use of random factors : we assume a different baseline response per day
+ggplot(mydataShifted, aes(x = dpi, y = oocysts.per.tube +1, group = dpi)) +
+  geom_boxplot() + scale_y_log10()
 
-         # + offset(log(fecweight)), 
+ggplot(mydataShifted, aes(x = dpi, y = weight, group = dpi)) +
+  geom_boxplot() 
 
+# test significance of interactions
+# Original model
+model1 <- glmer.nb(oocysts.per.tube.tsd ~ infection_isolate * Mouse_strain + 
+                    (1|dpi) + offset(log(fecweight)), 
+                  data = mydataShifted)
+# Model without an interaction
+model2 <- glmer.nb(oocysts.per.tube.tsd ~ infection_isolate + Mouse_strain + 
+                     (1|dpi) + offset(log(fecweight)), 
+                   data = mydataShifted)
+# Likelihood ratio test
+anova(model1, model2, test="LRT")
+## --> INTERACTIONS NON SIGNIFICANT
+summary(model2)
 
+library(sjPlot)
+sjPlot::plot_model(model2, sort.est = T, show.values = TRUE, value.offset = .3)
 
-glmmer(data = mydataShifted, 
-       oocysts ~ infection_isolate * Mouse_genotype + 1|dpi + offset(grams))
+# Post-hoc analysis
+
+if(!require(multcomp)){install.packages("multcomp")}
+library(multcomp)
+s1 <- summary(glht(model2, mcp(infection_isolate="Tukey")))
+s2 <- summary(glht(model2, mcp(Mouse_strain="Tukey")))
 
 ### Host suffering
-glmmer(data = mydataShifted, 
-       weight ~ infection_isolate * Mouse_genotype + 1|dpi + offset(originalWeight))
 
-### Tolerance (slope) To think harder better faster stronger...
-glmmer(data = mydataShifted, 
-       weight ~ infection_isolate * Mouse_genotype + 
-         (Mouse_genotype : oocysts) + (infection_isolate : oocysts) +
-         1|dpi + offset(originalWeight))
+# test significance of interactions
+# Original model
+model1.w <- lmer(weight ~ infection_isolate * Mouse_strain + 
+                   (1|dpi) + offset(log(startingWeight)), 
+                 data = mydataShifted)
+# Model without an interaction
+model2.w <- lmer(weight ~ infection_isolate + Mouse_strain + 
+                    (1|dpi) + offset(log(startingWeight)), 
+                  data = mydataShifted)
+# Likelihood ratio test
+anova(model1.w, model2.w, test="LRT")
+
+## --> INTERACTIONS SIGNIFICANT
+summary(model1.w)
+
+# Post-hoc analysis
+if(!require(multcomp)){install.packages("multcomp")}
+library(multcomp)
+s.P.w <- summary(glht(model1.w, mcp(infection_isolate="Tukey")))
+s.P.w
+s.H.w <- summary(glht(model1.w, mcp(Mouse_strain="Tukey")))
+s.H.w
+
+### Tolerance (slope) Raberg 2007 Raber 2008
+
+#### Test interactions
+modT1 <- lmer(weight ~ oocysts.per.tube.tsd + 
+                infection_isolate + Mouse_strain +
+                oocysts.per.tube.tsd : infection_isolate +
+                oocysts.per.tube.tsd : Mouse_strain + 
+                (1|EH_ID) + offset(log(startingWeight)), 
+              data = mydataShifted)
+modT2 <- lmer(weight ~ oocysts.per.tube.tsd + 
+                infection_isolate + Mouse_strain +
+                oocysts.per.tube.tsd : Mouse_strain + 
+                (1|EH_ID) + offset(log(startingWeight)), 
+              data = mydataShifted)
+modT3 <- lmer(weight ~ oocysts.per.tube.tsd + 
+                infection_isolate + Mouse_strain +
+                oocysts.per.tube.tsd : infection_isolate +
+                (1|EH_ID) + offset(log(startingWeight)), 
+              data = mydataShifted)
+modT4 <- lmer(weight ~ oocysts.per.tube.tsd + 
+                infection_isolate + Mouse_strain +
+                (1|EH_ID) + offset(log(startingWeight)), 
+              data = mydataShifted)
+anova(modT1, modT2, test="LRT") # NOT SIGNIF DIFF WHEN DROP INF ISOLATE
+# --> choose T2
+anova(modT2, modT3, test="LRT") # SIGNIF --> MOUSE STRAIN INTERACTION
+# --> choose T2
+anova(modT2, modT4, test="LRT") # SIGNIF
+# --> choose T2
+
+summary(modT2)
+summary(glht(modT2, mcp(Mouse_strain="Tukey")))
+summary(glht(modT2, mcp(infection_isolate="Tukey")))
+
+
+# How to plot data???
+mydataShifted$percentWeight <- mydataShifted$weight / mydataShifted$startingWeight
+
+# an example
+ggplot(mydataShifted[mydataShifted$EH_ID == "mouse_7",], 
+       aes(x = oocysts.per.tube.tsd, y = percentWeight,
+           shape = Mouse_strain)) +
+  geom_point() +
+  geom_smooth(aes(col = Mouse_strain), method = "lm", se = F)
+
+library(sjPlot)
+sjPlot::plot_model(modT2, sort.est = T)
+
+
+ggplot(mydataShifted, 
+       aes(x = oocysts.per.tube.tsd, y = percentWeight,
+           shape = Mouse_strain, col = Mouse_strain)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  scale_shape_manual(values = 1:20) +
+  facet_grid(.~infection_isolate) 
+
+
+library(nlme)
+fm2 <- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1|Subject)
+
+lmer(weight ~ oocysts.per.tube.tsd + 
+       infection_isolate + Mouse_strain +
+       oocysts.per.tube.tsd : Mouse_strain + 
+       (1|EH_ID) + offset(log(startingWeight)), 
+     data = mydataShifted)
+
+newdat <- expand.grid(infection_isolate=unique(mydataShifted$infection_isolate),
+                      Mouse_strain= unique(mydataShifted$Mouse_strain),
+                      oocysts.per.tube.tsd=c(min(mydataShifted$oocysts.per.tube.tsd),
+                            max(mydataShifted$oocysts.per.tube.tsd)))
+
+library(ggplot2)
+p <- ggplot(mydataShifted, aes(x=oocysts.per.tube.tsd, y=weight, colour=Mouse_strain)) +
+  geom_point(size=3) +
+  geom_line(aes(y=predict(modT2), group=EH_ID, size="EH_ID")) +
+  geom_line(data=newdat, aes(y=predict(modT2, level=0, newdata=newdat), size="Population")) +
+  scale_size_manual(name="Predictions", values=c("EH_ID"=0.5, "Population"=3)) +
+  theme_bw(base_size=22) 
+print(p)
+
 
 ## End statistical models along dpi
 
