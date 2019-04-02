@@ -204,7 +204,8 @@ if(!require(multcomp)){install.packages("multcomp")}
 library(multcomp)
 s1 <- summary(glht(model2, mcp(infection_isolate="Tukey")))
 s2 <- summary(glht(model2, mcp(Mouse_strain="Tukey")))
-
+s1
+s2
 ### Host suffering
 
 # test significance of interactions
@@ -232,13 +233,27 @@ s.H.w
 
 ### Tolerance (slope) Raberg 2007 Raber 2008
 
+ggplot(mydataShifted, aes(x = oocysts.per.tube.tsd, y = weight, col = EH_ID)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  theme(legend.position = "none")
+
+## WRONG if we use full model. Too many assumptions. weight before peak and after peak shall 
+## vary, not link with oocysts. The points before and after the peak are NOT independant.
+## we can't treat them as repeated measures. 
+## Hence, ONE tolerance value per animal. Defined by Raberg 2007.
+
 #### Test interactions
 modT1 <- lmer(weight ~ oocysts.per.tube.tsd + 
                 infection_isolate + Mouse_strain +
                 oocysts.per.tube.tsd : infection_isolate +
                 oocysts.per.tube.tsd : Mouse_strain + 
-                (1|EH_ID) + offset(log(startingWeight)), 
+                (1|oocysts.per.tube.tsd:EH_ID) + 
+                offset(log(startingWeight)), 
               data = mydataShifted)
+
+modT1
+
 modT2 <- lmer(weight ~ oocysts.per.tube.tsd + 
                 infection_isolate + Mouse_strain +
                 oocysts.per.tube.tsd : Mouse_strain + 
@@ -264,9 +279,42 @@ summary(modT2)
 summary(glht(modT2, mcp(Mouse_strain="Tukey")))
 summary(glht(modT2, mcp(infection_isolate="Tukey")))
 
-
 # How to plot data???
-mydataShifted$percentWeight <- mydataShifted$weight / mydataShifted$startingWeight
+# devtools::install_github("sjPlot/devel")
+# library(sjmisc)
+# library(lme4)
+# library(sjPlot)
+
+library(lsmeans)
+library(multcompView)
+
+lsm <- lsmeans(modT2, ~ oocysts.per.tube.tsd + 
+                 infection_isolate + Mouse_strain +
+                 oocysts.per.tube.tsd : Mouse_strain, 
+               at=list(startingWeight=1))
+
+a <- cld(lsm, type="response", sort=TRUE)
+
+plot(a)
+
+plot(lsm, type = "response") 
+median(mydataShifted$startingWeight)
+by(data = mydataShifted, mydataShifted$Mouse_strain, 
+   function(x) mean(x$weight, na.rm = T))
+
+lsm
+
+plot_model(modT2, type = "pred", 
+           terms = c("oocysts.per.tube.tsd", "startingWeight","Mouse_strain"))
+
+mydataShifted$startingWeight
+
+weight ~ oocysts.per.tube.tsd + 
+  infection_isolate + Mouse_strain +
+  oocysts.per.tube.tsd : Mouse_strain + 
+  (1|EH_ID) + offset(log(startingWeight)
+
+# mydataShifted$percentWeight <- mydataShifted$weight / mydataShifted$startingWeight
 
 # an example
 ggplot(mydataShifted[mydataShifted$EH_ID == "mouse_7",], 
