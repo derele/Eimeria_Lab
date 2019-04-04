@@ -40,8 +40,6 @@ ExpeDF_001$HybridStatus <- "inbred"
 ExpeDF_001[ExpeDF_001$Mouse_strain == "WP", "HybridStatus"] <- "hybrids"
 # Call PWD --> PWD1 (other origin)
 ExpeDF_001$Mouse_strain[ExpeDF_001$Mouse_strain == "PWD"] <- "PWD1"
-# make tolerance table
-tolerance_001 <- makeToleranceTable(ExpeDF_001)
 
 ## Load info from passaging : EXPE_002 
 ExpeDF_002 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp002_March2018_NMRI_4strains_RECORDweightAndOocysts.csv")
@@ -63,8 +61,6 @@ ExpeDF_002$Eimeria_species[ExpeDF_002$infection_isolate %in% c("E64", "EI64", "E
 ExpeDF_002 <- calculateWeightLoss(ExpeDF_002, startingDay = 0)
 # oocysts
 ExpeDF_002 <- calculateOPG(ExpeDF_002)
-# make tolerance table
-tolerance_002 <- makeToleranceTable(ExpeDF_002)
 
 ### EXPE_003 & 004
 # read all information for EXPE_003 and merge to one BIG file
@@ -120,8 +116,6 @@ ExpeDF_003_4 <- calculateOPG(ExpeDF_003_4)
 ## NB LM0193 died before the peak, remove
 ExpeDF_003_4 <- 
   ExpeDF_003_4[!ExpeDF_003_4$EH_ID %in% "LM0193",]
-# make tolerance table
-tolerance_003_4 <- makeToleranceTable(ExpeDF_003_4)
 
 #### Expe_005
 # load all tables of all experiments, 
@@ -205,5 +199,3 @@ ExpeDF_005$relativeWeight <- as.numeric(as.character(ExpeDF_005$relativeWeight))
 
 ## Keep ONLY first batch!!! Contamination in the second one...
 ExpeDF_005 <- ExpeDF_005[ExpeDF_005$Batch %in% 1,]
-# make tolerance table
-tolerance_005 <- makeToleranceTable(ExpeDF_005)

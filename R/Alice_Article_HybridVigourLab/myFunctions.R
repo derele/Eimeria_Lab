@@ -3,8 +3,9 @@
 # March 2019
 
 # Load libraries
-listLib <- c("ggplot2", "gridExtra", "reshape2", "scales", "lme4", "lmerTest", "plyr", "dplyr",
-             "tidyr", "reshape")
+if(!require(multcomp)){install.packages("multcomp")}
+listLib <- c("ggplot2", "gridExtra", "reshape2", "scales", "lme4", 
+             "lmerTest", "plyr", "dplyr", "tidyr", "reshape", "multcomp")
 lapply(listLib, require, character.only = TRUE)
 
 # Define a theme
@@ -111,119 +112,15 @@ getSumOPG <- function(df){
   return(sumOpg)
 }
 
-# create a table with tolerance factor, max.loss, max.OPG and sum.oocysts concatenated
-makeToleranceTable <- function(ExpeDF,
-                               dayVar = c("dpi", "mean_Neubauer", "OPG", "labels", "Neubauer1",
-                                          "Neubauer2", "Neubauer3", "Neubauer4", "dilution_ml", "weight",                   
-                                          "weightloss", "weightRelativeToInfection", "fecweight", 
-                                          "comment.x", "comment.y", "X.x", "relativeWeight", 
-                                          "X", "X.1", "X.2", "X.3", "X.4", "MM",
-                                          "oocysts.per.tube", "label")){
-  # maximum weightloss
-  max.loss = getMaxLoss(ExpeDF)
-  max.loss = max.loss[!names(max.loss) %in% dayVar]
-  # max and sum of oocysts
-  max.OPG = getMaxOPG(ExpeDF)
-  max.OPG = max.OPG[!names(max.OPG) %in% dayVar]
-  # sum
-  sum.oocysts = getSumOPG(ExpeDF)
-  sum.oocysts = sum.oocysts[!names(sum.oocysts) %in% dayVar]
-  # tolerance
-  tolerance = merge(max.loss, max.OPG)
-  tolerance = merge(tolerance, sum.oocysts)
-  # maxweightloss
-  tolerance$maxweightloss = 100 - tolerance$minRelativeWeight
-  # REMOVE UNINFECTED ANIMALS
-  tolerance <- tolerance[tolerance$maxOPG_inmillion != 0,]
-  # http://science.sciencemag.org/content/318/5851/812
-  # TO CORRECT LATER
-  # !!!!!
-  # resistance (inverse of peak parasite density) 
-  # tolerance (slope of a regression of minimum weight retained against peak parasite load)
-  tol = -(tolerance$maxweightloss / tolerance$maxOPG_inmillion)
-  tolerance$toleranceFactor = tol + abs(min(tol))
-  # erase useless level (Eflab)
-  tolerance$infection_isolate <- droplevels(tolerance$infection_isolate)
+makeMiceGenotypeAndIsolate <- function(df){
   # NB. Let's not consider which parent is which, but make A_B mouse = B_A mouse
   # we don't have enough individuals to test this effect, and we are not interested in it anyway!
-  x <- strsplit(tolerance$Mouse_strain, "_")
-  y <- lapply(x, sort)
-  z <- unlist(lapply(y, FUN = function(x){paste(x, collapse="-")}))
-  tolerance$Mouse_genotype <- z
-  ## Order the levels to be more clear in later plots (parents will be low and down 
-  ## on the legend, hybrids in between...)
-  tolerance$Mouse_genotype <- factor(tolerance$Mouse_genotype,
-                                     levels = c("NMRI", 
-                                                "WSB", "WP", "PWD1",
-                                                "BUSNA-BUSNA", "PWD-PWD",
-                                                "BUSNA-PWD",
-                                                "BUSNA-STRA","PWD-SCHUNT",
-                                                "SCHUNT-STRA",
-                                                "SCHUNT-SCHUNT","STRA-STRA"),
-                                     labels = c("NMRI", 
-                                                "MMd_F0 (Ws-Ws)", "Mmm-Mmd_Hybrid (WP)", "MMm_F0 (Pw1-Pw1)",
-                                                "MMm_F0 (Bu-Bu)",
-                                                "MMm_F0 (Pw-Pw)",
-                                                "MMm_F1 (Bu-Pw)",
-                                                "Mmm-Mmd_F1 (Bu-St)",
-                                                "Mmm-Mmd_F1 (Pw-Sc)",
-                                                "MMd_F1 (Sc-St)",
-                                                "MMd_F0 (Sc-Sc)",
-                                                "MMd_F0 (St-St)"))
-  tolerance$infection_isolate <- factor(tolerance$infection_isolate,
-                                        levels = c("E139", "E64", "E88", "EfLab"),
-                                        labels = c("E.ferrisi (E139)",
-                                                   "E.ferrisi (E64)",
-                                                   "E.falciformis (E88)",
-                                                   "E.falciformis (EfLab)"))
-  return(tolerance)
-}
-
-# Make groups boxplots
-myboxPlot <- 
-  function(tolerance, response, respName, group, groupName){
-    ggplot(tolerance, 
-           aes_string(x = group, y = response,
-                      fill = group)) +
-      geom_boxplot() +
-      geom_jitter(position = position_jitter(0.1), alpha =0.5)+
-      scale_x_discrete(name = groupName)+
-      theme(legend.position = "none") +
-      facet_grid(.~infection_isolate)
-  }
-
-#https://rdrr.io/github/ProjectMOSAIC/mosaic/src/R/Tukey.R
-# Compute Tukey Honest Significant Differences
-# Create a set of confidence intervals on the differences between the means of the levels of a factor with the specified family-wise probability of coverage. The intervals are based on the Studentized range statistic, Tukey's ‘Honest Significant Difference’ method.
-TukeyHSD.lm <- function(x, which, ordered = FALSE, conf.level=0.95, ...) {
-  stats::TukeyHSD( aov(x), which = which, ordered = ordered, conf.level = conf.level, ...)
-}
-
-# linear modelling
-myMod <- function(mydata, response, group){
-  m1 = lm(response ~ group * infection_isolate,
-          data=mydata)
-  mytukey = TukeyHSD.lm(m1)
-  mytukeyDF = lapply(mytukey, function(x) {
-    df <- data.frame(x)
-    data.frame(combi = rownames(df[df$p.adj < 0.05,]),
-               padj = df$p.adj[df$p.adj < 0.05],
-               diff = df$p.adj[df$p.adj < 0.05])})
-  return(list(model = m1,
-              summary.model = summary(m1),
-              mytukeyHSD = mytukeyDF))
-}
-
-## Plots to follow experiment course
-makeIntermPlots <- function(df){
-  df$relativeWeightLoss <- 100 - df$relativeWeight
-  # NB. Let's not consider which parent is which, but make A_B mouse = B_A mouse
-  # we don't have enough individuals to test this effect, and we are not interested in it anyway!
+  df$Mouse_strain <- as.character(df$Mouse_strain)
   x <- strsplit(df$Mouse_strain, "_")
   y <- lapply(x, sort)
   z <- unlist(lapply(y, FUN = function(x){paste(x, collapse="-")}))
   df$Mouse_genotype <- z
-  ## Order the levels to be more clear in later plots (parents will be low and down
+  ## Order the levels to be more clear in later plots (parents will be low and down 
   ## on the legend, hybrids in between...)
   df$Mouse_genotype <- factor(df$Mouse_genotype,
                               levels = c("NMRI", 
@@ -249,7 +146,77 @@ makeIntermPlots <- function(df){
                                             "E.ferrisi (E64)",
                                             "E.falciformis (E88)",
                                             "E.falciformis (EfLab)"))
-  
+  # erase useless level
+  df$infection_isolate <- droplevels(df$infection_isolate)
+  df$Mouse_genotype <- droplevels(df$Mouse_genotype)
+  return(df)
+}
+
+# create a table with tolerance factor, max.loss, max.OPG and sum.oocysts concatenated
+makeToleranceTable <- function(df){
+  # minimun weight and associated original weight
+  X <- as.data.frame(
+    df %>% 
+      dplyr::group_by(EH_ID) %>%
+      dplyr::slice(which.min(weight)) %>%
+      dplyr::select(EH_ID, weight, startingWeight, 
+             Mouse_genotype, infection_isolate, Exp_ID, dpi))
+  names(X)[names(X) %in% "dpi"] = "dpi_minWeight"
+  # maximum oocysts and associated fecweight
+  Y <- as.data.frame(
+    df %>% 
+      dplyr::group_by(EH_ID) %>%
+      dplyr::slice(which.max(oocysts.per.tube)) %>%
+      dplyr::select(EH_ID, oocysts.per.tube, fecweight, dpi))
+  names(Y)[names(Y) %in% "dpi"] = "dpi_maxOocysts"
+  # merge
+  fullDF <- merge(X, Y)
+  return(fullDF)
+}
+
+# Make groups boxplots
+myboxPlot <- 
+  function(tolerance, response, respName, group, groupName){
+    ggplot(tolerance, 
+           aes_string(x = group, y = response,
+                      fill = group)) +
+      geom_boxplot() +
+      geom_jitter(position = position_jitter(0.1), alpha =0.5)+
+      scale_x_discrete(name = groupName)+
+      theme(legend.position = "none") +
+      facet_grid(.~infection_isolate)
+  }
+
+#https://rdrr.io/github/ProjectMOSAIC/mosaic/src/R/Tukey.R
+# Compute Tukey Honest Significant Differences
+# Create a set of confidence intervals on the differences between the means of the levels of a factor with the specified family-wise probability of coverage. The intervals are based on the Studentized range statistic, Tukey's ‘Honest Significant Difference’ method.
+TukeyHSD.lm <- function(x, which, ordered = FALSE, conf.level=0.95, ...) {
+  stats::TukeyHSD( aov(x), which = which, ordered = ordered, conf.level = conf.level, ...)
+}
+
+mytukey <- function(m1){
+  mytukey = TukeyHSD.lm(m1)
+  mytukeyDF = lapply(mytukey, function(x) {
+    df <- data.frame(x)
+    data.frame(combi = rownames(df[df$p.adj < 0.05 & !is.na(df$p.adj),]),
+               padj = df$p.adj[df$p.adj < 0.05 & !is.na(df$p.adj)],
+               diff = df$diff[df$p.adj < 0.05 & !is.na(df$p.adj)])})
+  return(mytukeyDF)
+}
+
+# linear modelling
+myMod <- function(mydata, response, group){
+  m1 = lm(response ~ group * infection_isolate,
+          data=mydata)
+  mytukey = mytukey(m1)
+  return(list(model = m1,
+              summary.model = summary(m1),
+              mytukeyHSD = mytukeyDF))
+}
+
+## Plots to follow experiment course
+makeIntermPlots <- function(df){
+  df$relativeWeightLoss <- 100 - df$relativeWeight
   # calculate summary statistics on weight loss
   summaryWeight <- summarySE(df, measurevar = "relativeWeightLoss",
                              groupvars=c("Mouse_genotype",
