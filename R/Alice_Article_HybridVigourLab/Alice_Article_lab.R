@@ -15,7 +15,6 @@ source("loadExpe001toExpe005.R")
 ##############
 
 ################# Part 1. data preparation ################# 
-
 # CHOICE MADE : remove Ploen mice & NMRI. Variations are too high.
 ALL_Expe <- merge(ExpeDF_003_4, ExpeDF_005, all = T)
 ALL_Expe <- makeMiceGenotypeAndIsolate(ALL_Expe)
@@ -44,6 +43,7 @@ ALL_Expe <- ALL_Expe[!ALL_Expe$EH_ID %in% miceDeadBeforeEnd,]
 ALL_Expe[is.na(ALL_Expe$oocysts.per.tube), ] 
 # mouse LM0202 has one peak day missing for oocyst collection cause diarrhea
 summaryDF <- makeToleranceTable(ALL_Expe) #!!! when dpi several, first chosen
+
 ################# END data preparation ################# 
 
 plotsALL <- makeIntermPlots(ALL_Expe)
@@ -310,6 +310,85 @@ s2.H <- summary(glht(model1.H, mcp(Mouse_genotype="Tukey")))
 s2.H
 
 ### Tolerance (slope) Raberg 2007 Raber 2008
+# resistance = inverse of peak parasite density
+summaryDF2$peakParasiteDensity <- summaryDF2$oocysts.per.tube / summaryDF2$fecweight
+summaryDF2$resistance <- - summaryDF2$peakParasiteDensity
+summaryDF2$minWeightRelative <- summaryDF2$weight / summaryDF2$startingWeight
+summaryDF2$tolerance <- summaryDF2$minWeightRelative / summaryDF2$peakParasiteDensity
+
+ggplot(summaryDF2, aes(x = resistance, y = tolerance)) +
+  geom_point(aes(fill = Mouse_genotype), size=4, pch = 21, color = "black") +
+  facet_grid(. ~ infection_isolate) +
+  xlab("Resistance = inverse of peak parasite density")+
+  ylab("Tolerance = minimun relative weight / peak parasite density")+
+  theme(axis.text.x = element_text(angle = 0))
+
+summaryTolerance <- summarySE(summaryDF2, 
+                              measurevar="tolerance",
+                              groupvars=c("Mouse_genotype",
+                                          "infection_isolate"), 
+                              na.rm = T)
+summaryTolerance$ci[is.na(summaryTolerance$ci)] <- 0
+summaryResistance <- summarySE(summaryDF2, 
+                              measurevar="resistance",
+                              groupvars=c("Mouse_genotype",
+                                          "infection_isolate"), 
+                              na.rm = T)
+summaryResistance$ci[is.na(summaryResistance$ci)] <- 0
+
+library(psych)
+names(summaryTolerance)[names(summaryTolerance) %in% "N"] <- "n"
+names(summaryTolerance)[names(summaryTolerance) %in% "tolerance"] <- "mean"
+names(summaryResistance)[names(summaryResistance) %in% "N"] <- "n"
+names(summaryResistance)[names(summaryResistance) %in% "resistance"] <- "mean"
+summaryTolerance$axis <- "tolerance"
+summaryResistance$axis <- "resistance"
+summaryTable <- rbind(summaryTolerance, summaryResistance)
+
+error.crosses(summaryTable[summaryTable$axis %in% "tolerance",], 
+              summaryTable[summaryTable$axis %in% "resistance",],
+              labels= summaryTable$Mouse_genotype,
+              xlab = "tolerance", ylab = "resistance",
+              pch=16,cex=1)
+
+# tolerance = slope of a regression of minimum weight against peak parasite density
+# modelTol <- lm(weight ~ peakParasiteDensity * infection_isolate * Mouse_genotype +
+#                  offset(log(startingWeight)), data = summaryDF2)
+# # 
+# t <- summary(modelTol)
+# d <- data.frame(t$coefficients)
+# 
+# rowIndx <- grepl("peak", row.names(d)) & grepl("infection", row.names(d)) & grepl("Mouse", row.names(d))
+# d[rowIndx, "Estimate"]
+
+
+mydataShifted$tolFac <- mydataShifted$relativeWeight / mydataShifted$OPG
+mydataShifted$tolFac[mydataShifted$tolFac %in% c(Inf, -Inf)] <- NA
+
+summaryTolerance <- summarySE(mydataShifted, 
+                              measurevar="tolFac",
+                              groupvars=c("Mouse_genotype",
+                                          "infection_isolate", "dpi"), 
+                              na.rm = T)
+summaryTolerance$ci[is.na(summaryTolerance$ci)] <- 0
+
+ggplot(summaryTolerance, aes(x = dpi, y = tolFac))+
+  geom_errorbar(aes(ymin = tolFac - ci, ymax = tolFac + ci),
+                col = "gray") +
+  geom_line(aes(group = Mouse_genotype, col = Mouse_genotype), size = 2, alpha = 0.5) +
+  geom_point(aes(fill = Mouse_genotype), size=4, pch = 21, color = "black") +
+  facet_grid(. ~ infection_isolate) +
+  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
+  scale_y_log10() +
+  geom_vline(xintercept = 8) +
+  theme(axis.text.x = element_text(angle = 0))
+
+
+
+
+
+
+
 
 ## WRONG if we use full model. Too many assumptions. weight before peak and after peak shall 
 ## vary, not link with oocysts. The points before and after the peak are NOT independant.
