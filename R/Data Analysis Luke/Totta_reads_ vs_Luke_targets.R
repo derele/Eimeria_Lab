@@ -2,10 +2,10 @@
 #DF <- read.csv(file = "../luke/Documents/Mm_norm_counts.csv")
 
 #IZW path
-DF <- read.csv(file = "../luke/Documents/Mm_norm_counts.csv")
+#DF <- read.csv(file = "../luke/Documents/Mm_norm_counts.csv")
 
 #HU path
-#DF <- read.csv(file = "../luke/Documents/Mm_norm_counts.csv")
+DF <- read.csv(file = "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Mm_norm_counts.csv")
 
 IFNg <- DF["ENSMUSG00000055170",]
 TGFb <- DF["ENSMUSG00000002603",]
@@ -21,18 +21,17 @@ Ticam1 <- DF["ENSMUSG00000047123",]
 
 CYT <- rbind(IFNg, TGFb, STAT6, CXCL9, IL10, TNFa, CXCR3, IRG6A, GBP2, MyD88, Ticam1)
 
-setDT(CYT, keep.rownames = TRUE)
-                
 #install.packages("data.table")
 library(data.table)
 library(reshape2)
 
+setDT(CYT, keep.rownames = TRUE)
 row.names(CYT) <- c("IFN-y", "TGF-b", "STAT6", "CXCL9", "IL-10", "TNFa", "CXCR3", "IRG6A", "GBP2", "MyD88", "Ticam1")
 
 cCYT <- melt(CYT, id.vars = c("rn"))
 
 
 library(ggplot2)
-ggplot(cCYT, aes(cCYT$variable, cCYT$value, color =cCYT$rn)) +
+ggplot(cCYT, aes(cCYT$rn, cCYT$value, color =cCYT$variable)) +
   geom_point() +
   coord_flip()
