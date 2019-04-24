@@ -29,9 +29,24 @@ setDT(CYT, keep.rownames = TRUE)
 row.names(CYT) <- c("IFN-y", "TGF-b", "STAT6", "CXCL9", "IL-10", "TNFa", "CXCR3", "IRG6A", "GBP2", "MyD88", "Ticam1")
 
 cCYT <- melt(CYT, id.vars = c("rn"))
+cCYT[cCYT=="ENSMUSG00000055170"]<-"IFNg"
+cCYT[cCYT=="ENSMUSG00000002603"]<-"TGFb"
+cCYT[cCYT=="ENSMUSG00000002147"]<-"STAT6"
+cCYT[cCYT=="ENSMUSG00000029417"]<-"CXCL9"
+cCYT[cCYT=="ENSMUSG00000016529"]<-"IL10"
+cCYT[cCYT=="ENSMUSG00000024401"]<-"TNFa"
+cCYT[cCYT=="ENSMUSG00000050232"]<-"CXCR3"
+cCYT[cCYT=="ENSMUSG00000054072"]<-"IRG6A"
+cCYT[cCYT=="ENSMUSG00000028270"]<-"GBP2"
+cCYT[cCYT=="ENSMUSG00000032508"]<-"MyD88"
+cCYT[cCYT=="ENSMUSG00000047123"]<-"Ticam1"
 
+primary <- c("C57BL6_1stInf_0dpi_rep1", "C57BL6_1stInf_0dpi_rep2", "C57BL6_1stInf_5dpi_rep1", "C57BL6_1stInf_5dpi_rep2", "NMRI_1stInf_3dpi_rep1", "NMRI_1stInf_3dpi_rep2", "NMRI_1stInf_5dpi_rep1", "NMRI_1stInf_5dpi_rep2", "NMRI_1stInf_5dpi_rep3", "NMRI_1stInf_7dpi_rep1", "NMRI_1stInf_7dpi_rep2", "Rag_1stInf_0dpi_rep1", "Rag_1stInf_0dpi_rep2", "Rag_1stInf_5dpi_rep1", "Rag_1stInf_5dpi_rep2")
+challenge <- c("C57BL6_1stInf_5dpi_rep1", "NMRI_2ndInf_0dpi_rep1", "NMRI_2ndInf_0dpi_rep2", "NMRI_2ndInf_3dpi_rep2", "NMRI_2ndInf_5dpi_rep1", "NMRI_2ndInf_7dpi_rep1", "Rag_2ndInf_5dpi_rep1")
 
 library(ggplot2)
-ggplot(cCYT, aes(cCYT$rn, cCYT$value, color =cCYT$variable)) +
+#assign challenge and primary to facet by TO DO!!!#
+ggplot(cCYT, mapping = aes(x = rn , y = value,color = variable)) + 
   geom_point() +
+  facet_grid(challenge ~ primary ) +
   coord_flip()
