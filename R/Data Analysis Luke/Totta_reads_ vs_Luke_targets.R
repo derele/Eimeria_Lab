@@ -41,12 +41,29 @@ cCYT[cCYT=="ENSMUSG00000028270"]<-"GBP2"
 cCYT[cCYT=="ENSMUSG00000032508"]<-"MyD88"
 cCYT[cCYT=="ENSMUSG00000047123"]<-"Ticam1"
 
-primary <- c("C57BL6_1stInf_0dpi_rep1", "C57BL6_1stInf_0dpi_rep2", "C57BL6_1stInf_5dpi_rep1", "C57BL6_1stInf_5dpi_rep2", "NMRI_1stInf_3dpi_rep1", "NMRI_1stInf_3dpi_rep2", "NMRI_1stInf_5dpi_rep1", "NMRI_1stInf_5dpi_rep2", "NMRI_1stInf_5dpi_rep3", "NMRI_1stInf_7dpi_rep1", "NMRI_1stInf_7dpi_rep2", "Rag_1stInf_0dpi_rep1", "Rag_1stInf_0dpi_rep2", "Rag_1stInf_5dpi_rep1", "Rag_1stInf_5dpi_rep2")
-challenge <- c("C57BL6_1stInf_5dpi_rep1", "NMRI_2ndInf_0dpi_rep1", "NMRI_2ndInf_0dpi_rep2", "NMRI_2ndInf_3dpi_rep2", "NMRI_2ndInf_5dpi_rep1", "NMRI_2ndInf_7dpi_rep1", "Rag_2ndInf_5dpi_rep1")
+x <- c("C57BL6_1stInf_0dpi_rep1", "C57BL6_1stInf_0dpi_rep2", "C57BL6_1stInf_5dpi_rep1", "C57BL6_1stInf_5dpi_rep2", 
+             "NMRI_1stInf_3dpi_rep1", "NMRI_1stInf_3dpi_rep2", "NMRI_1stInf_5dpi_rep1", "NMRI_1stInf_5dpi_rep2", 
+             "NMRI_1stInf_5dpi_rep3", "NMRI_1stInf_7dpi_rep1", "NMRI_1stInf_7dpi_rep2", "Rag_1stInf_0dpi_rep1", 
+             "Rag_1stInf_0dpi_rep2", "Rag_1stInf_5dpi_rep1", "Rag_1stInf_5dpi_rep2", "C57BL6_2ndInf_5dpi_rep1", 
+             "NMRI_2ndInf_0dpi_rep1", "NMRI_2ndInf_0dpi_rep2", "NMRI_2ndInf_3dpi_rep2", "NMRI_2ndInf_5dpi_rep1", 
+             "NMRI_2ndInf_7dpi_rep1", "Rag_2ndInf_5dpi_rep1", "NMRI_2ndInf_7dpi_rep2")
+
+spl <- sapply(strsplit(x,"_"), function(x)x[1])
+lames <- data.frame(variable = x, strain = sapply(strsplit(x,"_"), function(x)x[1]), infection = sapply(strsplit(x,"_"), function(x)x[2]), dpi = sapply(strsplit(x,"_"), function(x)x[3]), replicate = sapply(strsplit(x,"_"), function(x)x[4]))
+
+scCYT <- merge(cCYT, lames, by = "variable")
+install.packages("hexbin")
 
 library(ggplot2)
-#assign challenge and primary to facet by TO DO!!!#
-ggplot(cCYT, mapping = aes(x = rn , y = value,color = variable)) + 
+#start plot#
+ggplot(scCYT, mapping = aes(x = rn , y = value, color = variable)) + 
   geom_point() +
-  facet_grid(challenge ~ primary ) +
   coord_flip()
+#mouse strains#
+ggplot(scCYT, mapping = aes(x = rn , y = value, color = strain)) + 
+  geom_boxplot()
+#infection type#
+ggplot(scCYT, mapping = aes(x = rn , y = value, color = infection)) + 
+  geom_boxplot()
+#dpi#
+
