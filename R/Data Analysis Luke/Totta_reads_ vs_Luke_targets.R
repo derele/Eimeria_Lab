@@ -41,18 +41,19 @@ cCYT[cCYT=="ENSMUSG00000028270"]<-"GBP2"
 cCYT[cCYT=="ENSMUSG00000032508"]<-"MyD88"
 cCYT[cCYT=="ENSMUSG00000047123"]<-"Ticam1"
 
-x <- c("C57BL6_1stInf_0dpi_rep1", "C57BL6_1stInf_0dpi_rep2", "C57BL6_1stInf_5dpi_rep1", "C57BL6_1stInf_5dpi_rep2", 
-             "NMRI_1stInf_3dpi_rep1", "NMRI_1stInf_3dpi_rep2", "NMRI_1stInf_5dpi_rep1", "NMRI_1stInf_5dpi_rep2", 
-             "NMRI_1stInf_5dpi_rep3", "NMRI_1stInf_7dpi_rep1", "NMRI_1stInf_7dpi_rep2", "Rag_1stInf_0dpi_rep1", 
-             "Rag_1stInf_0dpi_rep2", "Rag_1stInf_5dpi_rep1", "Rag_1stInf_5dpi_rep2", "C57BL6_2ndInf_5dpi_rep1", 
-             "NMRI_2ndInf_0dpi_rep1", "NMRI_2ndInf_0dpi_rep2", "NMRI_2ndInf_3dpi_rep2", "NMRI_2ndInf_5dpi_rep1", 
-             "NMRI_2ndInf_7dpi_rep1", "Rag_2ndInf_5dpi_rep1", "NMRI_2ndInf_7dpi_rep2")
+#use colnames insteda of writing them out#
+#x <- c("C57BL6_1stInf_0dpi_rep1", "C57BL6_1stInf_0dpi_rep2", "C57BL6_1stInf_5dpi_rep1", "C57BL6_1stInf_5dpi_rep2", 
+#             "NMRI_1stInf_3dpi_rep1", "NMRI_1stInf_3dpi_rep2", "NMRI_1stInf_5dpi_rep1", "NMRI_1stInf_5dpi_rep2", 
+#            "NMRI_1stInf_5dpi_rep3", "NMRI_1stInf_7dpi_rep1", "NMRI_1stInf_7dpi_rep2", "Rag_1stInf_0dpi_rep1", 
+#             "Rag_1stInf_0dpi_rep2", "Rag_1stInf_5dpi_rep1", "Rag_1stInf_5dpi_rep2", "C57BL6_2ndInf_5dpi_rep1", 
+#             "NMRI_2ndInf_0dpi_rep1", "NMRI_2ndInf_0dpi_rep2", "NMRI_2ndInf_3dpi_rep2", "NMRI_2ndInf_5dpi_rep1", 
+#             "NMRI_2ndInf_7dpi_rep1", "Rag_2ndInf_5dpi_rep1", "NMRI_2ndInf_7dpi_rep2")
+x = colnames(DF)
 
-spl <- sapply(strsplit(x,"_"), function(x)x[1])
-lames <- data.frame(variable = x, strain = sapply(strsplit(x,"_"), function(x)x[1]), infection = sapply(strsplit(x,"_"), function(x)x[2]), dpi = sapply(strsplit(x,"_"), function(x)x[3]), replicate = sapply(strsplit(x,"_"), function(x)x[4]))
+lames <- data.frame(variable = x, strain = sapply(strsplit(x,"_"), function(f)f[1]), infection = sapply(strsplit(x,"_"), function(f)f[2]),
+                    dpi = sapply(strsplit(x,"_"), function(f)f[3]), replicate = sapply(strsplit(x,"_"), function(f)f[4]))
 
 scCYT <- merge(cCYT, lames, by = "variable")
-install.packages("hexbin")
 
 library(ggplot2)
 #start plot#
