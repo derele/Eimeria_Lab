@@ -16,12 +16,27 @@ end_point[,'End.RFU'] <- as.numeric(as.character(end_point[,'End.RFU']))
 
 melt_deriv <- data.frame(lapply(melt_deriv, function(x) {gsub(",", ".", x)}))
 str(melt_deriv)
+melt_deriv[] <- lapply(melt_deriv, function(y) {
+  if(is.factor(y)) as.numeric(as.character(y)) else y
+})
+sapply(melt_deriv, class)
+str(melt_deriv)
 
 melt_RFU <- data.frame(lapply(melt_RFU, function(x) {gsub(",", ".", x)}))
+str(melt_RFU)
+melt_RFU[] <- lapply(melt_RFU, function(y) {
+  if(is.factor(y)) as.numeric(as.character(y)) else y
+})
+sapply(melt_RFU, class)
 str(melt_RFU)
 
 quant_amp <- data.frame(lapply(quant_amp, function(x) {gsub(",", ".", x)}))
 str(quant_amp)
+melt_deriv[] <- lapply(melt_deriv, function(y) {
+  if(is.factor(y)) as.numeric(as.character(y)) else y
+})
+sapply(melt_deriv, class)
+str(melt_deriv)
 
-#indx <- sapply(end_point$End.RFU, is.factor)
-#end_point[indx] <- lapply(end_point[indx], function(y) as.numeric(as.character(y)))
+library(ggplot2)
+
