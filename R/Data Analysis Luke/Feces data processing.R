@@ -7,8 +7,12 @@ Exp007a_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables
 Exp007b_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
 E7aF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv")
 E7bF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv")
-
-# the columns we want to keep
+#load csv at home (win)
+Exp007a_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
+Exp007b_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
+E7aF <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv")
+E7bF <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv") 
+#the columns we want to keep
 col2keep <- c("Strain", "HybridStatus", "InfectionStrain", "EH_ID")
 
 Exp007a_design <- Exp007a_design[col2keep]
@@ -33,7 +37,7 @@ E7bF$batch <- "december2018"
 # Make one big fat table Expe 7
 Exp007_record <- rbind(E7aF, E7bF)
 
-# Merge all, SOME FUCKERY HAPPENS HERE (E88 = 180 entries, E64 = 306 entries)#
+# Merge all, #
 Exp007 <- merge(Exp007_design, Exp007_record)
 
 # Split in 2 infection batches (Efalciformis and Eferrisi are studied separetely)
@@ -43,9 +47,11 @@ Exp007_E64 <- Exp007[Exp007$InfectionStrain %in% "E64",]
 #convert Wchange to numeric (291 and 295 are NAs)#
 str(Exp007_E64)
 Exp007_E64[,9] <- sapply(Exp007_E64[,9], as.numeric)
+Exp007_E64[,7] <- sapply(Exp007_E64[,7], as.numeric)
+head(Exp007_E64)
 str(Exp007_E88)
 Exp007_E88[,9] <- sapply(Exp007_E88[,9], as.numeric)
-
+Exp007_E88[,7] <- sapply(Exp007_E88[,7], as.numeric)
 
 # calculate summary statistics on weight loss NEEDS FIXING #
 #WLoss_007_E64 <- summarise(Exp007_E64, measurevar = "Wchange",
