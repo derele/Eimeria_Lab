@@ -1,7 +1,8 @@
 #LOAD, CLEAN UP AND PROCESS DATA#
+##########################################################################################################################
 #PC path
-ANT <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
-POS <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_posteriorMLN.csv")
+#ANT <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
+#POS <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_posteriorMLN.csv")
 
 #laptop path
 #ANT <- read.csv(file = "../lubomir/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
@@ -12,8 +13,8 @@ POS <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007
 #POS <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_posteriorMLN.csv")
 
 #HU path
-#ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
-#POS <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_posteriorMLN.csv")
+ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
+POS <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_posteriorMLN.csv")
 
 #cleanup artifact columns (check before using, csv reads different now and then)#
 ANT$X.6 <- NULL
@@ -39,6 +40,7 @@ names(POS) <- c("Sample","ThCD4p","TcCD8p","Th1IFNgp_in_CD4p","Th17IL17Ap_in_CD4
 #set columns to numbers
 library("dplyr")
 library("magrittr")
+str(POS)
 str(ANT)
 #ANT
 ANT$ThCD4p <- as.numeric(as.character(ANT$ThCD4p))
@@ -55,18 +57,18 @@ ANT$Th17RORgp_in_CD4pFoxp3n <- as.numeric(as.character(ANT$Th17RORgp_in_CD4pFoxp
 ANT$Dividing_Ki67p_in_RORgtp <- as.numeric(as.character(ANT$Dividing_Ki67p_in_RORgtp))
 
 #POS
-ANT$ThCD4p <- as.numeric(as.character(ANT$ThCD4p))
-ANT$TcCD8p <- as.numeric(as.character(ANT$TcCD8p))
-ANT$Th1IFNgp_in_CD4p <- as.numeric(as.character(ANT$Th1IFNgp_in_CD4p))
-ANT$Th17IL17Ap_in_CD4p <- as.numeric(as.character(ANT$Th17IL17Ap_in_CD4p))
-ANT$Tc1IFNgp_in_CD8p <- as.numeric(as.character(ANT$Tc1IFNgp_in_CD8p))
-ANT$Treg_Foxp3_in_CD4p <- as.numeric(as.character(ANT$Treg_Foxp3_in_CD4p))
-ANT$Dividing_Ki67p_in_Foxp3p <- as.numeric(as.character(ANT$Dividing_Ki67p_in_Foxp3p))
-ANT$RORgtp_in_Foxp3p <- as.numeric(as.character(ANT$RORgtp_in_Foxp3p))
-ANT$Th1Tbetp_in_CD4pFoxp3n <- as.numeric(as.character(ANT$Th1Tbetp_in_CD4pFoxp3n))
-ANT$Dividing_Ki67p_in_Tbetp <- as.numeric(as.character(ANT$Dividing_Ki67p_in_Tbetp))
-ANT$Th17RORgp_in_CD4pFoxp3n <- as.numeric(as.character(ANT$Th17RORgp_in_CD4pFoxp3n))
-ANT$Dividing_Ki67p_in_RORgtp <- as.numeric(as.character(ANT$Dividing_Ki67p_in_RORgtp))
+POS$ThCD4p <- as.numeric(as.character(POS$ThCD4p))
+POS$TcCD8p <- as.numeric(as.character(POS$TcCD8p))
+POS$Th1IFNgp_in_CD4p <- as.numeric(as.character(POS$Th1IFNgp_in_CD4p))
+POS$Th17IL17Ap_in_CD4p <- as.numeric(as.character(POS$Th17IL17Ap_in_CD4p))
+POS$Tc1IFNgp_in_CD8p <- as.numeric(as.character(POS$Tc1IFNgp_in_CD8p))
+POS$Treg_Foxp3_in_CD4p <- as.numeric(as.character(POS$Treg_Foxp3_in_CD4p))
+POS$Dividing_Ki67p_in_Foxp3p <- as.numeric(as.character(POS$Dividing_Ki67p_in_Foxp3p))
+POS$RORgtp_in_Foxp3p <- as.numeric(as.character(POS$RORgtp_in_Foxp3p))
+POS$Th1Tbetp_in_CD4pFoxp3n <- as.numeric(as.character(POS$Th1Tbetp_in_CD4pFoxp3n))
+POS$Dividing_Ki67p_in_Tbetp <- as.numeric(as.character(POS$Dividing_Ki67p_in_Tbetp))
+POS$Th17RORgp_in_CD4pFoxp3n <- as.numeric(as.character(POS$Th17RORgp_in_CD4pFoxp3n))
+POS$Dividing_Ki67p_in_RORgtp <- as.numeric(as.character(POS$Dividing_Ki67p_in_RORgtp))
 
 #check structure
 str(ANT)
@@ -79,6 +81,7 @@ str(ANT)
 
 i <- sapply(POS, is.factor)
 POS[i] <- lapply(POS[i], as.character)
+str(POS)
 
 #reshape df
 library(reshape2)
@@ -93,9 +96,8 @@ library(stringr)
 cANT$Sample <- gsub(cANT$Sample, pattern="Anterior", replacement='')
 cANT$Sample <- gsub(cANT$Sample, pattern=".fcs", replacement='')
 
-cPOS$Sample <- gsub(cPOS$Sample, pattern="Posterior", replacement='')
+POS$Sample <- gsub(cPOS$Sample, pattern="Posterior", replacement='')
 cPOS$Sample <- gsub(cPOS$Sample, pattern=".fcs", replacement='')
-
 
 #orientation plot
 library(ggplot2)
@@ -112,30 +114,30 @@ ggplot(cPOS, aes(Sample, value)) +
 
 #####################################################################################################################
 #select T-cell subsets from ANT
-CD4 <- cANT %>% filter(variable == "ThCD4p")
-CD8 <- cANT %>% filter(variable == "TcCD8p")
+A_CD4 <- cANT %>% filter(variable == "ThCD4p")
+A_CD8 <- cANT %>% filter(variable == "TcCD8p")
 
 #
-Th1_IFNgp_in_CD4 <- cANT %>% filter(variable == "Th1IFNgp_in_CD4p")
-Th1_IL17Ap_in_CD4 <- cANT %>% filter(variable == "Th17IL17Ap_in_CD4p")
-Treg_Foxp3_in_CD4 <- cANT %>% filter(variable == "Treg_Foxp3_in_CD4p")
+A_Th1_IFNgp_in_CD4 <- cANT %>% filter(variable == "Th1IFNgp_in_CD4p")
+A_Th1_IL17Ap_in_CD4 <- cANT %>% filter(variable == "Th17IL17Ap_in_CD4p")
+A_Treg_Foxp3_in_CD4 <- cANT %>% filter(variable == "Treg_Foxp3_in_CD4p")
 
-Tc1_IFNgp_in_CD8 <- cANT %>% filter(variable == "Tc1IFNgp_in_CD8p")
+A_Tc1_IFNgp_in_CD8 <- cANT %>% filter(variable == "Tc1IFNgp_in_CD8p")
 
-Th1_Tbet_in_CD4Foxp3n <- cANT %>% filter(variable == "Th1Tbetp_in_CD4pFoxp3n")
-Th17RORgp_in_CD4Foxp3n <- cANT %>% filter(variable == "Th17RORgp_in_CD4pFoxp3n")
+A_Th1_Tbet_in_CD4Foxp3n <- cANT %>% filter(variable == "Th1Tbetp_in_CD4pFoxp3n")
+A_Th17RORgp_in_CD4Foxp3n <- cANT %>% filter(variable == "Th17RORgp_in_CD4pFoxp3n")
 
-RORgtp_in_Foxp3p <- cANT %>% filter(variable == "RORgtp_in_Foxp3p")
+A_RORgtp_in_Foxp3p <- cANT %>% filter(variable == "RORgtp_in_Foxp3p")
 
-Dividing_K67p_in_Foxp3p <- cANT %>% filter(variable == "Dividing_Ki67p_in_Foxp3p")
+A_Dividing_K67p_in_Foxp3p <- cANT %>% filter(variable == "Dividing_Ki67p_in_Foxp3p")
 
-Dividing_Ki67p_in_Tbetp <- cANT %>% filter(variable == "Dividing_Ki67p_in_Tbetp")
+A_Dividing_Ki67p_in_Tbetp <- cANT %>% filter(variable == "Dividing_Ki67p_in_Tbetp")
 
-Dividing_Ki67p_in_RORgtp <- cANT %>% filter(variable == "Dividing_Ki67p_in_RORgtp")
+A_Dividing_Ki67p_in_RORgtp <- cANT %>% filter(variable == "Dividing_Ki67p_in_RORgtp")
 
 #create populations with subsets
-CDANT <- rbind(CD4, CD8)
-CD4T <- rbind(Th1_IFNgp_in_CD4, Th1_IL17Ap_in_CD4, Treg_Foxp3_in_CD4)
+A_CDANT <- rbind(CD4, CD8)
+A_CD4T <- rbind(Th1_IFNgp_in_CD4, Th1_IL17Ap_in_CD4, Treg_Foxp3_in_CD4)
 
 ggplot(CD4T, aes(Sample, value)) + 
   geom_bar(aes(fill = variable), position = "stack", stat = "identity") +
@@ -157,30 +159,30 @@ ggplot(CDANT, aes(variable, value)) +
 #####################################################################################################################
 
 #select T-cell subsets from POS
-CD4 <- cANT %>% filter(variable == "ThCD4p")
-CD8 <- cANT %>% filter(variable == "TcCD8p")
+P_CD4 <- cANT %>% filter(variable == "ThCD4p")
+P_CD8 <- cANT %>% filter(variable == "TcCD8p")
 
 #
-Th1_IFNgp_in_CD4 <- cANT %>% filter(variable == "Th1IFNgp_in_CD4p")
-Th1_IL17Ap_in_CD4 <- cANT %>% filter(variable == "Th17IL17Ap_in_CD4p")
-Treg_Foxp3_in_CD4 <- cANT %>% filter(variable == "Treg_Foxp3_in_CD4p")
+P_Th1_IFNgp_in_CD4 <- cANT %>% filter(variable == "Th1IFNgp_in_CD4p")
+P_Th1_IL17Ap_in_CD4 <- cANT %>% filter(variable == "Th17IL17Ap_in_CD4p")
+P_Treg_Foxp3_in_CD4 <- cANT %>% filter(variable == "Treg_Foxp3_in_CD4p")
 
-Tc1_IFNgp_in_CD8 <- cANT %>% filter(variable == "Tc1IFNgp_in_CD8p")
+P_Tc1_IFNgp_in_CD8 <- cANT %>% filter(variable == "Tc1IFNgp_in_CD8p")
 
-Th1_Tbet_in_CD4Foxp3n <- cANT %>% filter(variable == "Th1Tbetp_in_CD4pFoxp3n")
-Th17RORgp_in_CD4Foxp3n <- cANT %>% filter(variable == "Th17RORgp_in_CD4pFoxp3n")
+P_Th1_Tbet_in_CD4Foxp3n <- cANT %>% filter(variable == "Th1Tbetp_in_CD4pFoxp3n")
+P_Th17RORgp_in_CD4Foxp3n <- cANT %>% filter(variable == "Th17RORgp_in_CD4pFoxp3n")
 
-RORgtp_in_Foxp3p <- cANT %>% filter(variable == "RORgtp_in_Foxp3p")
+P_RORgtp_in_Foxp3p <- cANT %>% filter(variable == "RORgtp_in_Foxp3p")
 
-Dividing_K67p_in_Foxp3p <- cANT %>% filter(variable == "Dividing_Ki67p_in_Foxp3p")
+P_Dividing_K67p_in_Foxp3p <- cANT %>% filter(variable == "Dividing_Ki67p_in_Foxp3p")
 
-Dividing_Ki67p_in_Tbetp <- cANT %>% filter(variable == "Dividing_Ki67p_in_Tbetp")
+P_Dividing_Ki67p_in_Tbetp <- cANT %>% filter(variable == "Dividing_Ki67p_in_Tbetp")
 
-Dividing_Ki67p_in_RORgtp <- cANT %>% filter(variable == "Dividing_Ki67p_in_RORgtp")
+P_Dividing_Ki67p_in_RORgtp <- cANT %>% filter(variable == "Dividing_Ki67p_in_RORgtp")
 
 #create populations with subsets
-CDANT <- rbind(CD4, CD8)
-CD4T <- rbind(Th1_IFNgp_in_CD4, Th1_IL17Ap_in_CD4, Treg_Foxp3_in_CD4)
+P_CDANT <- rbind(CD4, CD8)
+P_CD4T <- rbind(Th1_IFNgp_in_CD4, Th1_IL17Ap_in_CD4, Treg_Foxp3_in_CD4)
 
 ggplot(CD4T, aes(Sample, value)) + 
   geom_bar(aes(fill = variable), position = "stack", stat = "identity") +
