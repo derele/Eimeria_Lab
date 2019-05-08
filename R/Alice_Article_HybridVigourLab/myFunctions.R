@@ -160,7 +160,7 @@ makeToleranceTable <- function(df){
       dplyr::group_by(EH_ID) %>%
       dplyr::slice(which.min(weight)) %>%
       dplyr::select(EH_ID, weight, startingWeight, 
-             Mouse_genotype, infection_isolate, Exp_ID, dpi))
+             Mouse_genotype, Eimeria_species, infection_isolate, Exp_ID, dpi))
   names(X)[names(X) %in% "dpi"] = "dpi_minWeight"
   # maximum oocysts and associated fecweight
   Y <- as.data.frame(
@@ -220,7 +220,7 @@ makeIntermPlots <- function(df){
   # calculate summary statistics on weight loss
   summaryWeight <- summarySE(df, measurevar = "relativeWeightLoss",
                              groupvars=c("Mouse_genotype",
-                                         "infection_isolate", "dpi"), na.rm = T)
+                                         "Eimeria_species", "dpi"), na.rm = T)
   summaryWeight$ci[is.na(summaryWeight$ci)] <- 0
   
   # plot mean relative weightloss
@@ -230,7 +230,7 @@ makeIntermPlots <- function(df){
                   col = "gray")+
     geom_line(aes(group = Mouse_genotype, col = Mouse_genotype), size = 2, alpha = 0.5) +
     geom_point(aes(fill = Mouse_genotype), size=4, pch = 21, color = "black") +
-    facet_grid(. ~ infection_isolate, scales = "free_y", space = "free") +
+    facet_grid(. ~ Eimeria_species, scales = "free_y", space = "free") +
     scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
     scale_y_continuous(name = "Weight loss relative to dpi0 (%)") +
     theme(axis.text.x = element_text(angle = 0))
@@ -238,7 +238,7 @@ makeIntermPlots <- function(df){
   # calculate summary statistics on oocysts shedding
   summaryOocysts <-summarySE(df, measurevar="OPG",
                              groupvars=c("Mouse_genotype",
-                                         "infection_isolate", "dpi"), na.rm = T)
+                                         "Eimeria_species", "dpi"), na.rm = T)
   summaryOocysts$ci[is.na(summaryOocysts$ci)] <- 0
   
   # mean parasite shedding
@@ -247,7 +247,7 @@ makeIntermPlots <- function(df){
                   col = "gray") +
     geom_line(aes(group = Mouse_genotype, col = Mouse_genotype), size = 2, alpha = 0.5) +
     geom_point(aes(fill = Mouse_genotype), size=4, pch = 21, color = "black") +
-    facet_grid(. ~ infection_isolate) +
+    facet_grid(. ~ Eimeria_species) +
     scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
     scale_y_log10(name = "Oocysts shedding along infection (OPG)",
                   breaks = c(1, 11, 101, 1001, 10001, 100001, 1000001, 10000001), 

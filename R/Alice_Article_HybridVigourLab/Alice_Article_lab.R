@@ -83,6 +83,7 @@ by_host_parasite_peak
 mydataShifted <- data.frame(Exp_ID = ALL_Expe$Exp_ID,
                             EH_ID = ALL_Expe$EH_ID,
                             infection_isolate = ALL_Expe$infection_isolate,
+                            Eimeria_species = ALL_Expe$Eimeria_species,
                             Mouse_genotype = ALL_Expe$Mouse_genotype,
                             dpi = ALL_Expe$dpi,
                             startingWeight = ALL_Expe$startingWeight)
@@ -162,8 +163,8 @@ by_host_parasite_peak2
 #https://stats.stackexchange.com/questions/237963/how-to-formulate-the-offset-of-a-glm
 
 ### Which distribution?
-hist(mydataShifted$weight)
-hist(mydataShifted$oocysts.per.tube, breaks = 100) # clearly negbin here :) 
+hist(mydataShifted$weight, col = "red")
+hist(mydataShifted$oocysts.per.tube, breaks = 100, col = "red") # clearly negbin here :) 
 
 x <- as.numeric(na.omit(mydataShifted$oocysts.per.tube))
 x <- x[x>0]
@@ -217,11 +218,11 @@ summaryDF2$oocysts.per.tube.tsd <- as.integer(summaryDF2$oocysts.per.tube / 1000
 dev.off()
 ggplot(mydataShifted, 
        aes(x = dpi, y = oocysts.per.tube.tsd + 1, group = dpi)) +
-  geom_boxplot() + scale_y_log10()
+  geom_boxplot(fill = "red") + scale_y_log10()
 
 ggplot(mydataShifted, 
        aes(x = dpi, y = weight, group = dpi)) +
-  geom_boxplot() 
+  geom_boxplot(fill = "red") 
 
 nrow(mydataShifted[mydataShifted$fecweight != 0,])
 nrow(mydataShifted)
@@ -229,9 +230,9 @@ nrow(mydataShifted)
 ## General definition of resistance = 1 per mouse
 
 ## FIRST, test Exp_ID effect
-m1.P.full <- glm.nb(oocysts.per.tube ~ infection_isolate * Mouse_genotype + Exp_ID + 
+m1.P.full <- glm.nb(oocysts.per.tube ~ Eimeria_species * Mouse_genotype + Exp_ID + 
                       offset(log(fecweight)), data = summaryDF2)
-m1.P <- glm.nb(oocysts.per.tube ~ infection_isolate * Mouse_genotype +
+m1.P <- glm.nb(oocysts.per.tube ~ Eimeria_species * Mouse_genotype +
                       offset(log(fecweight)), data = summaryDF2)
 # Likelihood ratio test
 anova(m1.P.full, m1.P, test="LRT")
@@ -249,33 +250,33 @@ mytukey(m1.P)
 # test significance of interactions
 # Original model
 model1.P <- glmer.nb(oocysts.per.tube.tsd ~
-                       infection_isolate * Mouse_genotype +
+                       Eimeria_species * Mouse_genotype +
                        (1|dpi) + offset(log(fecweight)),
                      data = mydataShifted)
 # Model without interaction
 model2.P <- glmer.nb(oocysts.per.tube.tsd ~ 
-                     infection_isolate + Mouse_genotype + 
+                       Eimeria_species + Mouse_genotype + 
                      (1|dpi) + offset(log(fecweight)), 
                    data = mydataShifted)
 
 # Likelihood ratio test
 anova(model1.P, model2.P, test="LRT")
-## --> INTERACTIONS SLIGHTLY SIGNIFICANT
-summary(model1.P)
+## --> INTERACTIONS NOT SLIGHTLY
+summary(model2.P)
 
 # Post-hoc analysis
-s1 <- summary(glht(model1.P, mcp(infection_isolate="Tukey")))
+s1 <- summary(glht(model2.P, mcp(Eimeria_species="Tukey")))
 s1
-s2 <- summary(glht(model1.P, mcp(Mouse_genotype="Tukey")))
+s2 <- summary(glht(model2.P, mcp(Mouse_genotype="Tukey")))
 s2
 
-### Host suffering
+### Pathogenicity 
 
 ## General definition of resistance = 1 per mouse
-m1.H <- glm(weight ~ infection_isolate * Mouse_genotype + 
+m1.H <- glm(weight ~ Eimeria_species * Mouse_genotype + 
                  offset(log(startingWeight)), 
                data = summaryDF2)
-m2.H <- glm(weight ~ infection_isolate + Mouse_genotype + 
+m2.H <- glm(weight ~ Eimeria_species + Mouse_genotype + 
                  offset(log(startingWeight)), 
                data = summaryDF2)
 # Likelihood ratio test
@@ -289,12 +290,12 @@ mytukey(m2.H)
 # test significance of interactions
 # Original model
 model1.H <- lmer(weight ~
-                   infection_isolate * Mouse_genotype +
+                   Eimeria_species * Mouse_genotype +
                    (1|dpi) + offset(log(startingWeight)),
                  data = mydataShifted)
 # Model without interaction
 model2.H <- lmer(weight ~ 
-                   infection_isolate + Mouse_genotype + 
+                   Eimeria_species + Mouse_genotype + 
                    (1|dpi) + offset(log(startingWeight)), 
                  data = mydataShifted)
 
@@ -304,7 +305,7 @@ anova(model1.H, model2.H, test="LRT")
 summary(model1.H)
 
 # Post-hoc analysis
-s1.H <- summary(glht(model1.H, mcp(infection_isolate="Tukey")))
+s1.H <- summary(glht(model1.H, mcp(Eimeria_species="Tukey")))
 s1.H
 s2.H <- summary(glht(model1.H, mcp(Mouse_genotype="Tukey")))
 s2.H
@@ -318,7 +319,7 @@ summaryDF2$tolerance <- summaryDF2$minWeightRelative / summaryDF2$peakParasiteDe
 
 ggplot(summaryDF2, aes(x = resistance, y = tolerance)) +
   geom_point(aes(fill = Mouse_genotype), size=4, pch = 21, color = "black") +
-  facet_grid(. ~ infection_isolate) +
+  facet_grid(. ~ Eimeria_species) +
   xlab("Resistance = inverse of peak parasite density")+
   ylab("Tolerance = minimun relative weight / peak parasite density")+
   theme(axis.text.x = element_text(angle = 0))
@@ -326,13 +327,13 @@ ggplot(summaryDF2, aes(x = resistance, y = tolerance)) +
 summaryTolerance <- summarySE(summaryDF2, 
                               measurevar="tolerance",
                               groupvars=c("Mouse_genotype",
-                                          "infection_isolate"), 
+                                          "Eimeria_species"), 
                               na.rm = T)
 summaryTolerance$ci[is.na(summaryTolerance$ci)] <- 0
 summaryResistance <- summarySE(summaryDF2, 
                               measurevar="resistance",
                               groupvars=c("Mouse_genotype",
-                                          "infection_isolate"), 
+                                          "Eimeria_species"), 
                               na.rm = T)
 summaryResistance$ci[is.na(summaryResistance$ci)] <- 0
 
@@ -368,7 +369,7 @@ mydataShifted$tolFac[mydataShifted$tolFac %in% c(Inf, -Inf)] <- NA
 summaryTolerance <- summarySE(mydataShifted, 
                               measurevar="tolFac",
                               groupvars=c("Mouse_genotype",
-                                          "infection_isolate", "dpi"), 
+                                          "Eimeria_species", "dpi"), 
                               na.rm = T)
 summaryTolerance$ci[is.na(summaryTolerance$ci)] <- 0
 
@@ -377,7 +378,7 @@ ggplot(summaryTolerance, aes(x = dpi, y = tolFac))+
                 col = "gray") +
   geom_line(aes(group = Mouse_genotype, col = Mouse_genotype), size = 2, alpha = 0.5) +
   geom_point(aes(fill = Mouse_genotype), size=4, pch = 21, color = "black") +
-  facet_grid(. ~ infection_isolate) +
+  facet_grid(. ~ Eimeria_species) +
   scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
   scale_y_log10() +
   geom_vline(xintercept = 8) +
@@ -397,26 +398,26 @@ ggplot(summaryTolerance, aes(x = dpi, y = tolFac))+
 
 #### Test interactions
 modT1 <- lm(weight ~ oocysts.per.tube + 
-              infection_isolate + Mouse_genotype +
-              oocysts.per.tube : infection_isolate +
+              Eimeria_species + Mouse_genotype +
+              oocysts.per.tube : Eimeria_species +
               oocysts.per.tube : Mouse_genotype + 
               offset(log(startingWeight)), 
             data = summaryDF2)
 
-modT2 <- lm(weight ~ oocysts.per.tube + 
-              infection_isolate + Mouse_genotype +
+modT2 <- lm(weight ~ Eimeria_species + 
+              Eimeria_species + Mouse_genotype +
               oocysts.per.tube : Mouse_genotype + 
               offset(log(startingWeight)), 
             data = summaryDF2)
 
 modT3 <- lm(weight ~ oocysts.per.tube + 
-              infection_isolate + Mouse_genotype +
-              oocysts.per.tube : infection_isolate + 
+              Eimeria_species + Mouse_genotype +
+              oocysts.per.tube : Eimeria_species + 
               offset(log(startingWeight)), 
             data = summaryDF2)
 
 modT4 <- lm(weight ~ oocysts.per.tube + 
-              infection_isolate + Mouse_genotype +
+              Eimeria_species + Mouse_genotype +
               offset(log(startingWeight)), 
             data = summaryDF2)
 
@@ -427,7 +428,7 @@ anova(modT1, modT4, test="LRT") # NO SIGNIF DIFF WHEN DROP BOTH
 
 summary(modT4)
 sTH <- summary(glht(modT4, mcp(Mouse_genotype="Tukey")))
-sTP <- summary(glht(modT2, mcp(infection_isolate="Tukey")))
+sTP <- summary(glht(modT2, mcp(Eimeria_species="Tukey")))
 sTH
 sTP
 
