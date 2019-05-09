@@ -266,10 +266,3 @@ getCorrectedDates <- function(mytab = read.csv("../data/1_informationTables/Exp0
   return(data.frame(original = mytab$Born, 
                     corrected = goodDates))
 }
-
-# calculate age at infection
-getAgeAtInfection <- function(mytab = read.csv("../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv"),
-                              infectionDate = "18-06-05"){
-  age <- difftime(infectionDate, mytab$Born, units = "weeks")
-  return(age)
-}

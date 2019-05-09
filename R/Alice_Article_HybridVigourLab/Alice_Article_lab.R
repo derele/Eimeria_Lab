@@ -18,6 +18,7 @@ source("loadExpe001toExpe005.R")
 # CHOICE MADE : remove Ploen mice & NMRI. Variations are too high.
 ALL_Expe <- merge(ExpeDF_003_4, ExpeDF_005, all = T)
 ALL_Expe <- makeMiceGenotypeAndIsolate(ALL_Expe)
+table(ALL_Expe$ageAtInfection, ALL_Expe$Mouse_strain)
 
 # NB if NA for oocysts.per.tube, set to 0 if the following day as 0 oocysts
 ALL_Expe[is.na(ALL_Expe$oocysts.per.tube), "dpi"] 
@@ -36,13 +37,18 @@ ALL_Expe$oocysts.per.tube[ALL_Expe$dpi %in% 3]
 ALL_Expe$oocysts.per.tube[ALL_Expe$dpi %in% 2] <- 0
 ALL_Expe$oocysts.per.tube[ALL_Expe$dpi %in% 1] <- 0
 
-# what's left
-miceDeadBeforeEnd <- c("LM0168", "LM0187", "LM0189", "LM0193")
-ALL_Expe <- ALL_Expe[!ALL_Expe$EH_ID %in% miceDeadBeforeEnd,]
-
 ALL_Expe[is.na(ALL_Expe$oocysts.per.tube), ] 
 # mouse LM0202 has one peak day missing for oocyst collection cause diarrhea
 summaryDF <- makeToleranceTable(ALL_Expe) #!!! when dpi several, first chosen
+
+## Check age/sex/batch possible confounding factors
+
+# Infection date : 
+ALL_Expe$Sex <- gsub(" ", "", ALL_Expe$Sex)
+
+ggplot(ALL_Expe[!duplicated(ALL_Expe$EH_ID),],
+       aes(x = Mouse_genotype, y = ageAtInfection, fill = Sex)) +
+  geom_violin() + geom_point(pch = 21, size = 4, position = position_jitter(width = 0.01))
 
 ################# END data preparation ################# 
 
@@ -165,29 +171,29 @@ by_host_parasite_peak2
 ### Which distribution?
 hist(mydataShifted$weight, col = "red")
 hist(mydataShifted$oocysts.per.tube, breaks = 100, col = "red") # clearly negbin here :) 
-
-x <- as.numeric(na.omit(mydataShifted$oocysts.per.tube))
-x <- x[x>0]
-library(fitdistrplus)
-
-plot(x, pch = 20)
-plotdist(x, histo = TRUE, demp = TRUE)
-descdist(x, discrete=FALSE, boot=500)
-
-fit_no  <- fitdist(x, "norm")
-fit_po  <- fitdist(x, "pois")
-fit_ne <- fitdist(x, "nbinom")
-summary(fit_no)
-summary(fit_po)
-summary(fit_ne)
-
-par(mfrow=c(2,2))
-plot.legend <- c("normal", "poisson", "negbin")
-denscomp(list(fit_no, fit_po, fit_ne), legendtext = plot.legend)
-cdfcomp(list(fit_no, fit_po, fit_ne), legendtext = plot.legend)
-qqcomp(list(fit_no, fit_po, fit_ne), legendtext = plot.legend)
-ppcomp(list(fit_no, fit_po, fit_ne), legendtext = plot.legend)
-par(mfrow=c(1,1))
+# 
+# x <- as.numeric(na.omit(mydataShifted$oocysts.per.tube))
+# x <- x[x>0]
+# library(fitdistrplus)
+# 
+# plot(x, pch = 20)
+# plotdist(x, histo = TRUE, demp = TRUE)
+# descdist(x, discrete=FALSE, boot=500)
+# 
+# fit_no  <- fitdist(x, "norm")
+# fit_po  <- fitdist(x, "pois")
+# fit_ne <- fitdist(x, "nbinom")
+# summary(fit_no)
+# summary(fit_po)
+# summary(fit_ne)
+# 
+# par(mfrow=c(2,2))
+# plot.legend <- c("normal", "poisson", "negbin")
+# denscomp(list(fit_no, fit_po, fit_ne), legendtext = plot.legend)
+# cdfcomp(list(fit_no, fit_po, fit_ne), legendtext = plot.legend)
+# qqcomp(list(fit_no, fit_po, fit_ne), legendtext = plot.legend)
+# ppcomp(list(fit_no, fit_po, fit_ne), legendtext = plot.legend)
+# par(mfrow=c(1,1))
 
 # The density plot and the CDF plot may be considered as the basic classical 
 # goodness-of-fits plots. The Q-Q plot emphasizes the lack-of-fit at the 
@@ -218,11 +224,11 @@ summaryDF2$oocysts.per.tube.tsd <- as.integer(summaryDF2$oocysts.per.tube / 1000
 dev.off()
 ggplot(mydataShifted, 
        aes(x = dpi, y = oocysts.per.tube.tsd + 1, group = dpi)) +
-  geom_boxplot(fill = "red") + scale_y_log10()
+  geom_boxplot(fill = "red") + scale_y_log10() + facet_grid(.~Mouse_genotype)
 
 ggplot(mydataShifted, 
        aes(x = dpi, y = weight, group = dpi)) +
-  geom_boxplot(fill = "red") 
+  geom_boxplot(fill = "red") + facet_grid(.~Mouse_genotype)
 
 nrow(mydataShifted[mydataShifted$fecweight != 0,])
 nrow(mydataShifted)
@@ -311,125 +317,27 @@ s2.H <- summary(glht(model1.H, mcp(Mouse_genotype="Tukey")))
 s2.H
 
 ### Tolerance (slope) Raberg 2007 Raber 2008
-# resistance = inverse of peak parasite density
-summaryDF2$peakParasiteDensity <- summaryDF2$oocysts.per.tube / summaryDF2$fecweight
-summaryDF2$resistance <- - summaryDF2$peakParasiteDensity
-summaryDF2$minWeightRelative <- summaryDF2$weight / summaryDF2$startingWeight
-summaryDF2$tolerance <- summaryDF2$minWeightRelative / summaryDF2$peakParasiteDensity
 
-ggplot(summaryDF2, aes(x = resistance, y = tolerance)) +
-  geom_point(aes(fill = Mouse_genotype), size=4, pch = 21, color = "black") +
-  facet_grid(. ~ Eimeria_species) +
-  xlab("Resistance = inverse of peak parasite density")+
-  ylab("Tolerance = minimun relative weight / peak parasite density")+
-  theme(axis.text.x = element_text(angle = 0))
+mydataShifted$millionOPG <- mydataShifted$OPG/1000000
 
-summaryTolerance <- summarySE(summaryDF2, 
-                              measurevar="tolerance",
-                              groupvars=c("Mouse_genotype",
-                                          "Eimeria_species"), 
-                              na.rm = T)
-summaryTolerance$ci[is.na(summaryTolerance$ci)] <- 0
-summaryResistance <- summarySE(summaryDF2, 
-                              measurevar="resistance",
-                              groupvars=c("Mouse_genotype",
-                                          "Eimeria_species"), 
-                              na.rm = T)
-summaryResistance$ci[is.na(summaryResistance$ci)] <- 0
+# relevel for Bu-Bu first (less tolerant)
+mydataShifted$Mouse_genotype <- relevel(mydataShifted$Mouse_genotype, ref = "MMm_F0 (Pw-Pw)")
 
-library(psych)
-names(summaryTolerance)[names(summaryTolerance) %in% "N"] <- "n"
-names(summaryTolerance)[names(summaryTolerance) %in% "tolerance"] <- "mean"
-names(summaryResistance)[names(summaryResistance) %in% "N"] <- "n"
-names(summaryResistance)[names(summaryResistance) %in% "resistance"] <- "mean"
-summaryTolerance$axis <- "tolerance"
-summaryResistance$axis <- "resistance"
-summaryTable <- rbind(summaryTolerance, summaryResistance)
-
-error.crosses(summaryTable[summaryTable$axis %in% "tolerance",], 
-              summaryTable[summaryTable$axis %in% "resistance",],
-              labels= summaryTable$Mouse_genotype,
-              xlab = "tolerance", ylab = "resistance",
-              pch=16,cex=1)
-
-# tolerance = slope of a regression of minimum weight against peak parasite density
-# modelTol <- lm(weight ~ peakParasiteDensity * infection_isolate * Mouse_genotype +
-#                  offset(log(startingWeight)), data = summaryDF2)
-# # 
-# t <- summary(modelTol)
-# d <- data.frame(t$coefficients)
-# 
-# rowIndx <- grepl("peak", row.names(d)) & grepl("infection", row.names(d)) & grepl("Mouse", row.names(d))
-# d[rowIndx, "Estimate"]
+modT <- lmer(weight ~ Eimeria_species * Mouse_genotype * millionOPG +
+                (1|EH_ID) + offset(log(startingWeight)),
+              data = mydataShifted)
 
 
-mydataShifted$tolFac <- mydataShifted$relativeWeight / mydataShifted$OPG
-mydataShifted$tolFac[mydataShifted$tolFac %in% c(Inf, -Inf)] <- NA
+#https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001989
 
-summaryTolerance <- summarySE(mydataShifted, 
-                              measurevar="tolFac",
-                              groupvars=c("Mouse_genotype",
-                                          "Eimeria_species", "dpi"), 
-                              na.rm = T)
-summaryTolerance$ci[is.na(summaryTolerance$ci)] <- 0
+# NO TOLERANCE DIFFERENT SIGNIFICATIVELY
+library(dplyr)
+library(sjPlot)
+library(sjmisc)
+library(ggplot2)
 
-ggplot(summaryTolerance, aes(x = dpi, y = tolFac))+
-  geom_errorbar(aes(ymin = tolFac - ci, ymax = tolFac + ci),
-                col = "gray") +
-  geom_line(aes(group = Mouse_genotype, col = Mouse_genotype), size = 2, alpha = 0.5) +
-  geom_point(aes(fill = Mouse_genotype), size=4, pch = 21, color = "black") +
-  facet_grid(. ~ Eimeria_species) +
-  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  scale_y_log10() +
-  geom_vline(xintercept = 8) +
-  theme(axis.text.x = element_text(angle = 0))
+theme_set(theme_sjplot())
 
+plot_model(modT, type = "pred", terms = c( "millionOPG", "Mouse_genotype", "Eimeria_species")) 
 
-
-
-
-
-
-
-## WRONG if we use full model. Too many assumptions. weight before peak and after peak shall 
-## vary, not link with oocysts. The points before and after the peak are NOT independant.
-## we can't treat them as repeated measures. 
-## Hence, ONE tolerance value per animal. Defined by Raberg 2007.
-
-#### Test interactions
-modT1 <- lm(weight ~ oocysts.per.tube + 
-              Eimeria_species + Mouse_genotype +
-              oocysts.per.tube : Eimeria_species +
-              oocysts.per.tube : Mouse_genotype + 
-              offset(log(startingWeight)), 
-            data = summaryDF2)
-
-modT2 <- lm(weight ~ Eimeria_species + 
-              Eimeria_species + Mouse_genotype +
-              oocysts.per.tube : Mouse_genotype + 
-              offset(log(startingWeight)), 
-            data = summaryDF2)
-
-modT3 <- lm(weight ~ oocysts.per.tube + 
-              Eimeria_species + Mouse_genotype +
-              oocysts.per.tube : Eimeria_species + 
-              offset(log(startingWeight)), 
-            data = summaryDF2)
-
-modT4 <- lm(weight ~ oocysts.per.tube + 
-              Eimeria_species + Mouse_genotype +
-              offset(log(startingWeight)), 
-            data = summaryDF2)
-
-anova(modT1, modT2, test="LRT") # NOT SIGNIF DIFF WHEN DROP INF ISOLATE
-anova(modT1, modT3, test="LRT") # NOT SIGNIF DIFF WHEN DROP MOUSE STRAIN
-anova(modT1, modT4, test="LRT") # NO SIGNIF DIFF WHEN DROP BOTH
-# --> choose T4
-
-summary(modT4)
-sTH <- summary(glht(modT4, mcp(Mouse_genotype="Tukey")))
-sTP <- summary(glht(modT2, mcp(Eimeria_species="Tukey")))
-sTH
-sTP
-
-## Damn! How comes interactions are not significant??? That's what we want to compare!
+tab_model(modT)

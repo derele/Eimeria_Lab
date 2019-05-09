@@ -7,6 +7,10 @@ ExpeDF_001 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/mas
 
 ExpeDF_001$Exp_ID <- "Exp_001" 
 
+ExpeDF_001$Infection_date <- as.character(ExpeDF_001$Infection_date)
+ExpeDF_001$Infection_date[ExpeDF_001$Infection_date == "11_May_17"] <- "11-05-17"
+ExpeDF_001$Infection_date[ExpeDF_001$Infection_date == "8_May_17"] <- "08-05-17"
+
 # correct names
 names(ExpeDF_001)[names(ExpeDF_001) %in% "strain"] <- "Mouse_strain"
 names(ExpeDF_001)[names(ExpeDF_001) %in% "Inf_strain"]  <- "infection_isolate"
@@ -62,6 +66,8 @@ ExpeDF_002 <- calculateWeightLoss(ExpeDF_002, startingDay = 0)
 # oocysts
 ExpeDF_002 <- calculateOPG(ExpeDF_002)
 
+ExpeDF_002$Infection_date <- "19-03-18"
+
 ### EXPE_003 & 004
 # read all information for EXPE_003 and merge to one BIG file
 oo <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp003_April2018_wildmice_Eferrisi_Firstbatch_RECORDoocysts.csv")
@@ -69,12 +75,23 @@ we <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data
 design <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/Exp003_April2018_wildmice_Eferrisi_Firstbatch_DESIGN.csv")
 ExpeDF_003 <- merge(oo, we, all = T)
 ExpeDF_003 <- merge(ExpeDF_003, design, by = "EH_ID", all = T)
+ExpeDF_003$Born <- as.POSIXct(ExpeDF_003$born, format = "%d/%m/%y")
+
+ExpeDF_003$Infection_date <- "2018-05-03 CET"
+ExpeDF_003$ageAtInfection <- difftime(ExpeDF_003$Infection_date, ExpeDF_003$Born,
+                                        units = "weeks")
+
 # read all information for EXPE_004 and merge to one BIG file
 oo <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDoocysts.csv")
 we <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDweight.csv")
 design <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_DESIGN.csv")
 ExpeDF_004 <- merge(oo, we, all = T)
 ExpeDF_004 <- merge(ExpeDF_004, design, by = "EH_ID", all = T)
+ExpeDF_004$Born <- as.POSIXct(ExpeDF_004$Born, format = "%y-%m-%d")
+
+ExpeDF_004$Infection_date <- "2018-06-03 CET"
+ExpeDF_004$ageAtInfection <- difftime(ExpeDF_004$Infection_date, ExpeDF_004$Born,
+                                      units = "weeks")
 # rm dead
 ExpeDF_004 <- ExpeDF_004[!ExpeDF_004$EH_ID %in% c("LM0155", "LM0160"),]
 
@@ -84,8 +101,8 @@ ExpeDF_004$Mouse_strain <- ExpeDF_004$Strain
 ExpeDF_004$Exp_ID <- "Exp_004"
 names(ExpeDF_003)[names(ExpeDF_003) == "sex"] <- "Sex"
 ExpeDF_003_4 <- merge(ExpeDF_003, ExpeDF_004, all = TRUE)
-# Keep for dpi 0 to 11
-ExpeDF_003_4 <- ExpeDF_003_4[ExpeDF_003_4$dpi %in% 0:11, ]# remove stabilisation period
+# # Keep for dpi 0 to 11
+# ExpeDF_003_4 <- ExpeDF_003_4[ExpeDF_003_4$dpi %in% 0:11, ]# remove stabilisation period
 # correct abherante value
 ExpeDF_003_4[ExpeDF_003_4$EH_ID %in% "LM0137" & ExpeDF_003_4$weight %in% 17.6, "weight"] <- NA
 # Add mouse subspecies
@@ -132,8 +149,16 @@ design$EH_ID <- gsub(" ", "", design$EH_ID)
 design$HybridStatus <- gsub(" ", "", design$HybridStatus)
 ExpeDF_005 <- merge(oo, we, by = c("labels", "Expe"))
 ExpeDF_005 <- merge(ExpeDF_005, design, by = "EH_ID", all.x = T)
+
+ExpeDF_005$Born <- as.POSIXct(ExpeDF_005$Born, format = "%Y-%m-%d")
+
 ## Correct error space
 ExpeDF_005$Strain <- gsub(" ", "", ExpeDF_005$Strain)
+
+ExpeDF_005$Infection_date <- "2018-07-09 CET"
+
+ExpeDF_005$ageAtInfection <- difftime(ExpeDF_005$Infection_date, ExpeDF_005$Born,
+                                      units = "weeks")
 # rename "Expe" -> "Exp_ID"
 names(ExpeDF_005)[names(ExpeDF_005) == "Expe"] <- "Exp_ID"
 names(ExpeDF_005)[names(ExpeDF_005) == "Strain"] <- "Mouse_strain"
@@ -199,3 +224,11 @@ ExpeDF_005$relativeWeight <- as.numeric(as.character(ExpeDF_005$relativeWeight))
 
 ## Keep ONLY first batch!!! Contamination in the second one...
 ExpeDF_005 <- ExpeDF_005[ExpeDF_005$Batch %in% 1,]
+
+# what's left
+miceDeadBeforeEnd <- c("LM0168", "LM0187", "LM0189", "LM0193")
+ExpeDF_003_4 <- ExpeDF_003_4[!ExpeDF_003_4$EH_ID %in% miceDeadBeforeEnd,]
+ExpeDF_005 <- ExpeDF_005[!ExpeDF_005$EH_ID %in% miceDeadBeforeEnd,]
+
+# Keep for dpi 0 to 11
+ExpeDF_003_4 <- ExpeDF_003_4[ExpeDF_003_4$dpi %in% 0:11, ]# remove stabilisation period
