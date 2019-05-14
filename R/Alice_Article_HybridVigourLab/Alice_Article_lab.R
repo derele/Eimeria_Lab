@@ -63,6 +63,13 @@ expedesign <- summaryDF %>%
   data.frame()
 expedesign
 
+## To do : N; time to peak weight loss; time to peak oocyst; maxWL; peakOO
+summaryDF$dpi_maxOocysts
+
+
+
+
+
 ## mean of peak day by host and parasite
 by_host_parasite_peak <- summaryDF %>% 
   group_by(infection_isolate) %>% 
@@ -88,6 +95,7 @@ by_host_parasite_peak
 # Shift all according to median peak, and keep equal window
 mydataShifted <- data.frame(Exp_ID = ALL_Expe$Exp_ID,
                             EH_ID = ALL_Expe$EH_ID,
+                            HybridStatus = ALL_Expe$HybridStatus,
                             infection_isolate = ALL_Expe$infection_isolate,
                             Eimeria_species = ALL_Expe$Eimeria_species,
                             Mouse_genotype = ALL_Expe$Mouse_genotype,
@@ -341,3 +349,108 @@ theme_set(theme_sjplot())
 plot_model(modT, type = "pred", terms = c( "millionOPG", "Mouse_genotype", "Eimeria_species")) 
 
 tab_model(modT)
+
+
+## Time serie
+
+# Control phase dpi 5 to 8
+controlDF <- mydataShifted[mydataShifted$dpi %in% 5:8,]
+
+ggplot(controlDF, aes(x = dpi, y = weight, col = Mouse_genotype)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = F) +
+  # geom_smooth(aes(group = EH_ID)) +
+  facet_grid(.~infection_isolate)
+
+fmC1 <- lmer(weight ~ dpi * Mouse_genotype * Eimeria_species +
+              (dpi | EH_ID) + offset(log(startingWeight)), controlDF)
+fmC2 <- lmer(weight ~ dpi * Mouse_genotype + Eimeria_species +
+              (dpi | EH_ID) + offset(log(startingWeight)), controlDF)
+
+anova(fmC1, fmC2)
+#The term (Days|Subject) generates a vector-valued random effect
+# (intercept and slope) for each of the 18 levels of the Subject factor
+
+summary(fmC1)
+
+
+
+
+
+
+
+
+# Create temporary data frame:
+snarc_coefs <- vector()
+for (i in unique(controlDF$EH_ID)) {
+  snarc_tmp <-
+    controlDF[controlDF$EH_ID %in% i,]
+  # Perform regression:
+  reg_result <- lm(snarc_tmp$relativeWeight ~
+                     snarc_tmp$dpi)
+  # Get coefficient:
+  tmp_coef <- coef(reg_result)
+  # Store coefficient:
+  snarc_coefs[i] <- tmp_coef[2]
+}
+
+controlDF <- merge(controlDF,
+                   data_frame(EH_ID = names(snarc_coefs), slopeRelWeight = snarc_coefs))
+
+unicontrolDF <- controlDF[!duplicated(controlDF$EH_ID),]
+
+unicontrolDF$host <- NA
+for(i in c("Mmm-Mmd_F1","MMd_F0", "MMm_F0", "MMm_F1",  "MMd_F1")){
+  unicontrolDF$host[grep(i, unicontrolDF$Mouse_genotype)] <- i
+  
+}
+
+unicontrolDF$host <- as.factor(unicontrolDF$host)
+unicontrolDF$host <- factor(unicontrolDF$host, 
+                            levels = c("MMd_F0", "MMd_F1", "Mmm-Mmd_F1", "MMm_F1", "MMm_F0"))
+
+ggplot(unicontrolDF, aes(x= host, y = slopeRelWeight, 
+                         fill = host )) +
+  geom_boxplot() +
+  geom_jitter(position = position_jitter(width = 0.1)) +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  facet_grid(Eimeria_species~.)
+
+# Resilience phase dpi 8 to 10
+resiDF <- mydataShifted[mydataShifted$dpi %in% 8:10,]
+
+# Create temporary data frame:
+snarc_coefs <- vector()
+for (i in unique(resiDF$EH_ID)) {
+  snarc_tmp <-
+    resiDF[resiDF$EH_ID %in% i,]
+  # Perform regression:
+  reg_result <- lm(snarc_tmp$relativeWeight ~
+                     snarc_tmp$dpi)
+  # Get coefficient:
+  tmp_coef <- coef(reg_result)
+  # Store coefficient:
+  snarc_coefs[i] <- tmp_coef[2]
+}
+
+resiDF <- merge(resiDF,
+                   data_frame(EH_ID = names(snarc_coefs), slopeRelWeight = snarc_coefs))
+
+uniresiDF <- resiDF[!duplicated(resiDF$EH_ID),]
+
+uniresiDF$host <- NA
+for(i in c("Mmm-Mmd_F1","MMd_F0", "MMm_F0", "MMm_F1",  "MMd_F1")){
+  uniresiDF$host[grep(i, uniresiDF$Mouse_genotype)] <- i
+  
+}
+
+uniresiDF$host <- as.factor(uniresiDF$host)
+uniresiDF$host <- factor(uniresiDF$host, 
+                            levels = c("MMd_F0", "MMd_F1", "Mmm-Mmd_F1", "MMm_F1", "MMm_F0"))
+
+ggplot(uniresiDF, aes(x= host, y = slopeRelWeight, 
+                         fill = host )) +
+  geom_boxplot() +
+  geom_jitter(position = position_jitter(width = 0.1)) +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  facet_grid(Eimeria_species~.)
