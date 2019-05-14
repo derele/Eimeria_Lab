@@ -13,8 +13,8 @@
 #POS <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_posteriorMLN.csv")
 
 #HU path
-ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
-POS <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_posteriorMLN.csv")
+ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_anteriorMLN.csv")
+POS <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_posteriorMLN.csv")
 
 #cleanup artifact columns (check before using, csv reads different now and then)#
 ANT$X.6 <- NULL
@@ -83,21 +83,55 @@ i <- sapply(POS, is.factor)
 POS[i] <- lapply(POS[i], as.character)
 str(POS)
 
-#reshape df
+#reduce labels
+library(stringr)
+#ANT$Sample <- gsub(ANT$Sample, pattern="Anterior", replacement='')
+#ANT$Sample <- gsub(ANT$Sample, pattern=".fcs", replacement='')
+#
+#POS$Sample <- gsub(POS$Sample, pattern="Posterior", replacement='')
+#POS$Sample <- gsub(POS$Sample, pattern=".fcs", replacement='')
+
+#extract Mouse_ID from that mess and paste in "LM02" to standardize with our data structure
+x = ANT$Sample
+AIDs <- data.frame(Sample = x, EH_ID = sapply(strsplit(x,"_"), function(f)f[2]), Position = sapply(strsplit(x, " "), function(f)f[2]))
+AIDs$EH_ID <- paste0("LM02", AIDs$EH_ID)
+
+y = POS$Sample
+PIDs <- data.frame(Sample = y, EH_ID = sapply(strsplit(y,"_"), function(f)f[2]), Position = sapply(strsplit(y, " "), function(f)f[2]))
+PIDs$EH_ID <- paste0("LM02", PIDs$EH_ID)
+
+#merge
+ANT <- merge(AIDs, ANT)
+POS <- merge(PIDs, POS)
+MLNs <- rbind(ANT, POS)
+
+#####################################################################################################################################
+#introduce parasitological data
+Exp007 <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge.csv")
+Exp007_FACS <- merge(Exp007, MLNs)
+
+
+#reshape for model
+library(reshape)
 library(reshape2)
 library(meltt)
 library(MASS)
 
+?reshape
+ModelFACS <- reshape(Exp007_FACS, direction = "wide", idvar = "EH_ID", timevar = "Position")
+
+
+
+
+
+
+
+#reshape df
+
+
 cANT <- melt(ANT, id = c("Sample"))
 cPOS <- melt(POS, id = c("Sample"))
 
-#reduce labels
-library(stringr)
-cANT$Sample <- gsub(cANT$Sample, pattern="Anterior", replacement='')
-cANT$Sample <- gsub(cANT$Sample, pattern=".fcs", replacement='')
-
-POS$Sample <- gsub(cPOS$Sample, pattern="Posterior", replacement='')
-cPOS$Sample <- gsub(cPOS$Sample, pattern=".fcs", replacement='')
 
 #orientation plot
 library(ggplot2)

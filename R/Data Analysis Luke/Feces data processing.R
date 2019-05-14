@@ -5,13 +5,19 @@ library(Rmisc)
 #load csv files at HU#
 Exp007a_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
 Exp007b_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
-E7aF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv")
-E7bF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv")
+
+#fix the tables, export as .csv
+E7aF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv", row.names = NULL)
+E7bF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv", row.names = NULL)
+
+
+
 #load csv at home (win)
-Exp007a_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
-Exp007b_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
-E7aF <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv")
-E7bF <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv") 
+#Exp007a_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
+#Exp007b_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
+#E7aF <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv")
+#E7bF <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv") 
+
 #the columns we want to keep
 col2keep <- c("Strain", "HybridStatus", "InfectionStrain", "EH_ID")
 
@@ -48,10 +54,16 @@ Exp007_E64 <- Exp007[Exp007$InfectionStrain %in% "E64",]
 str(Exp007_E64)
 Exp007_E64[,9] <- sapply(Exp007_E64[,9], as.numeric)
 Exp007_E64[,7] <- sapply(Exp007_E64[,7], as.numeric)
-head(Exp007_E64)
+str(Exp007_E64)
 str(Exp007_E88)
 Exp007_E88[,9] <- sapply(Exp007_E88[,9], as.numeric)
 Exp007_E88[,7] <- sapply(Exp007_E88[,7], as.numeric)
+str(Exp007_E88)
+
+#export
+?write.csv2
+write.csv(Exp007, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge", quote = FALSE)
+Exp007
 
 # calculate summary statistics on weight loss NEEDS FIXING #
 #WLoss_007_E64 <- summarise(Exp007_E64, measurevar = "Wchange",
@@ -67,17 +79,17 @@ Exp007_E88[,7] <- sapply(Exp007_E88[,7], as.numeric)
 #Exp007$Wchange[Exp007$Wchange == 0] <- 100
 
 #Summary and confidence intervals (feces only)#
-library(dplyr)
-DF <- Exp007 %>%
-  group_by(dpi, InfectionStrain, HybridStatus) %>%
-  dplyr::summarise(mean.weight = mean(Wchange, na.rm = T),
-                   sd.weight = sd(Wchange, na.rm = TRUE),
-                   n.weight = n()) %>%
-  dplyr::mutate(se.weight = sd.weight / sqrt(n.weight),
-                lower.ci.weight = mean.weight - qt(1 - (0.05 / 2), 
-                                                   n.weight - 1) * se.weight,
-                upper.ci.weight = mean.weight + qt(1 - (0.05 / 2), 
-                                                   n.weight - 1) * se.weight)
+#library(dplyr)
+#DF <- Exp007 %>%
+ # group_by(dpi, InfectionStrain, HybridStatus) %>%
+  #dplyr::summarise(mean.weight = mean(Wchange, na.rm = T),
+   #                sd.weight = sd(Wchange, na.rm = TRUE),
+    #               n.weight = n()) %>%
+  #dplyr::mutate(se.weight = sd.weight / sqrt(n.weight),
+     #           lower.ci.weight = mean.weight - qt(1 - (0.05 / 2), 
+      #                                             n.weight - 1) * se.weight,
+       #         upper.ci.weight = mean.weight + qt(1 - (0.05 / 2), 
+        #                                           n.weight - 1) * se.weight)
 
 #Plot the Exp007#
 library(ggplot2)
