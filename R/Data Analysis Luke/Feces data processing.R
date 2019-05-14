@@ -3,14 +3,17 @@
 library(Rmisc)
 
 #load csv files at HU#
-Exp007a_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
-Exp007b_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
-
-#fix the tables, export as .csv
-E7aF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv", row.names = NULL)
-E7bF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv", row.names = NULL)
+#Exp007a_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
+#Exp007b_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
+#E7aF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv", row.names = NULL)
+#E7bF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv", row.names = NULL)
 
 
+#load csv files at home (Win)
+Exp007a_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
+Exp007b_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
+E7aF <- read.csv("Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv")
+E7bF <- read.csv("Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv")
 
 #load csv at home (win)
 #Exp007a_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
@@ -32,9 +35,8 @@ names(Exp007b_design)[names(Exp007b_design) == "EH_id"] <- "EH_ID"
 Exp007_design <- rbind(Exp007a_design, Exp007b_design)
 
 # remove shit columns
-E7aF <- E7aF[-grep(pattern = "X", x = names(E7aF))]
-E7bF <- E7bF[-grep(pattern = "X", x = names(E7bF))]
-?grep
+#E7aF <- E7aF[-grep(pattern = "X", x = names(E7aF))]
+#E7bF <- E7bF[-grep(pattern = "X", x = names(E7bF))]
 
 # keep the batch information
 E7aF$batch <- "october2018"
@@ -60,9 +62,12 @@ Exp007_E88[,9] <- sapply(Exp007_E88[,9], as.numeric)
 Exp007_E88[,7] <- sapply(Exp007_E88[,7], as.numeric)
 str(Exp007_E88)
 
-#export
-?write.csv2
-write.csv(Exp007, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge", quote = FALSE)
+#export HU
+#write.csv(Exp007, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge", quote = FALSE)
+
+#export home (Win)
+write.csv(Exp007, "./Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge", quote = FALSE)
+
 Exp007
 
 # calculate summary statistics on weight loss NEEDS FIXING #

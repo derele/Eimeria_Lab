@@ -1,8 +1,8 @@
 #LOAD, CLEAN UP AND PROCESS DATA#
 ##########################################################################################################################
 #PC path
-#ANT <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
-#POS <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_posteriorMLN.csv")
+ANT <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_anteriorMLN.csv")
+POS <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_posteriorMLN.csv")
 
 #laptop path
 #ANT <- read.csv(file = "../lubomir/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
@@ -13,8 +13,8 @@
 #POS <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_posteriorMLN.csv")
 
 #HU path
-ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_anteriorMLN.csv")
-POS <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_posteriorMLN.csv")
+#ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_anteriorMLN.csv")
+#POS <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_posteriorMLN.csv")
 
 #cleanup artifact columns (check before using, csv reads different now and then)#
 ANT$X.6 <- NULL
@@ -107,18 +107,23 @@ MLNs <- rbind(ANT, POS)
 
 #####################################################################################################################################
 #introduce parasitological data
-Exp007 <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge.csv")
+# HU: 
+#Exp007 <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge.csv")
+# Home PC: 
+Exp007 <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge.csv")
+
 Exp007_FACS <- merge(Exp007, MLNs)
-
-
+Exp007_FACS$X <- NULL
+str(Exp007_FACS)
 #reshape for model
 library(reshape)
 library(reshape2)
 library(meltt)
 library(MASS)
 
-?reshape
-ModelFACS <- reshape(Exp007_FACS, direction = "wide", idvar = "EH_ID", timevar = "Position")
+wide <- dcast(Exp007_FACS, value.var = "dpi", "ThCD4p", "TcCD8p", "Th1IFNgp_in_CD4p", "Th17IL17Ap_in_CD4p", "Tc1IFNgp_in_CD8p", "Treg_Foxp3_in_CD4p", "Dividing_Ki67p_in_Foxp3p", "RORgtp_in_Foxp3p", "Th1Tbetp_in_CD4pFoxp3n", "Dividing_Ki67p_in_Tbetp", "Th17RORgp_in_CD4pFoxp3n", "Dividing_Ki67p_in_RORgtp")
+
+ModelFACS <- recast(Exp007_FACS, id.var = "weight_dpi0", "fecweight", "ThCD4p")
 
 
 
