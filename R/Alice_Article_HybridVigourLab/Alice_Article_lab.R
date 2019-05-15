@@ -8,38 +8,63 @@ source("myFunctions.R")
 #### Load data ####
 source("loadExpe001toExpe005.R")
 
+## Structure article ##
+# 1. test ANTH/no ANTH (expe 3-4 vs 5 parents) -> hyp, diff if 1 or 2 parasites (interaction)
+# 2. HV in expe 1 & 5. Older mice suffer more? Test age. Could be, closer to "real" conditions 
+# 3. H or P drivers? Restistance/tolerance. Important, test effect of strating weight (if small mouse, more affected)
+
+## Mat&met
+# age, sex controlled by balanced design within expe
+## Orga: a table with all mice and their measures by day +
+## a summary table with for each mouse peak shedding, time to peak shedding, peak WL, tol as ratio, and infos
+
+ALL_Expe <- merge(ExpeDF_001, ExpeDF_003_4, all = T)
+ALL_Expe <- merge(ALL_Expe, ExpeDF_005, all = T)
+ALL_Expe <- makeMiceGenotypeAndIsolate(ALL_Expe)
+table(ALL_Expe$ageAtInfection, ALL_Expe$Mouse_strain)
+
+# NB some mice died before the end of expe, treat carefully
+# miceDeadBeforeEnd <- c("LM0168", "LM0187", "LM0189", "LM0193")
+# ExpeDF_003_4 <- ExpeDF_003_4[!ExpeDF_003_4$EH_ID %in% miceDeadBeforeEnd,]
+# ExpeDF_005 <- ExpeDF_005[!ExpeDF_005$EH_ID %in% miceDeadBeforeEnd,]
+
+################# Part 1. data preparation ################# 
+
+# NB if NA for oocysts.per.tube, set to 0 if the following day as 0 oocysts
+ALL_Expe[is.na(ALL_Expe$oocysts.per.tube), "dpi"] 
+
+# if zero at dpi 4 but 1,2,3 not collected, fill the gaps (falciformis)
+temp <- ALL_Expe$EH_ID[ALL_Expe$dpi %in% 4 & ALL_Expe$oocysts.per.tube %in% 0]
+ALL_Expe$oocysts.per.tube[
+  ALL_Expe$EH_ID %in% temp & ALL_Expe$dpi %in% 1:3 & is.na(ALL_Expe$oocysts.per.tube)] <- 0
+
+# if zero at dpi 3 but 1,2 not collected, fill the gaps (ferrisi)
+temp <- ALL_Expe$EH_ID[ALL_Expe$dpi %in% 3 & ALL_Expe$oocysts.per.tube %in% 0]
+ALL_Expe$oocysts.per.tube[
+  ALL_Expe$EH_ID %in% temp & ALL_Expe$dpi %in% 1:2 & is.na(ALL_Expe$oocysts.per.tube)] <- 0
+
+explore <- ALL_Expe[is.na(ALL_Expe$oocysts.per.tube), ] 
+# LM0168 died at dpi 10 (keep, peak present)
+# LM0187 died at dpi8, no feces collected (careful)
+# LM0189 died at dpi9 (careful
+# LM0193 died at dpi8, no feces collected (careful)
+# LM0202 died at dpi8, no feces collected (careful) + mouse LM0202 has one day missing for oocyst collection cause diarrhea
+# In ExpeDF_001, a lot of mice (falci) died before the end of expe, careful
+
+ALL_summary <- makeSummaryTable(ALL_Expe)
+
+# explore the dead mice /peak
+
+
+######## Previously, when tryed to decompose (too noisy in my opinion)
+summaryDF <- makeToleranceTable(ALL_Expe) #!!! when dpi several, first chosen
+
 ############## IDEAS block
 # align by day +1 -1 weight loss and shedding
 # tolerance / resistance / host impact
 # change def tol cf raseberg 2015
 ##############
 
-################# Part 1. data preparation ################# 
-# CHOICE MADE : remove Ploen mice & NMRI. Variations are too high.
-ALL_Expe <- merge(ExpeDF_003_4, ExpeDF_005, all = T)
-ALL_Expe <- makeMiceGenotypeAndIsolate(ALL_Expe)
-table(ALL_Expe$ageAtInfection, ALL_Expe$Mouse_strain)
-
-# NB if NA for oocysts.per.tube, set to 0 if the following day as 0 oocysts
-ALL_Expe[is.na(ALL_Expe$oocysts.per.tube), "dpi"] 
-# mainly dpi 1,2 and 3 (not taken) Check if zero at dpi4
-ALL_Expe$oocysts.per.tube[ALL_Expe$dpi %in% 4]
-ALL_Expe$oocysts.per.tube[ALL_Expe$dpi %in% 3]
-ALL_Expe$oocysts.per.tube[ALL_Expe$dpi %in% 2]
-ALL_Expe$oocysts.per.tube[ALL_Expe$dpi %in% 1]
-miceWithNoOoDPI4 <- ALL_Expe$EH_ID[ALL_Expe$dpi %in% 4 & ALL_Expe$oocysts.per.tube %in% 0]
-ALL_Expe$oocysts.per.tube[ALL_Expe$EH_ID %in% miceWithNoOoDPI4 &
-                            ALL_Expe$dpi %in% 3 & 
-                            is.na(ALL_Expe$oocysts.per.tube)] <- 0
-ALL_Expe$oocysts.per.tube[ALL_Expe$dpi %in% 4]
-ALL_Expe$oocysts.per.tube[ALL_Expe$dpi %in% 3]
-# So we are safe to do : 
-ALL_Expe$oocysts.per.tube[ALL_Expe$dpi %in% 2] <- 0
-ALL_Expe$oocysts.per.tube[ALL_Expe$dpi %in% 1] <- 0
-
-ALL_Expe[is.na(ALL_Expe$oocysts.per.tube), ] 
-# mouse LM0202 has one peak day missing for oocyst collection cause diarrhea
-summaryDF <- makeToleranceTable(ALL_Expe) #!!! when dpi several, first chosen
 
 ## Check age/sex/batch possible confounding factors
 

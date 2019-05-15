@@ -8,8 +8,13 @@ ExpeDF_001 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/mas
 ExpeDF_001$Exp_ID <- "Exp_001" 
 
 ExpeDF_001$Infection_date <- as.character(ExpeDF_001$Infection_date)
-ExpeDF_001$Infection_date[ExpeDF_001$Infection_date == "11_May_17"] <- "11-05-17"
-ExpeDF_001$Infection_date[ExpeDF_001$Infection_date == "8_May_17"] <- "08-05-17"
+ExpeDF_001$Infection_date[ExpeDF_001$Infection_date == "11_May_17"] <- "2017-05-11 CET"
+ExpeDF_001$Infection_date[ExpeDF_001$Infection_date == "8_May_17"] <- "2017-05-08 CET"
+
+ExpeDF_001$Born <- as.POSIXct(ExpeDF_001$born, format = "%d.%m.%Y")
+
+ExpeDF_001$ageAtInfection <- difftime(ExpeDF_001$Infection_date, ExpeDF_001$Born,
+                                      units = "weeks")
 
 # correct names
 names(ExpeDF_001)[names(ExpeDF_001) %in% "strain"] <- "Mouse_strain"
@@ -134,6 +139,9 @@ ExpeDF_003_4 <- calculateOPG(ExpeDF_003_4)
 ExpeDF_003_4 <- 
   ExpeDF_003_4[!ExpeDF_003_4$EH_ID %in% "LM0193",]
 
+# Keep for dpi 0 to 11
+ExpeDF_003_4 <- ExpeDF_003_4[ExpeDF_003_4$dpi %in% 0:11, ]# remove stabilisation period
+
 #### Expe_005
 # load all tables of all experiments, 
 oo <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp005_full_RECORDoocysts.csv", na.strings = c("NA", " ", "n.a."))
@@ -224,11 +232,3 @@ ExpeDF_005$relativeWeight <- as.numeric(as.character(ExpeDF_005$relativeWeight))
 
 ## Keep ONLY first batch!!! Contamination in the second one...
 ExpeDF_005 <- ExpeDF_005[ExpeDF_005$Batch %in% 1,]
-
-# what's left
-miceDeadBeforeEnd <- c("LM0168", "LM0187", "LM0189", "LM0193")
-ExpeDF_003_4 <- ExpeDF_003_4[!ExpeDF_003_4$EH_ID %in% miceDeadBeforeEnd,]
-ExpeDF_005 <- ExpeDF_005[!ExpeDF_005$EH_ID %in% miceDeadBeforeEnd,]
-
-# Keep for dpi 0 to 11
-ExpeDF_003_4 <- ExpeDF_003_4[ExpeDF_003_4$dpi %in% 0:11, ]# remove stabilisation period

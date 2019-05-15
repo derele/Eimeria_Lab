@@ -153,7 +153,7 @@ makeMiceGenotypeAndIsolate <- function(df){
 }
 
 # create a table with tolerance factor, max.loss, max.OPG and sum.oocysts concatenated
-makeToleranceTable <- function(df){
+makeSummaryTable <- function(df){
   # minimun weight and associated original weight
   X <- as.data.frame(
     df %>% 
@@ -161,16 +161,22 @@ makeToleranceTable <- function(df){
       dplyr::slice(which.min(weight)) %>%
       dplyr::select(EH_ID, weight, startingWeight, 
              Mouse_genotype, Eimeria_species, infection_isolate, Exp_ID, dpi))
+  # time to min host weight loss peak
   names(X)[names(X) %in% "dpi"] = "dpi_minWeight"
+  names(X)[names(X) %in% "weight"] = "minWeight"
   # maximum oocysts and associated fecweight
   Y <- as.data.frame(
     df %>% 
       dplyr::group_by(EH_ID) %>%
       dplyr::slice(which.max(oocysts.per.tube)) %>%
       dplyr::select(EH_ID, oocysts.per.tube, fecweight, dpi))
-  names(Y)[names(Y) %in% "dpi"] = "dpi_maxOocysts"
+  # time to parasite shedding peak
+  names(Y)[names(Y) %in% "dpi"] = "dpi_max.oocysts.per.tube"
+  names(Y)[names(Y) %in% "oocysts.per.tube"] = "max.oocysts.per.tube"
   # merge
   fullDF <- merge(X, Y)
+  # tolerance factor (HF/PF = host min weight/parasite maximum shedding)
+  fullDF$tolfac <- fullDF$minWeight / fullDF$max.oocysts.per.tube
   return(fullDF)
 }
 
