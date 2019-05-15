@@ -159,7 +159,7 @@ makeSummaryTable <- function(df){
     df %>% 
       dplyr::group_by(EH_ID) %>%
       dplyr::slice(which.min(weight)) %>%
-      dplyr::select(EH_ID, weight, startingWeight, 
+      dplyr::select(EH_ID, weight, startingWeight, ageAtInfection, Sex,
              Mouse_genotype, Eimeria_species, infection_isolate, Exp_ID, dpi))
   # time to min host weight loss peak
   names(X)[names(X) %in% "dpi"] = "dpi_minWeight"
@@ -177,6 +177,15 @@ makeSummaryTable <- function(df){
   fullDF <- merge(X, Y)
   # tolerance factor (HF/PF = host min weight/parasite maximum shedding)
   fullDF$tolfac <- fullDF$minWeight / fullDF$max.oocysts.per.tube
+  fullDF$ageAtInfection <- as.numeric(fullDF$ageAtInfection)
+  # calculate min weight retained percent
+  fullDF$min.weight.retained.percent <- fullDF$minWeight / fullDF$startingWeight * 100
+  fullDF$max.OPG <- fullDF$max.oocysts.per.tube / fullDF$fecweight
+  # add age categorie (<25wo = young, >50we = old)
+  fullDF$ageCat <- NA
+  fullDF$ageCat[fullDF$ageAtInfection < 25] <- "young"
+  fullDF$ageCat[fullDF$ageAtInfection > 50] <- "old"
+  fullDF$ageCat <- relevel(as.factor(fullDF$ageCat), ref = "young")
   return(fullDF)
 }
 

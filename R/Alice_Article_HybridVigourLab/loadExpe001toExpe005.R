@@ -50,6 +50,10 @@ ExpeDF_001[ExpeDF_001$Mouse_strain == "WP", "HybridStatus"] <- "hybrids"
 # Call PWD --> PWD1 (other origin)
 ExpeDF_001$Mouse_strain[ExpeDF_001$Mouse_strain == "PWD"] <- "PWD1"
 
+ExpeDF_001$Sex <- NA
+ExpeDF_001$Sex[ExpeDF_001$sex == "f"] <- "F"
+ExpeDF_001$Sex[ExpeDF_001$sex == "m"] <- "M"
+
 ## Load info from passaging : EXPE_002 
 ExpeDF_002 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp002_March2018_NMRI_4strains_RECORDweightAndOocysts.csv")
 ExpeDF_002$Mouse_strain <- "NMRI"
@@ -229,6 +233,8 @@ ExpeDF_005[ExpeDF_005$OPG %in% Inf, "OPG"] <- NA
 # calculate relative weight loss 
 ExpeDF_005 <- calculateWeightLoss(ExpeDF_005, startingDay = 0)
 ExpeDF_005$relativeWeight <- as.numeric(as.character(ExpeDF_005$relativeWeight))
+
+ExpeDF_005$Sex <- gsub(" ", "", ExpeDF_005$Sex)
 
 ## Keep ONLY first batch!!! Contamination in the second one...
 ExpeDF_005 <- ExpeDF_005[ExpeDF_005$Batch %in% 1,]

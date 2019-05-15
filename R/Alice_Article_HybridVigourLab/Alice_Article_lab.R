@@ -7,8 +7,11 @@
 source("myFunctions.R")
 #### Load data ####
 source("loadExpe001toExpe005.R")
+theme_set(theme_bw() +  theme(text = element_text(size = 20)))
 
 ## Structure article ##
+# Verif: Infect ALL --> the. prevalence, link with Victor paper
+# matandmet : yound mice, weigth stabilisation period before (test no more growing)
 # 1. test ANTH/no ANTH (expe 3-4 vs 5 parents) -> hyp, diff if 1 or 2 parasites (interaction)
 # 2. HV in expe 1 & 5. Older mice suffer more? Test age. Could be, closer to "real" conditions 
 # 3. H or P drivers? Restistance/tolerance. Important, test effect of strating weight (if small mouse, more affected)
@@ -21,7 +24,6 @@ source("loadExpe001toExpe005.R")
 ALL_Expe <- merge(ExpeDF_001, ExpeDF_003_4, all = T)
 ALL_Expe <- merge(ALL_Expe, ExpeDF_005, all = T)
 ALL_Expe <- makeMiceGenotypeAndIsolate(ALL_Expe)
-table(ALL_Expe$ageAtInfection, ALL_Expe$Mouse_strain)
 
 # NB some mice died before the end of expe, treat carefully
 # miceDeadBeforeEnd <- c("LM0168", "LM0187", "LM0189", "LM0193")
@@ -31,8 +33,6 @@ table(ALL_Expe$ageAtInfection, ALL_Expe$Mouse_strain)
 ################# Part 1. data preparation ################# 
 
 # NB if NA for oocysts.per.tube, set to 0 if the following day as 0 oocysts
-ALL_Expe[is.na(ALL_Expe$oocysts.per.tube), "dpi"] 
-
 # if zero at dpi 4 but 1,2,3 not collected, fill the gaps (falciformis)
 temp <- ALL_Expe$EH_ID[ALL_Expe$dpi %in% 4 & ALL_Expe$oocysts.per.tube %in% 0]
 ALL_Expe$oocysts.per.tube[
@@ -50,11 +50,138 @@ explore <- ALL_Expe[is.na(ALL_Expe$oocysts.per.tube), ]
 # LM0193 died at dpi8, no feces collected (careful)
 # LM0202 died at dpi8, no feces collected (careful) + mouse LM0202 has one day missing for oocyst collection cause diarrhea
 # In ExpeDF_001, a lot of mice (falci) died before the end of expe, careful
-
 ALL_summary <- makeSummaryTable(ALL_Expe)
 
-# explore the dead mice /peak
+###### IMPACT OF AGE ON RESULTS ###### 
+p1 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =min.weight.retained.percent)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_grid(Eimeria_species~., scales = "free") +
+  scale_x_continuous(name="Age at infection (weeks)") +
+  scale_y_continuous(name="Min weight retained (%)")
+p2 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =min.weight.retained.percent,
+                              col = Mouse_genotype)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  facet_grid(Eimeria_species~ageCat, scales = "free") +
+  scale_x_continuous(name="Age at infection (weeks)") +
+  scale_y_continuous(name="Min weight retained (%)") +
+  theme(legend.position = "none")
+grid.arrange(p1, p2, ncol=2)
 
+p3 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =max.OPG)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  scale_y_log10(name="Max oocysts per gram of feces") +
+  facet_grid(Eimeria_species~., scales = "free") +
+  scale_x_continuous(name="Age at infection (weeks)")
+p4 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =max.OPG,
+                              col = Mouse_genotype)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  scale_y_log10(name="Max oocysts per gram of feces") +
+  facet_grid(Eimeria_species~ageCat, scales = "free") +
+  theme(legend.position = "none")
+grid.arrange(p3, p4, ncol=2)
+
+###### 
+
+###### resistance
+ggplot(ALL_summary, aes(x = Mouse_genotype, y = max.OPG, fill = Mouse_genotype)) +
+  geom_boxplot() + geom_jitter() +
+  scale_y_log10() + facet_grid(ageCat~infection_isolate, scales = "free") + 
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1))
+
+mod1 <- lm(data = oldMiceSummary, 
+          formula = max.oocysts.per.tube ~ infection_isolate * Mouse_genotype +
+            offset(log(fecweight)))
+mod2 <- lm(data = oldMiceSummary, 
+          formula = max.oocysts.per.tube ~ infection_isolate + Mouse_genotype +
+            offset(log(fecweight)))
+mod3 <- lm(data = oldMiceSummary, 
+           formula = max.oocysts.per.tube ~ infection_isolate +
+             offset(log(fecweight)))
+mod4 <- lm(data = oldMiceSummary, 
+           formula = max.oocysts.per.tube ~ Mouse_genotype +
+             offset(log(fecweight)))
+anova(mod1, mod2)
+anova(mod2, mod3)
+anova(mod2, mod4)
+
+## impact of host health
+ggplot(ALL_summary, aes(x = Mouse_genotype, y = min.weight.retained.percent, fill = Mouse_genotype)) +
+geom_boxplot() + geom_jitter() +
+  facet_grid(ageCat~infection_isolate, scales = "free") + 
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1))
+
+mod <- lm(data = oldMiceSummary, 
+          formula = minWeight ~ infection_isolate * Mouse_genotype +
+            offset(log(startingWeight)))
+summary(mod) # diff E.falci/E.ferrisi
+
+## tolerance
+ggplot(ALL_summary, aes(x = Mouse_genotype, y = tolfac, fill = Mouse_genotype)) +
+  geom_boxplot() + geom_jitter() + scale_y_log10() +
+  facet_grid(ageCat~infection_isolate, scales = "free") + 
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1))
+
+mod <- lm(data = oldMiceSummary, 
+          formula = tolfac ~ infection_isolate * Mouse_genotype)
+summary(mod)
+
+## time to peak Par
+ggplot(oldMiceSummary, aes(x = Mouse_genotype, y = dpi_max.oocysts.per.tube)) +
+  geom_boxplot() + geom_jitter() +
+  facet_grid(.~infection_isolate)
+
+mod <- lm(data = oldMiceSummary, 
+          formula = dpi_max.oocysts.per.tube ~ infection_isolate)
+summary(mod) # diff E.falci/E.ferrisi
+
+## time to peak Host
+ggplot(oldMiceSummary, aes(x = Mouse_genotype, y = dpi_minWeight)) +
+  geom_boxplot() + geom_jitter() +
+  facet_grid(.~infection_isolate)
+
+mod <- lm(data = oldMiceSummary, 
+          formula = dpi_minWeight ~ infection_isolate)
+summary(mod) # diff E.falci/E.ferrisi
+
+
+
+
+p1 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =min.weight.retained.percent)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_grid(Eimeria_species~., scales = "free") +
+  scale_x_continuous(name="Age at infection (weeks)") +
+  scale_y_continuous(name="Min weight retained (%)")
+p2 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =min.weight.retained.percent,
+                              col = Mouse_genotype)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  facet_grid(Eimeria_species~ageCat, scales = "free") +
+  scale_x_continuous(name="Age at infection (weeks)") +
+  scale_y_continuous(name="Min weight retained (%)") +
+  theme(legend.position = "none")
+grid.arrange(p1, p2, ncol=2)
+
+p3 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =max.OPG)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  scale_y_log10(name="Max oocysts per gram of feces") +
+  facet_grid(Eimeria_species~., scales = "free") +
+  scale_x_continuous(name="Age at infection (weeks)")
+p4 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =max.OPG,
+                              col = Mouse_genotype)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  scale_y_log10(name="Max oocysts per gram of feces") +
+  facet_grid(Eimeria_species~ageCat, scales = "free") +
+  theme(legend.position = "none")
+grid.arrange(p3, p4, ncol=2)
+
+###### 
 
 ######## Previously, when tryed to decompose (too noisy in my opinion)
 summaryDF <- makeToleranceTable(ALL_Expe) #!!! when dpi several, first chosen
