@@ -1,16 +1,16 @@
 #LOAD, CLEAN UP AND PROCESS DATA#
 ##########################################################################################################################
 #PC path
-ANT <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_anteriorMLN.csv")
-POS <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_posteriorMLN.csv")
+#ANT <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_anteriorMLN.csv")
+#POS <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_posteriorMLN.csv")
 
 #laptop path
 #ANT <- read.csv(file = "../lubomir/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
 #POS <- read.csv(file = "../lubomir/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
 
 #IZW path
-#ANT <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
-#POS <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_posteriorMLN.csv")
+ANT <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_anteriorMLN.csv")
+POS <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_posteriorMLN.csv")
 
 #HU path
 #ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_anteriorMLN.csv")
@@ -109,8 +109,11 @@ MLNs <- rbind(ANT, POS)
 #introduce parasitological data
 # HU: 
 #Exp007 <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge.csv")
+
+#IZW path
+Exp007 <- read.csv("../luke/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge")
 # Home PC: 
-Exp007 <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge.csv")
+#Exp007 <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge.csv")
 
 Exp007_FACS <- merge(Exp007, MLNs)
 Exp007_FACS$X <- NULL
@@ -125,117 +128,13 @@ wide <- dcast(Exp007_FACS, value.var = "dpi", "ThCD4p", "TcCD8p", "Th1IFNgp_in_C
 
 ModelFACS <- recast(Exp007_FACS, id.var = "weight_dpi0", "fecweight", "ThCD4p")
 
-
-
-
-
-
-
 #reshape df
+A_CD4 <- tibble(ANT$EH_ID, ANT$ThCD4p)
+A_CD8 <- tibble(ANT$EH_ID, ANT$TcCD8p)
+A_tpop <- merge(A_CD4, A_CD8)
 
 
-cANT <- melt(ANT, id = c("Sample"))
-cPOS <- melt(POS, id = c("Sample"))
-
-
+#Melt?
 #orientation plot
+
 library(ggplot2)
-
-ggplot(cANT, aes(Sample, value)) +   
-  geom_bar(aes(fill = variable), position = "fill", stat="identity") +
-  labs (title = "Anterior MLN", x = "Samples", y = "% of population") +
-  coord_flip()
-
-ggplot(cPOS, aes(Sample, value)) +   
-  geom_bar(aes(fill = variable), position = "fill", stat="identity") +
-  labs (title = "Posterior MLN", x = "Samples", y = "% of population") + 
-  coord_flip()
-
-#####################################################################################################################
-#select T-cell subsets from ANT
-A_CD4 <- cANT %>% filter(variable == "ThCD4p")
-A_CD8 <- cANT %>% filter(variable == "TcCD8p")
-
-#
-A_Th1_IFNgp_in_CD4 <- cANT %>% filter(variable == "Th1IFNgp_in_CD4p")
-A_Th1_IL17Ap_in_CD4 <- cANT %>% filter(variable == "Th17IL17Ap_in_CD4p")
-A_Treg_Foxp3_in_CD4 <- cANT %>% filter(variable == "Treg_Foxp3_in_CD4p")
-
-A_Tc1_IFNgp_in_CD8 <- cANT %>% filter(variable == "Tc1IFNgp_in_CD8p")
-
-A_Th1_Tbet_in_CD4Foxp3n <- cANT %>% filter(variable == "Th1Tbetp_in_CD4pFoxp3n")
-A_Th17RORgp_in_CD4Foxp3n <- cANT %>% filter(variable == "Th17RORgp_in_CD4pFoxp3n")
-
-A_RORgtp_in_Foxp3p <- cANT %>% filter(variable == "RORgtp_in_Foxp3p")
-
-A_Dividing_K67p_in_Foxp3p <- cANT %>% filter(variable == "Dividing_Ki67p_in_Foxp3p")
-
-A_Dividing_Ki67p_in_Tbetp <- cANT %>% filter(variable == "Dividing_Ki67p_in_Tbetp")
-
-A_Dividing_Ki67p_in_RORgtp <- cANT %>% filter(variable == "Dividing_Ki67p_in_RORgtp")
-
-#create populations with subsets
-A_CDANT <- rbind(CD4, CD8)
-A_CD4T <- rbind(Th1_IFNgp_in_CD4, Th1_IL17Ap_in_CD4, Treg_Foxp3_in_CD4)
-
-ggplot(CD4T, aes(Sample, value)) + 
-  geom_bar(aes(fill = variable), position = "stack", stat = "identity") +
-  coord_flip()
-
-
-
-
-
-#basic bar
-ggplot(CDANT, aes(Sample, value)) + 
-  geom_bar(aes(fill = variable), position = "dodge", stat = "identity") +
-  coord_flip()
-#by T-cells
-ggplot(CDANT, aes(variable, value)) + 
-  geom_bar(aes(fill = Sample), position = "dodge", stat = "identity") +
-  coord_flip()
-
-#####################################################################################################################
-
-#select T-cell subsets from POS
-P_CD4 <- cANT %>% filter(variable == "ThCD4p")
-P_CD8 <- cANT %>% filter(variable == "TcCD8p")
-
-#
-P_Th1_IFNgp_in_CD4 <- cANT %>% filter(variable == "Th1IFNgp_in_CD4p")
-P_Th1_IL17Ap_in_CD4 <- cANT %>% filter(variable == "Th17IL17Ap_in_CD4p")
-P_Treg_Foxp3_in_CD4 <- cANT %>% filter(variable == "Treg_Foxp3_in_CD4p")
-
-P_Tc1_IFNgp_in_CD8 <- cANT %>% filter(variable == "Tc1IFNgp_in_CD8p")
-
-P_Th1_Tbet_in_CD4Foxp3n <- cANT %>% filter(variable == "Th1Tbetp_in_CD4pFoxp3n")
-P_Th17RORgp_in_CD4Foxp3n <- cANT %>% filter(variable == "Th17RORgp_in_CD4pFoxp3n")
-
-P_RORgtp_in_Foxp3p <- cANT %>% filter(variable == "RORgtp_in_Foxp3p")
-
-P_Dividing_K67p_in_Foxp3p <- cANT %>% filter(variable == "Dividing_Ki67p_in_Foxp3p")
-
-P_Dividing_Ki67p_in_Tbetp <- cANT %>% filter(variable == "Dividing_Ki67p_in_Tbetp")
-
-P_Dividing_Ki67p_in_RORgtp <- cANT %>% filter(variable == "Dividing_Ki67p_in_RORgtp")
-
-#create populations with subsets
-P_CDANT <- rbind(CD4, CD8)
-P_CD4T <- rbind(Th1_IFNgp_in_CD4, Th1_IL17Ap_in_CD4, Treg_Foxp3_in_CD4)
-
-ggplot(CD4T, aes(Sample, value)) + 
-  geom_bar(aes(fill = variable), position = "stack", stat = "identity") +
-  coord_flip()
-
-
-
-
-
-#basic bar
-ggplot(CDANT, aes(Sample, value)) + 
-  geom_bar(aes(fill = variable), position = "dodge", stat = "identity") +
-  coord_flip()
-#by T-cells
-ggplot(CDANT, aes(variable, value)) + 
-  geom_bar(aes(fill = Sample), position = "dodge", stat = "identity") +
-  coord_flip()
