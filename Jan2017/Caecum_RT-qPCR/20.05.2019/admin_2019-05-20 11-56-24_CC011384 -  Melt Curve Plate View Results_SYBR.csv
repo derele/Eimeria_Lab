@@ -1,0 +1,33 @@
+;;1;2;3;4;5;6;7;8;9;10;11;12
+A;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;NRT
+A;Sample;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;;
+A;Peak 1;;;;;;;;;;;;
+A;Peak 2;;;;;;;;;;;;
+B;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;Unkn
+B;Sample;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;;
+B;Peak 1;;;;;;;;;;;;
+B;Peak 2;;;;;;;;;;;;
+C;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;
+C;Sample;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;;
+C;Peak 1;;;;;;;;;;;;
+C;Peak 2;;;;;;;;;;;;
+D;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;
+D;Sample;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;;
+D;Peak 1;;;;;;;;;;;;
+D;Peak 2;;;;;;;;;;;;
+E;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;
+E;Sample;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;;
+E;Peak 1;;;;;;;;;;;;
+E;Peak 2;;;;;;;;;;;;
+F;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;
+F;Sample;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;;
+F;Peak 1;;;;;;;;;;;;
+F;Peak 2;;;;;;;;;;;;
+G;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;
+G;Sample;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;;
+G;Peak 1;;;;;;;;;;;;
+G;Peak 2;;;;;;;;;;;;
+H;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;
+H;Sample;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;;
+H;Peak 1;;;;;;;;;;;;
+H;Peak 2;;;;;;;;;;;;
