@@ -1,0 +1,89 @@
+;Well;Fluor;Target;Content;Sample;Cq;SQ
+;A01;SYBR;CXCL9;Unkn;LM28;n. def.;n. def.
+;A02;SYBR;IL-10;Unkn;LM28;n. def.;n. def.
+;A03;SYBR;IL-12;Unkn;LM28;n. def.;n. def.
+;A04;SYBR;IL-6;Unkn;LM28;n. def.;n. def.
+;A05;SYBR;IFN-y;Unkn;LM28;n. def.;n. def.
+;A06;SYBR;STAT6;Unkn;LM28;n. def.;n. def.
+;A07;SYBR;TGF-b;Unkn;LM28;n. def.;n. def.
+;A08;SYBR;Ppia;Pos Ctrl;LM28;n. def.;n. def.
+;A09;SYBR;Ppip;Pos Ctrl;LM28;n. def.;n. def.
+;A10;SYBR;CDC42;Pos Ctrl;LM28;n. def.;n. def.
+;A11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;B01;SYBR;CXCL9;Unkn;LM28;n. def.;n. def.
+;B02;SYBR;IL-10;Unkn;LM28;n. def.;n. def.
+;B03;SYBR;IL-12;Unkn;LM28;n. def.;n. def.
+;B04;SYBR;IL-6;Unkn;LM28;n. def.;n. def.
+;B05;SYBR;IFN-y;Unkn;LM28;n. def.;n. def.
+;B06;SYBR;STAT6;Unkn;LM28;n. def.;n. def.
+;B07;SYBR;TGF-b;Unkn;LM28;n. def.;n. def.
+;B08;SYBR;Ppia;Pos Ctrl;LM28;n. def.;n. def.
+;B09;SYBR;Ppip;Pos Ctrl;LM28;n. def.;n. def.
+;B10;SYBR;CDC42;Pos Ctrl;LM28;n. def.;n. def.
+;B11;SYBR;;Neg Ctrl;;23,9584724314927;n. def.
+;C01;SYBR;CXCL9;Unkn;LM30;n. def.;n. def.
+;C02;SYBR;IL-10;Unkn;LM30;n. def.;n. def.
+;C03;SYBR;IL-12;Unkn;LM30;n. def.;n. def.
+;C04;SYBR;IL-6;Unkn;LM30;n. def.;n. def.
+;C05;SYBR;IFN-y;Unkn;LM30;n. def.;n. def.
+;C06;SYBR;STAT6;Unkn;LM30;n. def.;n. def.
+;C07;SYBR;TGF-b;Unkn;LM30;n. def.;n. def.
+;C08;SYBR;Ppia;Pos Ctrl;LM30;n. def.;n. def.
+;C09;SYBR;Ppip;Pos Ctrl;LM30;n. def.;n. def.
+;C10;SYBR;CDC42;Pos Ctrl;LM30;n. def.;n. def.
+;C11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;D01;SYBR;CXCL9;Unkn;LM30;n. def.;n. def.
+;D02;SYBR;IL-10;Unkn;LM30;n. def.;n. def.
+;D03;SYBR;IL-12;Unkn;LM30;n. def.;n. def.
+;D04;SYBR;IL-6;Unkn;LM30;n. def.;n. def.
+;D05;SYBR;IFN-y;Unkn;LM30;n. def.;n. def.
+;D06;SYBR;STAT6;Unkn;LM30;n. def.;n. def.
+;D07;SYBR;TGF-b;Unkn;LM30;n. def.;n. def.
+;D08;SYBR;Ppia;Pos Ctrl;LM30;n. def.;n. def.
+;D09;SYBR;Ppip;Pos Ctrl;LM30;n. def.;n. def.
+;D10;SYBR;CDC42;Pos Ctrl;LM30;n. def.;n. def.
+;D11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;E01;SYBR;CXCL9;Unkn;LM33;n. def.;n. def.
+;E02;SYBR;IL-10;Unkn;LM33;n. def.;n. def.
+;E03;SYBR;IL-12;Unkn;LM33;n. def.;n. def.
+;E04;SYBR;IL-6;Unkn;LM33;n. def.;n. def.
+;E05;SYBR;IFN-y;Unkn;LM33;n. def.;n. def.
+;E06;SYBR;STAT6;Unkn;LM33;n. def.;n. def.
+;E07;SYBR;TGF-b;Unkn;LM33;n. def.;n. def.
+;E08;SYBR;Ppia;Pos Ctrl;LM33;n. def.;n. def.
+;E09;SYBR;Ppip;Pos Ctrl;LM33;n. def.;n. def.
+;E10;SYBR;CDC42;Pos Ctrl;LM33;n. def.;n. def.
+;E11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;F01;SYBR;CXCL9;Unkn;LM33;n. def.;n. def.
+;F02;SYBR;IL-10;Unkn;LM33;n. def.;n. def.
+;F03;SYBR;IL-12;Unkn;LM33;n. def.;n. def.
+;F04;SYBR;IL-6;Unkn;LM33;n. def.;n. def.
+;F05;SYBR;IFN-y;Unkn;LM33;n. def.;n. def.
+;F06;SYBR;STAT6;Unkn;LM33;n. def.;n. def.
+;F07;SYBR;TGF-b;Unkn;LM33;n. def.;n. def.
+;F08;SYBR;Ppia;Pos Ctrl;LM33;n. def.;n. def.
+;F09;SYBR;Ppip;Pos Ctrl;LM33;n. def.;n. def.
+;F10;SYBR;CDC42;Pos Ctrl;LM33;n. def.;n. def.
+;F11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;G01;SYBR;CXCL9;Unkn;LM35;n. def.;n. def.
+;G02;SYBR;IL-10;Unkn;LM35;n. def.;n. def.
+;G03;SYBR;IL-12;Unkn;LM35;n. def.;n. def.
+;G04;SYBR;IL-6;Unkn;LM35;n. def.;n. def.
+;G05;SYBR;IFN-y;Unkn;LM35;n. def.;n. def.
+;G06;SYBR;STAT6;Unkn;LM35;n. def.;n. def.
+;G07;SYBR;TGF-b;Unkn;LM35;n. def.;n. def.
+;G08;SYBR;Ppia;Pos Ctrl;LM35;n. def.;n. def.
+;G09;SYBR;Ppip;Pos Ctrl;LM35;n. def.;n. def.
+;G10;SYBR;CDC42;Pos Ctrl;LM35;n. def.;n. def.
+;G11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;H01;SYBR;CXCL9;Unkn;LM35;n. def.;n. def.
+;H02;SYBR;IL-10;Unkn;LM35;n. def.;n. def.
+;H03;SYBR;IL-12;Unkn;LM35;n. def.;n. def.
+;H04;SYBR;IL-6;Unkn;LM35;n. def.;n. def.
+;H05;SYBR;IFN-y;Unkn;LM35;n. def.;n. def.
+;H06;SYBR;STAT6;Unkn;LM35;n. def.;n. def.
+;H07;SYBR;TGF-b;Unkn;LM35;n. def.;n. def.
+;H08;SYBR;Ppia;Pos Ctrl;LM35;n. def.;n. def.
+;H09;SYBR;Ppip;Pos Ctrl;LM35;n. def.;n. def.
+;H10;SYBR;CDC42;Pos Ctrl;LM35;n. def.;n. def.
+;H11;SYBR;;Neg Ctrl;;n. def.;n. def.
