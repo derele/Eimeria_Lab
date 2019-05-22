@@ -124,14 +124,47 @@ library(reshape2)
 library(meltt)
 library(MASS)
 
-wide <- dcast(Exp007_FACS, value.var = "dpi", "ThCD4p", "TcCD8p", "Th1IFNgp_in_CD4p", "Th17IL17Ap_in_CD4p", "Tc1IFNgp_in_CD8p", "Treg_Foxp3_in_CD4p", "Dividing_Ki67p_in_Foxp3p", "RORgtp_in_Foxp3p", "Th1Tbetp_in_CD4pFoxp3n", "Dividing_Ki67p_in_Tbetp", "Th17RORgp_in_CD4pFoxp3n", "Dividing_Ki67p_in_RORgtp")
-
-ModelFACS <- recast(Exp007_FACS, id.var = "weight_dpi0", "fecweight", "ThCD4p")
-
 #reshape df
 A_CD4 <- tibble(ANT$EH_ID, ANT$ThCD4p)
 A_CD8 <- tibble(ANT$EH_ID, ANT$TcCD8p)
 A_tpop <- merge(A_CD4, A_CD8)
+
+facs.measure.cols <- colnames(Exp007_FACS)[14:ncol(Exp007_FACS)]
+
+## apply summary over all interesting columns
+apply(Exp007_FACS[,facs.measure.cols], 2, summary)
+
+## for one interesing column only for Posterior and dpi8
+summary(Exp007_FACS[Exp007_FACS$dpi%in%8 & Exp007_FACS$Position%in%"Posterior","Tc1IFNgp_in_CD8p"])
+
+foo <- Exp007_FACS[Exp007_FACS$dpi%in%8 & Exp007_FACS$Position%in%"Posterior",]
+
+tapply(foo$Tc1IFNgp_in_CD8p, foo$InfectionStrain, summary)
+
+
+cell.sumaries <- lapply(facs.measure.cols, function (x){
+         tapply(foo[, x], foo$InfectionStrain, summary)
+})
+
+names(cell.sumaries) <- facs.measure.cols
+
+cell.medians <- lapply(facs.measure.cols, function (x){
+  tapply(foo[, x], foo$InfectionStrain, median)
+})
+
+names(cell.medians) <- facs.measure.cols
+
+cell.tests <- lapply(facs.measure.cols, function (x){
+  wilcox.test(foo[foo$InfectionStrain%in%"E88", x], foo[foo$InfectionStrain%in%"E64", x])
+})
+
+names(cell.tests) <- facs.measure.cols
+
+
+cbind(unlist(cell.medians), rep(unlist(lapply(cell.tests, "[", "p.value")), each=2))
+
+### combine two factors
+as.factor(letters):as.factor(rev(letters))
 
 
 #Melt?
