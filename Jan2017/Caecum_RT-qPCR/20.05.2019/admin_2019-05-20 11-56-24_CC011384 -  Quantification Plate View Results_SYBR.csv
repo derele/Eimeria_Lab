@@ -1,0 +1,33 @@
+;;1;2;3;4;5;6;7;8;9;10;11;12
+A;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;NRT
+A;Sample;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;;
+A;Cq;28,0713509092665;31,2545218830828;27,7404081987439;26,1132287935435;36,4839966521495;28,2947092049885;28,9576440409696;29,5435528393865;23,8940225162407;25,0923260078344;n. def.;n. def.
+A;;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.
+B;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;Unkn
+B;Sample;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;MouseCaecum1;;
+B;Cq;28,270853603631;29,8554038218134;26,4663357773199;25,6720560722865;28,2348897139179;28,1487121717251;28,3009931972849;20,668163354629;23,4371125011867;25,0893532464611;n. def.;n. def.
+B;;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.
+C;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;
+C;Sample;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;;
+C;Cq;26,3169855576699;35,5828029928738;25,1076627641106;25,454581163288;29,8044077812692;25,5763711357375;29,4030932002373;20,1071825754693;n. def.;24,5643338371806;n. def.;
+C;;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;
+D;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;
+D;Sample;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;MouseCaecum2;;
+D;Cq;26,3610182272761;33,4822117536117;25,1812515289044;25,4231794101497;29,4622292097768;25,7311050183832;29,3837566763341;20,0800702132285;22,6715076921897;24,3423948300862;n. def.;
+D;;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;
+E;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;
+E;Sample;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;;
+E;Cq;20,1158067000086;27,241413710114;25,7840860471887;24,924651484582;23,4109756254236;25,8080898143022;37,6565874426782;15,8250848931754;18,3664557113248;24,5287002053193;n. def.;
+E;;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;
+F;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;
+F;Sample;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;MouseCaecum3;;
+F;Cq;20,1477746568693;27,2968301528205;26,628849781048;37,7478314167743;23,293498396593;25,4926652146125;23,5144244251136;15,699147747664;18,4979188736646;24,5245403253545;n. def.;
+F;;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;
+G;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;
+G;Sample;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;;
+G;Cq;21,2267681567326;29,3244716426173;30,7065383199431;29,1255598798252;39,1996575601563;30,3352693535303;26,09511184392;18,1639505721808;20,4223078017786;28,3757042778575;n. def.;
+G;;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;
+H;Content;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Unkn;Pos Ctrl;Pos Ctrl;Neg Ctrl;
+H;Sample;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;MouseCaecum4;;
+H;Cq;21,3790248967072;28,9363711353531;30,853744414042;29,3967163536657;25,3673517549453;30,5917064046444;26,4890723766203;18,62135699172;21,0267056129599;28,4854972377598;n. def.;
+H;;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;
