@@ -164,6 +164,7 @@ makeSummaryTable <- function(df){
   # time to min host weight loss peak
   names(X)[names(X) %in% "dpi"] = "dpi_minWeight"
   names(X)[names(X) %in% "weight"] = "minWeight"
+  X$minWeightRelative <- X$minWeight / X$startingWeight * 100
   # maximum oocysts and associated fecweight
   Y <- as.data.frame(
     df %>% 
@@ -173,14 +174,13 @@ makeSummaryTable <- function(df){
   # time to parasite shedding peak
   names(Y)[names(Y) %in% "dpi"] = "dpi_max.oocysts.per.tube"
   names(Y)[names(Y) %in% "oocysts.per.tube"] = "max.oocysts.per.tube"
+  Y$max.OPG <- Y$max.oocysts.per.tube / Y$fecweight
   # merge
   fullDF <- merge(X, Y)
   # tolerance factor (HF/PF = host min weight/parasite maximum shedding)
-  fullDF$tolfac <- fullDF$minWeight / fullDF$max.oocysts.per.tube
+  fullDF$tolfacAbsolute <- fullDF$minWeight / fullDF$max.oocysts.per.tube
+  fullDF$tolfacRelative <- fullDF$minWeightRelative / fullDF$max.OPG
   fullDF$ageAtInfection <- as.numeric(fullDF$ageAtInfection)
-  # calculate min weight retained percent
-  fullDF$min.weight.retained.percent <- fullDF$minWeight / fullDF$startingWeight * 100
-  fullDF$max.OPG <- fullDF$max.oocysts.per.tube / fullDF$fecweight
   # add age categorie (<25wo = young, >50we = old)
   fullDF$ageCat <- NA
   fullDF$ageCat[fullDF$ageAtInfection < 25] <- "young"

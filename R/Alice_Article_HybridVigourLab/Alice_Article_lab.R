@@ -9,6 +9,34 @@ source("myFunctions.R")
 source("loadExpe001toExpe005.R")
 theme_set(theme_bw() +  theme(text = element_text(size = 20)))
 
+## Packages
+list.of.packages <- c("parasiteLoad",
+                      "bbmle",
+                      "devtools",
+                      "optimx", # for bbmle it needs to be required(?)
+                      "ggplot2",
+                      "VennDiagram",
+                      "fitdistrplus", # evaluate distribution
+                      "epiR", # Sterne's exact method
+                      "simpleboot", # BS
+                      # "boot", # BS
+                      "ggmap",
+                      "gridExtra",# several plots in one panel
+                      "wesanderson", # nice colors
+                      "cowplot",# several plots in one panel
+                      "ggpubr")
+ipak <- function(pkg){
+  new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  if (length(new.pkg))
+    install.packages(new.pkg, dependencies = TRUE)
+  sapply(pkg, require, character.only = TRUE)
+}
+ipak(list.of.packages)
+
+## Reinstall the package in case I updated it
+devtools::install_github("alicebalard/parasiteLoad")
+library(parasiteLoad)
+
 ## Structure article ##
 # Verif: Infect ALL --> the. prevalence, link with Victor paper
 # matandmet : yound mice, weigth stabilisation period before (test no more growing)
@@ -21,9 +49,13 @@ theme_set(theme_bw() +  theme(text = element_text(size = 20)))
 ## Orga: a table with all mice and their measures by day +
 ## a summary table with for each mouse peak shedding, time to peak shedding, peak WL, tol as ratio, and infos
 
-ALL_Expe <- merge(ExpeDF_001, ExpeDF_003_4, all = T)
-ALL_Expe <- merge(ALL_Expe, ExpeDF_005, all = T)
+# Remove Expe_001 until further notice
+
+## Keep ONLY first batch!!! Contamination in the second one...
+ALL_Expe <- merge(ExpeDF_003_4, ExpeDF_005[ExpeDF_005$Batch %in% 1,], all = T)
 ALL_Expe <- makeMiceGenotypeAndIsolate(ALL_Expe)
+
+
 
 # NB some mice died before the end of expe, treat carefully
 # miceDeadBeforeEnd <- c("LM0168", "LM0187", "LM0189", "LM0193")
@@ -53,36 +85,155 @@ explore <- ALL_Expe[is.na(ALL_Expe$oocysts.per.tube), ]
 ALL_summary <- makeSummaryTable(ALL_Expe)
 
 ###### IMPACT OF AGE ON RESULTS ###### 
-p1 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =min.weight.retained.percent)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  facet_grid(Eimeria_species~., scales = "free") +
-  scale_x_continuous(name="Age at infection (weeks)") +
-  scale_y_continuous(name="Min weight retained (%)")
-p2 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =min.weight.retained.percent,
+p1 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =minWeightRelative,
                               col = Mouse_genotype)) +
   geom_point() +
   geom_smooth(method = "lm", se = F) +
-  facet_grid(Eimeria_species~ageCat, scales = "free") +
+  facet_grid(Eimeria_species~., scales = "free") +
   scale_x_continuous(name="Age at infection (weeks)") +
   scale_y_continuous(name="Min weight retained (%)") +
   theme(legend.position = "none")
-grid.arrange(p1, p2, ncol=2)
-
-p3 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =max.OPG)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  scale_y_log10(name="Max oocysts per gram of feces") +
-  facet_grid(Eimeria_species~., scales = "free") +
-  scale_x_continuous(name="Age at infection (weeks)")
-p4 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =max.OPG,
+p2 <- ggplot(ALL_summary, aes(x=ageAtInfection, y =max.OPG,
                               col = Mouse_genotype)) +
   geom_point() +
   geom_smooth(method = "lm", se = F) +
   scale_y_log10(name="Max oocysts per gram of feces") +
-  facet_grid(Eimeria_species~ageCat, scales = "free") +
+  scale_x_continuous(name="Age at infection (weeks)") +
+  facet_grid(Eimeria_species~., scales = "free") +
   theme(legend.position = "none")
-grid.arrange(p3, p4, ncol=2)
+grid.arrange(p1, p2, ncol=2)
+
+###### 
+
+###### Part I. No complete resistance to both Eimeria falciformis and Eimeria ferrisi###### 
+length(unique(ALL_Expe$EH_ID))
+length(unique(ALL_summary$EH_ID))
+
+table(ALL_summary$max.oocysts.per.tube != 0, ALL_summary$infection_isolate)
+
+# we remove uninfected mouse LM0187
+toRM <- ALL_summary$EH_ID[ALL_summary$max.oocysts.per.tube == 0]
+ALL_Expe <- ALL_Expe[!ALL_Expe$EH_ID %in% toRM,]
+ALL_summary <- ALL_summary[!ALL_summary$EH_ID %in% toRM,]
+table(ALL_summary$max.oocysts.per.tube != 0, ALL_summary$infection_isolate)
+
+kruskal.test(max.OPG ~ infection_isolate, data = ALL_summary) 
+# Kruskal-Wallis rank sum test
+#
+# data:  max.OPG by infection_isolate
+# Kruskal-Wallis chi-squared = 3.4747, df = 2, p-value = 0.176
+ggplot(ALL_summary, aes(x = infection_isolate, y = max.OPG)) +
+  geom_boxplot() +
+  geom_segment(aes(x = 1.05, y = 3e+06, xend = 1.95, yend = 3e+06)) +
+  annotate(geom="text", x=1.5, y=3.1e+06, label="n.s.") +
+  geom_segment(aes(x = 2.05, y = 3e+06, xend = 2.95, yend = 3e+06)) +
+  annotate(geom="text", x=2.5, y=3.1e+06, label="n.s.")
+
+kruskal.test(minWeightRelative ~ infection_isolate, data = ALL_summary) 
+# Kruskal-Wallis rank sum test
+# 
+# data:  minWeightRelative by infection_isolate
+# Kruskal-Wallis chi-squared = 4.8525, df = 2, p-value = 0.08837
+kruskal.test(tolfacRelative ~ infection_isolate, data = ALL_summary) 
+# Kruskal-Wallis rank sum test
+# 
+# data:  tolfacRelative by infection_isolate
+# Kruskal-Wallis chi-squared = 3.3433, df = 2, p-value = 0.1879
+ggplot(ALL_summary, aes(x = infection_isolate, y = tolfacRelative)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  geom_segment(aes(x = 1.05, y = 1e-03, xend = 1.95, yend = 1e-03)) +
+  annotate(geom="text", x=1.5, y=1.1e-03, label="n.s.") +
+  geom_segment(aes(x = 2.05, y = 1e-03, xend = 2.95, yend = 1e-03)) +
+  annotate(geom="text", x=2.5, y=1.1e-03, label="n.s.")
+
+###### Part II. Test HV in lab res/tol ###### 
+F1DF_expe <- ALL_Expe[grep("F1", ALL_Expe$Mouse_genotype),]
+F1DF_summary <- ALL_summary[grep("F1", ALL_summary$Mouse_genotype),]
+
+table(F1DF_summary$group, F1DF_summary$infection_isolate)
+F1DF_summary$group <- "parental"
+F1DF_summary$group[grep("Mmm-Mmd", F1DF_summary$Mouse_genotype)] <- "hybrid"
+
+# F1DF_summary$HI <- NA
+# F1DF_summary$HI[grep("MMm", F1DF_summary$Mouse_genotype)] <- 1
+# F1DF_summary$HI[grep("MMd", F1DF_summary$Mouse_genotype)] <- 0
+# F1DF_summary$HI[grep("Mmm-Mmd", F1DF_summary$Mouse_genotype)] <- 0.5
+
+ggplot(F1DF_summary, aes(x = group, y = max.OPG, fill = infection_isolate)) +
+  geom_boxplot() + geom_point(pch = 21, size = 3)
+
+wilcox.test(max.OPG ~ group, 
+            data = F1DF_summary[F1DF_summary$infection_isolate == "E.ferrisi (E64)",]) 
+
+wilcox.test(max.OPG ~ group, 
+            data = F1DF_summary[F1DF_summary$infection_isolate == "E.falciformis (E88)",]) 
+
+
+###### 
+
+
+###### BANANA model ###### 
+bananalabDF <- ALL_summary[grep("F1", ALL_summary$Mouse_genotype),]
+bananalabDF$Eimeria_species <- as.factor(bananalabDF$Eimeria_species)
+
+bananalabDF$max.OPG.million <- bananalabDF$max.OPG / 1e6
+
+
+hist(bananalabDF$max.OPG.million) # close to normal-ish
+
+range(bananalabDF$max.OPG.million)
+median(bananalabDF$max.OPG.million)
+sd(bananalabDF$max.OPG.million)
+
+speparam <- c(L1start = 1,
+              L1LB = 0,
+              L1UB = 3,
+              L2start = 1,
+              L2LB = 0,
+              L2UB = 3,
+              alphaStart = 0, alphaLB = -10, alphaUB = 10,
+              mysdStart = 1, mysdLB = 1.e-9, mysdUB = 10)
+
+fitMaxOPG <- parasiteLoad::analyse(data = bananalabDF,
+                                   response = "max.OPG",
+                                   model = "normal",
+                                   group = "Eimeria_species",
+                                   myparamBounds = speparam)
+fitMaxOPG$H1
+# "Testing H1 no alpha vs alpha"
+# dLL dDF     pvalue
+# 1 5.4   1 0.00101085
+
+bananaPlot(mod = fitMaxOPG$H1,
+           data = bananalabDF,
+           response = "max.OPG",
+           group = "Eimeria_species") +
+  scale_fill_manual(values = c("purple", "green")) +
+  scale_color_manual(values = c("purple", "green")) +
+  scale_y_log10()+
+  theme_bw() + theme(text = element_text(size = 20))
+
+## Min Weight percent
+
+fitMinWL <- parasiteLoad::analyse(data = bananalabDF,
+                                   response = "minWeight",
+                                   model = "normal",
+                                   group = "Eimeria_species")
+fitMinWL$H1
+#"Testing H1 no alpha vs alpha"
+# dLL dDF pvalue
+# 1 478834   1      0
+
+bananaPlot(mod = fitMinWL$H1,
+           data = bananalabDF,
+           response = "minWeight",
+           group = "Eimeria_species") +
+  scale_fill_manual(values = c("purple", "green")) +
+  scale_color_manual(values = c("purple", "green")) +
+  theme_bw() + theme(text = element_text(size = 20))
+
+
 
 ###### 
 

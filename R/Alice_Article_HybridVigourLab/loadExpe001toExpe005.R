@@ -235,6 +235,3 @@ ExpeDF_005 <- calculateWeightLoss(ExpeDF_005, startingDay = 0)
 ExpeDF_005$relativeWeight <- as.numeric(as.character(ExpeDF_005$relativeWeight))
 
 ExpeDF_005$Sex <- gsub(" ", "", ExpeDF_005$Sex)
-
-## Keep ONLY first batch!!! Contamination in the second one...
-ExpeDF_005 <- ExpeDF_005[ExpeDF_005$Batch %in% 1,]
