@@ -10,20 +10,13 @@ source("loadExpe001toExpe005.R")
 theme_set(theme_bw() +  theme(text = element_text(size = 20)))
 
 ## Packages
-list.of.packages <- c("parasiteLoad",
-                      "bbmle",
-                      "devtools",
-                      "optimx", # for bbmle it needs to be required(?)
-                      "ggplot2",
-                      "VennDiagram",
-                      "fitdistrplus", # evaluate distribution
+list.of.packages <- c("parasiteLoad", "bbmle", "devtools", "optimx", # for bbmle it needs to be required(?)
+                      "ggplot2", "VennDiagram","fitdistrplus", # evaluate distribution
                       "epiR", # Sterne's exact method
-                      "simpleboot", # BS
-                      # "boot", # BS
-                      "ggmap",
-                      "gridExtra",# several plots in one panel
+                      # "simpleboot", # BS
+                      "ggmap", "gridExtra",# several plots in one panel
                       "wesanderson", # nice colors
-                      "cowplot",# several plots in one panel
+                      # "cowplot",# several plots in one panel
                       "ggpubr")
 ipak <- function(pkg){
   new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
@@ -54,8 +47,6 @@ library(parasiteLoad)
 ## Keep ONLY first batch!!! Contamination in the second one...
 ALL_Expe <- merge(ExpeDF_003_4, ExpeDF_005[ExpeDF_005$Batch %in% 1,], all = T)
 ALL_Expe <- makeMiceGenotypeAndIsolate(ALL_Expe)
-
-
 
 # NB some mice died before the end of expe, treat carefully
 # miceDeadBeforeEnd <- c("LM0168", "LM0187", "LM0189", "LM0193")
@@ -117,6 +108,137 @@ ALL_Expe <- ALL_Expe[!ALL_Expe$EH_ID %in% toRM,]
 ALL_summary <- ALL_summary[!ALL_summary$EH_ID %in% toRM,]
 table(ALL_summary$max.oocysts.per.tube != 0, ALL_summary$infection_isolate)
 
+## Idea: include time. See how to geek that.
+
+## Window of infection:
+
+## mean of peak day by host and parasite
+by_host_parasite_peak <- ALL_summary %>% 
+  group_by(infection_isolate) %>% 
+  summarise(
+    meanPeakParasite = mean(dpi_max.oocysts.per.tube),
+    medianPeakParasite = median(dpi_max.oocysts.per.tube),
+    sdPeakParasite = sd(dpi_max.oocysts.per.tube),
+    meanPeakHost = mean(dpi_minWeight),
+    medianPeakHost = median(dpi_minWeight),
+    sdPeakHost = sd(dpi_minWeight)
+  ) %>% 
+  data.frame()
+by_host_parasite_peak
+# infection_isolate meanPeakParasite medianPeakParasite sdPeakParasite meanPeakHost medianPeakHost sdPeakHost
+# 1    E.ferrisi (E139)         6.200000                  6      0.7071068        5.720              5   3.169122
+# 2     E.ferrisi (E64)         6.260000                  6      0.6327781        4.740              5   2.593634
+# 3 E.falciformis (E88)         8.208333                  8      0.5089774        8.125              9   3.391966
+
+# Shift all according to median peak, and keep equal window
+mydataShifted <- data.frame(Exp_ID = ALL_Expe$Exp_ID,
+                            EH_ID = ALL_Expe$EH_ID,
+                            HybridStatus = ALL_Expe$HybridStatus,
+                            infection_isolate = ALL_Expe$infection_isolate,
+                            Eimeria_species = ALL_Expe$Eimeria_species,
+                            Mouse_genotype = ALL_Expe$Mouse_genotype,
+                            dpi = ALL_Expe$dpi,
+                            startingWeight = ALL_Expe$startingWeight,
+                            ageAtInfection = ALL_Expe$ageAtInfection,
+                            Sex = ALL_Expe$Sex)
+
+# shift all centered on dpi 8 (centered around E88 parasite peak)
+## oocysts
+O_E88 <- ALL_Expe[ALL_Expe$infection_isolate == "E.falciformis (E88)",
+                  c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
+O_E64 <- ALL_Expe[ALL_Expe$infection_isolate == "E.ferrisi (E64)",
+                  c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
+O_E64$dpi <- O_E64$dpi + 2 
+O_E139 <- ALL_Expe[ALL_Expe$infection_isolate == "E.ferrisi (E139)", 
+                   c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
+O_E139$dpi <- O_E139$dpi + 2 
+oocystsShifted <- rbind(O_E88, O_E64, O_E139)
+
+## weight
+W_E88 <- ALL_Expe[ALL_Expe$infection_isolate == "E.falciformis (E88)",
+                  c("dpi", "weight", "EH_ID")]
+W_E88$dpi <- W_E88$dpi - 1 
+W_E64 <- ALL_Expe[ALL_Expe$infection_isolate == "E.ferrisi (E64)",
+                  c("dpi", "weight", "EH_ID")]
+W_E64$dpi <- W_E64$dpi + 3 
+W_E139 <- ALL_Expe[ALL_Expe$infection_isolate == "E.ferrisi (E139)", 
+                   c("dpi", "weight", "EH_ID")]
+W_E139$dpi <- W_E139$dpi + 3 
+
+weightShifted <- rbind(W_E88, W_E64, W_E139)
+
+mydataShifted <- merge(mydataShifted, weightShifted)
+mydataShifted <- merge(mydataShifted, oocystsShifted)
+
+## restrict window to get same info on all
+table(mydataShifted$dpi, mydataShifted$fecweight == 0)
+
+#### Keep WINDOWS OF INFECTION #### 
+# peak = dpi 8. 3 days before + peak + 2 days after full mice
+mydataShifted <- mydataShifted[mydataShifted$dpi %in% 5:10,]
+table(mydataShifted$dpi)
+
+# consider weightBegWind as weight beginning of window
+A = mydataShifted[mydataShifted$dpi == 5, c("weight", "EH_ID")]
+names(A)[1] = "startingWeight"
+mydataShifted <- mydataShifted %>% 
+  dplyr::rename(previousStartingweight = startingWeight)
+mydataShifted <- merge(mydataShifted, A)
+
+# Cumulative sum of our weight loss
+mydataShifted = mydataShifted %>% 
+  group_by(EH_ID) %>% 
+  dplyr::arrange(dpi, .by_group = TRUE) %>%
+  dplyr::mutate(relativeWeight = weight / startingWeight * 100)
+mydataShifted = data.frame(mydataShifted)
+
+mydataShifted$OPG <- mydataShifted$oocysts.per.tube / mydataShifted$fecweight
+
+# Summary DF within infection window
+summaryDF2 <- makeSummaryTable(mydataShifted) #!!! when dpi several, first chosen
+
+# check if our peaks are set at 8
+by_host_parasite_peak2 <- summaryDF2 %>% 
+  group_by(infection_isolate) %>% 
+  summarise(
+    meanPeakParasite = mean(dpi_max.oocysts.per.tube),
+    medianPeakParasite = median(dpi_max.oocysts.per.tube),
+    sdPeakParasite = sd(dpi_max.oocysts.per.tube),
+    meanPeakHost = mean(dpi_minWeight),
+    medianPeakHost = median(dpi_minWeight),
+    sdPeakHost = sd(dpi_minWeight)
+  ) %>% 
+  data.frame()
+by_host_parasite_peak2
+
+## Statistical models along dpi 
+# !! compare NB with Poisson later
+fitmodel1 <- glmer(OPG ~ Mouse_genotype * infection_isolate * poly(dpi) +
+                        dpi|EH_ID, data = mydataShifted, family = "poisson")
+
+
+glmer.nb(OPG ~ Mouse_genotype * infection_isolate * poly(dpi) +
+           dpi|EH_ID, data = mydataShifted)
+
+
+
+
+mydataShifted
+
+fitmodel1 <- lmer(OPG ~ 1 + 1|Exp_ID, data = mydataShifted) # random effect 1 way anova
+summary(fitmodel1)
+# https://personality-project.org/r/tutorials/summerschool.14/rosseel_lme3.pdf
+# the intra-expe coefficient rho is the proportion of variation explained by diff between expe.
+# also correlation between the OPG of mice within same expe
+d2 = as.numeric(VarCorr(fitmodel1)$Exp_ID)
+s2 = attr(VarCorr(fitmodel1), "sc")^2
+rho = d2/(d2+s2)
+rho # cluster effect 0.5%
+
+
+
+
+############
 kruskal.test(max.OPG ~ infection_isolate, data = ALL_summary) 
 # Kruskal-Wallis rank sum test
 #
@@ -373,108 +495,6 @@ summaryDF$dpi_maxOocysts
 
 
 
-## mean of peak day by host and parasite
-by_host_parasite_peak <- summaryDF %>% 
-  group_by(infection_isolate) %>% 
-  summarise(
-    meanPeakParasite = mean(dpi_maxOocysts),
-    medianPeakParasite = median(dpi_maxOocysts),
-    sdPeakParasite = sd(dpi_maxOocysts),
-    meanPeakHost = mean(dpi_minWeight),
-    medianPeakHost = median(dpi_minWeight),
-    sdPeakHost = sd(dpi_minWeight)
-    ) %>% 
-  data.frame()
-by_host_parasite_peak
-# infection_isolate meanPeakParasite medianPeakParasite sdPeakParasite
-# 1    E.ferrisi (E139)         6.208333                  6      0.7210600
-# 2     E.ferrisi (E64)         6.260000                  6      0.6327781
-# 3 E.falciformis (E88)         8.227273                  8      0.4289320
-# meanPeakHost medianPeakHost sdPeakHost
-# 1     5.541667              5   3.106503
-# 2     4.740000              5   2.593634
-# 3     8.090909              9   3.544400
-
-# Shift all according to median peak, and keep equal window
-mydataShifted <- data.frame(Exp_ID = ALL_Expe$Exp_ID,
-                            EH_ID = ALL_Expe$EH_ID,
-                            HybridStatus = ALL_Expe$HybridStatus,
-                            infection_isolate = ALL_Expe$infection_isolate,
-                            Eimeria_species = ALL_Expe$Eimeria_species,
-                            Mouse_genotype = ALL_Expe$Mouse_genotype,
-                            dpi = ALL_Expe$dpi,
-                            startingWeight = ALL_Expe$startingWeight)
-
-# shift all centered on dpi 8 (centered around E88 parasite peak)
-## oocysts
-O_E88 <- ALL_Expe[ALL_Expe$infection_isolate == "E.falciformis (E88)",
-                  c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
-O_E64 <- ALL_Expe[ALL_Expe$infection_isolate == "E.ferrisi (E64)",
-                  c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
-O_E64$dpi <- O_E64$dpi + 2 
-O_E139 <- ALL_Expe[ALL_Expe$infection_isolate == "E.ferrisi (E139)", 
-                   c("dpi", "oocysts.per.tube", "fecweight", "EH_ID")]
-O_E139$dpi <- O_E139$dpi + 2 
-oocystsShifted <- rbind(O_E88, O_E64, O_E139)
-
-## weight
-W_E88 <- ALL_Expe[ALL_Expe$infection_isolate == "E.falciformis (E88)",
-                  c("dpi", "weight", "EH_ID")]
-W_E88$dpi <- W_E88$dpi - 1 
-W_E64 <- ALL_Expe[ALL_Expe$infection_isolate == "E.ferrisi (E64)",
-                  c("dpi", "weight", "EH_ID")]
-W_E64$dpi <- W_E64$dpi + 3 
-W_E139 <- ALL_Expe[ALL_Expe$infection_isolate == "E.ferrisi (E139)", 
-                   c("dpi", "weight", "EH_ID")]
-W_E139$dpi <- W_E139$dpi + 3 
-
-weightShifted <- rbind(W_E88, W_E64, W_E139)
-
-mydataShifted <- merge(mydataShifted, weightShifted)
-mydataShifted <- merge(mydataShifted, oocystsShifted)
-
-## restrict window to get same info on all
-table(mydataShifted$dpi, mydataShifted$fecweight == 0)
-
-#### Keep WINDOWS OF INFECTION #### 
-# peak = dpi 8. 3 days before + peak + 2 days after full mice
-mydataShifted <- mydataShifted[mydataShifted$dpi %in% 5:10,]
-table(mydataShifted$dpi)
-
-# consider weightBegWind as weight beginning of window
-A = mydataShifted[mydataShifted$dpi == 5, c("weight", "EH_ID")]
-names(A)[1] = "startingWeight"
-mydataShifted <- mydataShifted %>% 
-  dplyr::rename(previousStartingweight = startingWeight)
-mydataShifted <- merge(mydataShifted, A)
-
-# Cumulative sum of our weight loss
-mydataShifted = mydataShifted %>% 
-  group_by(EH_ID) %>% 
-  dplyr::arrange(dpi, .by_group = TRUE) %>%
-  dplyr::mutate(relativeWeight = weight / startingWeight * 100)
-mydataShifted = data.frame(mydataShifted)
-
-mydataShifted$OPG <- mydataShifted$oocysts.per.tube / mydataShifted$fecweight
-
-# Summary DF within infection window
-summaryDF2 <- makeToleranceTable(mydataShifted) #!!! when dpi several, first chosen
-
-# check if our peaks are set at 8
-by_host_parasite_peak2 <- summaryDF2 %>% 
-  group_by(infection_isolate) %>% 
-  summarise(
-    meanPeakParasite = mean(dpi_maxOocysts),
-    medianPeakParasite = median(dpi_maxOocysts),
-    sdPeakParasite = sd(dpi_maxOocysts),
-    meanPeakHost = mean(dpi_minWeight),
-    medianPeakHost = median(dpi_minWeight),
-    sdPeakHost = sd(dpi_minWeight)
-  ) %>% 
-  data.frame()
-by_host_parasite_peak2
-
-## Statistical models along dpi
 
 # OFFSET: 
 #https://stats.stackexchange.com/questions/237963/how-to-formulate-the-offset-of-a-glm
