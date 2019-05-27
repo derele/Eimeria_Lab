@@ -81,7 +81,10 @@ ExpeDF_002$Infection_date <- "19-03-18"
 # read all information for EXPE_003 and merge to one BIG file
 oo <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp003_April2018_wildmice_Eferrisi_Firstbatch_RECORDoocysts.csv")
 we <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp003_April2018_wildmice_Eferrisi_Firstbatch_RECORDweight.csv")
-design <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/Exp003_April2018_wildmice_Eferrisi_Firstbatch_DESIGN.csv")
+
+design <- read.csv("../../data/2_designTables/Exp003_April2018_wildmice_Eferrisi_Firstbatch_DESIGN.csv")
+
+# design <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/Exp003_April2018_wildmice_Eferrisi_Firstbatch_DESIGN.csv")
 ExpeDF_003 <- merge(oo, we, all = T)
 ExpeDF_003 <- merge(ExpeDF_003, design, by = "EH_ID", all = T)
 ExpeDF_003$Born <- as.POSIXct(ExpeDF_003$born, format = "%d/%m/%y")
@@ -93,7 +96,7 @@ ExpeDF_003$ageAtInfection <- difftime(ExpeDF_003$Infection_date, ExpeDF_003$Born
 # read all information for EXPE_004 and merge to one BIG file
 oo <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDoocysts.csv")
 we <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_RECORDweight.csv")
-design <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_DESIGN.csv")
+design <- read.csv("../../data/2_designTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_DESIGN.csv")
 ExpeDF_004 <- merge(oo, we, all = T)
 ExpeDF_004 <- merge(ExpeDF_004, design, by = "EH_ID", all = T)
 ExpeDF_004$Born <- as.POSIXct(ExpeDF_004$Born, format = "%y-%m-%d")
@@ -150,10 +153,10 @@ ExpeDF_003_4 <- ExpeDF_003_4[ExpeDF_003_4$dpi %in% 0:11, ]# remove stabilisation
 # load all tables of all experiments, 
 oo <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp005_full_RECORDoocysts.csv", na.strings = c("NA", " ", "n.a."))
 we <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp005_full_RECORDweight.csv", na.strings = c("NA", " "))
-design <- rbind(read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/Inf1a_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
-                read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/Inf2a_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
-                read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/Inf1b_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
-                read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/Inf2b_Exp005.DESIGN.csv", na.strings = c("NA", " ")))
+design <- rbind(read.csv("../../data/2_designTables/Inf1a_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
+                read.csv("../../data/2_designTables/Inf2a_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
+                read.csv("../../data/2_designTables/Inf1b_Exp005.DESIGN.csv", na.strings = c("NA", " ")),
+                read.csv("../../data/2_designTables/Inf2b_Exp005.DESIGN.csv", na.strings = c("NA", " ")))
 # Correct error
 names(design)[names(design) == "EH_id"] <- "EH_ID"
 # Correct space error
@@ -235,3 +238,8 @@ ExpeDF_005 <- calculateWeightLoss(ExpeDF_005, startingDay = 0)
 ExpeDF_005$relativeWeight <- as.numeric(as.character(ExpeDF_005$relativeWeight))
 
 ExpeDF_005$Sex <- gsub(" ", "", ExpeDF_005$Sex)
+
+saveRDS(ExpeDF_001, file = "ExpeDF_001_Alice.rds")
+saveRDS(ExpeDF_002, file = "ExpeDF_002_Alice.rds")
+saveRDS(ExpeDF_003_4, file = "ExpeDF_003_4_Alice.rds")
+saveRDS(ExpeDF_005, file = "ExpeDF_005_Alice.rds")

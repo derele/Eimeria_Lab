@@ -6,7 +6,7 @@
 # Mouse AA_0139, HI = 0.85
 source("myFunctions.R")
 #### Load data ####
-source("loadExpe001toExpe005.R")
+# source("loadExpe001toExpe005.R")
 theme_set(theme_bw() +  theme(text = element_text(size = 20)))
 
 ## Packages
@@ -42,10 +42,13 @@ library(parasiteLoad)
 ## Orga: a table with all mice and their measures by day +
 ## a summary table with for each mouse peak shedding, time to peak shedding, peak WL, tol as ratio, and infos
 
-# Remove Expe_001 until further notice
+## Check second batch expe 5 separately +++ 
 
-## Keep ONLY first batch!!! Contamination in the second one...
-ALL_Expe <- merge(ExpeDF_003_4, ExpeDF_005[ExpeDF_005$Batch %in% 1,], all = T)
+ExpeDF_005 <- readRDS(file = "ExpeDF_005_Alice.rds")
+ExpeDF_003_4 <- readRDS(file = "ExpeDF_003_4_Alice.rds")
+
+ALL_Expe <- merge(ExpeDF_003_4, ExpeDF_005[ExpeDF_005$Batch == 1,], all = TRUE)
+
 ALL_Expe <- makeMiceGenotypeAndIsolate(ALL_Expe)
 
 # NB some mice died before the end of expe, treat carefully
@@ -213,12 +216,67 @@ by_host_parasite_peak2
 
 ## Statistical models along dpi 
 # !! compare NB with Poisson later
-fitmodel1 <- glmer(OPG ~ Mouse_genotype * infection_isolate * poly(dpi) +
-                        dpi|EH_ID, data = mydataShifted, family = "poisson")
+library(lme4)
+
+mydataShifted$EH_ID <- droplevels(mydataShifted$EH_ID)
+
+# https://rpsychologist.com/r-guide-longitudinal-lme-lmer
+
+mydataShifted$HybridStatus
+
+mod1 <- lme4::lmer(weight ~ HybridStatus * Eimeria_species * (dpi + I(dpi^2)) +
+                      1|EH_ID, offset = startingWeight, data = mydataShifted)
+mod13<- lme4::glmer(weight ~ HybridStatus + Eimeria_species + (dpi + I(dpi^2)) +
+                     (1|EH_ID), data = mydataShifted)
+
+mod14<- lme4::glmer(weight ~ HybridStatus + Eimeria_species + (poly(dpi, 2,raw = TRUE)) +
+                      (poly(dpi, 2,raw = TRUE)|EH_ID), data = mydataShifted, family = "Gamma")
 
 
-glmer.nb(OPG ~ Mouse_genotype * infection_isolate * poly(dpi) +
-           dpi|EH_ID, data = mydataShifted)
+mod14<- lme4::glmer(weight ~ Mouse_genotype + Eimeria_species + (poly(dpi, 2,raw = TRUE)) +
+                      (dpi|EH_ID), data = mydataShifted, family = "gaussian")
+
+summary(mod14)
+anova(mod1)
+
+plot(mod1, type = c("p", "smooth"))
+plot(mod1, sqrt(abs(resid(.))) ~ fitted(.),
+     type = c("p", "smooth"))
+
+mydataShifted$OPG <- round(mydataShifted$OPG / min(mydataShifted$OPG[mydataShifted$OPG != 0], na.rm = T))
+
+mod1 <- lme4::glmer(OPG ~ Mouse_genotype * Eimeria_species * (dpi + I(dpi^2)) +
+                      (dpi + I(dpi^2)|EH_ID), data = mydataShifted, family = "poisson")
+
+
+# scale data OPG by minimum
+mydataShifted$OPG <- round(mydataShifted$OPG / min(mydataShifted$OPG[mydataShifted$OPG != 0], na.rm = T))
+
+mod1 <- lme4::glmer(OPG ~ Mouse_genotype * Eimeria_species * (dpi + I(dpi^2)) +
+                      (dpi + I(dpi^2)|EH_ID), data = mydataShifted, family = "poisson")
+
+# scale data OPG by minimum
+mydataShifted$OPG <- round(mydataShifted$OPG / min(mydataShifted$OPG[mydataShifted$OPG != 0], na.rm = T))
+
+mod1 <- lme4::glmer(OPG ~ Mouse_genotype * Eimeria_species * (dpi + I(dpi^2)) +
+                      (dpi + I(dpi^2)|EH_ID), data = mydataShifted, family = "poisson")
+     
+
+
+
+hist(mydataShifted$weight)
+
+
+glmer.nb(OPG ~ Mouse_genotype * infection_isolate * poly(dpi, 2) +
+           poly(dpi, 2)|EH_ID, data = mydataShifted)
+
+
+model nonlinear changes at the day level
+
+# or use poly()
+lmer(y ~ poly(time, 2, raw = FALSE) * tx + 
+       (poly(time, 2, raw = TRUE) | subjects),
+     data=data)  
 
 
 
