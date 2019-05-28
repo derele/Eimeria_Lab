@@ -1,0 +1,11 @@
+;True;Target;Sample;Regulation;P-Value;Exceeds P-Value Threshold;Compared to Regulation Threshold
+;True;CDC42;MouseCaecum2;n. def.;n. def.;No;No change
+;True;CXCL9;MouseCaecum2;771,324070489757;0,00452494200087139;No;Up regulated
+;True;IFN-g;MouseCaecum2;44,643261447966;0,0304887811390744;Yes;Up regulated
+;True;IL-10;MouseCaecum2;2,41124402420548;0,101120636010367;Yes;No change
+;True;IL-12;MouseCaecum2;4,98836541234227;n. def.;No;Up regulated
+;True;IL-6;MouseCaecum2;2,53226975979049;0,0864652807675907;Yes;No change
+;True;Ppia;MouseCaecum2;n. def.;0,189675520373905;Yes;No change
+;True;Ppib;MouseCaecum2;n. def.;0,0961604480054041;Yes;No change
+;True;STAT6;MouseCaecum2;1,59905742155446;0,742192634590531;Yes;No change
+;True;TGF-b;MouseCaecum2;1,05262122164874;0,806494404469936;Yes;No change
