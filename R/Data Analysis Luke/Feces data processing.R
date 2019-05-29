@@ -10,16 +10,16 @@ library(Rmisc)
 
 
 #load csv files at home (Win)
-Exp007a_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
-Exp007b_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
-E7aF <- read.csv("Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv")
-E7bF <- read.csv("Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv")
+# Exp007a_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
+# Exp007b_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
+# E7aF <- read.csv("Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv")
+# E7bF <- read.csv("Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv")
 
-#load csv at home (win)
-#Exp007a_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
-#Exp007b_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
-#E7aF <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv")
-#E7bF <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv") 
+#load csv at IZW
+Exp007a_design <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_design.csv")
+Exp007b_design <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_design.csv")
+E7aF <- read.csv("../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7a_112018_Eim_feces.csv")
+E7bF <- read.csv("../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7b_112018_Eim_feces.csv") 
 
 #the columns we want to keep
 col2keep <- c("Strain", "HybridStatus", "InfectionStrain", "EH_ID")
@@ -31,8 +31,15 @@ Exp007b_design <- Exp007b_design[col2keep]
 names(Exp007a_design)[names(Exp007a_design) == "EH_id"] <- "EH_ID"
 names(Exp007b_design)[names(Exp007b_design) == "EH_id"] <- "EH_ID"
 
+#add infection history
+history_a <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_infection.history.csv")
+history_b <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_infection.history.csv")
+history <- rbind(history_a, history_b)
+
 # let's make one big fat Expe007 design table (E88 = 31 entries, E64 = 38 entries)
 Exp007_design <- rbind(Exp007a_design, Exp007b_design)
+
+Exp007_design <- merge(Exp007_design, history, by = "EH_ID")
 
 # remove shit columns
 #E7aF <- E7aF[-grep(pattern = "X", x = names(E7aF))]
@@ -64,7 +71,8 @@ str(Exp007_E88)
 
 #export HU
 #write.csv(Exp007, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge", quote = FALSE)
-
+#export IZW
+write.csv(Exp007, "../luke/Documents//Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
 #export home (Win)
 write.csv(Exp007, "./Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge", quote = FALSE)
 

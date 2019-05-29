@@ -9,12 +9,12 @@
 #POS <- read.csv(file = "../lubomir/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
 
 #IZW path
-#ANT <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_anteriorMLN.csv")
-#POS <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_posteriorMLN.csv")
+ANT <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_anteriorMLN.csv")
+POS <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_posteriorMLN.csv")
 
 #HU path
-ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_anteriorMLN.csv")
-POS <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_posteriorMLN.csv")
+#ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_anteriorMLN.csv")
+#POS <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_posteriorMLN.csv")
 
 #cleanup artifact columns (check before using, csv reads different now and then)#
 ANT$X.6 <- NULL
@@ -40,13 +40,12 @@ names(POS) <- c("Sample","ThCD4p","TcCD8p","Th1IFNgp_in_CD4p","Th17IL17Ap_in_CD4
 #set columns to numbers
 library("dplyr")
 library("magrittr")
-str(POS)
-str(ANT)
+
 #ANT
 ANT_num.convert <- function(data) {
   
-  char.columns <- colnames(data)[1]
-  cols <- colnames(data)[2:ncol(data)]
+  char.columns <- colnames(data)[1:3]
+  cols <- colnames(data)[4:ncol(data)]
   
   #make empty matrix/data.frame
   df <- data.frame()
@@ -64,80 +63,34 @@ ANT_num.convert <- function(data) {
 ANT <- ANT_num.convert(data = ANT)
 POS <- ANT_num.convert(data = POS)
 
-#function defined
-# ANT$ThCD4p <- as.numeric(as.character(ANT$ThCD4p))
-# ANT$TcCD8p <- as.numeric(as.character(ANT$TcCD8p))
-# ANT$Th1IFNgp_in_CD4p <- as.numeric(as.character(ANT$Th1IFNgp_in_CD4p))
-# ANT$Th17IL17Ap_in_CD4p <- as.numeric(as.character(ANT$Th17IL17Ap_in_CD4p))
-# ANT$Tc1IFNgp_in_CD8p <- as.numeric(as.character(ANT$Tc1IFNgp_in_CD8p))
-# ANT$Treg_Foxp3_in_CD4p <- as.numeric(as.character(ANT$Treg_Foxp3_in_CD4p))
-# ANT$Dividing_Ki67p_in_Foxp3p <- as.numeric(as.character(ANT$Dividing_Ki67p_in_Foxp3p))
-# ANT$RORgtp_in_Foxp3p <- as.numeric(as.character(ANT$RORgtp_in_Foxp3p))
-# ANT$Th1Tbetp_in_CD4pFoxp3n <- as.numeric(as.character(ANT$Th1Tbetp_in_CD4pFoxp3n))
-# ANT$Dividing_Ki67p_in_Tbetp <- as.numeric(as.character(ANT$Dividing_Ki67p_in_Tbetp))
-# ANT$Th17RORgp_in_CD4pFoxp3n <- as.numeric(as.character(ANT$Th17RORgp_in_CD4pFoxp3n))
-# ANT$Dividing_Ki67p_in_RORgtp <- as.numeric(as.character(ANT$Dividing_Ki67p_in_RORgtp))
-# 
-# #POS
-# POS$ThCD4p <- as.numeric(as.character(POS$ThCD4p))
-# POS$TcCD8p <- as.numeric(as.character(POS$TcCD8p))
-# POS$Th1IFNgp_in_CD4p <- as.numeric(as.character(POS$Th1IFNgp_in_CD4p))
-# POS$Th17IL17Ap_in_CD4p <- as.numeric(as.character(POS$Th17IL17Ap_in_CD4p))
-# POS$Tc1IFNgp_in_CD8p <- as.numeric(as.character(POS$Tc1IFNgp_in_CD8p))
-# POS$Treg_Foxp3_in_CD4p <- as.numeric(as.character(POS$Treg_Foxp3_in_CD4p))
-# POS$Dividing_Ki67p_in_Foxp3p <- as.numeric(as.character(POS$Dividing_Ki67p_in_Foxp3p))
-# POS$RORgtp_in_Foxp3p <- as.numeric(as.character(POS$RORgtp_in_Foxp3p))
-# POS$Th1Tbetp_in_CD4pFoxp3n <- as.numeric(as.character(POS$Th1Tbetp_in_CD4pFoxp3n))
-# POS$Dividing_Ki67p_in_Tbetp <- as.numeric(as.character(POS$Dividing_Ki67p_in_Tbetp))
-# POS$Th17RORgp_in_CD4pFoxp3n <- as.numeric(as.character(POS$Th17RORgp_in_CD4pFoxp3n))
-# POS$Dividing_Ki67p_in_RORgtp <- as.numeric(as.character(POS$Dividing_Ki67p_in_RORgtp))
-
-#check structure
-str(ANT)
-str(POS)
 
 #mutate "Sample" to character
 i <- sapply(ANT, is.factor)
 ANT[i] <- lapply(ANT[i], as.character)
-str(ANT)
+
 
 i <- sapply(POS, is.factor)
 POS[i] <- lapply(POS[i], as.character)
-str(POS)
 
-#reduce labels
-library(stringr)
-#ANT$Sample <- gsub(ANT$Sample, pattern="Anterior", replacement='')
-#ANT$Sample <- gsub(ANT$Sample, pattern=".fcs", replacement='')
-#
-#POS$Sample <- gsub(POS$Sample, pattern="Posterior", replacement='')
-#POS$Sample <- gsub(POS$Sample, pattern=".fcs", replacement='')
+CELLS <- rbind(ANT, POS)
+
 
 #extract Mouse_ID from that mess and paste in "LM02" to standardize with our data structure
-x = ANT$Sample
-AIDs <- data.frame(Sample = x, EH_ID = sapply(strsplit(x,"_"), function(f)f[2]), Position = sapply(strsplit(x, " "), function(f)f[2]))
-AIDs$EH_ID <- paste0("LM02", AIDs$EH_ID)
+CELLS$EH_ID <- gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "LM02\\2", CELLS$Sample.Sample)
+CELLS$Position <- gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "\\1", CELLS$Sample.Sample)
 
-y = POS$Sample
-PIDs <- data.frame(Sample = y, EH_ID = sapply(strsplit(y,"_"), function(f)f[2]), Position = sapply(strsplit(y, " "), function(f)f[2]))
-PIDs$EH_ID <- paste0("LM02", PIDs$EH_ID)
-
-#merge
-ANT <- merge(AIDs, ANT)
-POS <- merge(PIDs, POS)
-MLNs <- rbind(ANT, POS)
 
 #####################################################################################################################################
 #introduce parasitological data
 # HU: 
-Exp007 <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge.csv")
+#Exp007 <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7")
 
 #IZW path
-#Exp007 <- read.csv("../luke/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge")
+Exp007 <- read.csv("../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv")
 #Home PC: 
 #Exp007 <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge.csv")
 
-Exp007_FACS <- merge(Exp007, MLNs)
+Exp007_FACS <- merge(Exp007, CELLS)
 Exp007_FACS$X <- NULL
 str(Exp007_FACS)
 #reshape for model
@@ -146,19 +99,13 @@ library(reshape2)
 library(meltt)
 library(MASS)
 
-#reshape df
-A_CD4 <- tibble(ANT$EH_ID, ANT$ThCD4p)
-A_CD8 <- tibble(ANT$EH_ID, ANT$TcCD8p)
-A_tpop <- merge(A_CD4, A_CD8)
 
 #select cell population names
-facs.measure.cols <- colnames(Exp007_FACS)[14:ncol(Exp007_FACS)]
+facs.measure.cols <- c("ThCD4p", "TcCD8p", "Th1IFNgp_in_CD4p", "Th17IL17Ap_in_CD4p", 
+                       "Tc1IFNgp_in_CD8p", "Treg_Foxp3_in_CD4p", "Dividing_Ki67p_in_Foxp3p", 
+                       "RORgtp_in_Foxp3p", "Th1Tbetp_in_CD4pFoxp3n", "Dividing_Ki67p_in_Tbetp", 
+                       "Th17RORgp_in_CD4pFoxp3n", "Dividing_Ki67p_in_RORgtp")
 
-## apply summary over all interesting columns
-apply(Exp007_FACS[,facs.measure.cols], 2, summary)
-
-## for one interesing column only for Posterior and dpi8 example selection
-summary(Exp007_FACS[Exp007_FACS$dpi%in%8 & Exp007_FACS$Position%in%"Posterior","Tc1IFNgp_in_CD8p"])
 
 #select dpi8 from FACS
 dpi8POS <- Exp007_FACS[Exp007_FACS$dpi%in%8 & Exp007_FACS$Position%in%"Posterior",]
@@ -184,6 +131,11 @@ names(cell.sumariesPOS) <- facs.measure.cols
 cell.mediansANT <- lapply(facs.measure.cols, function (x){
   tapply(dpi8ANT[, x], dpi8ANT$InfectionStrain, median)
 })
+
+cell.mediansANT_HIST <- lapply(facs.measure.cols, function (x){
+  tapply(dpi8ANT[, x], dpi8ANT$primary:dpi8ANT$challenge, median)
+})
+
 
 cell.mediansPOS <- lapply(facs.measure.cols, function (x){
   tapply(dpi8POS[, x], dpi8POS$InfectionStrain, median)
@@ -212,6 +164,10 @@ colnames(wilcox_medians_ANT) <- c("population_percentages", "p_value")
 wilcox_medians_POS <- cbind(unlist(cell.mediansPOS), rep(unlist(lapply(cell.testsPOS, "[", "p.value")), each=2))
 colnames(wilcox_medians_POS)
 colnames(wilcox_medians_POS) <- c("population_percentages", "p_value")
+
+
+round(wilcox_medians_ANT, 3)
+
 
 ### combine two factors
 as.factor(letters):as.factor(rev(letters))
