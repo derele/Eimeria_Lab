@@ -3,11 +3,8 @@
 library(Rmisc)
 
 #load csv files at HU#
-#Exp007a_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
-#Exp007b_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
-#E7aF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv", row.names = NULL)
-#E7bF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv", row.names = NULL)
-
+E7a_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_design.csv")
+E7b_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_design.csv")
 
 #load csv files at home (Win)
 # Exp007a_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
@@ -16,67 +13,77 @@ library(Rmisc)
 # E7bF <- read.csv("Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv")
 
 #load csv at IZW
-Exp007a_design <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_design.csv")
-Exp007b_design <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_design.csv")
-E7aF <- read.csv("../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7a_112018_Eim_feces.csv")
-E7bF <- read.csv("../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7b_112018_Eim_feces.csv") 
+#E7a_design <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_design.csv")
+# E7b_design <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_design.csv")
+# E7aF <- read.csv("../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7a_112018_Eim_feces.csv")
+# E7bF <- read.csv("../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7b_112018_Eim_feces.csv") 
 
 #the columns we want to keep
-col2keep <- c("Strain", "HybridStatus", "InfectionStrain", "EH_ID")
+col2keep <- c("Strain", "HybridStatus", "EH_ID")
 
-Exp007a_design <- Exp007a_design[col2keep]
-Exp007b_design <- Exp007b_design[col2keep]
+E7a_design <- E7a_design[col2keep]
+E7b_design <- E7b_design[col2keep]
 
 # rename EH_id to EH_ID#
-names(Exp007a_design)[names(Exp007a_design) == "EH_id"] <- "EH_ID"
-names(Exp007b_design)[names(Exp007b_design) == "EH_id"] <- "EH_ID"
+names(E7a_design)[names(E7a_design) == "EH_id"] <- "EH_ID"
+names(E7b_design)[names(E7b_design) == "EH_id"] <- "EH_ID"
 
-#add infection history
-history_a <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_infection.history.csv")
-history_b <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_infection.history.csv")
+#add infection history IZW
+# history_a <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_infection.history.csv")
+# history_b <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_infection.history.csv")
+# history <- rbind(history_a, history_b)
+
+#add infection history HU
+history_a <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_infection.history.csv")
+history_b <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_infection.history.csv")
 history <- rbind(history_a, history_b)
 
 # let's make one big fat Expe007 design table (E88 = 31 entries, E64 = 38 entries)
-Exp007_design <- rbind(Exp007a_design, Exp007b_design)
+E7_design <- rbind(E7a_design, E7b_design)
 
-Exp007_design <- merge(Exp007_design, history, by = "EH_ID")
+E7_design <- merge(E7_design, history, by = "EH_ID")
 
 # remove shit columns
 #E7aF <- E7aF[-grep(pattern = "X", x = names(E7aF))]
 #E7bF <- E7bF[-grep(pattern = "X", x = names(E7bF))]
+
+#load feces data HU
+E7aF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7a_112018_Eim_feces.csv", row.names = NULL)
+E7bF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7b_112018_Eim_feces.csv", row.names = NULL)
 
 # keep the batch information
 E7aF$batch <- "october2018"
 E7bF$batch <- "december2018"
 
 # Make one big fat table Expe 7
-Exp007_record <- rbind(E7aF, E7bF)
+E7_record <- rbind(E7aF, E7bF)
 
 # Merge all, #
-Exp007 <- merge(Exp007_design, Exp007_record)
-
-# Split in 2 infection batches (Efalciformis and Eferrisi are studied separetely)
-Exp007_E88 <- Exp007[Exp007$InfectionStrain %in% "E88",]
-Exp007_E64 <- Exp007[Exp007$InfectionStrain %in% "E64",]
-
-#convert Wchange to numeric (291 and 295 are NAs)#
-str(Exp007_E64)
-Exp007_E64[,9] <- sapply(Exp007_E64[,9], as.numeric)
-Exp007_E64[,7] <- sapply(Exp007_E64[,7], as.numeric)
-str(Exp007_E64)
-str(Exp007_E88)
-Exp007_E88[,9] <- sapply(Exp007_E88[,9], as.numeric)
-Exp007_E88[,7] <- sapply(Exp007_E88[,7], as.numeric)
-str(Exp007_E88)
+E7 <- merge(E7_design, E7_record)
 
 #export HU
-#write.csv(Exp007, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge", quote = FALSE)
+write.csv(E7, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
 #export IZW
-write.csv(Exp007, "../luke/Documents//Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
+#write.csv(Exp007, "../luke/Documents//Eimeria_Lab/data/3_recordingTables/", quote = FALSE)
 #export home (Win)
-write.csv(Exp007, "./Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge", quote = FALSE)
+#write.csv(Exp007, "./Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge", quote = FALSE)
 
-Exp007
+# Split in 2 infection batches (Efalciformis and Eferrisi are studied separetely)
+E7_E88 <- E7[E7$primary %in% "E88",]
+E7_E64 <- E7[E7$primary %in% "E64",]
+
+#convert Wchange to numeric (291 and 295 are NAs)#
+# str(E7_E64)
+# Exp007_E64[,9] <- sapply(Exp007_E64[,9], as.numeric)
+# Exp007_E64[,7] <- sapply(Exp007_E64[,7], as.numeric)
+# str(Exp007_E64)
+# str(Exp007_E88)
+# Exp007_E88[,9] <- sapply(Exp007_E88[,9], as.numeric)
+# Exp007_E88[,7] <- sapply(Exp007_E88[,7], as.numeric)
+# str(Exp007_E88)
+
+
+
 
 # calculate summary statistics on weight loss NEEDS FIXING #
 #WLoss_007_E64 <- summarise(Exp007_E64, measurevar = "Wchange",
