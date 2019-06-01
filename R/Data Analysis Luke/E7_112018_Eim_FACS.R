@@ -249,6 +249,29 @@ cell.mediansPOS.history <- set_colnames(cell.mediansPOS.history, c("E64:E64", "E
 strains <- c(names(cell.mediansPOS.history))
 
 
+
+#check distribution
+library(ggplot2)
+library(ggpubr)
+
+ggqqplot(cell.mediansPOS.history$`E64:E64`)
+ggqqplot(cell.mediansPOS.history$`E64:E88`)
+ggqqplot(cell.mediansPOS.history$`E88:E64`)
+ggqqplot(cell.mediansPOS.history$`E88:E88`)
+
+ggdensity(cell.mediansPOS.history$`E64:E64`, 
+          main = "Density cell population medians",
+          xlab = "")
+ggdensity(cell.mediansPOS.history$`E64:E88`, 
+          main = "Density cell population medians",
+          xlab = "")
+ggdensity(cell.mediansPOS.history$`E88:E64`, 
+          main = "Density cell population medians",
+          xlab = "")
+ggdensity(cell.mediansPOS.history$`E88:E88`, 
+          main = "Density cell population medians",
+          xlab = "")
+
 #figure this out (test cell populations between infection histories)
  #cell.tests.history <- lapply(strains, function (x){
   # wilcox.test(cell.mediansANT.history[x, ], cell.mediansPOS.history[x, ])
