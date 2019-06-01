@@ -1,8 +1,8 @@
 #LOAD, CLEAN UP AND PROCESS DATA#
 ##########################################################################################################################
 #PC path
-#ANT <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_anteriorMLN.csv")
-#POS <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/FACS/CD40L_assays_Exp007_posteriorMLN.csv")
+ANT <- read.csv("./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_anteriorMLN.csv")
+POS <- read.csv("./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_posteriorMLN.csv")
 
 #laptop path
 #ANT <- read.csv(file = "../lubomir/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
@@ -13,8 +13,8 @@
 #POS <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_posteriorMLN.csv")
 
 #HU path
-ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_anteriorMLN.csv")
-POS <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_posteriorMLN.csv")
+#ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_anteriorMLN.csv")
+#POS <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_posteriorMLN.csv")
 
 #remove mouse 293 as it was mixed both posterior and anterior
 ANT <- ANT[-c(52),]
@@ -75,12 +75,13 @@ CELLS$Position <- gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "\\1
 #####################################################################################################################################
 #introduce parasitological data
 # HU: 
-E7 <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv")
+#E7 <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv")
 
 #IZW path
 #Exp007 <- read.csv("../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv")
+
 #Home PC: 
-#Exp007 <- read.csv("./Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge.csv")
+E7 <- read.csv("./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv")
 
 E7_FACS <- merge(E7, CELLS)
 E7_FACS$X <- NULL
@@ -97,12 +98,12 @@ dpi8POS <- E7_FACS[E7_FACS$dpi%in%8 & E7_FACS$Position%in%"Posterior",]
 dpi8ANT <- E7_FACS[E7_FACS$dpi%in%8 & E7_FACS$Position%in%"Anterior",]
 
 #primary infection strain effect on CD8 INF positive cell populations
-tapply(dpi8POS$Tc1IFNgp_in_CD8p, dpi8POS$primary, summary)
-tapply(dpi8ANT$Tc1IFNgp_in_CD8p, dpi8ANT$primary, summary)
+CD8_INF_POS_prim <- tapply(dpi8POS$Tc1IFNgp_in_CD8p, dpi8POS$primary, summary)
+CD8_INF_ANT_prim <- tapply(dpi8ANT$Tc1IFNgp_in_CD8p, dpi8ANT$primary, summary)
 
 #challenge infection strain effect on CD8 INF positive cell populations
-tapply(dpi8POS$Tc1IFNgp_in_CD8p, dpi8POS$challenge, summary)
-tapply(dpi8ANT$Tc1IFNgp_in_CD8p, dpi8ANT$challenge, summary)
+CD8_INF_POS_cha <- tapply(dpi8POS$Tc1IFNgp_in_CD8p, dpi8POS$challenge, summary)
+CD8_INF_ANT_cha <- tapply(dpi8ANT$Tc1IFNgp_in_CD8p, dpi8ANT$challenge, summary)
 
 ######################################## wilcox of medians (infection strains comparison primary)
 
@@ -125,17 +126,10 @@ cell.mediansANT.prim <- lapply(facs.measure.cols, function (x){
   tapply(dpi8ANT[, x], dpi8ANT$primary, median)
 })
 
-cell.mediansANT_HIST <- lapply(facs.measure.cols, function (x){
-  tapply(dpi8ANT[, x], dpi8ANT$primary:dpi8ANT$challenge, median)
-})
-
 cell.mediansPOS.prim <- lapply(facs.measure.cols, function (x){
   tapply(dpi8POS[, x], dpi8POS$primary, median)
 })
 
-cell.mediansPOS_HIST <- lapply(facs.measure.cols, function (x){
-  tapply(dpi8POS[, x], dpi8POS$primary:dpi8ANT$challenge, median)
-})
 #set identical names
 names(cell.mediansANT.prim) <- facs.measure.cols
 names(cell.mediansPOS.prim) <- facs.measure.cols
@@ -165,9 +159,15 @@ wilcox_medians_POS.prim <- cbind(unlist(cell.mediansPOS.prim), rep(unlist(lapply
 colnames(wilcox_medians_POS.prim)
 colnames(wilcox_medians_POS.prim) <- c("population_percentages", "p_value")
 
-W_Med_ANT.prim <- round(wilcox_medians_ANT.prim, 3)
-W_Med_POS.prim <- round(wilcox_medians_POS.prim, 3)
+##### compare between results of wilcox (ANT vs POS)
 
+##### row differences
+library(matrixTests)
+wilcox_medians_ANT.prim <- as.data.frame(wilcox_medians_ANT.prim)
+row_kruskalwallis(t(wilcox_medians_ANT.prim), g = wilcox_medians_ANT.prim$population_percentages)
+
+#sapply(intersect(rownames(wilcox_medians_ANT.prim), rownames(wilcox_medians_POS.prim)), 
+ #      function(x) Kruskal(wilcox_medians_ANT.prim[x,], wilcox_medians_POS.prim[x,]))
 
 ######################################## wilcox of medians (infection strains comparison challenge)
 
@@ -235,7 +235,7 @@ cell.mediansPOS_HIST <- lapply(facs.measure.cols, function (x){
 })
 
 #######test with man whitney
-
+library(magrittr)
 names(cell.mediansANT_HIST) <- facs.measure.cols
 
 cell.mediansANT.history <- data.frame(matrix(unlist(cell.mediansANT_HIST), nrow=length(cell.mediansANT_HIST), byrow=T))
@@ -243,12 +243,21 @@ cell.mediansANT.history <- set_rownames(cell.mediansANT.history, facs.measure.co
 cell.mediansANT.history <- set_colnames(cell.mediansANT.history, c("E64:E64", "E64:E88", "E88:E64", "E88:E88"))
 strains <- c(names(cell.mediansANT.history))
 
+cell.mediansPOS.history <- data.frame(matrix(unlist(cell.mediansPOS_HIST), nrow=length(cell.mediansPOS_HIST), byrow=T))
+cell.mediansPOS.history <- set_rownames(cell.mediansPOS.history, facs.measure.cols)
+cell.mediansPOS.history <- set_colnames(cell.mediansPOS.history, c("E64:E64", "E64:E88", "E88:E64", "E88:E88"))
+strains <- c(names(cell.mediansPOS.history))
 
-#figure this out
-# cell.testsPOS.cha <- lapply(facs.measure.cols, function (x){
-#   wilcox.test(dpi8POS[dpi8POS$challenge%in%"E88", x], dpi8POS[dpi8POS$challenge%in%"E64", x])
-# })
-# 
+
+#figure this out (test cell populations between infection histories)
+ #cell.tests.history <- lapply(strains, function (x){
+  # wilcox.test(cell.mediansANT.history[x, ], cell.mediansPOS.history[x, ])
+ #})
+
+ 
+ 
+ 
+
 # cell.testsANT.history <- lapply(cell.mediansANT.history, function (x){
 #   wilcox.test(x$`E64:E64`, x$`E64:E88`, x$`E88:E64`,  x$`E88:E88`)
 # })

@@ -3,14 +3,14 @@
 library(Rmisc)
 
 #load csv files at HU#
-E7a_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_design.csv")
-E7b_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_design.csv")
+#E7a_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_design.csv")
+#E7b_design <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_design.csv")
 
 #load csv files at home (Win)
-# Exp007a_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007a_design.csv")
-# Exp007b_design <- read.csv("./Eimeria_Lab/data/2_designTables/Exp007b_design.csv")
-# E7aF <- read.csv("Eimeria_Lab/data/3_recordingTables/Exp007/Exp007a/Exp_007a_feces.csv")
-# E7bF <- read.csv("Eimeria_Lab/data/3_recordingTables/Exp007/Exp007b/Exp_007b_feces.csv")
+E7a_design <- read.csv("../Documents/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_design.csv")
+E7b_design <- read.csv("../Documents/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_design.csv")
+E7aF <- read.csv("../Documents/Eimeria_Lab/data/3_recordingTables/E7a_112018_Eim_feces.csv")
+E7bF <- read.csv("../Documents/Eimeria_Lab/data/3_recordingTables/E7b_112018_Eim_feces.csv") 
 
 #load csv at IZW
 #E7a_design <- read.csv("../luke/Documents/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_design.csv")
@@ -34,9 +34,15 @@ names(E7b_design)[names(E7b_design) == "EH_id"] <- "EH_ID"
 # history <- rbind(history_a, history_b)
 
 #add infection history HU
-history_a <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_infection.history.csv")
-history_b <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_infection.history.csv")
+#history_a <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_infection.history.csv")
+#history_b <- read.csv("../luke/Repositories/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_infection.history.csv")
+#history <- rbind(history_a, history_b)
+
+#add infection history home Win
+history_a <- read.csv("../Documents/Eimeria_Lab/data/2_designTables/E7a_112018_Eim_infection.history.csv")
+history_b <- read.csv("../Documents/Eimeria_Lab/data/2_designTables/E7b_112018_Eim_infection.history.csv")
 history <- rbind(history_a, history_b)
+
 
 # let's make one big fat Expe007 design table (E88 = 31 entries, E64 = 38 entries)
 E7_design <- rbind(E7a_design, E7b_design)
@@ -48,8 +54,12 @@ E7_design <- merge(E7_design, history, by = "EH_ID")
 #E7bF <- E7bF[-grep(pattern = "X", x = names(E7bF))]
 
 #load feces data HU
-E7aF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7a_112018_Eim_feces.csv", row.names = NULL)
-E7bF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7b_112018_Eim_feces.csv", row.names = NULL)
+#E7aF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7a_112018_Eim_feces.csv", row.names = NULL)
+#E7bF <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7b_112018_Eim_feces.csv", row.names = NULL)
+
+#load feces data home Win
+E7aF <- read.csv("../Documents/Eimeria_Lab/data/3_recordingTables/E7a_112018_Eim_feces.csv", row.names = NULL)
+E7bF <- read.csv("../Documents/Eimeria_Lab/data/3_recordingTables/E7b_112018_Eim_feces.csv", row.names = NULL)
 
 # keep the batch information
 E7aF$batch <- "october2018"
@@ -62,11 +72,13 @@ E7_record <- rbind(E7aF, E7bF)
 E7 <- merge(E7_design, E7_record)
 
 #export HU
-write.csv(E7, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
+#write.csv(E7, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
+
 #export IZW
-#write.csv(Exp007, "../luke/Documents//Eimeria_Lab/data/3_recordingTables/", quote = FALSE)
+#write.csv(Exp007, "../luke/Documents//Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE", quote = FALSE)
+
 #export home (Win)
-#write.csv(Exp007, "./Eimeria_Lab/data/3_recordingTables/Exp007/Exp_007_Merge", quote = FALSE)
+write.csv(Exp007, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSEe)
 
 # Split in 2 infection batches (Efalciformis and Eferrisi are studied separetely)
 E7_E88 <- E7[E7$primary %in% "E88",]
