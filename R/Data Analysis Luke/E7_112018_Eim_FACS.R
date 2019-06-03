@@ -1,8 +1,8 @@
 #LOAD, CLEAN UP AND PROCESS DATA#
 ##########################################################################################################################
 #PC path
-ANT <- read.csv("./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_anteriorMLN.csv")
-POS <- read.csv("./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_posteriorMLN.csv")
+#ANT <- read.csv("./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_anteriorMLN.csv")
+#POS <- read.csv("./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_posteriorMLN.csv")
 
 #laptop path
 #ANT <- read.csv(file = "../lubomir/Documents/Eimeria_Lab/data/3_recordingTables/Exp007/CD40L_assays_Exp007_anteriorMLN.csv")
@@ -13,8 +13,8 @@ POS <- read.csv("./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays
 #POS <- read.csv(file = "../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_posteriorMLN.csv")
 
 #HU path
-#ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_anteriorMLN.csv")
-#POS <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_posteriorMLN.csv")
+ANT <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_anteriorMLN.csv")
+POS <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CD40L_assays_posteriorMLN.csv")
 
 #remove mouse 293 as it was mixed both posterior and anterior
 ANT <- ANT[-c(52),]
@@ -75,13 +75,13 @@ CELLS$Position <- gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "\\1
 #####################################################################################################################################
 #introduce parasitological data
 # HU: 
-#E7 <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv")
+E7 <- read.csv("../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv")
 
 #IZW path
 #Exp007 <- read.csv("../luke/Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv")
 
 #Home PC: 
-E7 <- read.csv("./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv")
+#E7 <- read.csv("./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv")
 
 E7_FACS <- merge(E7, CELLS)
 E7_FACS$X <- NULL
@@ -231,12 +231,13 @@ cell.mediansANT_HIST <- lapply(facs.measure.cols, function (x){
 })
 
 cell.mediansPOS_HIST <- lapply(facs.measure.cols, function (x){
-  tapply(dpi8POS[, x], dpi8POS$primary:dpi8ANT$challenge, median)
+  tapply(dpi8POS[, x], dpi8POS$primary:dpi8POS$challenge, median)
 })
 
 #######test with man whitney
 library(magrittr)
 names(cell.mediansANT_HIST) <- facs.measure.cols
+names(cell.mediansPOS_HIST) <- facs.measure.cols
 
 cell.mediansANT.history <- data.frame(matrix(unlist(cell.mediansANT_HIST), nrow=length(cell.mediansANT_HIST), byrow=T))
 cell.mediansANT.history <- set_rownames(cell.mediansANT.history, facs.measure.cols)
@@ -253,6 +254,11 @@ strains <- c(names(cell.mediansPOS.history))
 #check distribution
 library(ggplot2)
 library(ggpubr)
+
+ggqqplot(cell.mediansANT.history$`E64:E64`)
+ggqqplot(cell.mediansANT.history$`E64:E88`)
+ggqqplot(cell.mediansANT.history$`E88:E64`)
+ggqqplot(cell.mediansANT.history$`E88:E88`)
 
 ggqqplot(cell.mediansPOS.history$`E64:E64`)
 ggqqplot(cell.mediansPOS.history$`E64:E88`)
@@ -271,6 +277,22 @@ ggdensity(cell.mediansPOS.history$`E88:E64`,
 ggdensity(cell.mediansPOS.history$`E88:E88`, 
           main = "Density cell population medians",
           xlab = "")
+
+#try to apply some learned stuff
+library(reshape)
+library(reshape2)
+library(tidyr)
+library(dplyr)
+library(tibble)
+library(ggplot2)
+
+long.historyANT <- gather(cell.mediansANT.history, key = "history", value = "cell_populations", factor_key = FALSE)
+
+long.historyANT.names <- data.frame(long.historyANT = rep(x = facs.measure.cols, 4))
+long.historyANT <- cbind(long.historyANT, long.historyANT.names)
+
+ggplot(long.historyANT, aes(x = history, y = cell_populations, fill = long.historyANT)) +
+         geom_bar(stat = "identity", position = "dodge", color = "black")
 
 #figure this out (test cell populations between infection histories)
  #cell.tests.history <- lapply(strains, function (x){
