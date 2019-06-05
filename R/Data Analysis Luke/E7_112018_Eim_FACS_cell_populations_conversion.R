@@ -2,7 +2,7 @@
 library(httr)
 library(RCurl)
 
-CELLSfileUrl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FACS_cell_counts.csv"
+CELLSfileUrl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FACS_cell_counts_raw.csv"
 CELLS <- read.csv(text=getURL(CELLSfileUrl))
 
 # include percentage counts in the df
@@ -62,7 +62,7 @@ cell.counts$Dividing_Ki67p_in_Tbetp.cells <- with(cell.counts, (Th1Tbetp_in_CD4p
 #clean up table before saving
 #remove mouse column X (artifact)
 cell.counts$X = NULL
-cell.counts$Sample.1 = NULL
+cell.counts[,4] = NULL # only because of identical column names
 
 #write the .csv (rewrite Hongweis raw (all data included)) 
-write.csv(cell.counts, "./Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FACS_cell_counts.csv", quote = FALSE)
+write.csv(cell.counts, "./Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FACS_cell_counts_processed.csv", quote = FALSE)
