@@ -59,5 +59,10 @@ cell.counts$Th17RORgp_in_CD4pFoxp3n.cells <- with(cell.counts, (ThCD4p_Foxp3n.ce
 #Th1Tbetp_in_CD4pFoxp3n subsets to Dividing_Ki67p_in_Tbetp
 cell.counts$Dividing_Ki67p_in_Tbetp.cells <- with(cell.counts, (Th1Tbetp_in_CD4pFoxp3n.cells/100)*Dividing_Ki67p_in_Tbetp)
 
+#clean up table before saving
+#remove mouse column X (artifact)
+cell.counts$X = NULL
+cell.counts$Sample.1 = NULL
+
 #write the .csv (rewrite Hongweis raw (all data included)) 
 write.csv(cell.counts, "./Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FACS_cell_counts.csv", quote = FALSE)
