@@ -56,10 +56,10 @@ E7 <- merge(E7[E7$dpi%in%8,], cell.counts, by = "EH_ID")
 E7$infHistory <- E7$primary:E7$challenge
 
 ##select cell population names (now using .cells to calculate with actual cell populations)
-facs.measure.cols <- c("ThCD4p.cells", "TcCD8p.cells", "Th1IFNgp_in_CD4p.cells", "Th17IL17Ap_in_CD4p.cells", 
-                       "Tc1IFNgp_in_CD8p.cells", "Treg_Foxp3_in_CD4p.cells", "Dividing_Ki67p_in_Foxp3p.cells", 
-                       "RORgtp_in_Foxp3p.cells", "ThCD4p_Foxp3n.cells", "Th1Tbetp_in_CD4pFoxp3n.cells", "Dividing_Ki67p_in_Tbetp.cells", 
-                       "Th17RORgp_in_CD4pFoxp3n.cells", "Dividing_Ki67p_in_RORgtp.cells")
+facs.measure.cols <- c("ThCD4p", "TcCD8p", "Th1IFNgp_in_CD4p", "Th17IL17Ap_in_CD4p", 
+                       "Tc1IFNgp_in_CD8p", "Treg_Foxp3_in_CD4p", "Dividing_Ki67p_in_Foxp3p", 
+                       "RORgtp_in_Foxp3p", "ThCD4p_Foxp3n", "Th1Tbetp_in_CD4pFoxp3n", "Dividing_Ki67p_in_Tbetp", 
+                       "Th17RORgp_in_CD4pFoxp3n", "Dividing_Ki67p_in_RORgtp")
 
 #test for normality
 #if(!require(devtools)) install.packages("devtools")
