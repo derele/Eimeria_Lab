@@ -128,50 +128,79 @@ for(i in seq_along(facs_boxplots.position)){
   dev.off()
 }
 
-#check distribution with QQ
-qqnorm(E7$ThCD4p.cells[E7$Position == "Anterior"], main = "CD4p in Anterior")
-qqline(E7$ThCD4p.cells[E7$Position == "Anterior"])
+### raw counts are modeled either as poisson or negative binomial in
+### either case one could use the overall count (cell_counts) as
+### "offset" to specify the "duration of observation" (normally
+### offsets are used as a ratio, counto over time). I tried that, but
+### then figured out that I know too little about how to interprete
+### counts... expecially because the overall cell numbers are varying
+### SO MUCH that this changes the results completely!!!
 
-qqnorm(E7$ThCD4p.cells[E7$Position == "Posterior"], main = "CD4p in Posterior")
-qqline(E7$ThCD4p.cells[E7$Position == "Posterior"])
+#### 
+library(ggeffects)
 
-#test normality with Shapiro-Wilks test (only CD4+ here)
-with(E7, tapply(ThCD4p.cells, Position, shapiro.test))
-with(E7, tapply(ThCD4p.cells, infHistory, shapiro.test))
-
-#use anova for multi variable comparison, compare with Tukey, plot family comparisons
-aovThCD4p <- aov(ThCD4p.cells ~ infHistory, data = E7)
-model.tables(aovThCD4p, type = "effects")
-model.tables(aovThCD4p, type = "means")
-TukeyThCD4p <- TukeyHSD(aovThCD4p)
-plot(TukeyThCD4p, las=1) #let's automate this in a function
-
-
-## test differences between infection histories (by positon anterior/posterior)
-cell.testsPOS <- lapply(facs.measure.cols, function (x){
-  kruskal.test(E7[E7$Position%in%"Posterior", x], E7[E7$Position%in%"Posterior", "infHistory"])
+mods.l <- lapply(facs.measure.cols, function (x) {
+    glm(get(x) ~ (primary * challenge) + Position,
+        data=E7)
 })
+names(mods.l) <- facs.measure.cols
 
-## set cell type names
-names(cell.testsPOS) <- facs.measure.cols
-cell.testsPOS
+lapply(mods.l, summary)
 
-## test differences between infection histories (by positon anterior/posterior)
-cell.testsANT <- lapply(facs.measure.cols, function (x){
-  kruskal.test(E7[E7$Position%in%"Anterior", x], E7[E7$Position%in%"Anterior", "infHistory"])
+for(i in seq_along(facs.measure.cols)){
+    eff <- ggpredict(mods.l[[i]], terms=c("primary", "challenge", "Position"))
+    plot <-  plot(eff, rawdata=TRUE) +
+        scale_y_continuous(paste("percent", facs.measure.cols[[i]])) +
+        ggtitle(paste("predicted values of", facs.measure.cols[[i]]))
+    pdf(paste0(facs.measure.cols[[i]], ".effects.pdf"))
+    print(plot)
+    dev.off()
+}
+
+## I looked at the CD4 and CD8 INF cells b/c I remembered they were
+## "interesting". The pattern we see sofar in these cells is, however
+## that they are found _less_ posterior and _less_ in E64 primary. I
+## controlled this to be correct correct in basic means and medians...
+
+## Could this mean that E64 infection surpresses these INF producing
+## (?) cell types more than E88?!
+
+## -> Then our prediction would be that it's good for the host to have
+## littel of these cell types???
+
+## Let's have a first peek into how different hybrids are to pure mice
+## in this respect...
+
+modsHY.l <- lapply(facs.measure.cols, function (x) {
+    glm(get(x) ~ (primary * challenge) + Position + HybridStatus,
+        data=E7)
 })
+names(modsHY.l) <- facs.measure.cols
 
-## set cell type names
-names(cell.testsANT) <- facs.measure.cols
-cell.testsANT
-
+lapply(modsHY.l, summary)
 
 
-## ## remember to check the huge outlier value in Treg_Foxp3_in_CD4p (confirmed)
-## ## this would exclude it graphically...
-## ggplot(E7, aes(infHistory, Treg_Foxp3_in_CD4p)) +
-##     geom_boxplot() +
-##     geom_jitter(width=0.2) +
-##     facet_wrap(~Position) +
-##     ggtitle("Treg_Foxp3_in_CD4p") +
-##     ylim(0, 14)
+## And WOW (I reall wrote the above A PRIORY, otherwise... mayor
+## fishing excursion ;-)...), but Tc1IFNgp_in_CD8p are lower in
+## HYBRIDS look at THIS!!
+summary(modsHY.l[["Tc1IFNgp_in_CD8p"]])
+
+WOW <- ggpredict(modsHY.l[["Tc1IFNgp_in_CD8p"]],
+                 terms=c("primary", "challenge", "HybridStatus"))
+
+summary(modsHY.l[["Tc1IFNgp_in_CD8p"]], )
+
+pdf("WINNER_Tc1IFNgp_in_CD8p.effects.pdf")
+plot(WOW)
+dev.off()
+
+
+## Now... I fooled myself a bit to that enthusiasm, as I expected
+## "HybridStatusoutbred hybrids" to be ... well ... hybrids. Turns out
+## this are the within subspecies outbreds. Let's do some PostHoc
+## comparison. 
+library(multcomp)
+summary(glht(modsHY.l[["Tc1IFNgp_in_CD8p"]], mcp(HybridStatus="Tukey")))
+
+## nothing too shocking here, just that "outbred hybrids" have a trend
+## towards lower cell proportions compared to "inter subsp. hybrids"
