@@ -8,6 +8,9 @@ library(magrittr)
 library(ggplot2)
 library(ggpubr)
 library(lattice)
+library(ggeffects)
+library(multcomp)
+
 
 #CHUNK REDUNDANT AFTER FACS cell population conversion, moved there
 # ANTfileUrl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_CD40L_assays_anteriorMLN.csv"
@@ -137,7 +140,6 @@ for(i in seq_along(facs_boxplots.position)){
 ### SO MUCH that this changes the results completely!!!
 
 #### 
-library(ggeffects)
 
 mods.l <- lapply(facs.measure.cols, function (x) {
     glm(get(x) ~ (primary * challenge) + Position,
@@ -164,6 +166,10 @@ for(i in seq_along(facs.measure.cols)){
 
 ## Could this mean that E64 infection surpresses these INF producing
 ## (?) cell types more than E88?!
+### |-> this would make sense as the E88 ifections are more severe in terms of tissue damage. This could be explained by a highly 
+### stimulated Cytotoxic lymphocite populations (TcCD8+) and killing of infected/stress signalling epithelial cells. Also any shift
+### towards higher CD4+ Treg population would explain decrease in Th1CD4+ (inflammatory) and TcCD8+ (killer) cell presence.
+
 
 ## -> Then our prediction would be that it's good for the host to have
 ## littel of these cell types???
@@ -199,7 +205,7 @@ dev.off()
 ## "HybridStatusoutbred hybrids" to be ... well ... hybrids. Turns out
 ## this are the within subspecies outbreds. Let's do some PostHoc
 ## comparison. 
-library(multcomp)
+
 summary(glht(modsHY.l[["Tc1IFNgp_in_CD8p"]], mcp(HybridStatus="Tukey")))
 
 ## nothing too shocking here, just that "outbred hybrids" have a trend
