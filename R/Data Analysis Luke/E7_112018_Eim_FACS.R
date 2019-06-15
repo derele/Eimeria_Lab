@@ -210,3 +210,29 @@ summary(glht(modsHY.l[["Tc1IFNgp_in_CD8p"]], mcp(HybridStatus="Tukey")))
 
 ## nothing too shocking here, just that "outbred hybrids" have a trend
 ## towards lower cell proportions compared to "inter subsp. hybrids"
+
+## use Emanuel's method to look at other populations (make into function/loop later)
+
+modsHY.l <- lapply(facs.measure.cols, function (x) {
+  glm(get(x) ~ (primary * challenge) + Position + HybridStatus,
+      data=E7)
+})
+names(modsHY.l) <- facs.measure.cols
+
+lapply(modsHY.l, summary)
+
+
+for(i in seq_along(facs.measure.cols)){
+  hyb <- ggpredict(modsHY.l[[i]], terms=c("primary", "challenge", "HybridStatus"))
+  plot <-  plot(hyb, rawdata=TRUE) +
+    scale_y_continuous(paste("percent", facs.measure.cols[[i]])) +
+    ggtitle(paste("predicted values of", facs.measure.cols[[i]]))
+  pdf(paste0(facs.measure.cols[[i]], ".predict.pdf"))
+  print(plot)
+  dev.off()
+}
+
+## Run Tukey for all (fix all values are the same)
+predict.tukeys <- lapply(modsHY.l, function (x){
+  #problem is with "x" summary(glht(modsHY.l[[x]], mcp(HybridStatus="Tukey")))
+})
