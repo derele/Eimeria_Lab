@@ -2,6 +2,10 @@
 library(Rmisc)
 library(httr)
 library(RCurl)
+library(ggplot2)
+library(dplyr)
+library(Hmisc)
+library(data.table)
 
 E7a_design <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/E7a_112018_Eim_design.csv"
 E7b_design <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/E7b_112018_Eim_design.csv"
@@ -51,62 +55,27 @@ E7 <- merge(E7_design, E7_record)
 #write.csv(Exp007, "../luke/Documents//Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE", quote = FALSE)
 
 #export home (Win)
-write.csv(Exp007, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSEe)
+write.csv(E7, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
 
-# Split in 2 infection batches (Efalciformis and Eferrisi are studied separetely)
-E7_E88 <- E7[E7$primary %in% "E88",]
-E7_E64 <- E7[E7$primary %in% "E64",]
+#include combined infection history
+E7$infHistory <- E7$primary:E7$challenge
 
-#convert Wchange to numeric (291 and 295 are NAs)#
-# str(E7_E64)
-# Exp007_E64[,9] <- sapply(Exp007_E64[,9], as.numeric)
-# Exp007_E64[,7] <- sapply(Exp007_E64[,7], as.numeric)
-# str(Exp007_E64)
-# str(Exp007_E88)
-# Exp007_E88[,9] <- sapply(Exp007_E88[,9], as.numeric)
-# Exp007_E88[,7] <- sapply(Exp007_E88[,7], as.numeric)
-# str(Exp007_E88)
+#play with data and find a way to plot means with SD
+E7 <- E7[-c(447, 479),] #remove NAs
+hist(E7$Wchange, col = grey)
+summary(E7)
+boxplot(Wchange ~ infHistory, data = E7)
+boxplot(Wchange ~ HybridStatus, data = E7)
+boxplot(Wchange ~ dpi, data = E7)
+histogram(~Wchange | factor(infHistory), data = E7)
 
+#attach means of HybridStatus, infHistory, etc with data.table
+setDT(E7)[, WmeanHY := mean(Wchange), by = HybridStatus]
+setDT(E7)[, WmeanIH := mean(Wchange), by = infHistory]
+setDT(E7)[, WmeanD := mean(Wchange), by = dpi]
+#plot
+ggplot(data = E7, aes(x = dpi, y = Wchange, color = HybridStatus, group = EH_ID, size = )) +
+  geom_line()
 
-
-
-# calculate summary statistics on weight loss NEEDS FIXING #
-#WLoss_007_E64 <- summarise(Exp007_E64, measurevar = "Wchange",
-#                                   groupvars=c("HybridStatus", "dpi", "batch"), na.rm = T)
-#WLoss_007_E64$ci[is.na(WLoss_007_E64$ci)] <- 0
-#
-#WLoss_007_E88 <- summarySE(Exp007_E88, measurevar = "Wchange",
-#                                   groupvars=c("HybridStatus", "dpi", "batch"), na.rm = T)
-#WLoss_007_E88$ci[is.na(WLoss_007_E88$ci)] <- 0
-
-#convert Exp007 Wchange to numeric, replace dpi0 0% with 100%#
-#Exp007[,9] <- sapply(Exp007[,9], as.numeric)
-#Exp007$Wchange[Exp007$Wchange == 0] <- 100
-
-#Summary and confidence intervals (feces only)#
-#library(dplyr)
-#DF <- Exp007 %>%
- # group_by(dpi, InfectionStrain, HybridStatus) %>%
-  #dplyr::summarise(mean.weight = mean(Wchange, na.rm = T),
-   #                sd.weight = sd(Wchange, na.rm = TRUE),
-    #               n.weight = n()) %>%
-  #dplyr::mutate(se.weight = sd.weight / sqrt(n.weight),
-     #           lower.ci.weight = mean.weight - qt(1 - (0.05 / 2), 
-      #                                             n.weight - 1) * se.weight,
-       #         upper.ci.weight = mean.weight + qt(1 - (0.05 / 2), 
-        #                                           n.weight - 1) * se.weight)
-
-#Plot the Exp007#
-library(ggplot2)
-
-ggplot(DF, aes(x = dpi, y = mean.weight))+
-  geom_errorbar(aes(ymin = lower.ci.weight, ymax = upper.ci.weight, 
-                    col = HybridStatus),
-                alpha = 0.5) +
-  geom_line(aes(group = HybridStatus, col = HybridStatus), size = 2) +
-  geom_point(aes(fill = HybridStatus), size=4, pch = 21, color = "black") +
-  facet_grid(. ~ InfectionStrain) +
-  scale_x_continuous(breaks = 0:11, name = "Day post infection (dpi)") +
-  scale_y_continuous(name = "relative weight")
-
-
+ggplot(data = E7, aes(x = dpi, y = WmeanD, color = HybridStatus, group = EH_ID)) +
+  geom_line()

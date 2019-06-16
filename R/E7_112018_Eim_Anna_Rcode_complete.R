@@ -7,60 +7,75 @@
 
 ###########################################################################
 
-pathToData <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp007/"
-class(pathToData)
+# pathToData <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp007/"
+# class(pathToData)
 
-# Import our data
-Expe007a_oocysts <- read.csv(
-  paste(pathToData, "Exp007a/Exp_007a_oocyst_counts.csv", sep = ""))
-Expe007a_weight <- read.csv(
-  paste(pathToData, "Exp007a/Exp_007a_feces.csv", sep = ""))
-Expe007b_oocysts <- read.csv(
-  paste(pathToData, "Exp007b/Exp_007b_oocyst_counts.csv", sep = ""))
-Expe007b_weight <- read.csv(
-  paste(pathToData, "Exp007b/Exp_007b_feces.csv", sep = ""))
+# Import our data (better use raw file import straight away using library(httr) and library(RCurl))
+# E7a_oocysts <- read.csv(
+#   paste(pathToData, "Exp007a/Exp_007a_oocyst_counts.csv", sep = ""))
+E7a_oocysts <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7a_112018_Eim_oocyst_counts.csv"
+E7a_oocysts <- read.csv(text = getURL(E7a_oocysts))
+E7b_oocysts <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7b_112018_Eim_oocyst_counts.csv"
+E7b_oocysts <- read.csv(text = getURL(E7b_oocysts))
 
-pathToDesign <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/"
-Expe007a_design <- read.csv(
-  paste(pathToDesign, "Exp007a_design.csv", sep = ""))
-Expe007b_design <- read.csv(
-  paste(pathToDesign, "Exp007b_design.csv", sep = ""))
+# E7a_weight <- read.csv(
+#   paste(pathToData, "Exp007a/Exp_007a_feces.csv", sep = ""))
+# E7b_oocysts <- read.csv(
+#   paste(pathToData, "Exp007b/Exp_007b_oocyst_counts.csv", sep = ""))
+# E7b_weight <- read.csv(
+#   paste(pathToData, "Exp007b/Exp_007b_feces.csv", sep = ""))
+E7a_weight <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7a_112018_Eim_feces.csv"
+E7a_weight <- read.csv(text = getURL(E7a_weight))
+E7b_weight <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7b_112018_Eim_feces.csv"
+E7b_weight <- read.csv(text = getURL(E7b_weight))
+# 
+# pathToDesign <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/"
+# E7a_design <- read.csv(
+#   paste(pathToDesign, "Exp007a_design.csv", sep = ""))
+# E7b_design <- read.csv(
+#   paste(pathToDesign, "Exp007b_design.csv", sep = ""))
+E7_design <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/E7_112018_Eim_infection.history.csv"
+E7_design <- read.csv(text = getURL(E7_design))
 
 # First, merge the tables
-Expe007a <- merge(Expe007a_oocysts, Expe007a_weight)
-Expe007a <- merge(Expe007a, Expe007a_design)
+E7a <- merge(E7a_oocysts, E7a_weight)
+E7a <- merge(E7a, E7a_design)
 
-Expe007b <- merge(Expe007b_oocysts, Expe007b_weight)
-Expe007b <- merge(Expe007b, Expe007b_design)
+E7b <- merge(E7b_oocysts, E7b_weight)
+E7b <- merge(E7b, E7b_design)
 
-Expe007 <- merge(Expe007a, Expe007b, all = TRUE)
+E7 <- merge(E7a, E7b, all = TRUE)
 
-InfectionHistory <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp007/Exp_007_infection_history_complete.csv")
+# InfectionHistory <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp007/Exp_007_infection_history_complete.csv")
 
-Expe007 <- merge(Expe007, InfectionHistory, all=TRUE)
+E7 <- merge(E7, E7_design, all=TRUE)
 
 # To export
-# write.csv(Expe007, 
-#           file = "../../../../home/alice/Schreibtisch/GIT/Eimeria_Lab/data/3_recordingTables/Exp007/Expe007FullTable.csv", )
+# write.csv(E7, 
+#           file = "../../../../home/alice/Schreibtisch/GIT/Eimeria_Lab/data/3_recordingTables/Exp007/E7FullTable.csv", )
 
 # NB. Let's not consider which parent is which, but make A_B mouse = B_A mouse
-Expe007$Strain <- as.character(Expe007$Strain)
-x <- strsplit(Expe007$Strain, "_")
+E7$Strain <- as.character(E7$Strain)
+x <- strsplit(E7$Strain, "_")
 y <- lapply(x, sort)
 z <- unlist(lapply(y, FUN = function(x){paste(x, collapse="-")}))
-Expe007$Strain <- z
+E7$Strain <- z
 
 ############################################################################
 # Then prepare the oocysts counts
 
-Expe007$totalOocysts <- ((Expe007$oocyst_1 
-                          + Expe007$oocyst_2 
-                          + Expe007$oocyst_3 
-                          + Expe007$oocyst_4) / 4) * 
+E7$totalOocysts <- ((E7$oocyst_1 
+                          + E7$oocyst_2 
+                          + E7$oocyst_3 
+                          + E7$oocyst_4) / 4) * 
   10000 * # because volume chamber
-  Expe007$volume_PBS_mL
+  E7$volume_PBS_mL
 
-Expe007$OPG <- Expe007$totalOocysts / Expe007$fecweight 
+E7$OPG <- E7$totalOocysts / E7$fecweight 
+
+#remove comment column and 295 mouse before continuing to avoid NAs
+E7$comment = NULL
+E7 <- E7[-c(478 : 486),]
 
 ###############################################################################
 
@@ -73,62 +88,62 @@ library(gridExtra)
 ############ Plot OPG/dpi ############
 
 # explore
-#table(Expe007$batch, Expe007$challenge)
+#table(E7$batch, E7$challenge)
 
 #Plot OPG/day
-ggplot(Expe007, aes(x = dpi, y = OPG, group = EH_ID, col = EH_ID)) +
+ggplot(E7, aes(x = dpi, y = OPG, group = EH_ID, col = EH_ID)) +
   geom_point()+geom_line()+theme_bw() # pretty
 
 #Plot OPG/day per strain
-ggplot(Expe007, aes(x = dpi, y = OPG, group = EH_ID, col = Strain)) +
+ggplot(E7, aes(x = dpi, y = OPG, group = EH_ID, col = Strain)) +
   geom_point()+geom_line()+theme_bw()
 
-ggplot(Expe007, aes(x = dpi, y = OPG, group = EH_ID, col = Strain)) +
+ggplot(E7, aes(x = dpi, y = OPG, group = EH_ID, col = Strain)) +
   geom_point()+geom_line()+theme_bw()+facet_grid(.~challenge)
 
 #Plot OPG/dpi per hybrid status
-ggplot(Expe007, aes(x = dpi, y = OPG, group = EH_ID, col = HybridStatus)) +
+ggplot(E7, aes(x = dpi, y = OPG, group = EH_ID, col = HybridStatus)) +
   geom_point()+geom_line()+theme_bw()
 
-ggplot(Expe007, aes(x = dpi, y = OPG, group = EH_ID, col = HybridStatus)) +
+ggplot(E7, aes(x = dpi, y = OPG, group = EH_ID, col = HybridStatus)) +
   geom_point()+geom_line()+theme_bw()+facet_grid(.~HybridStatus)
 
-ggplot(Expe007, aes(x = dpi, y = OPG, group = EH_ID, col = challenge)) +
+ggplot(E7, aes(x = dpi, y = OPG, group = EH_ID, col = challenge)) +
   geom_point()+geom_line()+theme_bw()+facet_grid(.~HybridStatus)
 
-ggplot(Expe007, aes(x = dpi, y = OPG, group = EH_ID, col = HybridStatus)) +
+ggplot(E7, aes(x = dpi, y = OPG, group = EH_ID, col = HybridStatus)) +
   geom_point()+geom_line()+theme_bw()+facet_grid(.~challenge)
 
 #Plot OPG/day per Eimeria 
-ggplot(Expe007, aes(x = dpi, y = OPG, group = EH_ID, col = challenge)) +
+ggplot(E7, aes(x = dpi, y = OPG, group = EH_ID, col = challenge)) +
   geom_point()+geom_line()+theme_bw()
 
-ggplot(Expe007, aes(x = dpi, y = OPG, group = EH_ID, col = challenge)) +
+ggplot(E7, aes(x = dpi, y = OPG, group = EH_ID, col = challenge)) +
   geom_point()+geom_line()+theme_bw()+facet_grid(.~challenge)
 
-ggplot(Expe007, aes(x = dpi, y = OPG, group = EH_ID, col = challenge)) +
+ggplot(E7, aes(x = dpi, y = OPG, group = EH_ID, col = challenge)) +
   geom_point()+geom_line()+theme_bw()+facet_grid(.~Strain)
 
-ggplot(Expe007, aes(x = dpi, y = OPG, group = EH_ID, col = HybridStatus)) +
+ggplot(E7, aes(x = dpi, y = OPG, group = EH_ID, col = HybridStatus)) +
   geom_point()+geom_line()+theme_bw()+facet_grid(.~Strain)
 
 
 ############ Plot weight/dpi ############
 
 #Plot weight/dpi
-ggplot(Expe007a, aes(x=dpi, y=weight, group=EH_ID, col= EH_ID)) +
+ggplot(E7, aes(x=dpi, y=weight, group=EH_ID, col= EH_ID)) +
   geom_point()+geom_line()+theme_bw()
 
 #Plot weight/dpi per strain
-ggplot(Expe007a, aes(x=dpi, y=weight, group=EH_ID, col= Strain)) +
+ggplot(E7, aes(x=dpi, y=weight, group=EH_ID, col= Strain)) +
   geom_point()+geom_line()+theme_bw()
 
 #Plot weight/dpi per hybrid
-ggplot(Expe007a, aes(x=dpi, y=weight, group=EH_ID, col= HybridStatus)) +
+ggplot(E7, aes(x=dpi, y=weight, group=EH_ID, col= HybridStatus)) +
   geom_point()+geom_line()+theme_bw()
 
 #Plot weight/dpi per Eimeria
-ggplot(Expe007a, aes(x=dpi, y=weight, group=EH_ID, col= challenge)) +
+ggplot(E7, aes(x=dpi, y=weight, group=EH_ID, col= challenge)) +
   geom_point()+geom_line()+theme_bw()
 
 
@@ -136,12 +151,12 @@ ggplot(Expe007a, aes(x=dpi, y=weight, group=EH_ID, col= challenge)) +
 
 #Plot weight change/dpi 
 #this is relative weight change...
-# ggplot(Expe007a, aes(x=dpi, y=Wchange, group=EH_ID, col= EH_ID)) + geom_point()+geom_line()+theme_bw()
+# ggplot(E7a, aes(x=dpi, y=Wchange, group=EH_ID, col= EH_ID)) + geom_point()+geom_line()+theme_bw()
 
 # Make a plot with group = mean + 95%CI
 
 #OPG mean per Strain
-#StrainMean <- aggregate(Expe007[ , 10], list(Expe007$Strain), mean)
+#StrainMean <- aggregate(E7[ , 10], list(E7$Strain), mean)
 
 
 ###########################################################################
@@ -156,7 +171,8 @@ setwd("C:/Users/Anna/Documents/HU Berlin/AG HU/Bachelorarbeit/DNA qPCR")
 getwd()
 
 #Open and save data
-qPCR <- read.table("qPCR_DNA_ct_Zusammenfassung.txt", sep="\t", header=T, dec=",")
+qPCR <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_!nna_qPCR_DNA_ct_Zusammenfassung.txt"
+qPCR <- read.table(qPCR, sep="\t", header=T, dec=",")
 
 ###########################################################################
 
@@ -215,7 +231,7 @@ library(tidyr)
 #Rename Name to EH_ID
 colnames(mergedData)[colnames(mergedData)=="Name"] <- "EH_ID"
 
-#Clean table
+#Clean table ########### This is missing from GitHub
 InfectionHistory <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/Exp007/Exp_007_infection_history_complete.csv")
 InfectionHistory <- InfectionHistory %>% distinct()
 
@@ -294,18 +310,18 @@ ggplot(InfectionTable, aes(x = EH_ID, y = deltaCt_MminusE,
 ##### Combine infection history and strain info #####
 
 #Merge and clean design table
-Expe007_design <- merge(Expe007a_design, Expe007b_design, all=TRUE)
-Expe007_design <- Expe007_design %>% select(EH_ID, HybridStatus, Strain, Genome)
+E7_design <- merge(E7a_design, E7b_design, all=TRUE)
+E7_design <- E7_design %>% select(EH_ID, HybridStatus, Strain, Genome)
 
 #A_B mouse = B_A mouse
-Expe007_design$Strain <- as.character(Expe007_design$Strain)
-a <- strsplit(Expe007_design$Strain, "_")
+E7_design$Strain <- as.character(E7_design$Strain)
+a <- strsplit(E7_design$Strain, "_")
 b <- lapply(a, sort)
 c <- unlist(lapply(b, FUN = function(a){paste(a, collapse="-")}))
-Expe007_design$Strain <- c
+E7_design$Strain <- c
 
 #Merge with Infection History and clean
-InfectionTable <- merge(InfectionTable, Expe007_design, all=TRUE)
+InfectionTable <- merge(InfectionTable, E7_design, all=TRUE)
 InfectionTable <- InfectionTable[-c(54), ]
 #write.csv(InfectionTable, file = "C:/Users/Anna/Documents/HU Berlin/AG HU/Bachelorarbeit/Infection_history.csv")
 
@@ -326,7 +342,7 @@ ggplot(InfectionTable, aes(x = InfectionHistoryTotal, y = deltaCt_MminusE,
 
 ##### Graph with deltact per oocysts on dpi_x #####
 
-alldata <- merge(Expe007, InfectionTable, all = TRUE)
+alldata <- merge(E7, InfectionTable, all = TRUE)
 
 ##dpi7##
 #Like this, its just picking the rows that are true for the statement -> dplyr has it 
