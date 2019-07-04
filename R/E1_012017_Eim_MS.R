@@ -4,7 +4,8 @@
 library(ggplot2)
 library(lme4)
 library(lmerTest)
-library(lsmeans)
+library(lsmeans) # "mvtnorm" dependency is not available through base repos,
+#use install.packages("https://cran.r-project.org/src/contrib/Archive/mvtnorm/mvtnorm_1.0-8.tar.gz", repos=NULL)
 library(strengejacke)
 library(plyr)
 library(coin)
