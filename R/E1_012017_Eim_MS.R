@@ -10,19 +10,26 @@ library(strengejacke)
 library(plyr)
 library(coin)
 library(ggeffects)
+library(httr)
+library(RCurl)
+library(Rmisc)
 
 #### ### get the data --------------------------------------------
 
 ## for control: general experimental setup -------------------
-stab <- read.csv("./Experiment_Table_raw_NMRI_Jan2017.csv")
+#stab <- read.csv("./Experiment_Table_raw_NMRI_Jan2017.csv")
+stabURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/E1_012017_Eim_Experiment_Table_raw_NMRI.csv"
+stab <- read.csv(text=getURL(stabURL))
 stab <- subset(stab, !stab$inf.strain%in%"EI70", drop=TRUE)
 stab$inf.strain <- as.factor(as.character(stab$inf.strain))
 
 ## weight --------------------------------------------------------
-weight <- read.csv("./Weight_Expe_Jan_2017.csv")
+weightURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E1_012017_Eim_record.csv"
+weight <- read.csv(text=getURL(weightURL))
 ## weight was only obtained for mice dissected at or after 7dpi
 ## correcting the names
-names(weight)[names(weight)%in%"Mouse.ID"] <- "mouseID"
+names(weight)[names(weight)%in%"Mouse.ID"] <- "EH_ID"
+names(stab)[names(stab)%in%"EH_ID"] <- "EH_ID"
 
 ## EI70 infections were not followed up as likely double infections
 weight <- weight[!weight$inf.strain%in%"EI70", ] 
@@ -41,7 +48,7 @@ weight <- cbind(weight, p.weight[, 2:ncol(p.weight)])
 
 weight.long <- reshape(weight,
                        direction = "long",
-                       idvar = "mouseID", ids = mouseID,
+                       idvar = "EH_ID", ids = EH_ID,
                        varying = list(grep(".p$", colnames(weight), value=TRUE)),
                        timevar="dpi_of_perc",
                        v.names = "perc_of_dpi1", 
@@ -53,20 +60,22 @@ weight.long$dpi_of_perc <- as.numeric(gsub("Day\\.?(\\d+)_\\.p", "\\1",
 weight.long <- weight.long[, !grepl("^Day.", names(weight.long)) ]
 
 ### oocysts ---------------------------------------------------------
-oocysts <- read.csv("./Clean_oocyst_data.csv")
+#oocysts <- read.csv("./Clean_oocyst_data.csv")
+oocystsURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E1_012017_Eim_Clean_oocyst_data.csv"
+oocysts <- read.csv(text=getURL(oocystsURL))
 
 oocysts$Total.oocysts.g <- ((oocysts$Count..8.Neubauer.squares. / 8)*
                             10000 * 2) / oocysts$used.in.flotation..g.
 
 ## correcting the names
-names(oocysts)[names(oocysts)%in%c("Sample.ID", "dpi")] <- c("mouseID", "dpi_count")
+names(oocysts)[names(oocysts)%in%c("Sample.ID", "dpi")] <- c("EH_ID", "dpi_count")
 oocysts <- merge(oocysts, stab, all.y=TRUE)
 
-all.data <- merge(oocysts[, c("mouseID", "dpi_count", "Total.oocysts.g",
+all.data <- merge(oocysts[, c("EH_ID", "dpi_count", "Total.oocysts.g",
                               "dpi.diss", "inf.strain")],
                   weight.long,
-                  by.x=c("mouseID", "dpi_count", "dpi.diss", "inf.strain"),
-                  by.y=c("mouseID", "dpi_of_perc", "dpi.diss", "inf.strain"),
+                  by.x=c("EH_ID", "dpi_count", "dpi.diss", "inf.strain"),
+                  by.y=c("EH_ID", "dpi_of_perc", "dpi.diss", "inf.strain"),
                   all=TRUE)
 
 ## we can observe some pattern:
@@ -80,7 +89,9 @@ all.data <- merge(oocysts[, c("mouseID", "dpi_count", "Total.oocysts.g",
 
 ############# --------------- qPCR for DNA -------------------
 
-Rtissue <- read.csv("./Eimeria-NMRI_Relative quantification_clean.csv")
+#Rtissue <- read.csv("./Eimeria-NMRI_Relative quantification_clean.csv")
+RtissueURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E1_012017_Eim_NMRI_Relative_quantification_clean.csv"
+Rtissue <- read.csv(text=getURL(RtissueURL))
 
 ## only the means
 RtMeans <- Rtissue[seq(1, nrow(Rtissue), by=2),
@@ -88,11 +99,11 @@ RtMeans <- Rtissue[seq(1, nrow(Rtissue), by=2),
 
 RtMeans <- Rtissue[seq(1, nrow(Rtissue), by=2),
                    c("Sample", "Cq.Mean", "Cq.Mean.1")]
-names(RtMeans) <- c("mouseID", "Mouse_gDNA", "Eimeria_mDNA")
+names(RtMeans) <- c("EH_ID", "Mouse_gDNA", "Eimeria_mDNA")
 
-RtMeans$mouseID <- toupper(RtMeans$mouseID)
+RtMeans$EH_ID <- toupper(RtMeans$EH_ID)
 ## LM0065 was measured twice with the same outcome
-RtMeans <- RtMeans[!duplicated(RtMeans$mouseID),]
+RtMeans <- RtMeans[!duplicated(RtMeans$EH_ID),]
 RtMeans <- merge(RtMeans, stab, all=TRUE)
 RtMeans$dpi.diss <- gsub("dip$", "dpi", RtMeans$dpi.diss)
 RtMeans$dpi_count<- as.numeric(gsub("dpi", "", RtMeans$dpi.diss))
@@ -311,10 +322,10 @@ GeMeans$Sample <- toupper(GeMeans$Sample)
 GeMeans <- GeMeans[!GeMeans$Gene%in%"",]
 GeMeans$Gene <- toupper(GeMeans$Gene)
 ## standard naming
-names(GeMeans)[names(GeMeans)%in%"Sample"] <- "mouseID"
+names(GeMeans)[names(GeMeans)%in%"Sample"] <- "EH_ID"
 
 ## wide dateset for merging in overall table
-GeMeans.wide <- reshape(GeMeans, timevar = "Gene", idvar = "mouseID", direction = "wide")
+GeMeans.wide <- reshape(GeMeans, timevar = "Gene", idvar = "EH_ID", direction = "wide")
 
 M <- merge(GeMeans, stab, all=TRUE)
 M.wide <- merge(GeMeans.wide, stab, all=TRUE)
@@ -405,7 +416,7 @@ hist <- read.csv("./Histo.csv")
 hist$mMLS <- rowMeans(hist[, grepl("^MLS", colnames(hist))])
 hist$sMLS <- rowSums(hist[, grepl("^MLS", colnames(hist))])
 
-names(hist)[names(hist)%in%"Sample.ID"] <- "mouseID"
+names(hist)[names(hist)%in%"Sample.ID"] <- "EH_ID"
 stab <- merge(stab, hist, all=TRUE)
 
 ## no need to subset because Enas does not report MLS for uninfected
@@ -463,7 +474,7 @@ FlamModmls <- lmer(Score1~sMLS*inf.strain + (1|dpi.diss), data=stab)
 summary(FlamModmls)
 
 ## which peak is first
-diffthat <- by(all.data, all.data$mouseID, function (x){
+diffthat <- by(all.data, all.data$EH_ID, function (x){
     minW <- min(x[, "perc_of_dpi1"], na.rm=TRUE)
     WminW <- which(x[, "perc_of_dpi1"] == minW)
     dayminW <- mean(x[WminW, "dpi_count"])
@@ -474,17 +485,17 @@ diffthat <- by(all.data, all.data$mouseID, function (x){
 })
 
 diffthis <- do.call(rbind, diffthat)
-rownames(diffthis) <- unique(all.data$mouseID)
+rownames(diffthis) <- unique(all.data$EH_ID)
 diffthis <- diffthis[rowSums(is.na(diffthis))==0, ]
-diffthis <- merge(stab, diffthis, by.x="mouseID", by.y=0)
+diffthis <- merge(stab, diffthis, by.x="EH_ID", by.y=0)
 
-diffthis$mouseID <- as.factor(as.character(diffthis$mouseID))
+diffthis$EH_ID <- as.factor(as.character(diffthis$EH_ID))
 
 library(reshape)
 difflong <- melt(diffthis)
 
 pdf("figures/peaks.pdf", width=8, height=4)
-ggplot(difflong, aes(y=mouseID, x=value, color=variable)) +
+ggplot(difflong, aes(y=EH_ID, x=value, color=variable)) +
     geom_point(size=4, alpha=0.5) +
     facet_wrap(~inf.strain) +
     scale_x_continuous("days post infection", breaks=3:11) +
@@ -498,7 +509,7 @@ dev.off()
 
 pdf("figures/peaks_alt.pdf", width=6, height=6)
 pd <- position_dodge(0.15)
-ggplot(data=difflong, aes(x=value, y=variable, group=mouseID)) +
+ggplot(data=difflong, aes(x=value, y=variable, group=EH_ID)) +
     geom_line(color="red", position=pd)+
     geom_point(position=pd) +
     facet_wrap(~inf.strain) +
