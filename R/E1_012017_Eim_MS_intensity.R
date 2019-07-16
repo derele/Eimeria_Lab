@@ -1,11 +1,13 @@
 ## Analysis of experiment performed on NMRI mice in January 2017
 ## Emanuel Heitlinger
 ## Alice Balard
+## Lubomir Bednar
 library(ggplot2)
 library(lme4)
 library(lmerTest)
 library(lsmeans) # "mvtnorm" dependency is not available through base repos,
 #use install.packages("https://cran.r-project.org/src/contrib/Archive/mvtnorm/mvtnorm_1.0-8.tar.gz", repos=NULL)
+library(devtools) # devtools::install_github("strengejacke/strengejacke")
 library(strengejacke)
 library(plyr)
 library(coin)
@@ -37,15 +39,17 @@ weight <- weight[!weight$inf.strain%in%"EI70", ]
 ## remove non meaningful columns
 weight <- weight[, !colnames(weight)%in%c("Mouse.number", "Date.of.Birth")]
 
+#set weight as percentages
 p.weight <- apply(weight[, grepl("^Day.*g", colnames(weight))], 2,
                   function (x) {
                       (x/weight$Day.1_.g)*100
                   })
-
+#append the weight percentages
 colnames(p.weight) <- gsub(".g", ".p", colnames(p.weight))
 
 weight <- cbind(weight, p.weight[, 2:ncol(p.weight)])
 
+#create long format data
 weight.long <- reshape(weight,
                        direction = "long",
                        idvar = "EH_ID", ids = EH_ID,
@@ -53,7 +57,7 @@ weight.long <- reshape(weight,
                        timevar="dpi_of_perc",
                        v.names = "perc_of_dpi1", 
                        times = grep(".p$", colnames(weight), value=TRUE))
-
+#extract the  weight-dpi information from names
 weight.long$dpi_of_perc <- as.numeric(gsub("Day\\.?(\\d+)_\\.p", "\\1",
                                            weight.long$dpi_of_perc))
 
@@ -64,6 +68,7 @@ weight.long <- weight.long[, !grepl("^Day.", names(weight.long)) ]
 oocystsURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E1_012017_Eim_Clean_oocyst_data.csv"
 oocysts <- read.csv(text=getURL(oocystsURL))
 
+#add a column for total oocyst numbers
 oocysts$Total.oocysts.g <- ((oocysts$Count..8.Neubauer.squares. / 8)*
                             10000 * 2) / oocysts$used.in.flotation..g.
 
