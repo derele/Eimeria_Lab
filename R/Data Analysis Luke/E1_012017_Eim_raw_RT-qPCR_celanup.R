@@ -60,3 +60,39 @@ Samples_87_73_53_31 <- read.csv(text = getURL(Samples_87_73_53_31url), sep = ";"
 
 Samples_48url<- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E1_012017_Eim_RT-Caecum_qPCR/11_07_2019_Samples_48/admin_2019-07-11%2014-19-57_CC011384%20-%20%20Quantification%20Cq%20Results_0.csv"
 Samples_48 <- read.csv(text = getURL(Samples_48url), sep = ";")
+
+#meger it all
+All <- rbind(Samples_48, Samples_49_32_28_34, Samples_51_55_56_58, Samples_57a_57b_76a_76b, Samples_59_60_61_62, Samples_63_64_65_66,
+      Samples_67_68_69_73, Samples_75_77_79_80, Samples_81_82_83_84, Samples_85_86_88_89, Samples_87_73_53_31, 
+      Samples_90_91_93_22a, Samples_C_27_74_95)
+#Delete rubbish columns
+All$X <- NULL
+All$Biological.Set.Name <- NULL
+All$Cq.Std..Dev <- NULL
+All$Starting.Quantity..SQ. <- NULL
+All$Log.Starting.Quantity <- NULL
+All$Well.Note <- NULL
+All$SQ.Mean <- NULL
+All$SQ.Std..Dev <- NULL
+#convert "n.def" and 0 to NAs, Unknowns to Cecum, Empty Target to Nothing and Ppia to Pos Ctrl
+All[All=="n. def."] <- NA
+All[All=="0"] <- NA
+All$Content <- as.character(All$Content)
+All$Content[All$Content == "Unkn"] <- "Cecum"
+All$Target <- as.character(All$Target)
+All$Target[All$Target == ""] <- "Nothing"
+#sets Ppia accidentally to NA, doen't matter, just convert NAs to "Pos Ctrl" ## Definitely fix later
+All <- within(All, Content[Target=="Ppia"] <- ("Pos Ctrl"[Target=="Ppia"]))
+All$Content[is.na(x = All$Content)] <- "Pos Ctrl"
+
+#Add SDs
+
+#convert factor columns to numeric where appropriate, MESSES up teh whole thing, find way around (ignore NAs?)
+All$Cq <- transform(All, Cq = as.numeric(Cq))
+All$Cq.Mean <- transform(All, Cq.Mean = as.numeric(Cq.Mean))
+
+All$
+
+
+
+sapply(All$Cq.Mean, sd)
