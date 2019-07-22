@@ -84,15 +84,7 @@ All$Target[All$Target == ""] <- "Nothing"
 #sets Ppia accidentally to NA, doen't matter, just convert NAs to "Pos Ctrl" ## Definitely fix later
 All <- within(All, Content[Target=="Ppia"] <- ("Pos Ctrl"[Target=="Ppia"]))
 All$Content[is.na(x = All$Content)] <- "Pos Ctrl"
-
-#Add SDs
-
-#convert factor columns to numeric where appropriate, MESSES up teh whole thing, find way around (ignore NAs?)
-All$Cq <- transform(All, Cq = as.numeric(Cq))
-All$Cq.Mean <- transform(All, Cq.Mean = as.numeric(Cq.Mean))
-
-All$
-
-
-
-sapply(All$Cq.Mean, sd)
+#Omit NAs
+All <- na.omit(All)
+#write out to new file
+write.csv(x = All, file = "//home/lubomir/Documents/Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", quote = FALSE)
