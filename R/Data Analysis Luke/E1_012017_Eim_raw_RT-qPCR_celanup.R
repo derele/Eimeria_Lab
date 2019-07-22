@@ -87,4 +87,4 @@ All$Content[is.na(x = All$Content)] <- "Pos Ctrl"
 #Omit NAs
 All <- na.omit(All)
 #write out to new file
-write.csv(x = All, file = "//home/lubomir/Documents/Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", quote = FALSE)
+write.csv(x = All, file = "//home/lubomir/Documents/Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv")
