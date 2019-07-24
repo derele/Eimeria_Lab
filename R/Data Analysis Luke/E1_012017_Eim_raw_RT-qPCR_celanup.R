@@ -86,5 +86,7 @@ All <- within(All, Content[Target=="Ppia"] <- ("Pos Ctrl"[Target=="Ppia"]))
 All$Content[is.na(x = All$Content)] <- "Pos Ctrl"
 #Omit NAs
 All <- na.omit(All)
-#write out to new file
+#write out to new file (Laptop)
 write.csv(x = All, file = "//home/lubomir/Documents/Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv")
+#write out to new file (Win)
+write.csv(All, "./Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", row.names = FALSE)
