@@ -1,0 +1,11 @@
+;True;Target;MouseCaecum1 Normalized Expression;MouseCaecum2 Normalized Expression;MouseCaecum2 Regulation;Compared to Regulation Threshold
+;True;CDC42;n. def.;n. def.;n. def.;No change
+;True;CXCL9;0,126533166830631;0,000975923149053962;-129,654847262604;Down regulated
+;True;IFN-g;0,169333085655554;0,00118916000737529;-142,397225440927;Down regulated
+;True;IL-10;0,00178675235187869;0,000666028050034634;-2,68269835149703;No change
+;True;IL-12;0,000688492916418321;0,000407293764870944;-1,69040868238304;No change
+;True;IL-6;0,0117765495703577;0,00397790575581214;-2,96048983894374;No change
+;True;Ppia;n. def.;n. def.;n. def.;No change
+;True;Ppib;n. def.;n. def.;n. def.;No change
+;True;STAT6;0,0180654396209732;0,0356500694825511;1,97338510606534;No change
+;True;TGF-b;0,0262108597080055;0,0254840139910099;-1,02852163388593;No change
