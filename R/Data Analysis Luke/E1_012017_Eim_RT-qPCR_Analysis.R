@@ -7,6 +7,7 @@ library(dplyr)
 library(compare)
 library(viridis)
 library(RColorBrewer)
+library(ggsci)
 
 #load in data from GitHub
 RTqPCRurl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/b4efd8df335199ff9037634c5ba1d909a7d58baa/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv"
@@ -27,12 +28,6 @@ Infection <- read.csv(text = getURL(InfectionURL))
 names(Infection)[names(Infection) == "mouseID"] <- "EH_ID"
 names(Infection)[names(Infection) == "inf.strain"] <- "InfectionStrain"
 AVG_INF <- merge(AVG, Infection, by = "EH_ID", all = TRUE)
-#missing 80 values, compare
-comparison <- compare(AVG,AVG_INF,allowAll=TRUE)
-comparison$tM
-#write out AVG_inf to correct based on lab book notes
-write.csv(AVG_INF, file = "./AVG_INF.csv")
-
 #subset for graphing 
 Inf.groups <- subset(AVG_INF, 
                 InfectionStrain%in%"Eflab"|
@@ -40,7 +35,9 @@ Inf.groups <- subset(AVG_INF,
                 InfectionStrain%in%"EI70"|
                 InfectionStrain%in%"EI64"|
                 InfectionStrain%in%"Uninf")
+#remove rows for missing samples
+Inf.groups <- Inf.groups[ !(Inf.groups$EH_ID %in% c("LM0021", "LM0033", "LM0035", "LM0052")), ]
+
 
 ggplot(AVG_INF, aes(x = InfectionStrain, y = Cq.Mean, color = Target)) +
-  geom_boxplot() +
-  scale_color_viridis(option = "A")
+  geom_boxplot()
