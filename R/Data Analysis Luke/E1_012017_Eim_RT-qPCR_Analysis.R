@@ -9,7 +9,7 @@ library(viridis)
 library(RColorBrewer)
 library(ggsci)
 
-#load in data from GitHub, doesn't work atm (more columns than column names)
+#load in RTqPCR data from GitHub, doesn't work atm (more columns than column names)
 RTqPCRurl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/b4efd8df335199ff9037634c5ba1d909a7d58baa/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv"
 RTqPCR <- read.csv(text = getURL(RTqPCRurl))
 # manual loading: Win
@@ -18,30 +18,59 @@ RTqPCR <- read.csv(file = "./Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT
 RTqPCR <- read.csv(file = "./Documents/Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", sep = ";")
 #change colnames to match standard
 names(RTqPCR)[names(RTqPCR) == "Sample"] <- "EH_ID"
-#average duplicates and add SD
-AVG <- RTqPCR %>% group_by(Target, EH_ID) %>% 
+# just averages and add SD
+RTqPCR <- RTqPCR %>% group_by(Target, EH_ID) %>% 
   summarize(SD = sd(Cq.Mean),
             Cq.Mean = mean(Cq.Mean))
 
-#add mouse data
+#------------------add and process design table---------------------------------------------------------
 InfectionURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/E1_012017_Eim_Experiment_Table_raw_NMRI.csv"
 Infection.design <- read.csv(text = getURL(InfectionURL))
 #rename columns and merge
-names(Infection)[names(Infection) == "mouseID"] <- "EH_ID"
-names(Infection)[names(Infection) == "inf.strain"] <- "InfectionStrain"
-AVG_INF <- merge(AVG, Infection, by = "EH_ID", all = TRUE)
+names(Infection.design)[names(Infection.design) == "mouseID"] <- "EH_ID"
+names(Infection.design)[names(Infection.design) == "inf.strain"] <- "InfectionStrain"
+all.data <- merge(RTqPCR, Infection.design, by = "EH_ID", all = TRUE)
 #add Uninf to LM00C (otherwise gets removed by subset)
-AVG_INF[715:724,"InfectionStrain"] <- "Uninf"
+all.data[715:724,"InfectionStrain"] <- "Uninf"
+all.data[715:724, "dpi.diss"] <- c("0dpi")
 #remove rows for missing samples
-AVG_INF <- AVG_INF[ !(AVG_INF$EH_ID %in% c("LM0021", "LM0033", "LM0035", "LM0052")), ]
-#subset by infection 
-Infection <- subset(AVG_INF, InfectionStrain%in%"Eflab"|InfectionStrain%in%"Efwild"|InfectionStrain%in%"EI70"|
-                       InfectionStrain%in%"EI64"|InfectionStrain%in%"Uninf")
+all.data <- all.data[ !(all.data$EH_ID %in% c("LM0021", "LM0033", "LM0035", "LM0052")), ]
+#make dpi.diss numeric and a separate column
+all.data$dpi <- as.numeric(gsub("dpi|dip", "", all.data$dpi.diss))
+
+#----------------add and process infection intensity expression-----------------------------------#needs rewrite
+RtissueURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Eimeria-NMRI_Relative%20quantification_clean.csv"
+Rtissue <- read.csv(text = getURL(RtissueURL))
+## only the means
+RtMeans <- Rtissue[seq(1, nrow(Rtissue), by=2), c("Sample", "Cq.Mean", "Cq.Mean.1")]
+#naming and upper case
+names(RtMeans) <- c("EH_ID", "Mouse_gDNA", "Eimeria_mDNA")
+RtMeans$EH_ID <- toupper(RtMeans$EH_ID)
+## LM0065 was measured twice with the same outcome
+RtMeans <- RtMeans[!duplicated(RtMeans$EH_ID),]
+RtMeans <- merge(RtMeans, stab, all=TRUE)
+RtMeans$dpi.diss <- gsub("dip$", "dpi", RtMeans$dpi.diss)
+RtMeans$dpi_count<- as.numeric(gsub("dpi", "", RtMeans$dpi.diss))
+
+#--------------------------add and process oocyst data---------------------------------------------------
+oocystsURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Clean_oocyst_data.csv"
+oocysts <- read.csv(text = getURL(oocystsURL))
+
+#--------------------------add and process mouse weight data---------------------------------------------
+weightURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Weight_Expe_Jan_2017.csv"
+weight <- read.csv(text = getURL(weightURL))
+
+
+
+
+##subset by infection 
+Infection <- subset(all.data, InfectionStrain%in%"Eflab"|InfectionStrain%in%"Efwild"|InfectionStrain%in%"EI70"|
+                      InfectionStrain%in%"EI64"|InfectionStrain%in%"Uninf")
 # subset by gene
-Genes <- subset(AVG_INF, Target%in%"CDC42"|Target%in%"CXCL9"|Target%in%"IFN-g"|Target%in%"IL-10"|Target%in%"IL-12"|
-                Target%in%"IL-6"|Target%in%"Ppia"|Target%in%"Ppib"|Target%in%"STAT6"|Target%in%"TGF-b")
+Genes <- subset(all.data, Target%in%"CDC42"|Target%in%"CXCL9"|Target%in%"IFN-g"|Target%in%"IL-10"|Target%in%"IL-12"|
+                  Target%in%"IL-6"|Target%in%"Ppia"|Target%in%"Ppib"|Target%in%"STAT6"|Target%in%"TGF-b")
 # subset by dpi (dpi7 says "dip")
-Dpi <- subset(AVG_INF,dpi.diss%in%"3dpi"|dpi.diss%in%"5dpi"|dpi.diss%in%"7dip"|dpi.diss%in%"9dpi"|dpi.diss%in%"11dpi")
+Dpi <- subset(all.data,dpi.diss%in%"3dpi"|dpi.diss%in%"5dpi"|dpi.diss%in%"7dip"|dpi.diss%in%"9dpi"|dpi.diss%in%"11dpi")
 #graph by subsets
 #Infection
 ggplot(Infection, aes(x = InfectionStrain, y = Cq.Mean, color =InfectionStrain)) +
