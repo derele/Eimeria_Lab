@@ -73,6 +73,15 @@ histogram(~Wchange | factor(infHistory), data = E7)
 setDT(E7)[, WmeanHY := mean(Wchange), by = HybridStatus]
 setDT(E7)[, WmeanIH := mean(Wchange), by = infHistory]
 setDT(E7)[, WmeanD := mean(Wchange), by = dpi]
+
+## generate summary data for plotting ---------------------------
+w.means <- ddply(all.data,
+                 c("dpi_count", "inf.strain"),
+                 summarize,
+                 N    =  sum(!is.na(perc_of_dpi1)),
+                 sd    =  sd(perc_of_dpi1, na.rm=TRUE),
+                 mean = mean(perc_of_dpi1, na.rm=TRUE))
+
 #plot
 ggplot(data = E7, aes(x = dpi, y = Wchange, color = HybridStatus, group = EH_ID, size = )) +
   geom_line()

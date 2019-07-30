@@ -8,20 +8,30 @@ library(compare)
 library(viridis)
 library(RColorBrewer)
 library(ggsci)
+library(tidyverse)
+library(reshape2)
 
-#load in RTqPCR data from GitHub, doesn't work atm (more columns than column names)
+#----------------- add and process RTqPCR data from GitHub, doesn't work atm (more columns than column names)----------
 RTqPCRurl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/b4efd8df335199ff9037634c5ba1d909a7d58baa/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv"
 RTqPCR <- read.csv(text = getURL(RTqPCRurl))
 # manual loading: Win
 RTqPCR <- read.csv(file = "./Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", sep = ";")
 # manual loading Deb laptop
-RTqPCR <- read.csv(file = "./Documents/Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", sep = ";")
-#change colnames to match standard
+RTqPCR <- read.csv(file = "~/Documents/Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", sep = ";")
+#change colnames and misnamed rows to match standard
 names(RTqPCR)[names(RTqPCR) == "Sample"] <- "EH_ID"
+RTqPCR[RTqPCR=="IFN-y"] <- "IFN-g"
 # just averages and add SD
 RTqPCR <- RTqPCR %>% group_by(Target, EH_ID) %>% 
-  summarize(SD = sd(Cq.Mean),
+  summarize(#SD = sd(Cq.Mean), #forgoing this atm
             Cq.Mean = mean(Cq.Mean))
+#reset grouping to simplify df structure
+RTqPCR <- RTqPCR %>% ungroup(Target, EH_ID)
+#convert columns to char + remove multiple classses
+RTqPCRcharacters <- sapply(RTqPCR, is.factor)
+RTqPCR[RTqPCRcharacters] <- lapply(RTqPCR[RTqPCRcharacters], as.character)
+RTqPCR = as.data.frame(RTqPCR)
+
 
 #------------------add and process design table---------------------------------------------------------
 InfectionURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/E1_012017_Eim_Experiment_Table_raw_NMRI.csv"
@@ -29,15 +39,37 @@ Infection.design <- read.csv(text = getURL(InfectionURL))
 #rename columns and merge
 names(Infection.design)[names(Infection.design) == "mouseID"] <- "EH_ID"
 names(Infection.design)[names(Infection.design) == "inf.strain"] <- "InfectionStrain"
+
+## wide dateset for merging in overall table (don't forget to subtract standards, see Emanuel's script)
 all.data <- merge(RTqPCR, Infection.design, by = "EH_ID", all = TRUE)
+all.data.wide <- reshape(all.data, timevar = "Target", idvar = "EH_ID", direction = "wide")
+
+#merge wide
+
+
+
+pdf("figures/Cytokines.pdf", width=12, height=4)
+ggplot(subset(M, nchar(M$Gene)>2), aes(dpi, NE, color=inf.strain)) +
+  geom_jitter(width=0.2) +
+  geom_smooth(se=FALSE) +
+  scale_x_continuous(breaks=c(3, 5, 7, 9, 11),
+                     labels=c("3dpi", "5dpi", "7dip", "9dpi", "11dpi")) +
+  facet_wrap(~Gene, scales="free_y", nrow=2)+
+  scale_colour_brewer("infection\nisolate", palette = "Dark2") +
+  scale_y_continuous("normalized mRNA expression")+
+  theme_bw()
+dev.off()
+
+
+#--------------------------all.data--------------------------------------------
+
 #add Uninf to LM00C (otherwise gets removed by subset)
 all.data[715:724,"InfectionStrain"] <- "Uninf"
-all.data[715:724, "dpi.diss"] <- c("0dpi")
+# all.data[715:724, "dpi.diss"] <- as.factor(x = "dpi0")
 #remove rows for missing samples
 all.data <- all.data[ !(all.data$EH_ID %in% c("LM0021", "LM0033", "LM0035", "LM0052")), ]
 #make dpi.diss numeric and a separate column
 all.data$dpi <- as.numeric(gsub("dpi|dip", "", all.data$dpi.diss))
-
 #----------------add and process infection intensity expression-----------------------------------#needs rewrite
 RtissueURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Eimeria-NMRI_Relative%20quantification_clean.csv"
 Rtissue <- read.csv(text = getURL(RtissueURL))
