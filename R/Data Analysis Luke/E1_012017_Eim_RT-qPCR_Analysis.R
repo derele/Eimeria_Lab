@@ -13,7 +13,7 @@ library(reshape2)
 
 #----------------- add and process RTqPCR data from GitHub, doesn't work atm (more columns than column names)----------
 RTqPCRurl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/b4efd8df335199ff9037634c5ba1d909a7d58baa/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv"
-RTqPCR <- read.csv(text = getURL(RTqPCRurl))
+RTqPCR <- read.csv2(text = getURL(RTqPCRurl),sep = ",")
 # manual loading: Win
 RTqPCR <- read.csv(file = "./Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", sep = ";")
 # manual loading Deb laptop
@@ -22,9 +22,9 @@ RTqPCR <- read.csv(file = "~/Documents/Eimeria_Lab/data/3_recordingTables/E1_012
 names(RTqPCR)[names(RTqPCR) == "Sample"] <- "EH_ID"
 RTqPCR[RTqPCR=="IFN-y"] <- "IFN-g"
 # just averages and add SD
-RTqPCR <- RTqPCR %>% group_by(Target, EH_ID) %>% 
+RTqPCR <- data.frame(RTqPCR %>% group_by(Target, EH_ID) %>% 
   summarize(#SD = sd(Cq.Mean), #forgoing this atm
-            Cq.Mean = mean(Cq.Mean))
+            Cq.Mean = mean(Cq.Mean)))
 #reset grouping to simplify df structure
 RTqPCR <- RTqPCR %>% ungroup(Target, EH_ID)
 #convert columns to char + remove multiple classses

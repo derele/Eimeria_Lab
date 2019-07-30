@@ -95,5 +95,4 @@ All$Cq.Mean <- gsub(",", '.', All$Cq.Mean, fixed = T)
 #convert number values from factor to numeric
 All$Cq.Mean <- as.numeric(All$Cq.Mean)
 #problems with reading off Git, use write table
-write.table(All, file = "./Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", row.names = FALSE, dec = ".", sep = ";", quote = FALSE)
-
+write.csv(All, file = "~/Documents/Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", row.names = FALSE)
