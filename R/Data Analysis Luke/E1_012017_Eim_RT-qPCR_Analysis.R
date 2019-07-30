@@ -11,22 +11,16 @@ library(ggsci)
 library(tidyverse)
 library(reshape2)
 
-#----------------- add and process RTqPCR data from GitHub, doesn't work atm (more columns than column names)----------
-RTqPCRurl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/b4efd8df335199ff9037634c5ba1d909a7d58baa/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv"
-RTqPCR <- read.csv2(text = getURL(RTqPCRurl),sep = ",")
-# manual loading: Win
-RTqPCR <- read.csv(file = "./Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", sep = ";")
-# manual loading Deb laptop
-RTqPCR <- read.csv(file = "~/Documents/Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", sep = ";")
+#------------------------------ add and process RTqPCR data from GitHub-----------------------------------
+RTqPCRurl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv"
+RTqPCR <- read.csv(text = getURL(RTqPCRurl), sep = ",")
 #change colnames and misnamed rows to match standard
 names(RTqPCR)[names(RTqPCR) == "Sample"] <- "EH_ID"
 RTqPCR[RTqPCR=="IFN-y"] <- "IFN-g"
 # just averages and add SD
 RTqPCR <- data.frame(RTqPCR %>% group_by(Target, EH_ID) %>% 
-  summarize(#SD = sd(Cq.Mean), #forgoing this atm
+  summarize(SD = sd(Cq.Mean),
             Cq.Mean = mean(Cq.Mean)))
-#reset grouping to simplify df structure
-RTqPCR <- RTqPCR %>% ungroup(Target, EH_ID)
 #convert columns to char + remove multiple classses
 RTqPCRcharacters <- sapply(RTqPCR, is.factor)
 RTqPCR[RTqPCRcharacters] <- lapply(RTqPCR[RTqPCRcharacters], as.character)
@@ -42,6 +36,18 @@ names(Infection.design)[names(Infection.design) == "inf.strain"] <- "InfectionSt
 
 ## wide dateset for merging in overall table (don't forget to subtract standards, see Emanuel's script)
 all.data <- merge(RTqPCR, Infection.design, by = "EH_ID", all = TRUE)
+#big NA introduction, replacing with 0s
+all.data$SD[is.na(all.data$SD)] <- 0
+#add Uninf to LM00C (otherwise gets removed)
+all.data[715:724,"InfectionStrain"] <- "Uninf"
+#add dpi0 to LM00C (won't work as factor)
+all.data.characters <- sapply(all.data, is.factor)
+all.data[all.data.characters] <- lapply(all.data[all.data.characters], as.character)
+all.data = as.data.frame(all.data)
+all.data[715:724,"dpi.diss"] <- "dpi0"
+#remove NAs (missing samples from Infection design)
+all.data <- na.omit(all.data)
+#reshape to wide
 all.data.wide <- reshape(all.data, timevar = "Target", idvar = "EH_ID", direction = "wide")
 
 #merge wide
@@ -63,8 +69,7 @@ dev.off()
 
 #--------------------------all.data--------------------------------------------
 
-#add Uninf to LM00C (otherwise gets removed by subset)
-all.data[715:724,"InfectionStrain"] <- "Uninf"
+
 # all.data[715:724, "dpi.diss"] <- as.factor(x = "dpi0")
 #remove rows for missing samples
 all.data <- all.data[ !(all.data$EH_ID %in% c("LM0021", "LM0033", "LM0035", "LM0052")), ]
