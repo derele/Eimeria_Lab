@@ -34,6 +34,7 @@ Infection.design <- read.csv(text = getURL(InfectionURL))
 names(Infection.design)[names(Infection.design) == "mouseID"] <- "EH_ID"
 names(Infection.design)[names(Infection.design) == "inf.strain"] <- "InfectionStrain"
 
+#--------------------------all.data--------------------------------------------
 ## wide dateset for merging in overall table (don't forget to subtract standards, see Emanuel's script)
 all.data <- merge(RTqPCR, Infection.design, by = "EH_ID", all = TRUE)
 #big NA introduction, replacing with 0s
@@ -47,34 +48,25 @@ all.data = as.data.frame(all.data)
 all.data[715:724,"dpi.diss"] <- "dpi0"
 #remove NAs (missing samples from Infection design)
 all.data <- na.omit(all.data)
-#reshape to wide
-all.data.wide <- reshape(all.data, timevar = "Target", idvar = "EH_ID", direction = "wide")
-
-#merge wide
-
-
-
-pdf("figures/Cytokines.pdf", width=12, height=4)
-ggplot(subset(M, nchar(M$Gene)>2), aes(dpi, NE, color=inf.strain)) +
-  geom_jitter(width=0.2) +
-  geom_smooth(se=FALSE) +
-  scale_x_continuous(breaks=c(3, 5, 7, 9, 11),
-                     labels=c("3dpi", "5dpi", "7dip", "9dpi", "11dpi")) +
-  facet_wrap(~Gene, scales="free_y", nrow=2)+
-  scale_colour_brewer("infection\nisolate", palette = "Dark2") +
-  scale_y_continuous("normalized mRNA expression")+
-  theme_bw()
-dev.off()
-
-
-#--------------------------all.data--------------------------------------------
-
-
+#convert numeric to alow continuous scale
+all.data$dpi.diss <- as.numeric(gsub("dpi|dip", "", all.data$dpi.diss))
 # all.data[715:724, "dpi.diss"] <- as.factor(x = "dpi0")
 #remove rows for missing samples
 all.data <- all.data[ !(all.data$EH_ID %in% c("LM0021", "LM0033", "LM0035", "LM0052")), ]
 #make dpi.diss numeric and a separate column
 all.data$dpi <- as.numeric(gsub("dpi|dip", "", all.data$dpi.diss))
+
+ggplot(subset(all.data, nchar(all.data$Target)>2), aes(dpi.diss, Cq.Mean, color=InfectionStrain)) +
+  geom_jitter(width=0.2) +
+  geom_smooth(se=FALSE) +
+  scale_x_continuous(breaks=c(3, 5, 7, 9, 11),
+                     labels=c("3dpi", "5dpi", "7dip", "9dpi", "11dpi")) +
+  facet_wrap(~Target, scales="free_y", nrow=2)+
+  scale_colour_brewer("infection\nisolate", palette = "Dark2") +
+  scale_y_continuous("normalized mRNA expression")+
+  theme_bw()
+dev.off()
+
 #----------------add and process infection intensity expression-----------------------------------#needs rewrite
 RtissueURL <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/Eimeria-NMRI_Relative%20quantification_clean.csv"
 Rtissue <- read.csv(text = getURL(RtissueURL))
@@ -85,7 +77,7 @@ names(RtMeans) <- c("EH_ID", "Mouse_gDNA", "Eimeria_mDNA")
 RtMeans$EH_ID <- toupper(RtMeans$EH_ID)
 ## LM0065 was measured twice with the same outcome
 RtMeans <- RtMeans[!duplicated(RtMeans$EH_ID),]
-RtMeans <- merge(RtMeans, stab, all=TRUE)
+RtMeans <- merge(RtMeans, Infection.design, all=TRUE)
 RtMeans$dpi.diss <- gsub("dip$", "dpi", RtMeans$dpi.diss)
 RtMeans$dpi_count<- as.numeric(gsub("dpi", "", RtMeans$dpi.diss))
 

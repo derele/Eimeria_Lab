@@ -94,5 +94,5 @@ All$Sample <- sub("LM", "LM00", All$Sample )
 All$Cq.Mean <- gsub(",", '.', All$Cq.Mean, fixed = T)
 #convert number values from factor to numeric
 All$Cq.Mean <- as.numeric(All$Cq.Mean)
-#problems with reading off Git, use write table
-write.csv(All, file = "~/Documents/Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", row.names = FALSE)
+#write, omit row names for compatible raw read
+write.csv(All, file = "~/Eimeria_Lab/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv", row.names = FALSE)
