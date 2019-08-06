@@ -536,6 +536,7 @@ RTqPCR <- read.csv(text = getURL(RTqPCRurl), sep = ",")
 names(RTqPCR)[names(RTqPCR) == "Sample"] <- "EH_ID"
 RTqPCR[RTqPCR=="IFN-y"] <- "IFN-g"
 # just averages and add SD
+RTqPCR.raw <- RTqPCR
 RTqPCR <- data.frame(RTqPCR %>% group_by(Target, EH_ID, Content) %>% 
                        summarize(SD = sd(Cq.Mean),
                                  Cq.Mean = mean(Cq.Mean)))
@@ -576,18 +577,18 @@ CE$dpi <- as.numeric(gsub("dpi|dip", "", CE$dpi.diss))
 # c) you should now have six dct values, three for each of your two groups (healthy and diseased). 
 # You can calculate the ddct as mean(dct[diseased]) - mean(dct[healthy]), you can use a t-test, etc.
 # e.g.: cq.ref <- mean(x = c(CDC42, PPIA, PPIB)) 
-
-#make baseline
-CE.baseline <- aggregate( NE ~ Gene, CE, mean)
-CE.baseline <- CE.baseline[c(1,8,9), 2]
-CE.baseline <- mean(CE.baseline)
-#subtract baseline from att Cq.Means
-CE$CCq <- lapply(CE$NE, FUN = function(x) x-CE.baseline)
-#fix list messing with ggplot
-CE$CCq <- unlist(CE$CCq)
-#remove Pos Ctr and Neg Ctr from graph
-CE <- subset(CE, Content  == c("Cecum"))
-
+# ------------------------------------------------
+# make baseline (per sample, fix below) 
+# CE.baseline <- aggregate( NE ~ Gene, CE, mean)
+# CE.baseline <- CE.baseline[c(1,8,9), 2]
+# CE.baseline <- mean(CE.baseline)
+# #subtract baseline from att Cq.Means
+# CE$CCq <- lapply(CE$NE, FUN = function(x) x-CE.baseline)
+# #fix list messing with ggplot
+# CE$CCq <- unlist(CE$CCq)
+# #remove Pos Ctr and Neg Ctr from graph
+# CE <- subset(CE, Content  == c("Cecum"))
+#-----------------------------------------------------
 
 pdf("figures/Cytokines.pdf", width=12, height=4)
 
