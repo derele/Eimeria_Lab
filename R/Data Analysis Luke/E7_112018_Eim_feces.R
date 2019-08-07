@@ -34,7 +34,7 @@ history_b <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2
 history_b <- read.csv(text=getURL(history_b))
 inf.history <- rbind(history_a, history_b) 
 
-# let's make one big fat Expe007 design table (E88 = 31 entries, E64 = 38 entries)
+# let's make one big fat E7 design table (E88 = 31 entries, E64 = 38 entries)
 E7_design <- rbind(E7a_design, E7b_design)
 E7_design <- merge(E7_design, inf.history, by = "EH_ID")
 
@@ -60,7 +60,7 @@ write.csv(E7, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv",
 #include combined infection history
 E7$infHistory <- E7$primary:E7$challenge
 
-#play with data and find a way to plot means with SD
+#distribution check
 E7 <- E7[-c(447, 479),] #remove NAs
 hist(E7$Wchange, col = grey)
 summary(E7)
@@ -68,6 +68,11 @@ boxplot(Wchange ~ infHistory, data = E7)
 boxplot(Wchange ~ HybridStatus, data = E7)
 boxplot(Wchange ~ dpi, data = E7)
 histogram(~Wchange | factor(infHistory), data = E7)
+
+#add SDs
+E7 <- data.frame(E7 %>% group_by(Wchange, EH_ID, primary, challenge, infHistory) %>% 
+                       summarize(SD = sd(Wchange),
+                                 Wchange.mean = mean(Wchange)))
 
 #attach means of HybridStatus, infHistory, etc with data.table
 setDT(E7)[, WmeanHY := mean(Wchange), by = HybridStatus]
