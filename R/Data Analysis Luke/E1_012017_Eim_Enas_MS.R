@@ -156,7 +156,7 @@ maxPHd <- max(all.data$PH.delta, na.rm=TRUE)
 no.log.max.PHd <- 2^maxPHd
 (no.log.max.PHd*1/(1-no.log.max.PHd))*100
 
-max(all.data[all.data$inf.strain%in%"EI64", "PH.delta"], na.rm=TRUE)
+max(all.data[all.data$inf.strain%in%"EferW", "PH.delta"], na.rm=TRUE)
 
 
 ### Histology ----------------------------------------------
@@ -304,7 +304,7 @@ test.day.for.strain <- function(day, strain){
   list(test, length(foo$perc_of_dpi1[!is.na(foo$perc_of_dpi1)]))
 }
 
-test.day.for.strain(day="4", strain=c("EI64" ,"Uninf"))
+test.day.for.strain(day="4", strain=c("EferW" ,"Uninf"))
 test.day.for.strain("5", c("EferW" ,"Uninf"))
 
 test.day.for.strain("8", c("EfalW" ,"Uninf"))
@@ -418,16 +418,15 @@ TGFb.S <- read.csv(text = getURL(TGFb.Surl), sep = ",")
 TNFa.Surl <- "https://raw.githubusercontent.com/derele/Jan2017Exp/master/GE_TNFa.csv"
 TNFa.S <- read.csv(text = getURL(TNFa.Surl), sep = ",")
 
-#GE.files <- list.files(path = "Documents/Jan2017Exp/", pattern="^GE_")
-#luke Deb :
-#setwd(dir = "~/Documents/Jan2017Exp/")
-GeMeans.l <- lapply(GE.files, function (file) {
-  data <- read.csv(file)
-  data <- data[seq(1, nrow(Rtissue), by=2), c("Sample", "Gene", "NE")]
-  data[!is.na(data$Gene), ]
+GeMeans.l <- list(CXCL9.S, IL10.S, IL12.S, IL6.S, IFNg.S, STAT6.S, TGFb.S, TNFa.S)
+
+GeMeans.l <- lapply(GeMeans.l, function (data) {
+   out <- data[!is.na(data$NE), c("Sample", "Gene", "NE")]
+   out[!is.na(out$Gene), ]
 })
 
 GeMeans <- Reduce(rbind, GeMeans.l)
+
 GeMeans$Sample <- toupper(GeMeans$Sample)
 ### Correction
 ## removing an empty row
@@ -435,14 +434,19 @@ GeMeans <- GeMeans[!GeMeans$Gene%in%"",]
 GeMeans$Gene <- toupper(GeMeans$Gene)
 ## standard naming
 names(GeMeans)[names(GeMeans)%in%"Sample"] <- "EH_ID"
+## check uniqueness for genes / samples
+nrow(unique(GeMeans)) ==  nrow(GeMeans)
+nrow(unique(GeMeans[, c("EH_ID", "Gene")])) ==  nrow(GeMeans)
+## Okay 456
 
 ## wide dateset for merging in overall table
 GeMeans.wide <- reshape(GeMeans, timevar = "Gene", idvar = "EH_ID", direction = "wide")
 
-M <- merge(GeMeans, stab, all=TRUE)
-M.wide <- merge(GeMeans.wide, stab, all=TRUE)
 
+M <- merge(GeMeans, stab, all=TRUE)
 M$dpi <- as.numeric(gsub("dpi|dip", "", M$dpi.diss))
+
+M.wide <- merge(GeMeans.wide, stab, all=TRUE)
 
 pdf("figures/Cytokines.pdf", width=12, height=4)
 ggplot(subset(M, nchar(M$Gene)>2), aes(dpi, NE, color=inf.strain)) +
@@ -464,6 +468,7 @@ modIL10 <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL
 summary(modIL10)
 
 modIL12 <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL12"))
+summary(modIL12)
 
 modIL6 <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL6"))
 summary(modIL6)
@@ -522,67 +527,71 @@ tab_model(modCXCL9, modIL10, modIL12, modIL6,
 
 # ------------------------- Gene expression data (caecum)---------------------------
 RTqPCRurl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E1_012017_Eim_RT-qPCR_clean.csv"
-RTqPCR <- read.csv(text = getURL(RTqPCRurl), sep = ",")
+RTqPCR.raw <- read.csv(text = getURL(RTqPCRurl), sep = ",", stringsAsFactors=FALSE)
 #change colnames and misnamed rows to match standard
-names(RTqPCR)[names(RTqPCR) == "Sample"] <- "EH_ID"
-RTqPCR[RTqPCR=="IFN-y"] <- "IFN-g"
-# just averages and add SD
-RTqPCR <- data.frame(RTqPCR %>% group_by(Target, EH_ID) %>% 
-                       summarize(SD = sd(Cq.Mean),
-                                 Cq.Mean = mean(Cq.Mean)))
-#convert columns to char + remove multiple classses
-RTqPCRcharacters <- sapply(RTqPCR, is.factor)
-RTqPCR[RTqPCRcharacters] <- lapply(RTqPCR[RTqPCRcharacters], as.character)
-RTqPCR = as.data.frame(RTqPCR)
+names(RTqPCR.raw)[names(RTqPCR.raw) == "Sample"] <- "EH_ID"
+RTqPCR.raw[RTqPCR.raw=="IFN-y"] <- "IFN-g"
 
+## just averages and add SD
+RTqPCR <- data.frame(RTqPCR.raw %>% group_by(Target, EH_ID) %>% 
+                     summarize(SD = sd(Cq.Mean),
+                               CqM = mean(Cq.Mean)))
+RTqPCR <- as.data.frame(RTqPCR)
 
-#continue Emanuel's analysis------------------------------
-# GE.files <- list(TNFa.S, TGFb.S, STAT6.S,IFNg.S
-#                  ,IL6.S, IL12.S,IL10.S, CXCL9.S)
-# RTqPCR.files <- list(RTqPCR)
-# #rename Target to Gene, Cq.Mean to NE
 names(RTqPCR)[names(RTqPCR) == "Target"] <- "Gene"
-names(RTqPCR)[names(RTqPCR) == "Cq.Mean"] <- "NE"
-# 
-# CECmeans$Sample <- toupper(CECmeans$Sample)
-
-### Correction
-## removing an empty row
-# GeMeans <- GeMeans[!GeMeans$Gene%in%"",]
-# GeMeans$Gene <- toupper(GeMeans$Gene)
-
-RTqPCR <- RTqPCR[!RTqPCR$Gene%in%"",]
 RTqPCR$Gene <- toupper(RTqPCR$Gene)
-#fix PPIP to PPIB
+
 RTqPCR[RTqPCR=="PPIP"] <- "PPIB"
 
+
 ## wide dateset for merging in overall table
-CE.wide <- reshape(RTqPCR, timevar = "Gene", idvar = "EH_ID", direction = "wide")
+## ignore SD for a moment
+CE.wide <- reshape(RTqPCR[, c("Gene", "EH_ID","CqM")],
+                   timevar = "Gene", idvar = "EH_ID", direction = "wide")
 
+refGenes <- c("CqM.CDC42", "CqM.PPIA", "CqM.PPIB")
 
-#stab is missing samples after being reduced by previous work
-#M.wide <- merge(GeMeans.wide, stab, all=TRUE)
+targetGenes <- c("CqM.CXCL9", "CqM.IFN-G", "CqM.IL-10", 
+                 "CqM.IL-12", "CqM.IL-6", 
+                 "CqM.STAT6", "CqM.TGF-B")
 
-#------------------add and process design table---------------------------------------------------------
-InfectionURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/E1_012017_Eim_Experiment_Table_raw_NMRI.csv"
-Infection.design <- read.csv(text = getURL(InfectionURL))
-#rename columns and merge
-names(Infection.design)[names(Infection.design) == "mouseID"] <- "EH_ID"
-CE.wide <- merge(CE.wide, Infection.design, all=TRUE)
-CE <- merge(RTqPCR, Infection.design, all.x = TRUE)
-CE[715:724,"InfectionStrain"] <- "Uninf"
-#add dpi0 to LM00C (won't work as factor)
-CE.characters <- sapply(CE, is.factor)
-CE[CE.characters] <- lapply(CE[CE.characters], as.character)
-CE = as.data.frame(CE)
-CE[715:724,"dpi.diss"] <- "0dpi"
-names(CE)[names(CE) == "InfectionStrain"] <- "inf.strain"
-#--------------------------------------------------------------------------------------------------------
+## one general efficiency factor, as not measured for caecum
+eff.factor <- 1.9
 
-CE$dpi <- as.numeric(gsub("dpi|dip", "", CE$dpi.diss))
+CE.eff <-  eff.factor^(CE.wide[, c(refGenes, targetGenes)] * -1)
 
-pdf("figures/Cytokines.pdf", width=12, height=4)
-ggplot(subset(CE, nchar(CE$Gene)>2), aes(dpi, NE, color=inf.strain)) +
+normIDX <- apply(CE.eff[, refGenes], 1, prod)^
+    (1/length(refGenes))
+
+CE.norm <- CE.eff[, targetGenes] / normIDX
+
+names(CE.norm) <- gsub("CqM", "NE", names(CE.norm))
+
+## fix some very odd outlier numbers
+CE.norm[CE.norm > 1] <- NA
+
+## dropping everything but IDs and normalized values... look into SDs,
+## non-normalized etc... if needed!!
+CE.norm <- cbind(EH_ID=CE.wide[, "EH_ID"], CE.norm)
+
+## too lazy to write this more concisely...
+CE.long <- reshape(CE.norm,
+                   direction = "long",
+                   idvar = "EH_ID", ids = EH_ID,
+                   varying = list(grep("^NE\\.", colnames(CE.norm))),
+                   times = grep("^NE\\.", colnames(CE.norm), value=TRUE))
+
+## too confused to write this concisely
+rownames(CE.long) <- NULL
+CE.long$time <-  gsub("NE\\.", "", CE.long$time)
+names(CE.long) <- c("EH_ID", "Gene", "NE")
+
+CE.final <- merge(CE.long, stab, all.y=TRUE)
+
+CE.final$dpi <- as.numeric(gsub("dpi|dip", "", CE.final$dpi.diss))
+
+pdf("figures/CytokinesCE.pdf", width=12, height=4)
+ggplot(CE.final, aes(dpi, NE, color=inf.strain)) +
   geom_jitter(width=0.2) +
   geom_smooth(se=FALSE) +
   scale_x_continuous(breaks=c(3, 5, 7, 9, 11),
@@ -595,69 +604,64 @@ dev.off()
 
 #----------------------------------extract to same format as Emanuel's
 ## Contrasting against Eflab
-modCXCL9.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"CXCL9"))
+modCXCL9.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"CXCL9"))
 summary(modCXCL9.c)
 
-modIL10.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL10"))
+modIL10.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-10"))
 summary(modIL10)
 
-modIL12.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL12"))
+modIL12.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-12"))
 
-modIL6.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"IL6"))
+modIL6.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-6"))
 summary(modIL6)
 
-modINFG.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"INFG"))
+modINFG.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IFN-G"))
 summary(modINFG)
 
-modSTAT6.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"STAT6"))
+modSTAT6.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"STAT6"))
 summary(modSTAT6)
 
-modTGFB.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"TGFB"))
+modTGFB.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"TGF-B"))
 summary(modTGFB)
-
-modTNFA.c <- lme4::lmer(NE~inf.strain + (1|dpi.diss), data=subset(M, M$Gene%in%"TNFA"))
-summary(modTNFA)
 
 tab_model(modCXCL9.c, modIL10.c, modIL12.c, modIL6.c,
           modINFG.c, modSTAT6.c, modTGFB.c, 
-          file="table_VS_Eflab(itercept).html",
+          file="CEtable_VS_Eflab(itercept).html",
           dv.labels=c("CXCL9", "IL10", "IL12", "IL6",
                       "INFG", "STAT6", "TGFB"))
 
 ## Now contrasting against negative control
 # l3v3l setting introduces only NAs
-#CE$inf.strain = factor(CE$inf.strain, levels(CE$inf.strain)[c(4,1:3)])
+#CE.final$inf.strain = factor(CE.final$inf.strain, levels(CE$inf.strain)[c(4,1:3)])
 
-modCXCL9.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"CXCL9"))
+modCXCL9.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"CXCL9"))
 summary(modCXCL9.c)
 
-modIL10.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"IL-10"))
+modIL10.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-10"))
 summary(modIL10.c)
 
-modIL12.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"IL-12"))
+modIL12.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-12"))
 summary(modIL12.c)
 
-modIL6.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"IL-6"))
+modIL6.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IL-6"))
 summary(modIL6.c)
 
-modINFG.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"IFN-G"))
+modINFG.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"IFN-G"))
 summary(modINFG.c)
 
-modSTAT6.c <- lmer(NE~inf.strain  +(1|dpi.diss), data=subset(CE, CE$Gene%in%"STAT6"))
+modSTAT6.c <- lmer(NE~inf.strain  +(1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"STAT6"))
 summary(modSTAT6)
 
-modTGFB.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE, CE$Gene%in%"TGF-B"))
+modTGFB.c <- lmer(NE~inf.strain + (1|dpi.diss), data=subset(CE.final, CE.final$Gene%in%"TGF-B"))
 summary(modTGFB.c)
 
 tab_model(modCXCL9, modIL10, modIL12, modIL6,
           modINFG, modSTAT6, modTGFB,
-          file="table_VS_non_infected(itercept).html",
+          file="CEtable_VS_non_infected(itercept).html",
           dv.labels=c("CXCL9", "IL10", "IL12", "IL6",
                       "INFG", "STAT6", "TGFB"))
 
 
-
-## An analysis involving dpi is for now left out (not included).
 ##
 
 ## modSRAND <- glmer(sMLS~PH.delta+inf.strain +
@@ -679,12 +683,12 @@ tab_model(modCXCL9, modIL10, modIL12, modIL6,
 tapply(all.data$Score1,
        all.data$inf.strain:as.factor(all.data$dpi_count), print)
 
-FlamMod <- lmer(Score1~inf.strain + (1|dpi.diss), data=stab)
+FlamMod <- lmer(Score1~inf.strain + (1|dpi.diss), data=all.data)
 summary(FlamMod)
 
-difflsmeans(FlamMod, test.effs = "inf.strain")
+## difflsmeans(FlamMod, test.effs = "inf.strain")
 
-FlamModmls <- lmer(Score1~sMLS*inf.strain + (1|dpi.diss), data=stab)
+FlamModmls <- lmer(Score1~sMLS*inf.strain + (1|dpi.diss), data=all.data)
 summary(FlamModmls)
 
 ## which peak is first
