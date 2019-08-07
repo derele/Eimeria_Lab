@@ -8,9 +8,6 @@ library(magrittr)
 library(ggplot2)
 library(ggpubr)
 library(lattice)
-library(ggeffects)
-library(multcomp)
-
 
 #CHUNK REDUNDANT AFTER FACS cell population conversion, moved there
 # ANTfileUrl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_CD40L_assays_anteriorMLN.csv"
@@ -139,7 +136,8 @@ for(i in seq_along(facs_boxplots.position)){
 ### counts... expecially because the overall cell numbers are varying
 ### SO MUCH that this changes the results completely!!!
 
-#### model Position
+#### 
+library(ggeffects)
 
 mods.l <- lapply(facs.measure.cols, function (x) {
     glm(get(x) ~ (primary * challenge) + Position,
@@ -166,10 +164,6 @@ for(i in seq_along(facs.measure.cols)){
 
 ## Could this mean that E64 infection surpresses these INF producing
 ## (?) cell types more than E88?!
-### |-> this would make sense as the E88 ifections are more severe in terms of tissue damage. This could be explained by a highly 
-### stimulated Cytotoxic lymphocite populations (TcCD8+) and killing of infected/stress signalling epithelial cells. Also any shift
-### towards higher CD4+ Treg population would explain decrease in Th1CD4+ (inflammatory) and TcCD8+ (killer) cell presence.
-
 
 ## -> Then our prediction would be that it's good for the host to have
 ## littel of these cell types???
@@ -177,7 +171,6 @@ for(i in seq_along(facs.measure.cols)){
 ## Let's have a first peek into how different hybrids are to pure mice
 ## in this respect...
 
-## Model Hybrid status
 modsHY.l <- lapply(facs.measure.cols, function (x) {
     glm(get(x) ~ (primary * challenge) + Position + HybridStatus,
         data=E7)
@@ -206,64 +199,8 @@ dev.off()
 ## "HybridStatusoutbred hybrids" to be ... well ... hybrids. Turns out
 ## this are the within subspecies outbreds. Let's do some PostHoc
 ## comparison. 
-
+library(multcomp)
 summary(glht(modsHY.l[["Tc1IFNgp_in_CD8p"]], mcp(HybridStatus="Tukey")))
 
 ## nothing too shocking here, just that "outbred hybrids" have a trend
 ## towards lower cell proportions compared to "inter subsp. hybrids"
-
-## use Emanuel's method to look at other populations (make into function/loop later)
-
-modsHY.l <- lapply(facs.measure.cols, function (x) {
-  glm(get(x) ~ (primary * challenge) + Position + HybridStatus,
-      data=E7)
-})
-names(modsHY.l) <- facs.measure.cols
-
-lapply(modsHY.l, summary)
-
-
-for(i in seq_along(facs.measure.cols)){
-  hyb <- ggpredict(modsHY.l[[i]], terms=c("primary", "challenge", "HybridStatus"))
-  plot <-  plot(hyb, rawdata=TRUE) +
-    scale_y_continuous(paste("percent", facs.measure.cols[[i]])) +
-    ggtitle(paste("predicted values of", facs.measure.cols[[i]]))
-  pdf(paste0(facs.measure.cols[[i]], ".predict.pdf"))
-  print(plot)
-  dev.off()
-}
-
-# Run Tukey for all (fix = all values are the same)
-#predict.tukeys <- lapply(modsHY.l, function (x){
-#problem is with "x" summary(glht(modsHY.l[[x]], mcp(HybridStatus="Tukey")))
-#})
-
-### Temporarily run Tukey on hybrid status independently by naming facs.name.cols
-ThCD4p.Tukey <- summary(glht(modsHY.l[["ThCD4p"]], mcp(HybridStatus="Tukey"))) 
-TcCD8p.Tukey <- summary(glht(modsHY.l[["TcCD8p"]], mcp(HybridStatus="Tukey")))
-Th1IFNgp_in_CD4p.Tukey <- summary(glht(modsHY.l[["Th1IFNgp_in_CD4p"]], mcp(HybridStatus="Tukey")))
-Th17IL17Ap_in_CD4p.Tukey <- summary(glht(modsHY.l[["Th17IL17Ap_in_CD4p"]], mcp(HybridStatus="Tukey")))
-Tc1IFNgp_in_CD8p.Tukey <- summary(glht(modsHY.l[["Tc1IFNgp_in_CD8p"]], mcp(HybridStatus="Tukey"))) #"outbred hybrids" have a trend towards lower cell proportions compared to "inter subsp. hybrids"
-Treg_Foxp3_in_CD4p.Tukey <- summary(glht(modsHY.l[["Treg_Foxp3_in_CD4p"]], mcp(HybridStatus="Tukey")))
-Dividing_Ki67p_in_Foxp3p.Tukey <- summary(glht(modsHY.l[["Dividing_Ki67p_in_Foxp3p"]], mcp(HybridStatus="Tukey")))
-RORgtp_in_Foxp3p.Tukey <- summary(glht(modsHY.l[["RORgtp_in_Foxp3p"]], mcp(HybridStatus="Tukey")))
-ThCD4p_Foxp3n.Tukey <- summary(glht(modsHY.l[["ThCD4p_Foxp3n"]], mcp(HybridStatus="Tukey")))
-Th1Tbetp_in_CD4pFoxp3n.Tukey <- summary(glht(modsHY.l[["Th1Tbetp_in_CD4pFoxp3n"]], mcp(HybridStatus="Tukey")))
-Dividing_Ki67p_in_Tbetp.Tukey <- summary(glht(modsHY.l[["Dividing_Ki67p_in_Tbetp"]], mcp(HybridStatus="Tukey")))
-Th17RORgp_in_CD4pFoxp3n.Tukey <- summary(glht(modsHY.l[["Th17RORgp_in_CD4pFoxp3n"]], mcp(HybridStatus="Tukey")))
-Dividing_Ki67p_in_RORgtp.Tukey <- summary(glht(modsHY.l[["Dividing_Ki67p_in_RORgtp"]], mcp(HybridStatus="Tukey")))
-
-old.par <- par(mai=c(1,3,0.3,0.1)) #Makes room on the plot for the group names
-plot(ThCD4p.Tukey, main = "ThCD4p Tukey") # hybrids > outbreds, parent = outbreds, parent < hybrid
-plot(TcCD8p.Tukey, main = "TcCD8p Tukey") # hybrid > outbred, parent < outbred, parent < hybrid
-plot(Th1IFNgp_in_CD4p.Tukey, main = "Th1IFNgp_in_CD4p.Tukey") # hybrid < outbred, parent < outbred, parent > hybrid
-plot(Th17IL17Ap_in_CD4p.Tukey, main = "Th17IL17Ap_in_CD4p.Tukey") # hybrid < outbred, parent < outbred, parent < hybrid
-plot(Tc1IFNgp_in_CD8p.Tukey, main = "Tc1IFNgp_in_CD8p.Tukey") # hybrid < outbred, parent < outbred, parent > hybrid
-plot(Treg_Foxp3_in_CD4p.Tukey, main = "Treg_Foxp3_in_CD4p.Tukey") # hybrid < outbred, parent < outbred, parent < hybrid
-plot(Dividing_Ki67p_in_Foxp3p.Tukey, main = "Dividing_Ki67p_in_Foxp3p.Tukey") # all == 
-plot(RORgtp_in_Foxp3p.Tukey, main = "RORgtp_in_Foxp3p.Tukey") # hybrid < outbred, parent = outbred, parent > hybrid
-plot(ThCD4p_Foxp3n.Tukey, main = "ThCD4p_Foxp3n.Tukey") # hybrid > outbred, parent > outbred, parent = hybrid
-plot(Th1Tbetp_in_CD4pFoxp3n.Tukey, main = "Th1Tbetp_in_CD4pFoxp3n.Tukey") # hybrids < outbred, parent = outbreds, parent > hybrids
-plot(Dividing_Ki67p_in_Tbetp.Tukey, main = "Dividing_Ki67p_in_Tbetp.Tukey") # hybrids < outbreds, parent = outbreds, parent > hybrids
-plot(Th17RORgp_in_CD4pFoxp3n.Tukey, main = "Th17RORgp_in_CD4pFoxp3n.Tukey") # hybrid < outbred, parent = outbred, parent > hybrid
-plot(Dividing_Ki67p_in_RORgtp.Tukey, main = "Dividing_Ki67p_in_RORgtp.Tukey") # hybrid < outbred, parent = outbred, parent > hybrid
