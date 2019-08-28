@@ -12,8 +12,7 @@ E6_complete <- read.csv(text = getURL(E6_completeURL), sep = ";", dec = ",")
 cols = c(4, 5, 6, 7, 8, 10, 12, 13, 14, 15)
 E6_complete[,cols] %<>% lapply(function(x) as.numeric(as.character(x)))
 
-#graph
-
+#graph weight
 ggplot(E6_complete, aes(dpi, weight, color=Eimeria_species)) +
   # geom_jitter(width=0.2) +
   geom_smooth(se=FALSE) +
@@ -24,6 +23,27 @@ ggplot(E6_complete, aes(dpi, weight, color=Eimeria_species)) +
   scale_y_continuous("weight (g)") +
   theme_bw()
 
+# graph weight loss
+ggplot(E6_complete, aes(dpi, weightloss, color=Eimeria_species)) +
+  # geom_jitter(width=0.2) +
+  geom_smooth(se=FALSE) +
+  # scale_x_continuous(breaks=c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) +
+  #                    labels=c("0" ,"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")) +
+  facet_wrap(~HybridStatus, nrow=2) +
+  scale_colour_brewer("infection\nspecies", palette = "Dark2") +
+  scale_y_continuous("weight (g)") +
+  theme_bw()
+
+# graph oocysts
+ggplot(E6_complete, aes(dpi, OPG, color=Eimeria_species)) +
+  # geom_jitter(width=0.2) +
+  geom_smooth(se=FALSE) +
+  # scale_x_continuous(breaks=c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) +
+  #                    labels=c("0" ,"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")) +
+  facet_wrap(~HybridStatus, nrow=2) +
+  scale_colour_brewer("infection\nspecies", palette = "Dark2") +
+  scale_y_continuous("weight (g)") +
+  theme_bw()
 
 
 Cytokines <- ggarrange(CytokinesSP, CytokinesCE, nrow=2, common.legend = TRUE,
