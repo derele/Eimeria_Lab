@@ -8,6 +8,7 @@ library(magrittr)
 library(ggplot2)
 library(ggpubr)
 library(lattice)
+library(data.table)
 
 #CHUNK REDUNDANT AFTER FACS cell population conversion, moved there
 # ANTfileUrl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_CD40L_assays_anteriorMLN.csv"
@@ -188,7 +189,7 @@ summary(modsHY.l[["Tc1IFNgp_in_CD8p"]])
 WOW <- ggpredict(modsHY.l[["Tc1IFNgp_in_CD8p"]],
                  terms=c("primary", "challenge", "HybridStatus"))
 
-summary(modsHY.l[["Tc1IFNgp_in_CD8p"]], )
+summary(modsHY.l[["Tc1IFNgp_in_CD8p"]])
 
 pdf("WINNER_Tc1IFNgp_in_CD8p.effects.pdf")
 plot(WOW)
@@ -204,3 +205,10 @@ summary(glht(modsHY.l[["Tc1IFNgp_in_CD8p"]], mcp(HybridStatus="Tukey")))
 
 ## nothing too shocking here, just that "outbred hybrids" have a trend
 ## towards lower cell proportions compared to "inter subsp. hybrids"
+
+# ---------------------------------------------------------- Make connections between facets of models--------
+# transform data for graphing
+# E7.long <- reshape(data = E7, timevar = "infHistory", idvar = "EH_ID", direction = "long", varying = facs.measure.cols)
+
+# E7.melt <- melt(setDT(E7), measure=patterns(facs.measure.cols), 
+#     value.name = facs.measure.cols, variable.name='EH_ID')

@@ -80,9 +80,24 @@ histogram(~Wchange | factor(infHistory), data = E7)
 # setDT(E7)[, WmeanD := mean(Wchange), by = dpi]
 
 
-#plot
-ggplot(data = E7, aes(x = dpi, y = weight, color = HybridStatus)) +
-  geom_smooth(se = FALSE) +
-  facet_wrap(~infHistory)
+#plot weight and HS by infection history
+ggplot(E7, aes(dpi, weight, color=HybridStatus)) +
+  # geom_jitter(width=0.2) +
+  geom_smooth(se=F) +
+  # scale_x_continuous(breaks=c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) +
+  #                    labels=c("0" ,"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")) +
+  facet_wrap(~infHistory, scales="free_y", nrow=2) +
+  scale_colour_brewer("Hybrid\nStatus", palette = "Dark2") +
+  scale_y_continuous("weight (g)") +
+  theme_bw()
 
-
+# plot weight and  by infection history
+ggplot(E7, aes(dpi, weight, color=infHistory)) +
+  # geom_jitter(width=0.2) +
+  geom_smooth(se=FALSE) +
+  # scale_x_continuous(breaks=c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) +
+  #                    labels=c("0" ,"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")) +
+  facet_wrap(~HybridStatus, scales="free_y", nrow=2) +
+  scale_colour_brewer("Infection\nHistory", palette = "Dark2") +
+  scale_y_continuous("weight (g)") +
+  theme_bw()
