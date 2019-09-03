@@ -1,6 +1,3 @@
-#LOAD, CLEAN UP AND PROCESS DATA#
-##########################################################################################################################
-
 library(httr)
 library(RCurl)
 library(dplyr)
@@ -9,34 +6,9 @@ library(ggplot2)
 library(ggpubr)
 library(lattice)
 library(data.table)
-
-#CHUNK REDUNDANT AFTER FACS cell population conversion, moved there
-# ANTfileUrl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_CD40L_assays_anteriorMLN.csv"
-# 
-# ANT <- read.csv(text=getURL(ANTfileUrl))
-# 
-# POSfileUrl <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_CD40L_assays_posteriorMLN.csv"
-# 
-# POS <- read.csv(text=getURL(POSfileUrl))
-# 
-# #name columns properly (check before using, csv reads different now and then#
-# names(ANT) <- c("Sample","ThCD4p","TcCD8p","Th1IFNgp_in_CD4p","Th17IL17Ap_in_CD4p",
-#                 "Tc1IFNgp_in_CD8p","Treg_Foxp3_in_CD4p","Dividing_Ki67p_in_Foxp3p",
-#                 "RORgtp_in_Foxp3p","Th1Tbetp_in_CD4pFoxp3n","Dividing_Ki67p_in_Tbetp",
-#                 "Th17RORgp_in_CD4pFoxp3n","Dividing_Ki67p_in_RORgtp")
-# names(POS) <- c("Sample","ThCD4p","TcCD8p","Th1IFNgp_in_CD4p","Th17IL17Ap_in_CD4p",
-#                 "Tc1IFNgp_in_CD8p","Treg_Foxp3_in_CD4p","Dividing_Ki67p_in_Foxp3p",
-#                 "RORgtp_in_Foxp3p","Th1Tbetp_in_CD4pFoxp3n","Dividing_Ki67p_in_Tbetp",
-#                 "Th17RORgp_in_CD4pFoxp3n","Dividing_Ki67p_in_RORgtp")
-# 
-# #set columns to numbers
-# 
-# 
-# CELLS <- rbind(ANT, POS)
-# 
-# #extract Mouse_ID from that mess and paste in "LM02" to standardize with our data structure
-# CELLS$EH_ID <- gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "LM02\\2", CELLS$Sample)
-# CELLS$Position <- gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "\\1", CELLS$Sample)
+library(ggeffects)
+library(multcomp)
+library(fitdistrplus)
 
 #read in cell counts (FACS) data
 cell.countsURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FACS_cell_counts_processed.csv"
@@ -137,15 +109,19 @@ for(i in seq_along(facs_boxplots.position)){
 ### counts... expecially because the overall cell numbers are varying
 ### SO MUCH that this changes the results completely!!!
 
-#### 
-library(ggeffects)
+# distribution testing before modeling
+hist(E7$ThCD4p)
+descdist(E7$ThCD4p)
+descdist(E7$TcCD8p)
+descdist(E7$Th1IFNgp_in_CD4p)
 
+
+# model interaction of cell populations with primary and secondary infection and position
 mods.l <- lapply(facs.measure.cols, function (x) {
-    glm(get(x) ~ (primary * challenge) + Position,
+    lm(get(x) ~ (primary * challenge) + Position,
         data=E7)
 })
 names(mods.l) <- facs.measure.cols
-
 lapply(mods.l, summary)
 
 for(i in seq_along(facs.measure.cols)){
@@ -157,6 +133,27 @@ for(i in seq_along(facs.measure.cols)){
     print(plot)
     dev.off()
 }
+
+# Try infection history and position
+mods.i <- lapply(facs.measure.cols, function (x) {
+  lm(get(x) ~ primary * challenge * Position,
+     data=E7)
+})
+names(mods.i) <- facs.measure.cols
+lapply(mods.i, summary)
+
+for(i in seq_along(facs.measure.cols)){
+  eff <- ggpredict(mods.i[[i]], terms=c("primary", "challenge", "Position"))
+  plot <-  plot(eff, rawdata=TRUE) +
+    scale_y_continuous(paste("percent", facs.measure.cols[[i]])) +
+    ggtitle(paste("predicted values of", facs.measure.cols[[i]]))
+  pdf(paste0(facs.measure.cols[[i]], ".ia.pdf"))
+  print(plot)
+  dev.off()
+}
+
+# comparison of models
+lapply(seq_along(mods.i), function(i) anova(mods.i[[i]], mods.l[[i]]))
 
 ## I looked at the CD4 and CD8 INF cells b/c I remembered they were
 ## "interesting". The pattern we see sofar in these cells is, however
@@ -173,13 +170,13 @@ for(i in seq_along(facs.measure.cols)){
 ## in this respect...
 
 modsHY.l <- lapply(facs.measure.cols, function (x) {
-    glm(get(x) ~ (primary * challenge) + Position + HybridStatus,
+    lm(get(x) ~ (primary * challenge) + Position + HybridStatus,
         data=E7)
 })
+
 names(modsHY.l) <- facs.measure.cols
 
 lapply(modsHY.l, summary)
-
 
 ## And WOW (I reall wrote the above A PRIORY, otherwise... mayor
 ## fishing excursion ;-)...), but Tc1IFNgp_in_CD8p are lower in
@@ -200,7 +197,7 @@ dev.off()
 ## "HybridStatusoutbred hybrids" to be ... well ... hybrids. Turns out
 ## this are the within subspecies outbreds. Let's do some PostHoc
 ## comparison. 
-library(multcomp)
+
 summary(glht(modsHY.l[["Tc1IFNgp_in_CD8p"]], mcp(HybridStatus="Tukey")))
 
 ## nothing too shocking here, just that "outbred hybrids" have a trend
