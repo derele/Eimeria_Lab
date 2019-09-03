@@ -116,7 +116,7 @@ descdist(E7$TcCD8p)
 descdist(E7$Th1IFNgp_in_CD4p)
 
 
-# model interaction of cell populations with primary and secondary infection and position
+# model interaction of cell populations with primary and secondary infection + constant position direction (PRIMARY : SECONDARY + POSITION)
 mods.l <- lapply(facs.measure.cols, function (x) {
     lm(get(x) ~ (primary * challenge) + Position,
         data=E7)
@@ -129,12 +129,12 @@ for(i in seq_along(facs.measure.cols)){
     plot <-  plot(eff, rawdata=TRUE) +
         scale_y_continuous(paste("percent", facs.measure.cols[[i]])) +
         ggtitle(paste("predicted values of", facs.measure.cols[[i]]))
-    pdf(paste0(facs.measure.cols[[i]], ".effects.pdf"))
+    pdf(paste0(facs.measure.cols[[i]], ".priXcha+pos.pdf"))
     print(plot)
     dev.off()
 }
 
-# Try infection history and position
+# model interaction of cell populations with primary, secondary infection and position (PRIMARY : SECONDARY : POSITION)
 mods.i <- lapply(facs.measure.cols, function (x) {
   lm(get(x) ~ primary * challenge * Position,
      data=E7)
@@ -147,7 +147,7 @@ for(i in seq_along(facs.measure.cols)){
   plot <-  plot(eff, rawdata=TRUE) +
     scale_y_continuous(paste("percent", facs.measure.cols[[i]])) +
     ggtitle(paste("predicted values of", facs.measure.cols[[i]]))
-  pdf(paste0(facs.measure.cols[[i]], ".ia.pdf"))
+  pdf(paste0(facs.measure.cols[[i]], ".priXchaXpos.pdf"))
   print(plot)
   dev.off()
 }
@@ -155,19 +155,7 @@ for(i in seq_along(facs.measure.cols)){
 # comparison of models
 lapply(seq_along(mods.i), function(i) anova(mods.i[[i]], mods.l[[i]]))
 
-## I looked at the CD4 and CD8 INF cells b/c I remembered they were
-## "interesting". The pattern we see sofar in these cells is, however
-## that they are found _less_ posterior and _less_ in E64 primary. I
-## controlled this to be correct correct in basic means and medians...
-
-## Could this mean that E64 infection surpresses these INF producing
-## (?) cell types more than E88?!
-
-## -> Then our prediction would be that it's good for the host to have
-## littel of these cell types???
-
-## Let's have a first peek into how different hybrids are to pure mice
-## in this respect...
+#check the model when using HI categories as well
 
 modsHY.l <- lapply(facs.measure.cols, function (x) {
     lm(get(x) ~ (primary * challenge) + Position + HybridStatus,
@@ -178,6 +166,8 @@ names(modsHY.l) <- facs.measure.cols
 
 lapply(modsHY.l, summary)
 
+# comparison of all 3 models
+lapply(seq_along(mods.i), function(i) anova(mods.i[[i]], mods.l[[i]], modsHY.l[[i]]))
 ## And WOW (I reall wrote the above A PRIORY, otherwise... mayor
 ## fishing excursion ;-)...), but Tc1IFNgp_in_CD8p are lower in
 ## HYBRIDS look at THIS!!
