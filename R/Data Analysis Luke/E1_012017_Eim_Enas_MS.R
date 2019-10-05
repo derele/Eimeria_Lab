@@ -8,10 +8,12 @@ library(gridExtra)
 library(ggpubr)
 library(httr)
 library(RCurl)
-library(Rmisc)
 library(sjPlot)
 library(devtools)
 library(dplyr)
+require(dplyr)
+library(tidyr)
+library(tidyverse)
 
 #### ### get the data --------------------------------------------
 
@@ -533,9 +535,8 @@ names(RTqPCR.raw)[names(RTqPCR.raw) == "Sample"] <- "EH_ID"
 RTqPCR.raw[RTqPCR.raw=="IFN-y"] <- "IFN-g"
 
 ## just averages and add SD
-RTqPCR <- data.frame(RTqPCR.raw %>% group_by(Target, EH_ID) %>% 
-                     summarize(SD = sd(Cq.Mean),
-                               CqM = mean(Cq.Mean)))
+RTqPCR <- RTqPCR.raw %>% group_by(EH_ID, Target) %>% summarise(CqM = mean(Cq.Mean))
+
 RTqPCR <- as.data.frame(RTqPCR)
 
 names(RTqPCR)[names(RTqPCR) == "Target"] <- "Gene"
