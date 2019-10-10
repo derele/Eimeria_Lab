@@ -9,6 +9,7 @@ library(data.table)
 library(ggeffects)
 library(multcomp)
 library(fitdistrplus)
+library(interplot)
 
 #read in cell counts (FACS) data
 cell.countsURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FACS_cell_counts_processed.csv"
@@ -65,7 +66,22 @@ cell.means
 histogram(~infHistory | facs.measure.cols, data = E7)
 histogram(~Position | facs.measure.cols, data = E7)
 
-## #check distribution infHistory
+#weight to cell count ratio NO IDEA WHAT IM DOING
+E7$cell_counts <- as.numeric(E7$cell_counts)
+E7weight.lm <- lm(formula =  Wchange ~  weight * cell_counts, data = E7)
+lapply(E7weight.lm, summary)
+summary(E7weight.lm)
+interplot(m = E7weight.lm, var1 = "cell_counts", var2 = "weight")
+
+E7Strain.lm <- lm(formula =  weight ~  Strain * cell_counts, data = E7)
+lapply(E7Strain.lm, summary)
+summary(E7Strain.lm)
+interplot(m = E7Strain.lm, var1 = "cell_counts", var2 = "Strain")
+
+#intergate oocyst data
+oocysts <- ""
+
+#check distribution infHistory
 plotCells.inf <- function (col){
   ggplot(E7, aes(infHistory, get(col))) +
     geom_boxplot() +

@@ -48,6 +48,17 @@ E7_record <- rbind(E7aF, E7bF)
 # Merge all, #
 E7 <- merge(E7_design, E7_record)
 
+#include oocyst data
+E7a_oocyst <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7a_112018_Eim_oocyst_counts.csv"
+E7a_oocyst <- read.csv(text = getURL(E7a_oocyst))
+E7b_oocyst <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7b_112018_Eim_oocyst_counts.csv"
+E7b_oocyst <- read.csv(text = getURL(E7b_oocyst))
+E7_oocyst <- rbind(E7a_oocyst, E7b_oocyst)
+oocyst_keep <- c("dpi", "average", "OPG", "EH_ID", "volume_PBS_mL")
+E7_oocyst <- E7_oocyst[oocyst_keep]
+E7 <- merge(E7, E7_oocyst, no.dups = TRUE)
+E7 <- transform(E7, OPG = average / fecweight)
+
 #export HU
 #write.csv(E7, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
 
