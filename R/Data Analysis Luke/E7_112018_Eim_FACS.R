@@ -10,6 +10,8 @@ library(ggeffects)
 library(multcomp)
 library(fitdistrplus)
 library(interplot)
+library(reshape2)
+require(reshape2)
 
 #read in cell counts (FACS) data
 cell.countsURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FACS_cell_counts_processed.csv"
@@ -62,9 +64,29 @@ cell.means <- lapply(facs.measure.cols, function (x){
 names(cell.means) <- facs.measure.cols
 cell.means
 
-#check distribution with histogram
-histogram(~infHistory | facs.measure.cols, data = E7)
-histogram(~Position | facs.measure.cols, data = E7)
+#set OPG NAs to 0, add  and clean intensity data
+E7[["OPG"]][is.na(E7[["OPG"]])] <- 0
+E7_inf <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_Anna_qPCR_DNA_ct_Zusammenfassung.csv"
+E7_inf <- read.csv(text = getURL(E7_inf))
+E7_inf$Ct.SYBR <- NULL
+E7_inf$Pos <- NULL
+E7_inf$Amount.SYBR..Copies. <- NULL
+E7_inf$Amount.Mean.SYBR <- NULL
+E7_inf$Amount.Dev..SYBR <- NULL
+E7_inf <- distinct(E7_inf)
+E7_inf <- E7_inf %>% 
+  dcast(Name ~ Target.SYBR, value.var = "Ct.Mean.SYBR", fill = 0) %>% 
+  mutate(delta = eimeria - mouse) %>% 
+  dplyr::select(Name,delta)
+E7_inf <- E7_inf %>% tidyr::separate(Name, c("LM", "EH_ID"))
+E7_inf$EH_ID <- sub("^", "LM", E7_inf$EH_ID )
+E7_inf$LM <- NULL
+E7 <- merge(E7, E7_inf, by = "EH_ID")
+
+# graph with intensity
+ggplot(E7, aes(delta, cell_counts, color = infHistory)) +
+  geom_point() +
+  facet_wrap("Strain")
 
 #weight to cell count ratio NO IDEA WHAT IM DOING
 E7$cell_counts <- as.numeric(E7$cell_counts)
@@ -78,8 +100,6 @@ lapply(E7Strain.lm, summary)
 summary(E7Strain.lm)
 interplot(m = E7Strain.lm, var1 = "cell_counts", var2 = "Strain")
 
-#intergate oocyst data
-oocysts <- ""
 
 #check distribution infHistory
 plotCells.inf <- function (col){
