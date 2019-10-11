@@ -1,3 +1,4 @@
+# because of large number of conflicting packages, use "package::function" when necessary
 library(httr)
 library(RCurl)
 library(dplyr)
@@ -11,7 +12,6 @@ library(multcomp)
 library(fitdistrplus)
 library(interplot)
 library(reshape2)
-require(reshape2)
 
 #read in cell counts (FACS) data
 cell.countsURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FACS_cell_counts_processed.csv"
@@ -51,12 +51,6 @@ cell.medians <- lapply(facs.measure.cols, function (x){
 })
 names(cell.medians) <- facs.measure.cols
 cell.medians
-
-#cell means of all mice across infection histories (maybe trim 5% for outliers witth mean( , trim = .05)?)
-with(E7, mean(ThCD4p.cells[infHistory == "E64:E64"]))
-with(E7, mean(ThCD4p.cells[infHistory == "E64:E88"]))
-with(E7, mean(ThCD4p.cells[infHistory == "E88:E64"]))
-with(E7, mean(ThCD4p.cells[infHistory == "E88:E88"]))
 
 cell.means <- lapply(facs.measure.cols, function (x){
   tapply(E7[, x], list(E7$infHistory, as.factor(E7$Position)), mean)
@@ -145,13 +139,6 @@ for(i in seq_along(facs_boxplots.position)){
 ### counts... expecially because the overall cell numbers are varying
 ### SO MUCH that this changes the results completely!!!
 
-# distribution testing before modeling
-hist(E7$ThCD4p)
-descdist(E7$ThCD4p)
-descdist(E7$TcCD8p)
-descdist(E7$Th1IFNgp_in_CD4p)
-
-
 # model interaction of cell populations with primary and secondary infection + constant position direction (PRIMARY : SECONDARY + POSITION)
 mods.l <- lapply(facs.measure.cols, function (x) {
     lm(get(x) ~ (primary * challenge) + Position,
@@ -230,8 +217,3 @@ summary(glht(modsHY.l[["Tc1IFNgp_in_CD8p"]], mcp(HybridStatus="Tukey")))
 ## towards lower cell proportions compared to "inter subsp. hybrids"
 
 # ---------------------------------------------------------- Make connections between facets of models--------
-# transform data for graphing
-# E7.long <- reshape(data = E7, timevar = "infHistory", idvar = "EH_ID", direction = "long", varying = facs.measure.cols)
-
-# E7.melt <- melt(setDT(E7), measure=patterns(facs.measure.cols), 
-#     value.name = facs.measure.cols, variable.name='EH_ID')

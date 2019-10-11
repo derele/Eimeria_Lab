@@ -60,7 +60,7 @@ E7 <- merge(E7, E7_oocyst, no.dups = TRUE)
 E7 <- transform(E7, OPG = average / fecweight)
 
 #export HU
-#write.csv(E7, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
+write.csv(E7, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
 
 #export IZW
 #write.csv(Exp007, "../luke/Documents//Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE", quote = FALSE)
