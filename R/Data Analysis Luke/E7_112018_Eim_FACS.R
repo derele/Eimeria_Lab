@@ -82,6 +82,16 @@ ggplot(E7, aes(delta, cell_counts, color = infHistory)) +
   geom_point() +
   facet_wrap("Strain")
 
+# subtract POS from ANT (as ANT is the internal control)  (preserves direction)
+E7clean <- dplyr::select(E7, EH_ID, dpi, Strain, HybridStatus, primary, challenge, weight, fecweight, OPG, cell_counts, 
+                         ThCD4p, TcCD8p, Th1IFNgp_in_CD4p, Th17IL17Ap_in_CD4p, Tc1IFNgp_in_CD8p, Treg_Foxp3_in_CD4p,
+                         Dividing_Ki67p_in_Foxp3p, RORgtp_in_Foxp3p, Th1Tbetp_in_CD4pFoxp3n, Dividing_Ki67p_in_Tbetp,
+                         Th17RORgp_in_CD4pFoxp3n, Dividing_Ki67p_in_RORgtp, Position, infHistory, delta) 
+#########not finished#E7clean <- E7clean %>% 
+  #dcast(Name ~ Target.SYBR, value.var = "Ct.Mean.SYBR", fill = 0) %>% 
+  #mutate(delta = eimeria - mouse) %>% 
+  #dplyr::select(Name,delta)
+
 #weight to cell count ratio NO IDEA WHAT IM DOING
 E7$cell_counts <- as.numeric(E7$cell_counts)
 E7weight.lm <- lm(formula =  Wchange ~  weight * cell_counts, data = E7)
