@@ -87,22 +87,104 @@ E7clean <- dplyr::select(E7, EH_ID, dpi, Strain, HybridStatus, primary, challeng
                          ThCD4p, TcCD8p, Th1IFNgp_in_CD4p, Th17IL17Ap_in_CD4p, Tc1IFNgp_in_CD8p, Treg_Foxp3_in_CD4p,
                          Dividing_Ki67p_in_Foxp3p, RORgtp_in_Foxp3p, Th1Tbetp_in_CD4pFoxp3n, Dividing_Ki67p_in_Tbetp,
                          Th17RORgp_in_CD4pFoxp3n, Dividing_Ki67p_in_RORgtp, Position, infHistory, delta) 
-#########not finished#E7clean <- E7clean %>% 
-  #dcast(Name ~ Target.SYBR, value.var = "Ct.Mean.SYBR", fill = 0) %>% 
-  #mutate(delta = eimeria - mouse) %>% 
-  #dplyr::select(Name,delta)
 
-#weight to cell count ratio NO IDEA WHAT IM DOING
-E7$cell_counts <- as.numeric(E7$cell_counts)
-E7weight.lm <- lm(formula =  Wchange ~  weight * cell_counts, data = E7)
-lapply(E7weight.lm, summary)
-summary(E7weight.lm)
-interplot(m = E7weight.lm, var1 = "cell_counts", var2 = "weight")
+###################################### BIG CHUNK TO BE AUTOMATED ################
+E7Position <- E7clean %>% 
+  dcast(EH_ID ~ Position, value.var = "cell_counts", fill = 0) %>% 
+  mutate(POSminusANT = Posterior - Anterior) %>% 
+  dplyr::select(EH_ID, POSminusANT)
 
-E7Strain.lm <- lm(formula =  weight ~  Strain * cell_counts, data = E7)
-lapply(E7Strain.lm, summary)
-summary(E7Strain.lm)
-interplot(m = E7Strain.lm, var1 = "cell_counts", var2 = "Strain")
+E7ThCD4p <- E7clean %>%
+  dcast(EH_ID ~ Position, value.var = "ThCD4p", fill = 0) %>%
+  mutate(ThCD4p = Posterior - Anterior) %>%
+  dplyr::select(EH_ID, ThCD4p)
+
+E7TcCD8p <- E7clean %>%
+  dcast(EH_ID ~ Position, value.var = "TcCD8p", fill = 0) %>%
+  mutate(TcCD8p = Posterior - Anterior) %>%
+  dplyr::select(EH_ID, TcCD8p)
+
+E7Th1IFNgp_in_CD4p <- E7clean %>%
+  dcast(EH_ID ~ Position, value.var = "Th1IFNgp_in_CD4p", fill = 0) %>%
+  mutate(Th1IFNgp_in_CD4p = Posterior - Anterior) %>%
+  dplyr::select(EH_ID, Th1IFNgp_in_CD4p)
+
+E7Th17IL17Ap_in_CD4p <- E7clean %>%
+  dcast(EH_ID ~ Position, value.var = "Th17IL17Ap_in_CD4p", fill = 0) %>%
+  mutate(Th17IL17Ap_in_CD4p = Posterior - Anterior) %>%
+  dplyr::select(EH_ID, Th17IL17Ap_in_CD4p)
+
+E7Tc1IFNgp_in_CD8p <- E7clean %>%
+  dcast(EH_ID ~ Position, value.var = "Tc1IFNgp_in_CD8p", fill = 0) %>%
+  mutate(Tc1IFNgp_in_CD8p = Posterior - Anterior) %>%
+  dplyr::select(EH_ID, Tc1IFNgp_in_CD8p)
+
+E7Treg_Foxp3_in_CD4p <- E7clean %>%
+  dcast(EH_ID ~ Position, value.var = "Treg_Foxp3_in_CD4p", fill = 0) %>%
+  mutate(Treg_Foxp3_in_CD4p = Posterior - Anterior) %>%
+  dplyr::select(EH_ID, Treg_Foxp3_in_CD4p)
+
+E7Dividing_Ki67p_in_Foxp3p <- E7clean %>%
+  dcast(EH_ID ~ Position, value.var = "Dividing_Ki67p_in_Foxp3p", fill = 0) %>%
+  mutate(Dividing_Ki67p_in_Foxp3p = Posterior - Anterior) %>%
+  dplyr::select(EH_ID, Dividing_Ki67p_in_Foxp3p)
+
+E7RORgtp_in_Foxp3p <- E7clean %>%
+  dcast(EH_ID ~ Position, value.var = "RORgtp_in_Foxp3p", fill = 0) %>%
+  mutate(RORgtp_in_Foxp3p = Posterior - Anterior) %>%
+  dplyr::select(EH_ID, RORgtp_in_Foxp3p)
+
+# doesn't exist without conversion script
+# E7ThCD4p_Foxp3n <- E7clean %>%
+#   dcast(EH_ID ~ Position, value.var = "ThCD4p_Foxp3n", fill = 0) %>%
+#   mutate(ThCD4p_Foxp3n = Posterior - Anterior) %>%
+#   dplyr::select(EH_ID, ThCD4p_Foxp3n)
+
+E7Th1Tbetp_in_CD4pFoxp3n <- E7clean %>%
+  dcast(EH_ID ~ Position, value.var = "Th1Tbetp_in_CD4pFoxp3n", fill = 0) %>%
+  mutate(Th1Tbetp_in_CD4pFoxp3n = Posterior - Anterior) %>%
+  dplyr::select(EH_ID, Th1Tbetp_in_CD4pFoxp3n)
+
+E7Dividing_Ki67p_in_Tbetp <- E7clean %>%
+  dcast(EH_ID ~ Position, value.var = "Dividing_Ki67p_in_Tbetp", fill = 0) %>%
+  mutate(Dividing_Ki67p_in_Tbetp = Posterior - Anterior) %>%
+  dplyr::select(EH_ID, Dividing_Ki67p_in_Tbetp)
+
+E7Th17RORgp_in_CD4pFoxp3n <- E7clean %>%
+  dcast(EH_ID ~ Position, value.var = "Th17RORgp_in_CD4pFoxp3n", fill = 0) %>%
+  mutate(Th17RORgp_in_CD4pFoxp3n = Posterior - Anterior) %>%
+  dplyr::select(EH_ID, Th17RORgp_in_CD4pFoxp3n)
+
+E7Dividing_Ki67p_in_RORgtp <- E7clean %>%
+  dcast(EH_ID ~ Position, value.var = "Dividing_Ki67p_in_RORgtp", fill = 0) %>%
+  mutate(Dividing_Ki67p_in_RORgtp = Posterior - Anterior) %>%
+  dplyr::select(EH_ID, Dividing_Ki67p_in_RORgtp)
+
+E7cells <- merge(E7Position, E7ThCD4p, by = "EH_ID")
+E7cells <- merge(E7cells,E7TcCD8p, by = "EH_ID")
+E7cells <- merge(E7cells,E7Th1IFNgp_in_CD4p, by = "EH_ID")
+E7cells <- merge(E7cells,E7Th17IL17Ap_in_CD4p, by = "EH_ID")
+E7cells <- merge(E7cells,E7Tc1IFNgp_in_CD8p, by = "EH_ID")
+E7cells <- merge(E7cells,E7Treg_Foxp3_in_CD4p, by = "EH_ID")
+E7cells <- merge(E7cells,E7Dividing_Ki67p_in_Foxp3p, by = "EH_ID")
+E7cells <- merge(E7cells,E7RORgtp_in_Foxp3p, by = "EH_ID")
+E7cells <- merge(E7cells,E7Th1Tbetp_in_CD4pFoxp3n, by = "EH_ID")
+E7cells <- merge(E7cells,E7Dividing_Ki67p_in_Tbetp, by = "EH_ID")
+E7cells <- merge(E7cells,E7Th17RORgp_in_CD4pFoxp3n, by = "EH_ID")
+E7cells <- merge(E7cells,E7Dividing_Ki67p_in_RORgtp, by = "EH_ID")
+###############################################################################################
+
+# #weight to cell count ratio NO IDEA WHAT IM DOING
+# E7$cell_counts <- as.numeric(E7$cell_counts)
+# E7weight.lm <- lm(formula =  Wchange ~  weight * cell_counts, data = E7)
+# lapply(E7weight.lm, summary)
+# summary(E7weight.lm)
+# interplot(m = E7weight.lm, var1 = "cell_counts", var2 = "weight")
+# 
+# E7Strain.lm <- lm(formula =  weight ~  Strain * cell_counts, data = E7)
+# lapply(E7Strain.lm, summary)
+# summary(E7Strain.lm)
+# interplot(m = E7Strain.lm, var1 = "cell_counts", var2 = "Strain")
 
 
 #check distribution infHistory
