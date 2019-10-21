@@ -11,13 +11,13 @@ A1,LM_0231,34.59,36.01,2.02,-,CXCR3
 A2,LM_0231,37.44,36.01,2.02,-,CXCR3
 B1,LM_0287,26.02,,,-,CXCR3
 B2,LM_0287,,,,-,CXCR3
-C1,LM_0285,26.94,28.92,2.80,-,CXCR3
-C2,LM_0285,30.89,28.92,2.80,-,CXCR3
+C1,LM_0285,26.94,28.92,2.8,-,CXCR3
+C2,LM_0285,30.89,28.92,2.8,-,CXCR3
 D1,LM_0269,22.16,27.07,6.95,-,CXCR3
 D2,LM_0269,31.98,27.07,6.95,-,CXCR3
 E1,LM_0265,24.07,24.46,0.54,-,CXCR3
 E2,LM_0265,24.84,24.46,0.54,-,CXCR3
-F1,LM_0293,25.00,25.17,0.24,-,CXCR3
+F1,LM_0293,25,25.17,0.24,-,CXCR3
 F2,LM_0293,25.34,25.17,0.24,-,CXCR3
 G1,LM_0263,20.78,21.19,0.57,-,CXCR3
 G2,LM_0263,21.59,21.19,0.57,-,CXCR3
@@ -47,10 +47,10 @@ C5,LM_0285,32.73,32.73,0.01,-,IL-12
 C6,LM_0285,32.72,32.73,0.01,-,IL-12
 D5,LM_0269,24.91,24.58,0.47,-,IL-12
 D6,LM_0269,24.25,24.58,0.47,-,IL-12
-E5,LM_0265,25.01,25.50,0.69,-,IL-12
-E6,LM_0265,25.98,25.50,0.69,-,IL-12
-F5,LM_0293,25.63,26.50,1.24,-,IL-12
-F6,LM_0293,27.37,26.50,1.24,-,IL-12
+E5,LM_0265,25.01,25.5,0.69,-,IL-12
+E6,LM_0265,25.98,25.5,0.69,-,IL-12
+F5,LM_0293,25.63,26.5,1.24,-,IL-12
+F6,LM_0293,27.37,26.5,1.24,-,IL-12
 G5,LM_0263,22.81,22.47,0.48,-,IL-12
 G6,LM_0263,22.13,22.47,0.48,-,IL-12
 H5,LM_0282,23.99,24.57,0.83,-,IL-12
@@ -61,7 +61,7 @@ B7,LM_0287,32.13,33.75,2.29,-,GAPDH
 B8,LM_0287,35.37,33.75,2.29,-,GAPDH
 C7,LM_0285,29.47,28.91,0.78,-,GAPDH
 C8,LM_0285,28.36,28.91,0.78,-,GAPDH
-D7,LM_0269,21.30,20.62,0.96,-,GAPDH
+D7,LM_0269,21.3,20.62,0.96,-,GAPDH
 D8,LM_0269,19.94,20.62,0.96,-,GAPDH
 E7,LM_0265,18.74,18.91,0.24,-,GAPDH
 E8,LM_0265,19.08,18.91,0.24,-,GAPDH
@@ -73,13 +73,13 @@ H7,LM_0282,18.15,18.48,0.47,-,GAPDH
 H8,LM_0282,18.81,18.48,0.47,-,GAPDH
 A9,LM_0231,,,,-,B-actin
 A10,LM_0231,23.18,,,-,B-actin
-B9,LM_0287,38.78,33.80,7.05,-,B-actin
-B10,LM_0287,28.81,33.80,7.05,-,B-actin
-C9,LM_0285,28.10,26.00,2.96,-,B-actin
-C10,LM_0285,23.91,26.00,2.96,-,B-actin
+B9,LM_0287,38.78,33.8,7.05,-,B-actin
+B10,LM_0287,28.81,33.8,7.05,-,B-actin
+C9,LM_0285,28.1,26,2.96,-,B-actin
+C10,LM_0285,23.91,26,2.96,-,B-actin
 D9,LM_0269,20.83,20.91,0.11,-,B-actin
 D10,LM_0269,20.98,20.91,0.11,-,B-actin
-E9,LM_0265,18.70,18.95,0.34,-,B-actin
+E9,LM_0265,18.7,18.95,0.34,-,B-actin
 E10,LM_0265,19.19,18.95,0.34,-,B-actin
 F9,LM_0293,,,,-,B-actin
 F10,LM_0293,,,,-,B-actin
@@ -87,63 +87,3 @@ G9,LM_0263,16.53,16.52,0.01,-,B-actin
 G10,LM_0263,16.51,16.52,0.01,-,B-actin
 H9,LM_0282,19.47,18.97,0.71,-,B-actin
 H10,LM_0282,18.47,18.97,0.71,-,B-actin
-,,,,,,
-Main Assay,Analysis Parameters,,,,,
-Type of Application,Quantification,,,,,
-Dye(s),SYBR,,,,,
-Inverted Data,OFF,,,,,
-Threshold setting,Noiseband,,,,,
-Threshold level,102,,,,,
-Baseline setting,Automatic,,,,,
-Baseline range (from cycle no. ... to),n/a,,,,,
-Drift Correction,OFF,,,,,
-,,,,,,
-Subassay CXCR3,Analysis Parameters,,,,,
-Type of Application,Quantification,,,,,
-Dye(s),SYBR,,,,,
-Inverted Data,OFF,,,,,
-Threshold setting,Noiseband,,,,,
-Threshold level,183,,,,,
-Baseline setting,Automatic,,,,,
-Baseline range (from cycle no. ... to),n/a,,,,,
-Drift Correction,OFF,,,,,
-,,,,,,
-Subassay IRG6,Analysis Parameters,,,,,
-Type of Application,Quantification,,,,,
-Dye(s),SYBR,,,,,
-Inverted Data,OFF,,,,,
-Threshold setting,Noiseband,,,,,
-Threshold level,98,,,,,
-Baseline setting,Automatic,,,,,
-Baseline range (from cycle no. ... to),n/a,,,,,
-Drift Correction,OFF,,,,,
-,,,,,,
-Subassay IL-12,Analysis Parameters,,,,,
-Type of Application,Quantification,,,,,
-Dye(s),SYBR,,,,,
-Inverted Data,OFF,,,,,
-Threshold setting,Noiseband,,,,,
-Threshold level,134,,,,,
-Baseline setting,Automatic,,,,,
-Baseline range (from cycle no. ... to),n/a,,,,,
-Drift Correction,OFF,,,,,
-,,,,,,
-Subassay GAPDH,Analysis Parameters,,,,,
-Type of Application,Quantification,,,,,
-Dye(s),SYBR,,,,,
-Inverted Data,OFF,,,,,
-Threshold setting,Noiseband,,,,,
-Threshold level,199,,,,,
-Baseline setting,Automatic,,,,,
-Baseline range (from cycle no. ... to),n/a,,,,,
-Drift Correction,OFF,,,,,
-,,,,,,
-Subassay B-actin,Analysis Parameters,,,,,
-Type of Application,Quantification,,,,,
-Dye(s),SYBR,,,,,
-Inverted Data,OFF,,,,,
-Threshold setting,Noiseband,,,,,
-Threshold level,105,,,,,
-Baseline setting,Automatic,,,,,
-Baseline range (from cycle no. ... to),n/a,,,,,
-Drift Correction,OFF,,,,,
