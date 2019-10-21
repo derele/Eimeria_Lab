@@ -4,6 +4,9 @@ library(tidyverse)
 library(dplyr)
 library(Rmisc)
 library(RCurl)
-
+# load in raw table
 RT <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_RT-qPCR1.csv"
 RT <- read.csv(text = getURL(RT))
+#clean up
+
+
