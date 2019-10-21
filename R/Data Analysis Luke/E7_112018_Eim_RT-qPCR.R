@@ -70,3 +70,35 @@ ggplot(RT.long, aes(x = NE, y = Mouse_ID)) +
 # load in complete mouse info 
 complete <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"
 complete <- read.csv(text = getURL(complete))
+names(RT.wide)[names(RT.wide) == "Mouse_ID"] <- "EH_ID"
+names(RT.long)[names(RT.long) == "Mouse_ID"] <- "EH_ID"
+complete$X <- NULL
+# split EH_ID name and make with "_"
+complete$EH_ID <- gsub("LM", "LM_", complete$EH_ID)
+complete <- merge(complete, RT.long, by = "EH_ID")
+# add intensity 
+E7_inf <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_Anna_qPCR_DNA_ct_Zusammenfassung.csv"
+E7_inf <- read.csv(text = getURL(E7_inf))
+E7_inf$Ct.SYBR <- NULL
+E7_inf$Pos <- NULL
+E7_inf$Amount.SYBR..Copies. <- NULL
+E7_inf$Amount.Mean.SYBR <- NULL
+E7_inf$Amount.Dev..SYBR <- NULL
+E7_inf <- distinct(E7_inf)
+E7_inf <- E7_inf %>% 
+  dcast(Name ~ Target.SYBR, value.var = "Ct.Mean.SYBR", fill = 0) %>% 
+  mutate(delta = eimeria - mouse) %>% 
+  dplyr::select(Name,delta)
+E7_inf <- E7_inf %>% tidyr::separate(Name, c("LM", "EH_ID"))
+E7_inf$EH_ID <- sub("^", "LM", E7_inf$EH_ID )
+E7_inf$LM <- NULL
+E7_inf$EH_ID <- gsub("LM", "LM_", E7_inf$EH_ID)
+complete <- merge(complete, E7_inf, by = "EH_ID")
+# graph 
+ggplot(complete, aes(x = delta, y = NE, color = Target)) +
+  geom_point() +
+  facet_wrap("infHistory")
+ggplot(complete, aes(x = NE, y = delta, color = Target)) +
+  geom_point() + 
+  facet_wrap("HybridStatus")
+
