@@ -1,12 +1,9 @@
 Pos,Name,Ct SYBR,Ct Mean SYBR,Ct Dev. SYBR,Amount SYBR,Target SYBR
-A11,negative,-,,,-,negative
-B11,negative,-,,,-,negative
-C11,negative,-,,,-,negative
-D11,negative,-,,,-,negative
-E11,negative,4.54,,,-,negative
-F11,negative,-,,,-,negative
-G11,negative,-,,,-,negative
-H11,negative,-,,,-,negative
+A11,IRG6A,-,,,-,negative
+B11,CXCR3,-,,,-,negative
+C11,IL-12rb1,-,,,-,negative
+D11,B-acting,-,,,-,negative
+E11,GAPDH,4.54,,,-,negative
 A1,LM_0231,34.59,36.01,2.02,-,CXCR3
 A2,LM_0231,37.44,36.01,2.02,-,CXCR3
 B1,LM_0287,26.02,,,-,CXCR3
