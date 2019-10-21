@@ -58,6 +58,7 @@ oocyst_keep <- c("dpi", "average", "OPG", "EH_ID", "volume_PBS_mL")
 E7_oocyst <- E7_oocyst[oocyst_keep]
 E7 <- merge(E7, E7_oocyst, no.dups = TRUE)
 E7 <- transform(E7, OPG = average / fecweight)
+E7$infHistory <- E7$primary:E7$challenge
 
 #export HU
 write.csv(E7, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
