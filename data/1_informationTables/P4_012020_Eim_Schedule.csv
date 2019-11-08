@@ -1,0 +1,45 @@
+day,date,task,dpi
+Monday,06/01/19,visual inspection / food / water,0
+Tuesday,07/01/19,visual inspection / food / water ,0
+Wednesday,08/01/19,visual inspection / food / water,0
+Thursday,09/01/19,visual inspection / food / water ,0
+Friday,10/01/19,visual inspection / food / water ,0
+Saturday,11/01/19,visual inspection / food / water,0
+Sunday,12/01/19,visual inspection / food / water ,0
+Monday,13/01/19,INFECT,0
+Tuesday,14/01/19,weight control,1
+Wednesday,15/01/19,weight control,2
+Thursday,16/01/19,'weight control + collect E64, E139',3
+Friday,17/01/19,'weight control + collect E64, E139',4
+Saturday,18/01/19,'weight control + collect E64, E139 + clean the Eflab, E88 cages + collect UNI',5
+Sunday,19/01/19,'weight control + collect E64, E139 + collect UNI',6
+Monday,20/01/19,'weight control + collect Eflab, E88+ collect E64, E139 + collect UNI',7
+Tuesday,21/01/19,'weight control + collect Eflab, E88 + collect UNI',8
+Wednesday,22/01/19,'weight control + collect Eflab, E88 + collect UNI',9
+Thursday,23/01/19,'weight control + collect Eflab, E88',10
+Friday,24/01/19,'weight control + collect Eflab, E88 + put mice on beddings',11
+Saturday,25/01/19,visual inspection / food / water,0
+Sunday,26/01/19,visual inspection / food / water,0
+Monday,27/01/19,visual inspection / food / water,0
+Tuesday,28/01/19,visual inspection / food / water,0
+Wednesday,29/01/19,visual inspection / food / water,0
+Thursday,30/01/19,visual inspection / food / water,0
+Friday,31/01/19,visual inspection / food / water + change beddings,0
+Saturday,01/02/19,visual inspection / food / water,0
+Sunday,02/02/19,visual inspection / food / water,0
+Monday,03/02/19,visual inspection / food / water,0
+Tuesday,04/02/19,visual inspection / food / water,0
+Wednesday,05/02/19,visual inspection / food / water,0
+Thursday,06/02/19,visual inspection / food / water,0
+Friday,07/02/19,visual inspection / food / water,0
+Saturday,08/02/19,visual inspection / food / water,0
+Sunday,09/02/19,visual inspection / food / water,0
+Monday,10/02/19,INFECT,0
+Tuesday,11/02/19,weight control,1
+Wednesday,12/02/19,'weight control + collect E64, E139',2
+Thursday,13/02/19,'weight control + collect E64, E139',3
+Friday,14/02/19,'weight control + collect E64, E139',4
+Saturday,15/02/19,'weight control + collect E64, E139 + clean the Eflab, E88 cages + collect UNI',5
+Sunday,16/02/19,'weight control + collect E64, E139 + collect UNI',6
+Monday,17/02/19,'weight control +collect Eflab, E88+ collect E64, E139 + collect UNI',7
+Tuesday,18/02/19,'SACRIFICE + collect E88, Eflab + collect UNI',8
