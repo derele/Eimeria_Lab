@@ -14,6 +14,13 @@ RT2 <- read.csv(text = getURL(RT2))
 
 RT3 <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_RT-qPCRs/E7_112018_Eim_RT-qPCR3/E7_112018_Eim_RT-qPCR3.CSV"
 RT3 <- read.csv(text = getURL(RT3))
+
+RT4 <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_RT-qPCRs/E7_112018_Eim_RT-qPCR4/E7_112018_Eim_RT-qPCR4.CSV"
+RT4 <- read.csv(text = getURL(RT4))
+
+RT5 <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_RT-qPCRs/E7_112018_Eim_RT-qPCR5/E7_112018_Eim_RT-qPCR5.CSV"
+RT5 <- read.csv(text = getURL(RT5))
+
 # remove  extra columns
 RT1$Ct.Mean.SYBR <- NULL
 RT1$Ct.Dev..SYBR <- NULL
