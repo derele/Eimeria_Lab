@@ -27,12 +27,19 @@ RT1$Ct.Dev..SYBR <- NULL
 RT1$Amount.SYBR <- NULL
 RT2$Amount.SYBR <- NULL
 RT3$Amount.SYBR <- NULL
+RT4$Amount.SYBR <- NULL
+RT5$Amount.SYBR <- NULL
 RT1$Pos <- NULL
 RT2$Pos <- NULL
 RT3$Pos <- NULL
+RT4$Pos <- NULL
+RT5$Pos <- NULL
+
 # bind
 RT <- bind_rows(RT1, RT2)
 RT <- bind_rows(RT, RT3)
+RT <- bind_rows(RT, RT4)
+RT <- bind_rows(RT, RT5)
 #check and remove negative controls
 RT <- RT[!grepl("IRG6A", RT$Name),]
 RT <- RT[!grepl("CXCR3", RT$Name),]
