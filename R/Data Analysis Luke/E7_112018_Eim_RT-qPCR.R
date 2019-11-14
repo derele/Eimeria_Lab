@@ -116,4 +116,23 @@ ggplot(complete, aes(x = NE, y = delta, color = Target)) +
   geom_point() + 
   facet_wrap("HybridStatus")
 # load in wild data for comparison
+HZ18 <- "https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Gene_expression/HZ18_RT-qPCR_RTlong.csv"
+HZ18 <- read.csv(text = getURL(HZ18))
+#process to graph together
+HZ18 <- HZ18[!(HZ18$Target=="GBP2"),]
+HZ18 <- HZ18[!(HZ18$Target=="IL-6"),]
+i <- sapply(HZ18, is.factor)
+HZ18[i] <- lapply(HZ18[i], as.character)
+HZ18$Target[HZ18$Target == "IL-12b"] <- "IL-12"
+colnames(HZ18)[1] <- "EH_ID"
+HZ18$inf <- NULL
+HZ18$HI <- NULL
 
+
+All <- rbind(HZ18, RT.long)
+All$group <- strsplit(All$EH_ID, split = "_")
+
+
+ggplot(NULL, aes(Target, NE)) + 
+    geom_point(data = HZ18) +
+    geom_step(data = RT.long) + 
