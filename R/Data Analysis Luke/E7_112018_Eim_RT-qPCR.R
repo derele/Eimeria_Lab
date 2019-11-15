@@ -124,15 +124,15 @@ HZ18 <- HZ18[!(HZ18$Target=="IL-6"),]
 i <- sapply(HZ18, is.factor)
 HZ18[i] <- lapply(HZ18[i], as.character)
 HZ18$Target[HZ18$Target == "IL-12b"] <- "IL-12"
-colnames(HZ18)[1] <- "EH_ID"
 HZ18$inf <- NULL
 HZ18$HI <- NULL
 
+ggplot(HZ18, aes(x = NE, y = Mouse_ID)) +
+  geom_point() +
+  facet_wrap("Target") +
+  coord_flip()
 
-All <- rbind(HZ18, RT.long)
-All$group <- strsplit(All$EH_ID, split = "_")
-
-
-ggplot(NULL, aes(Target, NE)) + 
-    geom_point(data = HZ18) +
-    geom_step(data = RT.long) + 
+ggplot(RT.long, aes(x = NE, y = EH_ID)) +
+  geom_point() + 
+  facet_wrap("Target") + 
+  coord_flip()
