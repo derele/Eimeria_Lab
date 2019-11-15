@@ -101,7 +101,7 @@ E7_inf$Amount.Dev..SYBR <- NULL
 E7_inf <- distinct(E7_inf)
 E7_inf <- E7_inf %>% 
   dcast(Name ~ Target.SYBR, value.var = "Ct.Mean.SYBR", fill = 0) %>% 
-  mutate(delta = eimeria - mouse) %>% 
+  mutate(delta = mouse - eimeria) %>% 
   dplyr::select(Name,delta)
 E7_inf <- E7_inf %>% tidyr::separate(Name, c("LM", "EH_ID"))
 E7_inf$EH_ID <- sub("^", "LM", E7_inf$EH_ID )
@@ -126,13 +126,25 @@ HZ18[i] <- lapply(HZ18[i], as.character)
 HZ18$Target[HZ18$Target == "IL-12b"] <- "IL-12"
 HZ18$inf <- NULL
 HZ18$HI <- NULL
+E7 <- merge(RT.long, E7_inf)
+names(HZ18)[names(HZ18) == "deltaCtMmE_tissue"] <- "delta"
 
-ggplot(HZ18, aes(x = NE, y = Mouse_ID)) +
+ggplot(HZ18, aes(x = NE, y = delta)) +
   geom_point() +
   facet_wrap("Target") +
   coord_flip()
 
-ggplot(RT.long, aes(x = NE, y = EH_ID)) +
+ggplot(E7, aes(x = NE, y = delta)) +
   geom_point() + 
   facet_wrap("Target") + 
+  coord_flip()
+# combine in one table and distinguish as batches (rename Mouse_ID to EH_ID for sake of merging)
+HZ18$batch <- "HZ18"
+E7$batch <- "E7"
+names(HZ18)[names(HZ18) == "Mouse_ID"] <- "EH_ID"
+All <- rbind(HZ18, E7)
+
+ggplot(All, aes(x = NE, y = delta, color = batch)) +
+  geom_point() +
+  facet_wrap("Target") +
   coord_flip()
