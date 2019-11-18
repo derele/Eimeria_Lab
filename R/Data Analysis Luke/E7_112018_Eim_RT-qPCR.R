@@ -21,6 +21,9 @@ RT4 <- read.csv(text = getURL(RT4))
 RT5 <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_RT-qPCRs/E7_112018_Eim_RT-qPCR5/E7_112018_Eim_RT-qPCR5.CSV"
 RT5 <- read.csv(text = getURL(RT5))
 
+RT6 <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_RT-qPCRs/E7_RT-qPCR6/E7_RT-qPCR6.CSV"
+RT6 <- read.csv(text = getURL(RT6))
+
 # remove  extra columns
 RT1$Ct.Mean.SYBR <- NULL
 RT1$Ct.Dev..SYBR <- NULL
@@ -29,18 +32,29 @@ RT2$Amount.SYBR <- NULL
 RT3$Amount.SYBR <- NULL
 RT4$Amount.SYBR <- NULL
 RT5$Amount.SYBR <- NULL
+RT6$Amount.SYBR <- NULL
 RT1$Pos <- NULL
 RT2$Pos <- NULL
 RT3$Pos <- NULL
 RT4$Pos <- NULL
 RT5$Pos <- NULL
+RT6$Pos <- NULL
+
+# convert all Ct.SYBR to numbers
+RT1$Ct.SYBR <- as.numeric(levels(RT1$Ct.SYBR))[RT1$Ct.SYBR]
+RT2$Ct.SYBR <- as.numeric(levels(RT2$Ct.SYBR))[RT2$Ct.SYBR]
+RT3$Ct.SYBR <- as.numeric(levels(RT3$Ct.SYBR))[RT3$Ct.SYBR]
+RT4$Ct.SYBR <- as.numeric(levels(RT4$Ct.SYBR))[RT4$Ct.SYBR]
+RT5$Ct.SYBR <- as.numeric(levels(RT5$Ct.SYBR))[RT5$Ct.SYBR]
+RT6$Ct.SYBR <- as.numeric(levels(RT6$Ct.SYBR))[RT6$Ct.SYBR]
 
 # bind
-RT <- bind_rows(RT1, RT2)
+RT <- dplyr::bind_rows(RT1, RT2)
 RT <- bind_rows(RT, RT3)
 RT <- bind_rows(RT, RT4)
 RT <- bind_rows(RT, RT5)
-#check and remove negative controls
+RT <- bind_rows(RT, RT6)
+#rename targets properly
 RT <- RT[!grepl("IRG6A", RT$Name),]
 RT <- RT[!grepl("CXCR3", RT$Name),]
 RT <- RT[!grepl("IL-12rb1", RT$Name),]
@@ -90,6 +104,11 @@ complete$X <- NULL
 # split EH_ID name and make with "_"
 complete$EH_ID <- gsub("LM", "LM_", complete$EH_ID)
 complete <- merge(complete, RT.long, by = "EH_ID")
+#quick basic subtract before merge (based on E7 melting curves)
+MC <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_detection_MC.csv"
+MC <- read.csv(text = getURL(MC))
+complete <- merge(complete, MC, by = "EH_ID")
+complete <-complete[!(complete$Caecum == "neg"),]
 # add intensity 
 E7_inf <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_Anna_qPCR_DNA_ct_Zusammenfassung.csv"
 E7_inf <- read.csv(text = getURL(E7_inf))
@@ -111,10 +130,12 @@ complete <- merge(complete, E7_inf, by = "EH_ID")
 # graph 
 ggplot(complete, aes(x = delta, y = NE, color = Target)) +
   geom_point() +
-  facet_wrap("infHistory")
+  facet_wrap("infHistory") +
+  geom_smooth(method = "lm")
 ggplot(complete, aes(x = NE, y = delta, color = Target)) +
   geom_point() + 
-  facet_wrap("HybridStatus")
+  facet_wrap("HybridStatus") +
+  geom_smooth(method = "lm")
 # load in wild data for comparison
 HZ18 <- "https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Gene_expression/HZ18_RT-qPCR_RTlong.csv"
 HZ18 <- read.csv(text = getURL(HZ18))
@@ -127,6 +148,8 @@ HZ18$Target[HZ18$Target == "IL-12b"] <- "IL-12"
 HZ18$inf <- NULL
 HZ18$HI <- NULL
 E7 <- merge(RT.long, E7_inf)
+E7 <- merge(E7, MC, by = "EH_ID")
+E7 <- E7[!(E7$Caecum == "neg"),]
 names(HZ18)[names(HZ18) == "deltaCtMmE_tissue"] <- "delta"
 
 ggplot(HZ18, aes(x = NE, y = delta)) +
@@ -142,9 +165,11 @@ ggplot(E7, aes(x = NE, y = delta)) +
 HZ18$batch <- "HZ18"
 E7$batch <- "E7"
 names(HZ18)[names(HZ18) == "Mouse_ID"] <- "EH_ID"
-All <- rbind(HZ18, E7)
+All <- bind_rows(HZ18, E7)
 
 ggplot(All, aes(x = NE, y = delta, color = batch)) +
   geom_point() +
   facet_wrap("Target") +
-  coord_flip()
+  coord_flip() +
+  geom_smooth(method = "lm")
+
