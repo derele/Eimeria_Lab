@@ -74,19 +74,31 @@ RT.long <- data.frame(RT.long)
 # set ref and target genes
 refGenes <- c("RT.Ct.B-actin", "RT.Ct.GAPDH")
 targetGenes <- c("RT.Ct.CXCR3", "RT.Ct.IL.12", "RT.Ct.IRG6")
-# calculate ref genes in new column and subtract (sweep) from target genes
+# calculate ref genes in new column and subtract targets from HKG average, create new columns
 RT.wide <- RT.wide %>% mutate(refMean = rowMeans(na.rm = TRUE,select(., refGenes)))
 RT.wide <- data.frame(RT.wide)
 refMean <- as.numeric(RT.wide$refMean)
-RT.wide[,2:4] <- sweep(RT.wide[2:4],1,refMean,'-')
-RT.wide$refMean <- NULL
-RT.wide$RT.Ct.B.actin <- NULL
+RT.wide$CXCR3 <- (RT.wide$refMean - RT.wide$RT.Ct.CXCR3)
+RT.wide$IRG6 <- (RT.wide$refMean - RT.wide$RT.Ct.IRG6)
+RT.wide$IL.12 <- (RT.wide$refMean - RT.wide$RT.Ct.IL.12)
+# remove non normalized expressions
+RT.wide$RT.Ct.CXCR3 <- NULL
+RT.wide$RT.Ct.IRG6 <- NULL
+RT.wide$RT.Ct.IL.12 <- NULL
 RT.wide$RT.Ct.GAPDH <- NULL
+RT.wide$RT.Ct.B.actin <- NULL
+RT.wide$refMean <- NULL
 
-# rename columns after melt + convert to long with NE values
-names(RT.wide)[names(RT.wide) == "RT.Ct.CXCR3"] <- "CXCR3"
-names(RT.wide)[names(RT.wide) == "RT.Ct.IL.12"] <- "IL-12"
-names(RT.wide)[names(RT.wide) == "RT.Ct.IRG6"] <- "IRG6"
+# #not necessary
+# RT.wide[,2:4] <- sweep(RT.wide[2:4],1,refMean,'-')
+# RT.wide$refMean <- NULL
+# RT.wide$RT.Ct.B.actin <- NULL
+# RT.wide$RT.Ct.GAPDH <- NULL
+
+# # rename columns after melt + convert to long with NE values
+# names(RT.wide)[names(RT.wide) == "RT.Ct.CXCR3"] <- "CXCR3"
+# names(RT.wide)[names(RT.wide) == "RT.Ct.IL.12"] <- "IL-12"
+# names(RT.wide)[names(RT.wide) == "RT.Ct.IRG6"] <- "IRG6"
 
 RT.long <- melt(RT.wide, id.vars = "Mouse_ID")
 names(RT.long)[names(RT.long) == "variable"] <- "Target"
@@ -147,10 +159,13 @@ HZ18[i] <- lapply(HZ18[i], as.character)
 HZ18$Target[HZ18$Target == "IL-12b"] <- "IL-12"
 HZ18$inf <- NULL
 HZ18$HI <- NULL
+
 E7 <- merge(RT.long, E7_inf)
 E7 <- merge(E7, MC, by = "EH_ID")
 E7 <- E7[!(E7$Caecum == "neg"),]
 names(HZ18)[names(HZ18) == "deltaCtMmE_tissue"] <- "delta"
+E7 %>% mutate_if(is.factor, as.character) -> E7
+E7$Target[E7$Target == "IL.12"] <- "IL-12"
 
 ggplot(HZ18, aes(x = NE, y = delta)) +
   geom_point() +
@@ -162,6 +177,7 @@ ggplot(E7, aes(x = NE, y = delta)) +
   facet_wrap("Target") + 
   coord_flip()
 # combine in one table and distinguish as batches (rename Mouse_ID to EH_ID for sake of merging)
+
 HZ18$batch <- "HZ18"
 E7$batch <- "E7"
 names(HZ18)[names(HZ18) == "Mouse_ID"] <- "EH_ID"
