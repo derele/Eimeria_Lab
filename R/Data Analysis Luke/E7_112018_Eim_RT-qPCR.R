@@ -68,7 +68,7 @@ RTMC <- read.csv(sep = ";", text = getURL(RTMC))
 names(RTMC)[names(RTMC) == "EH_ID"] <- "Name"
 names(RTMC)[names(RTMC) == "Target"] <- "Target.SYBR"
 RT <- merge(RT, RTMC)
-RT <- RT[!(RT$Caecum == "neg"),]
+#RT <- RT[!(RT$Caecum == "neg"),]
 RT$Observer <- NULL
 RT$Date <- NULL 
 # name columns to match other data sets (Mouse_ID, Target) + make RT.CT numeric
@@ -162,10 +162,11 @@ ggplot(complete, aes(x = NE, y = delta, color = Target)) +
 # load in wild data for comparison
 HZ18 <- "https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Gene_expression/HZ18_RT-qPCR_RTlong.csv"
 HZ18 <- read.csv(text = getURL(HZ18))
-
-
-
-
+names(HZ18)[names(HZ18) == "inf"] <- "Caecum"
+HZ18$Caecum <- as.character(HZ18$Caecum)
+HZ18$Caecum[HZ18$Caecum == "TRUE"] <- "pos"
+HZ18$Caecum[HZ18$Caecum == "FALSE"] <- "neg"
+HZ18 <- HZ18[!(HZ18$Caecum == "neg"),]
 
 #process to graph together
 HZ18 <- HZ18[!(HZ18$Target=="GBP2"),]
@@ -174,7 +175,6 @@ i <- sapply(HZ18, is.factor)
 HZ18[i] <- lapply(HZ18[i], as.character)
 HZ18$Target[HZ18$Target == "IL-12b"] <- "IL-12"
 HZ18$inf <- NULL
-HZ18$HI <- NULL
 
 E7 <- merge(RT.long, E7_inf)
 E7 <- merge(E7, E7EimMC, by = "EH_ID")
@@ -198,10 +198,11 @@ HZ18$batch <- "HZ18"
 E7$batch <- "E7"
 names(HZ18)[names(HZ18) == "Mouse_ID"] <- "EH_ID"
 All <- bind_rows(HZ18, E7)
+#remove dodgy outliers
+All <- All[-c(127, 129), ]
 
 ggplot(All, aes(x = NE, y = delta, color = batch)) +
   geom_point() +
   facet_wrap("Target") +
-  coord_flip() +
   geom_smooth(method = "lm")
 
