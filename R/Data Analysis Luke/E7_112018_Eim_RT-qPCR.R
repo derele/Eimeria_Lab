@@ -166,6 +166,18 @@ names(HZ18)[names(HZ18) == "inf"] <- "Caecum"
 HZ18$Caecum <- as.character(HZ18$Caecum)
 HZ18$Caecum[HZ18$Caecum == "TRUE"] <- "pos"
 HZ18$Caecum[HZ18$Caecum == "FALSE"] <- "neg"
+# graph to compare NE between infected and non-infected
+
+
+
+
+
+ggplot(HZ18, aes(x = HI, y = NE, color = Caecum)) +
+  geom_point() +
+  facet_wrap("Target") +
+  geom_smooth(method = "lm")
+
+
 HZ18 <- HZ18[!(HZ18$Caecum == "neg"),]
 
 #process to graph together
@@ -204,5 +216,8 @@ All <- All[-c(127, 129), ]
 ggplot(All, aes(x = NE, y = delta, color = batch)) +
   geom_point() +
   facet_wrap("Target") +
+  coord_flip() +
   geom_smooth(method = "lm")
 
+# subest for graphing
+IL6
