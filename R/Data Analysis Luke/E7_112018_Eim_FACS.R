@@ -297,7 +297,16 @@ pdf("WINNER_Tc1IFNgp_in_CD8p.effects.pdf")
 plot(WOW)
 dev.off()
 
-
+# graph hybrid status
+for(i in seq_along(facs.measure.cols)){
+  eff <- ggpredict(modsHY.l[[i]], terms=c("primary", "challenge", "HybridStatus"))
+  plot <-  plot(eff, rawdata=TRUE) +
+    scale_y_continuous(paste("percent", facs.measure.cols[[i]])) +
+    ggtitle(paste("predicted values of", facs.measure.cols[[i]]))
+  pdf(paste0(facs.measure.cols[[i]], ".priXchaXposHYB.pdf"))
+  print(plot)
+  dev.off()
+}
 ## Now... I fooled myself a bit to that enthusiasm, as I expected
 ## "HybridStatusoutbred hybrids" to be ... well ... hybrids. Turns out
 ## this are the within subspecies outbreds. Let's do some PostHoc

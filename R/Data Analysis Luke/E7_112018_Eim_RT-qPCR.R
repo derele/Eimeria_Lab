@@ -5,6 +5,7 @@ library(dplyr)
 library(Rmisc)
 library(RCurl)
 library(reshape2)
+library(ggpubr)
 # load in raw tables
 RT1 <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_RT-qPCRs/E7_112018_Eim_RT-qPCR1/E7_112018_Eim_RT-qPCR1.csv"
 RT1 <- read.csv(text = getURL(RT1))
@@ -86,7 +87,8 @@ RT.wide <- reshape(RT.long[, c("Target", "Mouse_ID","RT.Ct")],
 refGenes <- c("RT.Ct.B-actin", "RT.Ct.GAPDH")
 targetGenes <- c("RT.Ct.CXCR3", "RT.Ct.IL-12", "RT.Ct.IRG6")
 # calculate ref genes in new column and subtract targets from HKG average, create new columns
-RT.wide <- RT.wide %>% mutate(refMean = rowMeans(na.rm = TRUE,select(., refGenes)))
+require(dplyr)
+RT.wide <- RT.wide %>% mutate(refMean = rowMeans(na.rm = TRUE, dplyr::select(RT.wide, refGenes)))
 RT.wide <- data.frame(RT.wide)
 refMean <- as.numeric(RT.wide$refMean)
 RT.wide$CXCR3 <- (RT.wide$refMean - RT.wide$RT.Ct.CXCR3)
@@ -131,7 +133,8 @@ complete <- merge(complete, RT.long, by = "EH_ID")
 E7EimMC <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_detection_MC.csv"
 E7EimMC <- read.csv(text = getURL(E7EimMC))
 complete <- merge(complete, E7EimMC, by = "EH_ID")
-complete <- complete[!(complete$Caecum == "neg"),]
+
+
 # add intensity 
 E7_inf <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_Anna_qPCR_DNA_ct_Zusammenfassung.csv"
 E7_inf <- read.csv(text = getURL(E7_inf))
@@ -150,6 +153,22 @@ E7_inf$EH_ID <- sub("^", "LM", E7_inf$EH_ID )
 E7_inf$LM <- NULL
 E7_inf$EH_ID <- gsub("LM", "LM_", E7_inf$EH_ID)
 complete <- merge(complete, E7_inf, by = "EH_ID")
+# graph E7 infection intensity before deleting negs
+# and subset to make smaller (reduce repeating points)
+intensity <- select(complete, EH_ID, delta, infHistory, Caecum)
+intensity <- distinct(intensity)
+
+ggplot(intensity, aes(x = delta, y = Caecum, color = infHistory)) +
+  geom_jitter(size = 3) +
+  theme(axis.text=element_text(size=12), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))
+########################################################################
+# delete negs
+complete <- complete[!(complete$Caecum == "neg"),]
+
 # graph 
 ggplot(complete, aes(x = delta, y = NE, color = Target)) +
   geom_point() +
@@ -160,24 +179,30 @@ ggplot(complete, aes(x = NE, y = delta, color = Target)) +
   facet_wrap("HybridStatus") +
   geom_smooth(method = "lm")
 # load in wild data for comparison
-HZ18 <- "https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Gene_expression/HZ18_RT-qPCR_RTlong.csv"
+HZ18 <- "https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Gene_expression/HZ18_complete.csv"
 HZ18 <- read.csv(text = getURL(HZ18))
 names(HZ18)[names(HZ18) == "inf"] <- "Caecum"
 HZ18$Caecum <- as.character(HZ18$Caecum)
 HZ18$Caecum[HZ18$Caecum == "TRUE"] <- "pos"
 HZ18$Caecum[HZ18$Caecum == "FALSE"] <- "neg"
+names(HZ18)[names(HZ18) == "deltaCtMmE_tissue"] <- "delta"
 # graph to compare NE between infected and non-infected
-
-
-
-
-
 ggplot(HZ18, aes(x = HI, y = NE, color = Caecum)) +
   geom_point() +
   facet_wrap("Target") +
   geom_smooth(method = "lm")
 
+ggplot(HZ18, aes(x = HI, y = NE, color = Eimeria.subspecies)) +
+  geom_point() +
+  facet_wrap("Target") +
+  geom_smooth(method = "lm")
 
+ggplot(HZ18, aes(x = delta, y = NE, color = Eimeria.subspecies)) +
+  geom_point() +
+  facet_wrap("Target") +
+  geom_smooth(method = "lm")
+
+###################################################################
 HZ18 <- HZ18[!(HZ18$Caecum == "neg"),]
 
 #process to graph together
@@ -190,28 +215,34 @@ HZ18$inf <- NULL
 
 E7 <- merge(RT.long, E7_inf)
 E7 <- merge(E7, E7EimMC, by = "EH_ID")
+############################################################
+#remove negs
 E7 <- E7[!(E7$Caecum == "neg"),]
 names(HZ18)[names(HZ18) == "deltaCtMmE_tissue"] <- "delta"
 E7 %>% mutate_if(is.factor, as.character) -> E7
 E7$Target[E7$Target == "IL.12"] <- "IL-12"
 
-ggplot(HZ18, aes(x = NE, y = delta)) +
-  geom_point() +
-  facet_wrap("Target") +
-  coord_flip()
 
-ggplot(E7, aes(x = NE, y = delta)) +
-  geom_point() + 
-  facet_wrap("Target") + 
-  coord_flip()
+ggplot(HZ18, aes(x = HI, y = NE)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap("Target")
+
+ggplot(HZ18, aes(x = HI, y = delta)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap("Target")
+
+
 # combine in one table and distinguish as batches (rename Mouse_ID to EH_ID for sake of merging)
 
 HZ18$batch <- "HZ18"
 E7$batch <- "E7"
+complete$batch <- "E7"
 names(HZ18)[names(HZ18) == "Mouse_ID"] <- "EH_ID"
 All <- bind_rows(HZ18, E7)
 #remove dodgy outliers
-All <- All[-c(127, 129), ]
+# All <- All[-c(127, 129), ]
 
 ggplot(All, aes(x = NE, y = delta, color = batch)) +
   geom_point() +
@@ -219,5 +250,120 @@ ggplot(All, aes(x = NE, y = delta, color = batch)) +
   coord_flip() +
   geom_smooth(method = "lm")
 
-# subest for graphing
-IL6
+# just complete minus outliers
+complete <-complete[!(complete$NE > 0),]
+All <-All[!(All$NE > 0),]
+
+# E7 graph only sample positive for Eimeria in the caecum
+ggplot(data = subset(complete, !is.na(x = Target) & !(complete$Caecum == "neg")), aes(x = infHistory, y = NE, color = infHistory)) +
+  geom_boxplot() +
+  geom_point() +
+  facet_wrap("Target") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("Gene expression of Eimeria positive mice")
+
+# HZ18 graph only sample positive for Eimeria in the caecum
+ggplot(data = subset(HZ18, !is.na(x = Target) & !(HZ18$Caecum == "neg")), aes(x = Eimeria.subspecies, y = NE, color = Eimeria.subspecies)) +
+  geom_point() + 
+  geom_boxplot() +
+  facet_wrap("Target") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("Gene expression of Eimeria positive mice")
+
+# Laboratory gene expression
+plot_complete <- select(complete, EH_ID, HybridStatus, batch, infHistory, Target, NE, Caecum, delta, primary, challenge)
+plot_complete <- distinct(plot_complete)
+plot_complete %>% mutate_if(is.factor, as.character) -> plot_complete
+plot_complete$Target[plot_complete$Target == "IL.12"] <- "IL-12"
+plot_complete <-plot_complete[!(plot_complete$NE > 0),]
+plot_complete <-plot_complete[!(plot_complete$delta > 0),]
+plot_complete[plot_complete == "inter subsp. hybrids"] <- "Outbreds"
+plot_complete[plot_complete == "outbred hybrids"] <- "Hybrids"
+plot_complete[plot_complete == "parental strains"] <- "Parentals"
+
+ggplot(data = subset(plot_complete, !is.na(x = Target)), aes(x = infHistory, y = NE, color = Target)) +
+  geom_boxplot() +
+  geom_jitter(position = position_jitterdodge()) +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(size = 20, face = "bold")) +
+  ggtitle("Laboratory mice gene expression")
+# Laboratory infection intensity
+ggplot(data = subset(plot_complete, !is.na(x = Target)), aes(x = NE, y = delta)) +
+  geom_jitter() +
+  geom_violin() +
+  facet_wrap("infHistory") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(size = 20, face = "bold")) +
+  ggtitle("Laboratory mice infection intensity")
+
+# Hybrid Status effect (or lack thereof)
+ggplot(data = subset(plot_complete, !is.na(x = Target)), aes(x = HybridStatus, y = NE, color = Target)) +
+  geom_boxplot() +
+  facet_wrap("infHistory") +
+  geom_jitter(position = position_jitterdodge()) +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(size = 20, face = "bold")) +
+  ggtitle("Laboratory mice gene expression")
+
+# Wild 2018 gene expression
+plot_HZ18 <- select(HZ18, EH_ID, Target, HI, delta, Eimeria.subspecies, NE, Caecum, batch)
+plot_HZ18 <- distinct(plot_HZ18)
+plot_HZ18 <- plot_HZ18[!(plot_HZ18$NE > 0),]
+
+ggplot(data = subset(plot_HZ18, !is.na(x = Target)), aes(x = Eimeria.subspecies, y = NE, color = Target)) +
+  geom_boxplot() +
+  geom_jitter(position = position_jitterdodge()) +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(size = 20, face = "bold")) +
+  ggtitle("Wild mice gene expression")
+# Wild 2018 infection intensity
+ggplot(data = subset(plot_HZ18, !is.na(x = Target)), aes(x = NE, y = delta)) +
+  geom_jitter() +
+  geom_violin() +
+  facet_wrap("Eimeria.subspecies") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(size = 20, face = "bold")) +
+  ggtitle("Wild mice infection intensity")
+
+# Wild Hybrid effect
+ggplot(data = subset(plot_HZ18, !is.na(x = Target)), aes(x = HI, y = NE, color = Target)) +
+  geom_point() +
+  facet_wrap("Eimeria.subspecies") +
+  geom_smooth(method = "lm")
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(size = 20, face = "bold")) +
+  ggtitle("Wild mice infection intensity")
+
+
