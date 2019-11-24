@@ -91,6 +91,82 @@ require(dplyr)
 RT.wide <- RT.wide %>% mutate(refMean = rowMeans(na.rm = TRUE, dplyr::select(RT.wide, refGenes)))
 RT.wide <- data.frame(RT.wide)
 refMean <- as.numeric(RT.wide$refMean)
+
+# load in complete mouse info 
+complete <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"
+complete <- read.csv(text = getURL(complete))
+names(RT.wide)[names(RT.wide) == "Mouse_ID"] <- "EH_ID"
+names(RT.long)[names(RT.long) == "Mouse_ID"] <- "EH_ID"
+complete$X <- NULL
+# split EH_ID name and make with "_"
+complete$EH_ID <- gsub("LM", "LM_", complete$EH_ID)
+complete <- merge(complete, RT.long, by = "EH_ID")
+#quick basic subtract before merge (based on E7 melting curves)
+E7EimMC <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_detection_MC.csv"
+E7EimMC <- read.csv(text = getURL(E7EimMC))
+complete <- merge(complete, E7EimMC, by = "EH_ID")
+
+# add intensity 
+E7_inf <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_Anna_qPCR_DNA_ct_Zusammenfassung.csv"
+E7_inf <- read.csv(text = getURL(E7_inf))
+E7_inf$Ct.SYBR <- NULL
+E7_inf$Pos <- NULL
+E7_inf$Amount.SYBR..Copies. <- NULL
+E7_inf$Amount.Mean.SYBR <- NULL
+E7_inf$Amount.Dev..SYBR <- NULL
+E7_inf <- distinct(E7_inf)
+E7_inf <- E7_inf %>% 
+  dcast(Name ~ Target.SYBR, value.var = "Ct.Mean.SYBR", fill = 0) %>% 
+  mutate(delta = mouse - eimeria) %>% 
+  dplyr::select(Name,delta)
+E7_inf <- E7_inf %>% tidyr::separate(Name, c("LM", "EH_ID"))
+E7_inf$EH_ID <- sub("^", "LM", E7_inf$EH_ID )
+E7_inf$LM <- NULL
+E7_inf$EH_ID <- gsub("LM", "LM_", E7_inf$EH_ID)
+complete <- merge(complete, E7_inf, by = "EH_ID")
+# and subset to make smaller (reduce repeating points)
+intensity <- select(complete, EH_ID, delta, infHistory, Caecum)
+intensity <- distinct(intensity)
+# substract ref genes individually to check whether they might influence the gene expression when averaged together
+B_actin <- RT.wide
+B_actin$CXCR3 <- (B_actin$RT.Ct.B.actin - B_actin$RT.Ct.CXCR3)
+B_actin$IRG6 <- (B_actin$RT.Ct.B.actin - B_actin$RT.Ct.IRG6)
+B_actin$IL12 <- (B_actin$RT.Ct.B.actin - B_actin$RT.Ct.IL.12)
+
+GAPDH <- RT.wide
+GAPDH$CXCR3 <- (GAPDH$RT.Ct.GAPDH - GAPDH$RT.Ct.CXCR3)
+GAPDH$IRG6 <- (GAPDH$RT.Ct.GAPDH - GAPDH$RT.Ct.IRG6)
+GAPDH$IL12 <- (GAPDH$RT.Ct.GAPDH - GAPDH$RT.Ct.IL.12)
+#graph out to compare (B actin)
+B_actin.long <- gather(B_actin, Target, NE, CXCR3:IL12, factor_key=TRUE)
+B_actin.long$RT.Ct.B.actin <- NULL
+B_actin.long$RT.Ct.CXCR3 <- NULL
+B_actin.long$RT.Ct.GAPDH <- NULL
+B_actin.long$RT.Ct.IL.12 <- NULL
+B_actin.long$RT.Ct.IRG6 <- NULL
+B_actin.long$refMean <- NULL
+B_actin.long <- merge(B_actin.long, intensity)
+
+ggplot(B_actin.long, aes(infHistory, NE)) +
+  geom_jitter() +
+  geom_boxplot() + 
+  facet_wrap("Target",  scales = "free_y")
+#graph out to compare (B actin)
+GAPDH.long <- gather(GAPDH, Target, NE, CXCR3:IL12, factor_key=TRUE)
+GAPDH.long$RT.Ct.B.actin <- NULL
+GAPDH.long$RT.Ct.CXCR3 <- NULL
+GAPDH.long$RT.Ct.GAPDH <- NULL
+GAPDH.long$RT.Ct.IL.12 <- NULL
+GAPDH.long$RT.Ct.IRG6 <- NULL
+GAPDH.long$refMean <- NULL
+GAPDH.long <- merge(GAPDH.long, intensity)
+
+ggplot(GAPDH.long, aes(infHistory, NE)) +
+  geom_jitter() +
+  geom_boxplot() + 
+  facet_wrap("Target",  scales = "free_y")
+
+# continue with averaging refgenes and subtracting targets from them
 RT.wide$CXCR3 <- (RT.wide$refMean - RT.wide$RT.Ct.CXCR3)
 RT.wide$IRG6 <- (RT.wide$refMean - RT.wide$RT.Ct.IRG6)
 RT.wide$IL.12 <- (RT.wide$refMean - RT.wide$RT.Ct.IL.12)
@@ -120,43 +196,9 @@ names(RT.long)[names(RT.long) == "value"] <- "NE"
 ggplot(RT.long, aes(x = NE, y = Mouse_ID)) +
   geom_point() +
   facet_wrap("Target")
-# load in complete mouse info 
-complete <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"
-complete <- read.csv(text = getURL(complete))
-names(RT.wide)[names(RT.wide) == "Mouse_ID"] <- "EH_ID"
-names(RT.long)[names(RT.long) == "Mouse_ID"] <- "EH_ID"
-complete$X <- NULL
-# split EH_ID name and make with "_"
-complete$EH_ID <- gsub("LM", "LM_", complete$EH_ID)
-complete <- merge(complete, RT.long, by = "EH_ID")
-#quick basic subtract before merge (based on E7 melting curves)
-E7EimMC <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_detection_MC.csv"
-E7EimMC <- read.csv(text = getURL(E7EimMC))
-complete <- merge(complete, E7EimMC, by = "EH_ID")
 
-
-# add intensity 
-E7_inf <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_Anna_qPCR_DNA_ct_Zusammenfassung.csv"
-E7_inf <- read.csv(text = getURL(E7_inf))
-E7_inf$Ct.SYBR <- NULL
-E7_inf$Pos <- NULL
-E7_inf$Amount.SYBR..Copies. <- NULL
-E7_inf$Amount.Mean.SYBR <- NULL
-E7_inf$Amount.Dev..SYBR <- NULL
-E7_inf <- distinct(E7_inf)
-E7_inf <- E7_inf %>% 
-  dcast(Name ~ Target.SYBR, value.var = "Ct.Mean.SYBR", fill = 0) %>% 
-  mutate(delta = mouse - eimeria) %>% 
-  dplyr::select(Name,delta)
-E7_inf <- E7_inf %>% tidyr::separate(Name, c("LM", "EH_ID"))
-E7_inf$EH_ID <- sub("^", "LM", E7_inf$EH_ID )
-E7_inf$LM <- NULL
-E7_inf$EH_ID <- gsub("LM", "LM_", E7_inf$EH_ID)
-complete <- merge(complete, E7_inf, by = "EH_ID")
 # graph E7 infection intensity before deleting negs
-# and subset to make smaller (reduce repeating points)
-intensity <- select(complete, EH_ID, delta, infHistory, Caecum)
-intensity <- distinct(intensity)
+
 
 ggplot(intensity, aes(x = delta, y = Caecum, color = infHistory)) +
   geom_jitter(size = 3) +
