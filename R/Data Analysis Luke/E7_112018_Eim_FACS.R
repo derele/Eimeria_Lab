@@ -318,3 +318,35 @@ summary(glht(modsHY.l[["Tc1IFNgp_in_CD8p"]], mcp(HybridStatus="Tukey")))
 ## towards lower cell proportions compared to "inter subsp. hybrids"
 
 # ---------------------------------------------------------- Make connections between facets of models--------
+E7$primary <- as.character(E7$primary)
+E7$challenge <- as.character(E7$challenge)
+E7$primary[E7$primary == "E64"] <- "E. ferrisi"
+E7$primary[E7$primary == "E88"] <- "E. falciformis"
+E7$challenge[E7$challenge == "E64"] <- "E. ferrisi"
+E7$challenge[E7$challenge == "E88"] <- "E. falciformis"
+
+
+mods.l <- lapply(facs.measure.cols, function (x) {
+  lm(get(x) ~ (primary * challenge) + Position,
+     data=E7)
+})
+names(mods.l) <- facs.measure.cols
+lapply(mods.l, summary)
+
+for(i in seq_along(facs.measure.cols)){
+  eff <- ggpredict(mods.l[[i]], terms=c("primary", "challenge", "Position"))
+  plot <-  plot(eff, rawdata=TRUE) +
+    theme(axis.text=element_text(size=12, face = "bold"), 
+          axis.title=element_text(size=14,face="bold"),
+          axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black"),
+          strip.text.x = element_text(size = 14, face = "bold"),
+          legend.text=element_text(size=12, face = "bold"),
+          legend.title = element_text(size = 12, face = "bold"),
+          plot.title = element_text(size = 20, face = "bold")) +
+    scale_y_continuous(paste("percent", facs.measure.cols[[i]])) +
+    ggtitle(paste("predicted values of", facs.measure.cols[[i]]))
+  pdf(paste0(facs.measure.cols[[i]], ".priXcha+pos.pdf"))
+  print(plot)
+  dev.off()
+}
+

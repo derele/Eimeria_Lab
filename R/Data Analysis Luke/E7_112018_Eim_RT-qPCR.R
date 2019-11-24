@@ -167,7 +167,7 @@ ggplot(intensity, aes(x = delta, y = Caecum, color = infHistory)) +
         legend.title = element_text(size = 12, face = "bold"))
 ########################################################################
 # delete negs
-complete <- complete[!(complete$Caecum == "neg"),]
+# complete <- complete[!(complete$Caecum == "neg"),]
 
 # graph 
 ggplot(complete, aes(x = delta, y = NE, color = Target)) +
@@ -203,7 +203,7 @@ ggplot(HZ18, aes(x = delta, y = NE, color = Eimeria.subspecies)) +
   geom_smooth(method = "lm")
 
 ###################################################################
-HZ18 <- HZ18[!(HZ18$Caecum == "neg"),]
+# HZ18 <- HZ18[!(HZ18$Caecum == "neg"),]
 
 #process to graph together
 HZ18 <- HZ18[!(HZ18$Target=="GBP2"),]
@@ -217,7 +217,7 @@ E7 <- merge(RT.long, E7_inf)
 E7 <- merge(E7, E7EimMC, by = "EH_ID")
 ############################################################
 #remove negs
-E7 <- E7[!(E7$Caecum == "neg"),]
+ E7 <- E7[!(E7$Caecum == "neg"),]
 names(HZ18)[names(HZ18) == "deltaCtMmE_tissue"] <- "delta"
 E7 %>% mutate_if(is.factor, as.character) -> E7
 E7$Target[E7$Target == "IL.12"] <- "IL-12"
@@ -288,22 +288,33 @@ plot_complete <-plot_complete[!(plot_complete$delta > 0),]
 plot_complete[plot_complete == "inter subsp. hybrids"] <- "Outbreds"
 plot_complete[plot_complete == "outbred hybrids"] <- "Hybrids"
 plot_complete[plot_complete == "parental strains"] <- "Parentals"
+plot_complete[plot_complete == "E64:E64"] <- "E. ferrisi : E. ferrisi"
+plot_complete[plot_complete == "E64:E88"] <- "E. ferrisi : E. falciformis"
+plot_complete[plot_complete == "E88:E64"] <- "E. falciformis : E. ferrisi"
+plot_complete[plot_complete == "E88:E88"] <- "E. falciformis : E. falciformis"
+names(plot_complete)[names(plot_complete) == "infHistory"] <- "Infection_History"
+plot_complete <- na.omit(plot_complete)
 
-ggplot(data = subset(plot_complete, !is.na(x = Target)), aes(x = infHistory, y = NE, color = Target)) +
+
+
+ggplot(data = plot_complete, aes(x = Infection_History, y = NE)) +
   geom_boxplot() +
-  geom_jitter(position = position_jitterdodge()) +
-  theme(axis.text=element_text(size=12, face = "bold"), 
+  facet_wrap("Target",  scales = "free_y") +
+  theme(axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", color = "black"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_text(size = 12, face = "bold"),
+        plot.margin=unit(c(1,1,1,2),"cm"),
         plot.title = element_text(size = 20, face = "bold")) +
   ggtitle("Laboratory mice gene expression")
+
+
 # Laboratory infection intensity
-ggplot(data = subset(plot_complete, !is.na(x = Target)), aes(x = NE, y = delta)) +
-  geom_jitter() +
-  geom_violin() +
-  facet_wrap("infHistory") +
+ggplot(data = subset(plot_complete, !is.na(x = Target)), aes(x = Caecum, y = delta, color = Infection_History)) +
+  geom_jitter(size = 2) +
+  coord_flip() +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
@@ -315,7 +326,7 @@ ggplot(data = subset(plot_complete, !is.na(x = Target)), aes(x = NE, y = delta))
 # Hybrid Status effect (or lack thereof)
 ggplot(data = subset(plot_complete, !is.na(x = Target)), aes(x = HybridStatus, y = NE, color = Target)) +
   geom_boxplot() +
-  facet_wrap("infHistory") +
+  facet_wrap("Infection_History") +
   geom_jitter(position = position_jitterdodge()) +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
