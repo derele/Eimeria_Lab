@@ -10,10 +10,14 @@ library(tidyr)
 # load in raw data
 P3a_record <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3a_112019_Eim_Record.csv"
 P3a_record <- read.csv(text = getURL(P3a_record))
+P3a_record$batch <- "a"
+P3a_record$day_change <- NULL
 
 P3b_record <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3b_112019_Eim_Record.csv"
 P3b_record <- read.csv(text = getURL(P3b_record))
 P3b_record$X <- NULL
+P3b_record$batch <- "b"
+P3b_record$day_change <- NULL
 
 # load in design
 P3_design <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/P3_112019_Eim_design.csv"
@@ -34,9 +38,16 @@ ggplot(P3a_record, aes(x = dpi, y = wloss)) +
   geom_smooth() + 
   facet_wrap("primary")
 
-ggplot(P3b_record, aes(x = dpi, y = wloss, color = infHistory)) +
+ggplot(P3b_record, aes(x = dpi, y = wloss)) +
   geom_point() +
   geom_smooth() +
-  facet_wrap("infHistory")
+  facet_wrap("challenge")
 
+# add oocyst data
+oocysts <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_oocysts.csv"
+oocysts <- read.csv(text = getURL(oocysts))
+oocysts$X <- NULL 
 
+# make overall table with labels
+P3_record <- rbind(P3a_record, P3b_record)
+P3_record_full <- merge(P3_record, oocysts, by = "labels")
