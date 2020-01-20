@@ -97,4 +97,10 @@ ggplot(P3_record_full, aes(x = dpi, y = OPG, color = infHistory)) +
   geom_line() +
   facet_wrap("batch")
 
+ggplot(P3_record_full, aes(x = primary, y = OPG, color = Eim_sp))+ 
+  geom_boxplot() +
+  geom_point() + 
+  facet_wrap("challenge")
+
+
 # graph like Anna's for comparison
