@@ -35,15 +35,15 @@ P3a_record <- merge(P3a_record, P3_design, by = "EH_ID")
 P3b_record <- merge(P3b_record, P3_design, by = "EH_ID")
 
 # graph to see overall state
-ggplot(P3a_record, aes(x = dpi, y = wloss, color = EH_ID)) +
+ggplot(P3a_record, aes(x = dpi, y = wloss)) +
   geom_point() +
-  geom_line() +
+  geom_smooth() + 
   facet_wrap("primary")
 
-ggplot(P3b_record, aes(x = dpi, y = wloss, color = EH_ID)) +
+ggplot(P3b_record, aes(x = dpi, y = wloss)) +
   geom_point() +
-  geom_line() +
-  facet_wrap("infHistory")
+  geom_smooth() +
+  facet_wrap("challenge")
 
 ggplot(P3b_record, aes(x = dpi, y = wloss)) +
   geom_point() +
@@ -57,7 +57,7 @@ oocysts$X <- NULL
 
 # make overall table with labels
 P3_record <- rbind(P3a_record, P3b_record)
-P3_record_full <- merge(P3_record, oocysts, by = "labels", all = T)
+P3_record_full <- merge(P3_record, oocysts, by = "labels")
 
 # add Eim species column
 P3_record_full <- P3_record_full %>% mutate(Eim_sp = case_when(
