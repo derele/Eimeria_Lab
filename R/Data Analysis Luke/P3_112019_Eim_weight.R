@@ -33,18 +33,22 @@ P3_design$infHistory <- paste(P3_design$primary, P3_design$challenge, sep =  ":"
 # merge to acquire infection history (also fix any num/factor class discrepancies and data frame columns)
 P3a_record <- merge(P3a_record, P3_design, by = "EH_ID")
 P3b_record <- merge(P3b_record, P3_design, by = "EH_ID")
-P3b_record$wloss <- as.numeric(as.character(P3b_record$wloss))
 
 # graph to see overall state
-ggplot(P3a_record, aes(x = dpi, y = wloss)) +
+ggplot(P3a_record, aes(x = dpi, y = wloss, color = EH_ID)) +
   geom_point() +
-  geom_smooth() + 
+  geom_line() +
   facet_wrap("primary")
+
+ggplot(P3b_record, aes(x = dpi, y = wloss, color = EH_ID)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap("infHistory")
 
 ggplot(P3b_record, aes(x = dpi, y = wloss)) +
   geom_point() +
   geom_smooth() +
-  facet_wrap("challenge")
+  facet_wrap("primary")
 
 # add oocyst data
 oocysts <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_oocysts.csv"
@@ -53,7 +57,7 @@ oocysts$X <- NULL
 
 # make overall table with labels
 P3_record <- rbind(P3a_record, P3b_record)
-P3_record_full <- merge(P3_record, oocysts, by = "labels")
+P3_record_full <- merge(P3_record, oocysts, by = "labels", all = T)
 
 # add Eim species column
 P3_record_full <- P3_record_full %>% mutate(Eim_sp = case_when(
@@ -88,9 +92,9 @@ ggplot(P3_record_full, aes(x = dpi, y = OPG, color = challenge)) +
   geom_point() +
   facet_wrap("primary")
 
-ggplot(P3_record_full, aes(x = dpi, y = OPG, color = EH_ID)) +
+ggplot(P3_record_full, aes(x = dpi, y = OPG, color = infHistory)) +
   geom_point() +
   geom_line() +
-  facet_wrap("infHistory")
+  facet_wrap("batch")
 
 # graph like Anna's for comparison
