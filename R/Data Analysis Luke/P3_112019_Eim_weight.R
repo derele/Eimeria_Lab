@@ -56,6 +56,25 @@ P3_record <- rbind(P3a_record, P3b_record)
 P3_record_full <- merge(P3_record, oocysts, by = "labels")
 
 # add Eim species column
+P3_record_full <- P3_record_full %>% mutate(Eim_sp = case_when(
+  infHistory == "Eflab:E64" ~ "Efal:Efer",
+  infHistory == "E64:E88" ~ "Efer:Efal",
+  infHistory == "E139:E88" ~ "Efer:Efal",
+  infHistory == "E88:E64" ~ "Efal:Efer",
+  
+  infHistory == "E88:UNI" ~ "Efal",
+  infHistory == "Eflab:UNI" ~ "Efal",
+  infHistory == "UNI:E88" ~ "Efal",
+  infHistory == "E88:E88" ~ "Efal",
+  infHistory == "Eflab:E88" ~ "Efal",
+  
+  infHistory == "UNI:E64" ~ "Efer",
+  infHistory == "E64:E64" ~ "Efer",
+  infHistory == "E139:UNI" ~ "Efer",
+  infHistory == "E139:E64" ~ "Efer",
+  infHistory == "E64:UNI" ~ "Efer",
+  
+  infHistory == "UNI:UNI" ~ "uni",))
 
 # calculate OPG
 P3_record_full$OPG <- P3_record_full$AVG / P3_record_full$faeces_weight
@@ -69,5 +88,9 @@ ggplot(P3_record_full, aes(x = dpi, y = OPG, color = challenge)) +
   geom_point() +
   facet_wrap("primary")
 
+ggplot(P3_record_full, aes(x = dpi, y = OPG, color = EH_ID)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap("infHistory")
 
 # graph like Anna's for comparison
