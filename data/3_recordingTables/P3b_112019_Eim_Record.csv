@@ -1,3 +1,4 @@
+,EH_ID,dpi,weight,weight_dpi0,faeces_weight,wloss,labels,day_change
 1,LM_0332,0,51.3,51.3,NA,100,BHI,NA
 2,LM_0333,0,50,50,NA,100,YAO,NA
 3,LM_0334,0,47.3,47.3,NA,100,EVN,NA
@@ -142,4 +143,3 @@
 142,LM_0345,8,52.8,59.2,NA,89.1891891891892,IHD,NA
 143,LM_0346,8,49.4,53.2,1.87,92.8571428571429,VJA,NA
 144,LM_0347,8,60.4,69.1,2.65,87.4095513748191,FMI,NA
-,EH_ID,dpi,weight,weight_dpi0,faeces_weight,wloss,labels,day_change
