@@ -31,8 +31,8 @@ P3_design <- unique(P3_design)
 # mak infection history
 P3_design$infHistory <- paste(P3_design$primary, P3_design$challenge, sep =  ":") 
 # merge to acquire infection history (also fix any num/factor class discrepancies and data frame columns)
-P3a_record <- merge(P3a_record, P3_design, by = "EH_ID")
-P3b_record <- merge(P3b_record, P3_design, by = "EH_ID")
+P3a_record <- merge(P3a_record, P3_design, by = "EH_ID", all = T)
+P3b_record <- merge(P3b_record, P3_design, by = "EH_ID", all = T)
 
 # graph to see overall state
 ggplot(P3a_record, aes(x = dpi, y = wloss)) +
@@ -57,7 +57,7 @@ oocysts$X <- NULL
 
 # make overall table with labels
 P3_record <- rbind(P3a_record, P3b_record)
-P3_record_full <- merge(P3_record, oocysts, by = "labels")
+P3_record_full <- merge(P3_record, oocysts, by = "labels", all = T)
 
 # add Eim species column
 P3_record_full <- P3_record_full %>% mutate(Eim_sp = case_when(
@@ -78,7 +78,7 @@ P3_record_full <- P3_record_full %>% mutate(Eim_sp = case_when(
   infHistory == "E139:E64" ~ "Efer",
   infHistory == "E64:UNI" ~ "Efer",
   
-  infHistory == "UNI:UNI" ~ "uni",))
+  infHistory == "UNI:UNI" ~ "uni"))
 
 # calculate OPG
 P3_record_full$OPG <- P3_record_full$AVG / P3_record_full$faeces_weight
