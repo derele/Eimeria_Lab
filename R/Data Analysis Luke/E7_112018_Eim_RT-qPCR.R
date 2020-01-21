@@ -104,7 +104,7 @@ complete <- merge(complete, RT.long, by = "EH_ID")
 #quick basic subtract before merge (based on E7 melting curves)
 E7EimMC <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_detection_MC.csv"
 E7EimMC <- read.csv(text = getURL(E7EimMC))
-complete <- merge(complete, E7EimMC, by = "EH_ID")
+complete <- merge(complete, E7EimMC, by = "EH_ID", all = T)
 
 # add intensity 
 E7_inf <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_Anna_qPCR_DNA_ct_Zusammenfassung.csv"
@@ -119,11 +119,12 @@ E7_inf <- E7_inf %>%
   dcast(Name ~ Target.SYBR, value.var = "Ct.Mean.SYBR", fill = 0) %>% 
   mutate(delta = mouse - eimeria) %>% 
   dplyr::select(Name,delta)
-E7_inf <- E7_inf %>% tidyr::separate(Name, c("LM", "EH_ID"))
-E7_inf$EH_ID <- sub("^", "LM", E7_inf$EH_ID )
-E7_inf$LM <- NULL
-E7_inf$EH_ID <- gsub("LM", "LM_", E7_inf$EH_ID)
-complete <- merge(complete, E7_inf, by = "EH_ID")
+names(E7_inf)[names(E7_inf) == "Name"] <- "EH_ID"
+# E7_inf <- E7_inf %>% tidyr::separate(Name, c("LM", "EH_ID"))
+# E7_inf$EH_ID <- sub("^", "LM", E7_inf$EH_ID )
+# E7_inf$LM <- NULL
+# E7_inf$EH_ID <- gsub("LM", "LM_", E7_inf$EH_ID)
+complete <- merge(complete, E7_inf, by = "EH_ID", all = T)
 # and subset to make smaller (reduce repeating points)
 intensity <- select(complete, EH_ID, delta, infHistory, Caecum)
 intensity <- distinct(intensity)
@@ -170,6 +171,16 @@ ggplot(GAPDH.long, aes(infHistory, NE)) +
 RT.wide$CXCR3 <- (RT.wide$refMean - RT.wide$RT.Ct.CXCR3)
 RT.wide$IRG6 <- (RT.wide$refMean - RT.wide$RT.Ct.IRG6)
 RT.wide$IL.12 <- (RT.wide$refMean - RT.wide$RT.Ct.IL.12)
+
+RT.long <- reshape(RT.wide, 
+            direction = "long",
+            varying = list(names(RT.wide)[2:4]),
+            v.names = "NE",
+            times = c("CXCR3", "IRG6", "IL.12"),
+            timevar = "Target",
+            idvar = "EH_ID")
+rownames(RT.long) <- NULL
+
 # remove non normalized expressions
 RT.wide$RT.Ct.CXCR3 <- NULL
 RT.wide$RT.Ct.IRG6 <- NULL
@@ -189,17 +200,15 @@ RT.wide$refMean <- NULL
 # names(RT.wide)[names(RT.wide) == "RT.Ct.IL.12"] <- "IL-12"
 # names(RT.wide)[names(RT.wide) == "RT.Ct.IRG6"] <- "IRG6"
 
-RT.long <- melt(RT.wide, id.vars = "Mouse_ID")
-names(RT.long)[names(RT.long) == "variable"] <- "Target"
-names(RT.long)[names(RT.long) == "value"] <- "NE"
+# RT.long <- melt(RT.wide, id.vars = "Mouse_ID")
+# names(RT.long)[names(RT.long) == "variable"] <- "Target"
+# names(RT.long)[names(RT.long) == "value"] <- "NE"
 # graph
-ggplot(RT.long, aes(x = NE, y = Mouse_ID)) +
+ggplot(RT.long, aes(x = NE, y = EH_ID)) +
   geom_point() +
   facet_wrap("Target")
 
-# graph E7 infection intensity before deleting negs
-
-
+# graph E7 infection intensity
 ggplot(intensity, aes(x = delta, y = Caecum, color = infHistory)) +
   geom_jitter(size = 3) +
   theme(axis.text=element_text(size=12), 
@@ -208,14 +217,24 @@ ggplot(intensity, aes(x = delta, y = Caecum, color = infHistory)) +
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_text(size = 12, face = "bold"))
 ########################################################################
-# delete negs
-# complete <- complete[!(complete$Caecum == "neg"),]
+E7 <- merge(RT.long, intensity, all = T)
 
 # graph 
-ggplot(complete, aes(x = delta, y = NE, color = Target)) +
+ggplot(E7, aes(x = delta, y = NE, color = Caecum)) +
   geom_point() +
-  facet_wrap("infHistory") +
-  geom_smooth(method = "lm")
+  geom_miss_point() +
+  facet_wrap("Target", scales = "free")
+
+ggplot(E7, aes(x = NE, y = delta, color = infHistory)) +
+  geom_point() +
+  geom_miss_point() +
+  facet_wrap("Caecum", scales = "free")
+
+ggplot(E7, aes(x = NE, y = delta, color = Caecum)) +
+  geom_point() +
+  facet_wrap("infHistory", scales = "free")
+
+
 ggplot(complete, aes(x = NE, y = delta, color = Target)) +
   geom_point() + 
   facet_wrap("HybridStatus") +
