@@ -38,17 +38,24 @@ P3b_record <- merge(P3b_record, P3_design, by = "EH_ID", all = T)
 ggplot(P3a_record, aes(x = dpi, y = wloss)) +
   geom_point() +
   geom_smooth() + 
-  facet_wrap("primary")
+  facet_wrap("primary") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 primary infection weighloss by parasite strain")
 
 ggplot(P3b_record, aes(x = dpi, y = wloss)) +
   geom_point() +
   geom_smooth() +
-  facet_wrap("challenge")
-
-ggplot(P3b_record, aes(x = dpi, y = wloss)) +
-  geom_point() +
-  geom_smooth() +
-  facet_wrap("primary")
+  facet_wrap("challenge") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 challenge infection weighloss by parasite strain")
 
 # add oocyst data
 oocysts <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_oocysts.csv"
@@ -57,7 +64,7 @@ oocysts$X <- NULL
 
 # make overall table with labels
 P3_record <- rbind(P3a_record, P3b_record)
-P3_record_full <- merge(P3_record, oocysts, by = "labels", all = T)
+P3_record_full <- merge(P3_record, oocysts, by = "labels")
 
 # add Eim species column
 P3_record_full <- P3_record_full %>% mutate(Eim_sp = case_when(
@@ -83,14 +90,53 @@ P3_record_full <- P3_record_full %>% mutate(Eim_sp = case_when(
 # calculate OPG
 P3_record_full$OPG <- P3_record_full$AVG / P3_record_full$faeces_weight
 
-#let's see what we made
-ggplot(P3_record_full, aes(x = dpi, y = AVG, color = challenge)) +
+# create just primary and challenge oocyst and weightloss graphs
+P3a <- merge(P3a_record, oocysts)
+ggplot(P3a, aes(x = dpi, y = AVG)) +
   geom_point() +
-  facet_wrap("primary")
+  facet_wrap("primary") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 primary oocyst shedding by parasite strain")
+
+P3b <- merge(P3b_record, oocysts)
+ggplot(P3b, aes(x = dpi, y = AVG)) +
+  geom_point() +
+  facet_wrap("challenge") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 challenge oocyst shedding by parasite strain")
+
+
+#let's see what we made
+
+
+# makes no sense to graph this 
+# ggplot(P3_record_full, aes(x = dpi, y = AVG, color = challenge, shape = batch)) +
+#   geom_point(size = 3) +
+#   facet_wrap("primary") +
+#   theme(axis.text=element_text(size=12, face = "bold"), 
+#         axis.title=element_text(size=14,face="bold"),
+#         strip.text.x = element_text(size = 14, face = "bold"),
+#         legend.text=element_text(size=12, face = "bold"),
+#         legend.title = element_text(size = 12, face = "bold"))+
+#   ggtitle("P3 oocyst shedding by parasite strain AVG")
 
 ggplot(P3_record_full, aes(x = dpi, y = OPG, color = challenge)) +
   geom_point() +
-  facet_wrap("primary")
+  facet_wrap("primary") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 oocyst shedding by parasite strain OPG")
 
 ggplot(P3_record_full, aes(x = dpi, y = OPG, color = infHistory)) +
   geom_point() +
