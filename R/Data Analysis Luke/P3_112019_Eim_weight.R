@@ -57,6 +57,16 @@ ggplot(P3b_record, aes(x = dpi, y = wloss)) +
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("P3 challenge infection weighloss by parasite strain")
 
+ggplot(P3b_record, aes(x = dpi, y = wloss)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap("infHistory") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 weightloss infhist")
 # add oocyst data
 oocysts <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_oocysts.csv"
 oocysts <- read.csv(text = getURL(oocysts))
@@ -92,7 +102,11 @@ P3_record_full$OPG <- P3_record_full$AVG / P3_record_full$faeces_weight
 
 # create just primary and challenge oocyst and weightloss graphs
 P3a <- merge(P3a_record, oocysts)
-ggplot(P3a, aes(x = dpi, y = AVG)) +
+P3a$OPG <- P3a$AVG / P3a$faeces_weight
+P3a$N.oocyst <- (P3a$AVG * 10^4)/2
+
+
+ggplot(P3a, aes(x = dpi, y = N.oocyst)) +
   geom_point() +
   facet_wrap("primary") +
   theme(axis.text=element_text(size=12, face = "bold"), 
@@ -150,3 +164,4 @@ ggplot(P3_record_full, aes(x = primary, y = OPG, color = Eim_sp))+
 
 
 # graph like Anna's for comparison
+
