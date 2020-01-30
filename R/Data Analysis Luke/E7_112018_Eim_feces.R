@@ -51,8 +51,35 @@ E7 <- merge(E7_design, E7_record)
 #include oocyst data
 E7a_oocyst <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7a_112018_Eim_oocyst_counts.csv"
 E7a_oocyst <- read.csv(text = getURL(E7a_oocyst))
+
 E7b_oocyst <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7b_112018_Eim_oocyst_counts.csv"
 E7b_oocyst <- read.csv(text = getURL(E7b_oocyst))
+# calculate total oocyst count per mL
+E7a_oocyst$totalOocysts <- ((E7a_oocyst$oocyst_1 
+                     + E7a_oocyst$oocyst_2 
+                     + E7a_oocyst$oocyst_3 
+                     + E7a_oocyst$oocyst_4) / 4) * 
+  10000 * # because volume chamber
+  E7a_oocyst$volume_PBS_mL
+
+E7b_oocyst$totalOocysts <- ((E7b_oocyst$oocyst_1 
+                             + E7b_oocyst$oocyst_2 
+                             + E7b_oocyst$oocyst_3 
+                             + E7b_oocyst$oocyst_4) / 4) * 
+  10000 * # because volume chamber
+  E7b_oocyst$volume_PBS_mL
+
+
+# calculate OPG
+E7a_oocyst$OPG <- E7a_oocyst$totalOocysts / E7a_oocyst$
+
+P3a$OPG <- P3a$AVG / P3a$faeces_weight
+P3a$N.oocyst <- (P3a$AVG * 10^4)/2
+
+
+E7$OPG <- E7$totalOocysts / E7$fecweight 
+
+
 E7_oocyst <- rbind(E7a_oocyst, E7b_oocyst)
 oocyst_keep <- c("dpi", "average", "OPG", "EH_ID", "volume_PBS_mL")
 E7_oocyst <- E7_oocyst[oocyst_keep]
