@@ -219,6 +219,8 @@ ggplot(intensity, aes(x = delta, y = Caecum, color = infHistory)) +
 ########################################################################
 E7 <- merge(RT.long, intensity, all = T)
 
+write.csv(E7, file = "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_RT_and_qPCR_complete.csv")
+
 # graph 
 ggplot(E7, aes(x = delta, y = NE, color = Caecum)) +
   geom_point() +

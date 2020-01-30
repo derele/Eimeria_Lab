@@ -6,6 +6,8 @@ library(ggplot2)
 library(dplyr)
 library(Hmisc)
 library(data.table)
+library(varhandle)
+
 
 E7a_design <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/E7a_112018_Eim_design.csv"
 E7b_design <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/E7b_112018_Eim_design.csv"
