@@ -17,6 +17,9 @@ E7b_design <- read.csv(text=getURL(E7b_design))
 E7aF <- read.csv(text=getURL(E7aF))
 E7bF <- read.csv(text=getURL(E7bF))
 
+E7aF$labels <- sub("^", "1", E7aF$labels)
+E7bF$labels <- sub("^", "2", E7bF$labels)
+
 #the columns we want to keep
 col2keep <- c("Strain", "HybridStatus", "EH_ID")
 
@@ -38,15 +41,8 @@ inf.history <- rbind(history_a, history_b)
 E7_design <- rbind(E7a_design, E7b_design)
 E7_design <- merge(E7_design, inf.history, by = "EH_ID")
 
-# keep the batch information
-E7aF$batch <- "october2018"
-E7bF$batch <- "december2018"
-
 # Make one big fat table Expe 7
 E7_record <- rbind(E7aF, E7bF)
-
-# Merge all, #
-E7 <- merge(E7_design, E7_record)
 
 #include oocyst data
 E7a_oocyst <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7a_112018_Eim_oocyst_counts.csv"
@@ -54,6 +50,11 @@ E7a_oocyst <- read.csv(text = getURL(E7a_oocyst))
 
 E7b_oocyst <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7b_112018_Eim_oocyst_counts.csv"
 E7b_oocyst <- read.csv(text = getURL(E7b_oocyst))
+
+E7a_oocyst$labels <- sub("^", "1", E7a_oocyst$labels)
+E7b_oocyst$labels <- sub("^", "2", E7b_oocyst$labels)
+E7a_oocyst$batch <- NULL
+E7b_oocyst$batch <- NULL
 # calculate total oocyst count per mL
 E7a_oocyst$totalOocysts <- ((E7a_oocyst$oocyst_1 
                      + E7a_oocyst$oocyst_2 
@@ -69,23 +70,19 @@ E7b_oocyst$totalOocysts <- ((E7b_oocyst$oocyst_1
   10000 * # because volume chamber
   E7b_oocyst$volume_PBS_mL
 
-
-# calculate OPG
-E7a_oocyst$OPG <- E7a_oocyst$totalOocysts / E7a_oocyst$
-
-P3a$OPG <- P3a$AVG / P3a$faeces_weight
-P3a$N.oocyst <- (P3a$AVG * 10^4)/2
-
-
-E7$OPG <- E7$totalOocysts / E7$fecweight 
-
-
 E7_oocyst <- rbind(E7a_oocyst, E7b_oocyst)
-oocyst_keep <- c("dpi", "average", "OPG", "EH_ID", "volume_PBS_mL")
-E7_oocyst <- E7_oocyst[oocyst_keep]
-E7 <- merge(E7, E7_oocyst, no.dups = TRUE)
-E7 <- transform(E7, OPG = average / fecweight)
+E7_oocyst <- select(E7_oocyst, EH_ID, dpi, average, volume_PBS_mL, labels, totalOocysts)
+E7_record <- merge(E7_record, E7_oocyst)
+# calculate OPG
+E7_record$OPG <- E7_record$totalOocysts / E7_record$fecweight 
+
+# Merge all, #
+E7 <- merge(E7_design, E7_record)
 E7$infHistory <- E7$primary:E7$challenge
+
+# removing batches for now because they were causing havoc 
+# E7primary <- filter(E7, batch == "a")
+# E7challenge <- filter(E7,batch == "b")
 
 #export HU
 write.csv(E7, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
@@ -96,11 +93,7 @@ write.csv(E7, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018
 #export home (Win)
 write.csv(E7, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
 
-#include combined infection history
-E7$infHistory <- E7$primary:E7$challenge
-
 #distribution check
-E7 <- E7[-c(447, 479),] #remove NAs
 hist(E7$Wchange, col = grey)
 summary(E7)
 boxplot(Wchange ~ infHistory, data = E7)
@@ -120,15 +113,28 @@ histogram(~Wchange | factor(infHistory), data = E7)
 
 
 #plot weight and HS by infection history
-ggplot(E7, aes(dpi, weight, color=HybridStatus)) +
+ggplot(E7, aes(dpi, Wchange, color=HybridStatus)) +
   # geom_jitter(width=0.2) +
   geom_smooth(se=F) +
   # scale_x_continuous(breaks=c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) +
   #                    labels=c("0" ,"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")) +
-  facet_wrap(~infHistory, scales="free_y", nrow=2) +
+  facet_wrap(~primary, scales="free_y") +
   scale_colour_brewer("Hybrid\nStatus", palette = "Dark2") +
   scale_y_continuous("weight (g)") +
   theme_bw()
+
+
+
+ggplot(E7, aes(dpi, Wchange, color=HybridStatus)) +
+  # geom_jitter(width=0.2) +
+  geom_smooth(se=F) +
+  # scale_x_continuous(breaks=c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) +
+  #                    labels=c("0" ,"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")) +
+  facet_wrap(~infHistory, scales="free_y") +
+  scale_colour_brewer("Hybrid\nStatus", palette = "Dark2") +
+  scale_y_continuous("weight (g)") +
+  theme_bw()
+
 
 # plot weight and  by infection history
 ggplot(E7, aes(dpi, weight, color=infHistory)) +
@@ -140,3 +146,36 @@ ggplot(E7, aes(dpi, weight, color=infHistory)) +
   scale_colour_brewer("Infection\nHistory", palette = "Dark2") +
   scale_y_continuous("weight (g)") +
   theme_bw()
+
+E71 <- subset(E7, grepl("^1", E7$labels))
+E72 <- subset(E7, grepl("^2", E7$labels))
+
+ggplot(E7, aes(x = dpi, y = OPG, color = challenge)) +
+  geom_point() +
+  facet_wrap("primary") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 oocyst shedding by parasite strain OPG")
+
+ggplot(E72, aes(x = dpi, y = OPG)) +
+  geom_point() +
+  facet_wrap("primary") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 oocyst shedding by parasite strain OPG")
+
+ggplot(E7challenge, aes(x = dpi, y = OPG, color = challenge)) +
+  geom_point() +
+  facet_wrap("primary") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 oocyst shedding by parasite strain OPG")
