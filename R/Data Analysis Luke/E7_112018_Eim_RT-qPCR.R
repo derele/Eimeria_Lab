@@ -217,6 +217,13 @@ ggplot(intensity, aes(x = delta, y = Caecum, color = infHistory)) +
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_text(size = 12, face = "bold"))
 ########################################################################
+RT.long$RT.Ct.IL.12 <- NULL
+RT.long$RT.Ct.IRG6 <- NULL
+RT.long$refMean <- NULL
+RT.long$CXCR3 <- NULL
+RT.long$IL.12 <- NULL 
+RT.long$IRG6 <- NULL
+
 E7 <- merge(RT.long, intensity, all = T)
 
 write.csv(E7, file = "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_RT_and_qPCR_complete.csv")
