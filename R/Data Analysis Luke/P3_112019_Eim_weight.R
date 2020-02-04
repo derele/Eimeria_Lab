@@ -106,8 +106,9 @@ P3a$OPG <- P3a$AVG / P3a$faeces_weight
 P3a$N.oocyst <- (P3a$AVG * 10^4)/2
 
 
-ggplot(P3a, aes(x = dpi, y = N.oocyst)) +
+ggplot(P3a, aes(x = dpi, y = N.oocyst, color = EH_ID)) +
   geom_point() +
+  geom_line() +
   facet_wrap("primary") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
@@ -116,10 +117,17 @@ ggplot(P3a, aes(x = dpi, y = N.oocyst)) +
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("P3 primary oocyst shedding by parasite strain")
 
+
 P3b <- merge(P3b_record, oocysts)
-ggplot(P3b, aes(x = dpi, y = AVG)) +
+P3b <- merge(P3b_record, oocysts)
+P3b$OPG <- P3b$AVG / P3b$faeces_weight
+P3b$N.oocyst <- (P3b$AVG * 10^4)/2
+
+
+ggplot(P3b, aes(x = dpi, y = N.oocyst)) +
   geom_point() +
-  facet_wrap("challenge") +
+  geom_line() +
+  facet_wrap("infHistory") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),

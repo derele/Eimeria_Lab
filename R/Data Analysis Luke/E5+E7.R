@@ -96,5 +96,5 @@ ggplot(E7, aes(x = delta, y = OPG, color = challenge)) +
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("Shedding of oocysts during primary infection (intensity)")
+  ggtitle("Shedding of oocysts during challenge infection (intensity)")
 
