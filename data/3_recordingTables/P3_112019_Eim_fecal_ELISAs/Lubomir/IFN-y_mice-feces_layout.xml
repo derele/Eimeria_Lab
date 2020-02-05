@@ -1,0 +1,852 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Gen5Data>
+  <BTIPlateLayout Version="2">
+    <Columns>12</Columns>
+    <Rows>8</Rows>
+    <PanelOrientation />
+    <Protocols>
+      <Protocol ID="SINGLE">
+        <PathName>C:\Users\User\Documents\Protocols\IFN-y_mouse_samples_Lubomir_Bednar.prt</PathName>
+        <TopRow />
+        <LeftColumn />
+        <BottomRow />
+        <RightColumn />
+        <WellTypes>
+          <WellType Type="Blank">
+            <IDPrefix />
+            <ColorSequence />
+            <ColorSequenceBk />
+            <WellIDs>
+              <WellID ID="BLK">
+                <Index />
+                <Name />
+                <Replicates>2</Replicates>
+                <RGBColor>0x000000</RGBColor>
+                <RGBColorBk>0x80FFFF</RGBColorBk>
+                <ConcDilType />
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+            </WellIDs>
+          </WellType>
+          <WellType Type="Assay Control">
+            <IDPrefix />
+            <ColorSequence />
+            <ColorSequenceBk />
+            <WellIDs />
+          </WellType>
+          <WellType Type="Sample">
+            <IDPrefix>SPL</IDPrefix>
+            <HideWellType>No</HideWellType>
+            <Replicates>2</Replicates>
+            <ConcDilType>Dilutions</ConcDilType>
+            <ConcDilUnit />
+            <ConcDilValues />
+            <ColorSequence>
+              <RGBColor>Auto</RGBColor>
+            </ColorSequence>
+            <ColorSequenceBk>
+              <RGBColor>0xA6CAF0</RGBColor>
+            </ColorSequenceBk>
+            <WellIDs>
+              <WellID ID="SPL1">
+                <Index>1</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL2">
+                <Index>2</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL3">
+                <Index>3</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL4">
+                <Index>4</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL5">
+                <Index>5</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL6">
+                <Index>6</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL7">
+                <Index>7</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL8">
+                <Index>8</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL9">
+                <Index>9</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL10">
+                <Index>10</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL11">
+                <Index>11</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL12">
+                <Index>12</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL13">
+                <Index>13</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL14">
+                <Index>14</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL15">
+                <Index>15</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL16">
+                <Index>16</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL17">
+                <Index>17</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL18">
+                <Index>18</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL19">
+                <Index>19</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL20">
+                <Index>20</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL21">
+                <Index>21</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL22">
+                <Index>22</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL23">
+                <Index>23</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL24">
+                <Index>24</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL25">
+                <Index>25</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL26">
+                <Index>26</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL27">
+                <Index>27</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL28">
+                <Index>28</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL29">
+                <Index>29</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL30">
+                <Index>30</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL31">
+                <Index>31</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL32">
+                <Index>32</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL33">
+                <Index>33</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL34">
+                <Index>34</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL35">
+                <Index>35</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL36">
+                <Index>36</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL37">
+                <Index>37</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL38">
+                <Index>38</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL39">
+                <Index>39</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+              <WellID ID="SPL40">
+                <Index>40</Index>
+                <Name />
+                <RGBColor />
+                <RGBColorBk />
+                <ConcDilType>Dilutions</ConcDilType>
+                <ConcDilUnit />
+                <ConcDilValues />
+              </WellID>
+            </WellIDs>
+          </WellType>
+          <WellType Type="Sample Control">
+            <IDPrefix>SPLC</IDPrefix>
+            <HideWellType>Yes</HideWellType>
+            <Replicates>1</Replicates>
+            <ConcDilType>Dilutions</ConcDilType>
+            <ConcDilUnit />
+            <ConcDilValues />
+            <ColorSequence>
+              <RGBColor>Auto</RGBColor>
+            </ColorSequence>
+            <ColorSequenceBk>
+              <RGBColor>0xC0C0C0</RGBColor>
+            </ColorSequenceBk>
+            <WellIDs />
+          </WellType>
+          <WellType Type="Standard">
+            <IDPrefix />
+            <ColorSequence />
+            <ColorSequenceBk />
+            <WellIDs>
+              <WellID ID="STD">
+                <Index>1</Index>
+                <Name />
+                <Replicates>2</Replicates>
+                <RGBColor>0x000000</RGBColor>
+                <RGBColorBk>0xFF8000</RGBColorBk>
+                <ConcDilType>Concentrations</ConcDilType>
+                <ConcDilUnit>pg/mL</ConcDilUnit>
+                <ConcDilValues>
+                  <ConcDilValue Value="2000" />
+                  <ConcDilValue Value="1000" />
+                  <ConcDilValue Value="500" />
+                  <ConcDilValue Value="250" />
+                  <ConcDilValue Value="125" />
+                  <ConcDilValue Value="62.5" />
+                  <ConcDilValue Value="31.25" />
+                </ConcDilValues>
+              </WellID>
+            </WellIDs>
+          </WellType>
+        </WellTypes>
+        <WellAssignments>
+          <Well Coordinate="A1">
+            <WellID>STD</WellID>
+            <ConcDilValue>2000</ConcDilValue>
+          </Well>
+          <Well Coordinate="A2">
+            <WellID>STD</WellID>
+            <ConcDilValue>2000</ConcDilValue>
+          </Well>
+          <Well Coordinate="A3">
+            <WellID>SPL1</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="A4">
+            <WellID>SPL1</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="A5">
+            <WellID>SPL9</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="A6">
+            <WellID>SPL9</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="A7">
+            <WellID>SPL17</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="A8">
+            <WellID>SPL17</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="A9">
+            <WellID>SPL25</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="A10">
+            <WellID>SPL25</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="A11">
+            <WellID>SPL33</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="A12">
+            <WellID>SPL33</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="B1">
+            <WellID>STD</WellID>
+            <ConcDilValue>1000</ConcDilValue>
+          </Well>
+          <Well Coordinate="B2">
+            <WellID>STD</WellID>
+            <ConcDilValue>1000</ConcDilValue>
+          </Well>
+          <Well Coordinate="B3">
+            <WellID>SPL2</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="B4">
+            <WellID>SPL2</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="B5">
+            <WellID>SPL10</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="B6">
+            <WellID>SPL10</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="B7">
+            <WellID>SPL18</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="B8">
+            <WellID>SPL18</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="B9">
+            <WellID>SPL26</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="B10">
+            <WellID>SPL26</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="B11">
+            <WellID>SPL34</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="B12">
+            <WellID>SPL34</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="C1">
+            <WellID>STD</WellID>
+            <ConcDilValue>500</ConcDilValue>
+          </Well>
+          <Well Coordinate="C2">
+            <WellID>STD</WellID>
+            <ConcDilValue>500</ConcDilValue>
+          </Well>
+          <Well Coordinate="C3">
+            <WellID>SPL3</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="C4">
+            <WellID>SPL3</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="C5">
+            <WellID>SPL11</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="C6">
+            <WellID>SPL11</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="C7">
+            <WellID>SPL19</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="C8">
+            <WellID>SPL19</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="C9">
+            <WellID>SPL27</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="C10">
+            <WellID>SPL27</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="C11">
+            <WellID>SPL35</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="C12">
+            <WellID>SPL35</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="D1">
+            <WellID>STD</WellID>
+            <ConcDilValue>250</ConcDilValue>
+          </Well>
+          <Well Coordinate="D2">
+            <WellID>STD</WellID>
+            <ConcDilValue>250</ConcDilValue>
+          </Well>
+          <Well Coordinate="D3">
+            <WellID>SPL4</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="D4">
+            <WellID>SPL4</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="D5">
+            <WellID>SPL12</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="D6">
+            <WellID>SPL12</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="D7">
+            <WellID>SPL20</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="D8">
+            <WellID>SPL20</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="D9">
+            <WellID>SPL28</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="D10">
+            <WellID>SPL28</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="D11">
+            <WellID>SPL36</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="D12">
+            <WellID>SPL36</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="E1">
+            <WellID>STD</WellID>
+            <ConcDilValue>125</ConcDilValue>
+          </Well>
+          <Well Coordinate="E2">
+            <WellID>STD</WellID>
+            <ConcDilValue>125</ConcDilValue>
+          </Well>
+          <Well Coordinate="E3">
+            <WellID>SPL5</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="E4">
+            <WellID>SPL5</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="E5">
+            <WellID>SPL13</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="E6">
+            <WellID>SPL13</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="E7">
+            <WellID>SPL21</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="E8">
+            <WellID>SPL21</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="E9">
+            <WellID>SPL29</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="E10">
+            <WellID>SPL29</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="E11">
+            <WellID>SPL37</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="E12">
+            <WellID>SPL37</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="F1">
+            <WellID>STD</WellID>
+            <ConcDilValue>62.5</ConcDilValue>
+          </Well>
+          <Well Coordinate="F2">
+            <WellID>STD</WellID>
+            <ConcDilValue>62.5</ConcDilValue>
+          </Well>
+          <Well Coordinate="F3">
+            <WellID>SPL6</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="F4">
+            <WellID>SPL6</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="F5">
+            <WellID>SPL14</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="F6">
+            <WellID>SPL14</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="F7">
+            <WellID>SPL22</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="F8">
+            <WellID>SPL22</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="F9">
+            <WellID>SPL30</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="F10">
+            <WellID>SPL30</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="F11">
+            <WellID>SPL38</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="F12">
+            <WellID>SPL38</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="G1">
+            <WellID>STD</WellID>
+            <ConcDilValue>31.25</ConcDilValue>
+          </Well>
+          <Well Coordinate="G2">
+            <WellID>STD</WellID>
+            <ConcDilValue>31.25</ConcDilValue>
+          </Well>
+          <Well Coordinate="G3">
+            <WellID>SPL7</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="G4">
+            <WellID>SPL7</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="G5">
+            <WellID>SPL15</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="G6">
+            <WellID>SPL15</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="G7">
+            <WellID>SPL23</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="G8">
+            <WellID>SPL23</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="G9">
+            <WellID>SPL31</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="G10">
+            <WellID>SPL31</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="G11">
+            <WellID>SPL39</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="G12">
+            <WellID>SPL39</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="H1">
+            <WellID>BLK</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="H2">
+            <WellID>BLK</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="H3">
+            <WellID>SPL8</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="H4">
+            <WellID>SPL8</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="H5">
+            <WellID>SPL16</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="H6">
+            <WellID>SPL16</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="H7">
+            <WellID>SPL24</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="H8">
+            <WellID>SPL24</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="H9">
+            <WellID>SPL32</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="H10">
+            <WellID>SPL32</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="H11">
+            <WellID>SPL40</WellID>
+            <ConcDilValue />
+          </Well>
+          <Well Coordinate="H12">
+            <WellID>SPL40</WellID>
+            <ConcDilValue />
+          </Well>
+        </WellAssignments>
+      </Protocol>
+    </Protocols>
+  </BTIPlateLayout>
+  <BTISampleIdentification Version="1">
+    <PanelSampleAssignment>SAME</PanelSampleAssignment>
+    <Fields>
+      <Field Title="Name">
+        <DisplayStatus>SHOW</DisplayStatus>
+      </Field>
+    </Fields>
+  </BTISampleIdentification>
+</Gen5Data>
