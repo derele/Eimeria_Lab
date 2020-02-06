@@ -106,15 +106,15 @@ P3a$OPG <- P3a$AVG / P3a$faeces_weight
 P3a$N.oocyst <- (P3a$AVG * 10^4)/2
 
 
-ggplot(P3a, aes(x = dpi, y = N.oocyst, color = EH_ID)) +
+ggplot(P3a, aes(x = dpi, y = N.oocyst)) +
   geom_point() +
-  geom_line() +
   facet_wrap("primary") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
+        legend.title = element_text(size = 12, face = "bold"),
+        title = element_text(size = 14, face = "bold")) +
   ggtitle("P3 primary oocyst shedding by parasite strain")
 
 
@@ -123,6 +123,16 @@ P3b <- merge(P3b_record, oocysts)
 P3b$OPG <- P3b$AVG / P3b$faeces_weight
 P3b$N.oocyst <- (P3b$AVG * 10^4)/2
 
+ggplot(P3b, aes(x = dpi, y = N.oocyst)) +
+  geom_point() +
+  facet_wrap("challenge") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"),
+        title = element_text(size = 14, face = "bold")) +
+  ggtitle("P3 challenge oocyst shedding by parasite strain")
 
 ggplot(P3b, aes(x = dpi, y = N.oocyst)) +
   geom_point() +
@@ -149,6 +159,7 @@ ggplot(P3b, aes(x = dpi, y = N.oocyst)) +
 #         legend.text=element_text(size=12, face = "bold"),
 #         legend.title = element_text(size = 12, face = "bold"))+
 #   ggtitle("P3 oocyst shedding by parasite strain AVG")
+P3_record_full$N.oocyst <- (P3_record_full$AVG * 10^4)/2
 
 ggplot(P3_record_full, aes(x = dpi, y = OPG, color = challenge)) +
   geom_point() +
@@ -160,12 +171,19 @@ ggplot(P3_record_full, aes(x = dpi, y = OPG, color = challenge)) +
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("P3 oocyst shedding by parasite strain OPG")
 
-ggplot(P3_record_full, aes(x = dpi, y = OPG, color = infHistory)) +
+ggplot(P3_record_full, aes(x = dpi, y = N.oocyst, color = batch)) +
   geom_point() +
   geom_line() +
-  facet_wrap("batch")
+  facet_wrap("infHistory") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 batch shedding")
 
-ggplot(P3_record_full, aes(x = primary, y = OPG, color = Eim_sp))+ 
+
+ggplot(P3_record_full, aes(x = primary, y = N.oocyst, color = Eim_sp))+ 
   geom_boxplot() +
   geom_point() + 
   facet_wrap("challenge")

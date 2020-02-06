@@ -112,6 +112,27 @@ histogram(~Wchange | factor(infHistory), data = E7)
 # setDT(E7)[, WmeanHY := mean(Wchange), by = HybridStatus]
 # setDT(E7)[, WmeanIH := mean(Wchange), by = infHistory]
 # setDT(E7)[, WmeanD := mean(Wchange), by = dpi]
+ggplot(E7, aes(x = dpi, y = Wchange)) +
+  geom_point() +
+  geom_smooth() + 
+  facet_wrap("infHistory") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 primary infection weighloss by parasite strain")
+
+ggplot(E7, aes(x = dpi, y = Wchange)) +
+  geom_point() +
+  geom_smooth() + 
+  facet_wrap("challenge") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 primary infection weighloss by parasite strain")
 
 
 #plot weight and HS by infection history
@@ -121,8 +142,7 @@ ggplot(E7, aes(dpi, Wchange, color=HybridStatus)) +
   # scale_x_continuous(breaks=c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) +
   #                    labels=c("0" ,"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")) +
   facet_wrap(~primary, scales="free_y") +
-  scale_colour_brewer("Hybrid\nStatus", palette = "Dark2") +
-  scale_y_continuous("weight (g)") +
+  scale_colour_brewer("Hybrid\nStatus", palette = "Dark2") + 
   theme_bw()
 
 

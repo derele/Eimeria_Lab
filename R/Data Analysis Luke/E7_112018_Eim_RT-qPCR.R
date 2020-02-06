@@ -6,6 +6,9 @@ library(Rmisc)
 library(RCurl)
 library(reshape2)
 library(ggpubr)
+library(ggplot2)
+library(naniar)
+
 # load in raw tables
 RT1 <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_RT-qPCRs/E7_112018_Eim_RT-qPCR1/E7_112018_Eim_RT-qPCR1.csv"
 RT1 <- read.csv(text = getURL(RT1))
@@ -224,7 +227,7 @@ RT.long$CXCR3 <- NULL
 RT.long$IL.12 <- NULL 
 RT.long$IRG6 <- NULL
 
-E7 <- merge(RT.long, intensity, all = T)
+E7 <- merge(RT.long, intensity)
 
 write.csv(E7, file = "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_RT_and_qPCR_complete.csv")
 
@@ -232,22 +235,38 @@ write.csv(E7, file = "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_RT_and_
 ggplot(E7, aes(x = delta, y = NE, color = Caecum)) +
   geom_point() +
   geom_miss_point() +
-  facet_wrap("Target", scales = "free")
+  facet_wrap("Target", scales = "free") +
+  theme(axis.text=element_text(size=12), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"),
+        title = element_text(size = 14, face = "bold")) +
+  ggtitle("E7 infection intensity vs. gene expression")
 
-ggplot(E7, aes(x = NE, y = delta, color = infHistory)) +
-  geom_point() +
-  geom_miss_point() +
-  facet_wrap("Caecum", scales = "free")
+complete$Date <- NULL
+complete <- na.omit(complete)
+ggplot(complete, aes(y = delta, x = infHistory, color = challenge)) +
+  geom_boxplot() +
+  facet_wrap("Caecum", scales = "free") +
+  theme(axis.text=element_text(size=12), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"),
+        title = element_text(size = 14, face = "bold")) +
+  ggtitle("E7 qPCR ")
 
-ggplot(E7, aes(x = NE, y = delta, color = Caecum)) +
-  geom_point() +
-  facet_wrap("infHistory", scales = "free")
+ggplot(E7, aes(x = infHistory, y = delta, color = Caecum)) +
+  geom_boxplot() +
+  theme(axis.text=element_text(size=12), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"),
+        title = element_text(size = 14, face = "bold")) +
+  ggtitle("E7 infection intensity vs. infection history")
 
-
-ggplot(complete, aes(x = NE, y = delta, color = Target)) +
-  geom_point() + 
-  facet_wrap("HybridStatus") +
-  geom_smooth(method = "lm")
 # load in wild data for comparison
 HZ18 <- "https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Gene_expression/HZ18_complete.csv"
 HZ18 <- read.csv(text = getURL(HZ18))
