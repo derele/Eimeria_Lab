@@ -99,6 +99,7 @@ P3_record_full <- P3_record_full %>% mutate(Eim_sp = case_when(
 
 # calculate OPG
 P3_record_full$OPG <- P3_record_full$AVG / P3_record_full$faeces_weight
+P3_record_full$N.oocyst <- (P3_record_full$AVG * 10^4)/2
 
 # create just primary and challenge oocyst and weightloss graphs
 P3a <- merge(P3a_record, oocysts)
@@ -123,9 +124,9 @@ P3b <- merge(P3b_record, oocysts)
 P3b$OPG <- P3b$AVG / P3b$faeces_weight
 P3b$N.oocyst <- (P3b$AVG * 10^4)/2
 
-ggplot(P3b, aes(x = dpi, y = N.oocyst)) +
-  geom_point() +
-  facet_wrap("challenge") +
+ggplot(P3b, aes(x = dpi, y = N.oocyst, color = challenge)) +
+  geom_point(size = 3) +
+  facet_wrap("EH_ID") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),

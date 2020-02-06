@@ -59,3 +59,4 @@ ggplot(RT1.long, aes(x = EH_ID, y = NE)) +
         legend.title = element_text(size = 12, face = "bold"),
         title = element_text(size = 14, face = "bold")) +
   ggtitle("P3 gene expression")
+
