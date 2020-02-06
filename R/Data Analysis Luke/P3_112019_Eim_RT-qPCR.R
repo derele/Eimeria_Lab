@@ -33,6 +33,7 @@ targetGenes <- c("CXCR3", "IL-12", "IRG6")
 
 RT1.wide <- RT1.wide %>% mutate(refMean = rowMeans(na.rm = TRUE, dplyr::select(RT1.wide, refGenes)))
 RT1.wide <- data.frame(RT1.wide)
+# Ref - Target = lower value (bigger minus means less expression)
 RT1.wide$CXCR3 <- (RT1.wide$refMean - RT1.wide$CXCR3)
 RT1.wide$IRG6 <- (RT1.wide$refMean - RT1.wide$IRG6)
 RT1.wide$IL.12 <- (RT1.wide$refMean - RT1.wide$IL.12)

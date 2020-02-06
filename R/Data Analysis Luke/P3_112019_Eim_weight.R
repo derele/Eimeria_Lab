@@ -103,9 +103,9 @@ P3_record_full$N.oocyst <- (P3_record_full$AVG * 10^4)/2
 
 # create just primary and challenge oocyst and weightloss graphs
 P3a <- merge(P3a_record, oocysts)
-P3a$OPG <- P3a$AVG / P3a$faeces_weight
-P3a$N.oocyst <- (P3a$AVG * 10^4)/2
 
+P3a$N.oocyst <- (P3a$AVG * 10^4)/2
+P3a$OPG <- P3a$N.oocyst / P3a$faeces_weight
 
 ggplot(P3a, aes(x = dpi, y = N.oocyst)) +
   geom_point() +
@@ -121,8 +121,9 @@ ggplot(P3a, aes(x = dpi, y = N.oocyst)) +
 
 P3b <- merge(P3b_record, oocysts)
 P3b <- merge(P3b_record, oocysts)
-P3b$OPG <- P3b$AVG / P3b$faeces_weight
+
 P3b$N.oocyst <- (P3b$AVG * 10^4)/2
+P3b$OPG <- P3b$N.oocyst / P3b$faeces_weight
 
 ggplot(P3b, aes(x = dpi, y = N.oocyst, color = challenge)) +
   geom_point(size = 3) +
