@@ -22,7 +22,7 @@ qPCR1.long <- qPCR1.long %>%
   mutate(delta = mouse - eimeria) %>% 
   dplyr::select(Name,delta)
 names(qPCR1.long)[names(qPCR1.long) == "Name"] <- "EH_ID"
-qPCR1.long$dpi <- 8
 
 #### write out (will become merge later)
 write.csv(qPCR1.long, "./Eimeria_Lab/data/3_recordingTables/P3_112019_Eim_qPCRs/P3_112019_Eim_qPCR1_clean.csv")
+

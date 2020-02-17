@@ -10,10 +10,10 @@ library(reshape2)
 library(drc)
 
 ##### add clean tables
-E1_std <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_11_2019_Eim_CEWE_ELISAs/P3_112019_Eim_CEWE_ELISA1_std.csv"
+E1_std <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_CEWE_ELISAs/P3_112019_Eim_CEWE_ELISA1_std.csv"
 E1_std <- read.csv(text = getURL(E1_std))
 
-E1_samples <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_11_2019_Eim_CEWE_ELISAs/P3_112019_Eim_CEWE_ELISA1_samples.csv"
+E1_samples <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_CEWE_ELISAs/P3_112019_Eim_CEWE_ELISA1_samples.csv"
 E1_samples <- read.csv(text = getURL(E1_samples))
 
 ###### use drc to construct standard curve and pinpointprotein content
@@ -35,4 +35,4 @@ E1 <- dplyr::select(E1, IFNy)
 # the 0 replacement is just temporary
 E1[E1=="NaN"]<- 0
 
-write.csv(E1, "./Eimeria_Lab/data/3_recordingTables/P3_112019_Eim_CEWE_ELISAs/E7_112018_Eim_CEWE_ELISA1_complete.csv")
+write.csv(E1, "./Eimeria_Lab/data/3_recordingTables/P3_112019_Eim_CEWE_ELISAs/EP_112019_Eim_CEWE_ELISA1_complete.csv")
