@@ -7,6 +7,7 @@ library(ggplot2)
 library(tidyr)
 library(reshape2)
 library(drc)
+library(data.table)
 
 ############################################## first plate
 # standards 
@@ -34,11 +35,13 @@ text(y =E1_samples$OD, x = E1[,1], labels=E1_samples$label, data=E1, cex=0.9, fo
 E1 <- data.frame(E1)
 colnames(E1)[1] <- "IFNy"
 E1 <- dplyr::select(E1, IFNy)
+setDT(E1, keep.rownames = TRUE)[]
+colnames(E1)[1] <- "labels"
 # the 0 replacement is just temporary
 E1[E1=="NaN"]<- 0
 # write out
 write.csv(E1, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISA1_clean.csv")
-
+write.csv(E1, "./Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISA1_clean.csv")
 ########################################################### second plate
 # standards
 E2_std <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISA2_std.csv"
@@ -64,10 +67,13 @@ text(y =E2_samples$OD, x = E2[,1], labels=E2_samples$label, data=E2, cex=0.9, fo
 E2 <- data.frame(E2)
 colnames(E2)[1] <- "IFNy"
 E2 <- dplyr::select(E2, IFNy)
+setDT(E2, keep.rownames = TRUE)[]
+colnames(E2)[1] <- "labels"
 # the 0 replacement is just temporary
 E2[E2=="NaN"]<- 0
 
-write.csv(E1, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISA2_clean.csv")
+write.csv(E2, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISA2_clean.csv")
+write.csv(E2, "./Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISA2_clean.csv")
 
 ############################ merge datasets
 ELISA_complete <- rbind(E1, E2)
@@ -75,3 +81,4 @@ ELISA_complete <- rbind(E1, E2)
 ELISA_complete <- filter(ELISA_complete)
 # write out
 write.csv(ELISA_complete, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISAs_complete.csv")
+write.csv(ELISA_complete, "./Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISAs_complete.csv")
