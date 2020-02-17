@@ -13,19 +13,19 @@ P3a_record <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/
 P3a_record <- read.csv(text = getURL(P3a_record))
 P3a_record$batch <- "a"
 P3a_record$day_change <- NULL
-P3a_record$labels <- sub("^", "1", P3a_record$labels)
+P3a_record$labels <- sub("^", "P3a", P3a_record$labels)
 
 P3b_record <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3b_112019_Eim_Record.csv"
 P3b_record <- read.csv(text = getURL(P3b_record))
 P3b_record$X <- NULL
 P3b_record$batch <- "b"
 P3b_record$day_change <- NULL
-P3b_record$labels <- sub("^", "2", P3b_record$labels)
+P3b_record$labels <- sub("^", "P3b", P3b_record$labels)
 
 # load in design
 P3_design <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/2_designTables/P3_112019_Eim_design.csv"
 P3_design <- read.csv(text = getURL(P3_design))
-P3_design <- select(P3_design, EH_ID, primary, challenge)
+P3_design <- dplyr::select(P3_design, EH_ID, primary, challenge)
 P3_design <- unique(P3_design)
 
 # mak infection history

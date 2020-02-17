@@ -19,8 +19,8 @@ E7b_design <- read.csv(text=getURL(E7b_design))
 E7aF <- read.csv(text=getURL(E7aF))
 E7bF <- read.csv(text=getURL(E7bF))
 
-E7aF$labels <- sub("^", "1", E7aF$labels)
-E7bF$labels <- sub("^", "2", E7bF$labels)
+E7aF$labels <- sub("^", "E7a", E7aF$labels)
+E7bF$labels <- sub("^", "E7b", E7bF$labels)
 
 #the columns we want to keep
 col2keep <- c("Strain", "HybridStatus", "EH_ID")
@@ -53,8 +53,8 @@ E7a_oocyst <- read.csv(text = getURL(E7a_oocyst))
 E7b_oocyst <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7b_112018_Eim_oocyst_counts.csv"
 E7b_oocyst <- read.csv(text = getURL(E7b_oocyst))
 
-E7a_oocyst$labels <- sub("^", "1", E7a_oocyst$labels)
-E7b_oocyst$labels <- sub("^", "2", E7b_oocyst$labels)
+E7a_oocyst$labels <- sub("^", "E7a", E7a_oocyst$labels)
+E7b_oocyst$labels <- sub("^", "E7b", E7b_oocyst$labels)
 E7a_oocyst$batch <- NULL
 E7b_oocyst$batch <- NULL
 # calculate total oocyst count per mL
@@ -87,7 +87,7 @@ E7$infHistory <- E7$primary:E7$challenge
 # E7challenge <- filter(E7,batch == "b")
 
 #export HU
-write.csv(E7, "../luke/Repositories/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE)
+write.csv(E7, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_Weight&Oocyst_complete.csv")
 
 #export IZW
 #write.csv(Exp007, "../luke/Documents//Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_complete.csv", quote = FALSE", quote = FALSE)
