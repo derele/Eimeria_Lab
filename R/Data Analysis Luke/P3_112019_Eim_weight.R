@@ -77,31 +77,35 @@ P3_record <- rbind(P3a_record, P3b_record)
 P3_record_full <- merge(P3_record, oocysts, by = "labels")
 
 # add Eim species column
-P3_record_full <- P3_record_full %>% mutate(Eim_sp = case_when(
-  infHistory == "Eflab:E64" ~ "Efal:Efer",
-  infHistory == "E64:E88" ~ "Efer:Efal",
-  infHistory == "E139:E88" ~ "Efer:Efal",
-  infHistory == "E88:E64" ~ "Efal:Efer",
-  
-  infHistory == "E88:UNI" ~ "Efal",
-  infHistory == "Eflab:UNI" ~ "Efal",
-  infHistory == "UNI:E88" ~ "Efal",
-  infHistory == "E88:E88" ~ "Efal",
-  infHistory == "Eflab:E88" ~ "Efal",
-  
-  infHistory == "UNI:E64" ~ "Efer",
-  infHistory == "E64:E64" ~ "Efer",
-  infHistory == "E139:UNI" ~ "Efer",
-  infHistory == "E139:E64" ~ "Efer",
-  infHistory == "E64:UNI" ~ "Efer",
-  
-  infHistory == "UNI:UNI" ~ "uni"))
+# P3_record_full <- P3_record_full %>% mutate(Eim_sp = case_when(
+#   infHistory == "Eflab:E64" ~ "Efal:Efer",
+#   infHistory == "E64:E88" ~ "Efer:Efal",
+#   infHistory == "E139:E88" ~ "Efer:Efal",
+#   infHistory == "E88:E64" ~ "Efal:Efer",
+#   
+#   infHistory == "E88:UNI" ~ "Efal",
+#   infHistory == "Eflab:UNI" ~ "Efal",
+#   infHistory == "UNI:E88" ~ "Efal",
+#   infHistory == "E88:E88" ~ "Efal",
+#   infHistory == "Eflab:E88" ~ "Efal",
+#   
+#   infHistory == "UNI:E64" ~ "Efer",
+#   infHistory == "E64:E64" ~ "Efer",
+#   infHistory == "E139:UNI" ~ "Efer",
+#   infHistory == "E139:E64" ~ "Efer",
+#   infHistory == "E64:UNI" ~ "Efer",
+#   
+#   infHistory == "UNI:UNI" ~ "uni"))
 
 # calculate OPG
 P3_record_full$OPG <- P3_record_full$AVG / P3_record_full$faeces_weight
 P3_record_full$N.oocyst <- (P3_record_full$AVG * 10^4)/2
+# write this beuty out
+write.csv(P3_record_full, "./Eimeria_Lab/data/3_recordingTables/P3_112019_Eim_Weight&Oocyst_complete.csv")
 
-# create just primary and challenge oocyst and weightloss graphs
+
+
+############################create just primary and challenge oocyst and weightloss graphs
 P3a <- merge(P3a_record, oocysts)
 
 P3a$N.oocyst <- (P3a$AVG * 10^4)/2
@@ -189,43 +193,3 @@ ggplot(P3_record_full, aes(x = primary, y = N.oocyst, color = Eim_sp))+
   geom_boxplot() +
   geom_point() + 
   facet_wrap("challenge")
-
-
-# add qPCRs
-P3_qPCRs <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_qPCRs_complete.csv"
-P3_qPCRs <- read.csv(text = getURL(P3_qPCRs))
-
-P3_qPCRs <- merge(P3_qPCRs, P3_design, by = "EH_ID")
-
-ggplot(P3_qPCRs, aes(x = delta, y = NE, color = infHistory)) +
-  geom_point(size = 3) +
-  facet_wrap("Target", scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("P3 gene expression vs delta")
-
-ggplot(P3_qPCRs, aes(x = delta, y = NE, color = challenge)) +
-  geom_point(size = 3) +
-  facet_wrap("Target", scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("P3 gene expression vs delta")
-
-P3b_q <- select(P3b, EH_ID, OPG, N.oocyst, wloss, dpi)
-P3b_q <- merge(P3b_q, P3_qPCRs, by = "EH_ID")
-
-ggplot(P3b_q, aes(x = N.oocyst, y = NE, color = challenge)) +
-  geom_point(size = 3) +
-  facet_wrap("Target", scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("P3 gene expression vs delta")
