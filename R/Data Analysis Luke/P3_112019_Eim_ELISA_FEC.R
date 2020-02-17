@@ -37,4 +37,4 @@ E1 <- dplyr::select(E1, IFNy)
 # the 0 replacement is just temporary
 E1[E1=="NaN"]<- 0
 # write out
-write.csv(E1, "./Manuscript_1/clean_data/P3_112019_Eim_feces_ELISA1_complete.csv")
+write.csv(E1, "./Eimeria_Lab/data/3_recordingTables/P3_112019_Eim_FEC_ELISAs/P3_112019_Eim_feces_ELISA1_complete.csv")

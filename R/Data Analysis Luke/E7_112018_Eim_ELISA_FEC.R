@@ -9,13 +9,14 @@ library(reshape2)
 library(drc)
 
 ############################################## first plate
-# standards
+# standards 
+# LABELS are missing
 E1_std <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISA1_std.csv"
 E1_std <- read.csv(text = getURL(E1_std))
 # samples
 E1_samples <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISA1_samples.csv"
 E1_samples <- read.csv(text = getURL(E1_samples))
-E1_samples$label <- sub("^", "P3a", E1_samples$label)
+E1_samples$label <- sub("^", "E7", E1_samples$label)
 
 ###### use drc to construct standard curve and pinpoint protein content
 
@@ -45,7 +46,7 @@ E2_std <- read.csv(text = getURL(E2_std))
 # samples
 E2_samples <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISA2_samples.csv"
 E2_samples <- read.csv(text = getURL(E2_samples))
-E2_samples$label <- sub("^", "P3a", E2_samples$label)
+E2_samples$label <- sub("^", "E7", E2_samples$label)
 
 ###### use drc to construct standard curve and pinpoint protein content
 
