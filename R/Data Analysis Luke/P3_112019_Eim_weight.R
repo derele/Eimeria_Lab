@@ -191,5 +191,41 @@ ggplot(P3_record_full, aes(x = primary, y = N.oocyst, color = Eim_sp))+
   facet_wrap("challenge")
 
 
-# graph like Anna's for comparison
+# add qPCRs
+P3_qPCRs <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_qPCRs_complete.csv"
+P3_qPCRs <- read.csv(text = getURL(P3_qPCRs))
 
+P3_qPCRs <- merge(P3_qPCRs, P3_design, by = "EH_ID")
+
+ggplot(P3_qPCRs, aes(x = delta, y = NE, color = infHistory)) +
+  geom_point(size = 3) +
+  facet_wrap("Target", scales = "free") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 gene expression vs delta")
+
+ggplot(P3_qPCRs, aes(x = delta, y = NE, color = challenge)) +
+  geom_point(size = 3) +
+  facet_wrap("Target", scales = "free") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 gene expression vs delta")
+
+P3b_q <- select(P3b, EH_ID, OPG, N.oocyst, wloss, dpi)
+P3b_q <- merge(P3b_q, P3_qPCRs, by = "EH_ID")
+
+ggplot(P3b_q, aes(x = N.oocyst, y = NE, color = challenge)) +
+  geom_point(size = 3) +
+  facet_wrap("Target", scales = "free") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("P3 gene expression vs delta")
