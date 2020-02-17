@@ -31,6 +31,8 @@ E7_qPCR$X <- NULL
 # missing labels fix in E7 FEC ELISA script
 E7_FEC_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISAs_complete.csv"
 E7_FEC_ELISA <- read.csv(text = getURL(E7_FEC_ELISA))
-colnames(E7_FEC_ELISA)[1] <- "labels"
+E7_FEC_ELISA$X <- NULL
 colnames(E7_FEC_ELISA)[2] <- "IFNy_FEC"
 
+# merge (E7 vs E7a and E7b makes mess, go back to E7_FEC_ELISA and rewrite labels (consult collection info table and boxes))
+E7 <- merge(E7_weightANDoocysts, E7_FEC_ELISA, all = T)
