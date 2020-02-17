@@ -1,0 +1,89 @@
+;Well;Fluor;Target;Content;Sample;Cq;SQ
+;A01;SYBR;CXCL9;Unkn;MouseCaecum1;n. def.;n. def.
+;A02;SYBR;IL-10;Unkn;MouseCaecum1;29,2806571454761;n. def.
+;A03;SYBR;IL-12;Unkn;MouseCaecum1;31,2462839456901;n. def.
+;A04;SYBR;IL-6;Unkn;MouseCaecum1;28,5621952767226;n. def.
+;A05;SYBR;IFN-g;Unkn;MouseCaecum1;28,7864692471551;n. def.
+;A06;SYBR;STAT6;Unkn;MouseCaecum1;24,3589797715219;n. def.
+;A07;SYBR;TGF-b;Unkn;MouseCaecum1;24,060292072447;n. def.
+;A08;SYBR;Ppia;Unkn;MouseCaecum1;15,4097387021162;n. def.
+;A09;SYBR;Ppib;Pos Ctrl;MouseCaecum1;17,6248952670071;n. def.
+;A10;SYBR;CDC42;Pos Ctrl;MouseCaecum1;26,2561810934771;n. def.
+;A11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;B01;SYBR;CXCL9;Unkn;MouseCaecum1;29,9255929365635;n. def.
+;B02;SYBR;IL-10;Unkn;MouseCaecum1;30,2181717205626;n. def.
+;B03;SYBR;IL-12;Unkn;MouseCaecum1;32,3586989029434;n. def.
+;B04;SYBR;IL-6;Unkn;MouseCaecum1;28,8327297668671;n. def.
+;B05;SYBR;IFN-g;Unkn;MouseCaecum1;29,6352430495314;n. def.
+;B06;SYBR;STAT6;Unkn;MouseCaecum1;24,3875798688599;n. def.
+;B07;SYBR;TGF-b;Unkn;MouseCaecum1;23,4980586303785;n. def.
+;B08;SYBR;Ppia;Unkn;MouseCaecum1;14,9173388618356;n. def.
+;B09;SYBR;Ppib;Pos Ctrl;MouseCaecum1;17,1094201182855;n. def.
+;B10;SYBR;CDC42;Pos Ctrl;MouseCaecum1;25,3903276245298;n. def.
+;B11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;C01;SYBR;CXCL9;Unkn;MouseCaecum2;27,8959258324987;n. def.
+;C02;SYBR;IL-10;Unkn;MouseCaecum2;35,9268422249141;n. def.
+;C03;SYBR;IL-12;Unkn;MouseCaecum2;35,7621581638328;n. def.
+;C04;SYBR;IL-6;Unkn;MouseCaecum2;30,7809414110008;n. def.
+;C05;SYBR;IFN-g;Unkn;MouseCaecum2;30,3988659190542;n. def.
+;C06;SYBR;STAT6;Unkn;MouseCaecum2;29,1422686361797;n. def.
+;C07;SYBR;TGF-b;Unkn;MouseCaecum2;29,8996551882743;n. def.
+;C08;SYBR;Ppia;Unkn;MouseCaecum2;20,0307582782122;n. def.
+;C09;SYBR;Ppib;Pos Ctrl;MouseCaecum2;20,5632468631318;n. def.
+;C10;SYBR;CDC42;Pos Ctrl;MouseCaecum2;26,9703027256104;n. def.
+;C11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;D01;SYBR;CXCL9;Unkn;MouseCaecum2;28,1036115910145;n. def.
+;D02;SYBR;IL-10;Unkn;MouseCaecum2;36,03130246355;n. def.
+;D03;SYBR;IL-12;Unkn;MouseCaecum2;34,5025379954217;n. def.
+;D04;SYBR;IL-6;Unkn;MouseCaecum2;32,6324518107125;n. def.
+;D05;SYBR;IFN-g;Unkn;MouseCaecum2;31,2332619177179;n. def.
+;D06;SYBR;STAT6;Unkn;MouseCaecum2;29,9204113275086;n. def.
+;D07;SYBR;TGF-b;Unkn;MouseCaecum2;30,445351435312;n. def.
+;D08;SYBR;Ppia;Unkn;MouseCaecum2;20,4690256067126;n. def.
+;D09;SYBR;Ppib;Pos Ctrl;MouseCaecum2;20,7339540424255;n. def.
+;D10;SYBR;CDC42;Pos Ctrl;MouseCaecum2;26,6640930916197;n. def.
+;D11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;E01;SYBR;CXCL9;Unkn;MouseCaecum3;31,2909649700277;n. def.
+;E02;SYBR;IL-10;Unkn;MouseCaecum3;n. def.;n. def.
+;E03;SYBR;IL-12;Unkn;MouseCaecum3;34,9254874189213;n. def.
+;E04;SYBR;IL-6;Unkn;MouseCaecum3;31,4373860190682;n. def.
+;E05;SYBR;IFN-g;Unkn;MouseCaecum3;32,3016027462625;n. def.
+;E06;SYBR;STAT6;Unkn;MouseCaecum3;29,3853838234373;n. def.
+;E07;SYBR;TGF-b;Unkn;MouseCaecum3;35,3343614141346;n. def.
+;E08;SYBR;Ppia;Unkn;MouseCaecum3;24,781189556534;n. def.
+;E09;SYBR;Ppib;Pos Ctrl;MouseCaecum3;28,2337039769063;n. def.
+;E10;SYBR;CDC42;Pos Ctrl;MouseCaecum3;27,5928920491035;n. def.
+;E11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;F01;SYBR;CXCL9;Unkn;MouseCaecum3;31,5795900229398;n. def.
+;F02;SYBR;IL-10;Unkn;MouseCaecum3;n. def.;n. def.
+;F03;SYBR;IL-12;Unkn;MouseCaecum3;37,6505409515568;n. def.
+;F04;SYBR;IL-6;Unkn;MouseCaecum3;33,9891674636336;n. def.
+;F05;SYBR;IFN-g;Unkn;MouseCaecum3;33,9779323150374;n. def.
+;F06;SYBR;STAT6;Unkn;MouseCaecum3;30,3645462532926;n. def.
+;F07;SYBR;TGF-b;Unkn;MouseCaecum3;32,3575705106044;n. def.
+;F08;SYBR;Ppia;Unkn;MouseCaecum3;24,6491165368869;n. def.
+;F09;SYBR;Ppib;Pos Ctrl;MouseCaecum3;27,6001856577786;n. def.
+;F10;SYBR;CDC42;Pos Ctrl;MouseCaecum3;27,6032159281941;n. def.
+;F11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;G01;SYBR;CXCL9;Unkn;MouseCaecum4;25,9992761210697;n. def.
+;G02;SYBR;IL-10;Unkn;MouseCaecum4;30,7988741001478;n. def.
+;G03;SYBR;IL-12;Unkn;MouseCaecum4;32,2065680375097;n. def.
+;G04;SYBR;IL-6;Unkn;MouseCaecum4;27,614279673594;n. def.
+;G05;SYBR;IFN-g;Unkn;MouseCaecum4;28,360498671832;n. def.
+;G06;SYBR;STAT6;Unkn;MouseCaecum4;23,3936597954637;n. def.
+;G07;SYBR;TGF-b;Unkn;MouseCaecum4;22,5654570851045;n. def.
+;G08;SYBR;Ppia;Unkn;MouseCaecum4;13,7588712388792;n. def.
+;G09;SYBR;Ppib;Pos Ctrl;MouseCaecum4;15,6427960585629;n. def.
+;G10;SYBR;CDC42;Pos Ctrl;MouseCaecum4;22,1260957138841;n. def.
+;G11;SYBR;;Neg Ctrl;;n. def.;n. def.
+;H01;SYBR;CXCL9;Unkn;MouseCaecum4;26,9615375870014;n. def.
+;H02;SYBR;IL-10;Unkn;MouseCaecum4;32,3552739396883;n. def.
+;H03;SYBR;IL-12;Unkn;MouseCaecum4;33,1052421986319;n. def.
+;H04;SYBR;IL-6;Unkn;MouseCaecum4;26,9931278682806;n. def.
+;H05;SYBR;IFN-g;Unkn;MouseCaecum4;28,7007809578039;n. def.
+;H06;SYBR;STAT6;Unkn;MouseCaecum4;22,4202459030111;n. def.
+;H07;SYBR;TGF-b;Unkn;MouseCaecum4;23,1413064600225;n. def.
+;H08;SYBR;Ppia;Unkn;MouseCaecum4;14,5708250906211;n. def.
+;H09;SYBR;Ppib;Pos Ctrl;MouseCaecum4;16,8145619827285;n. def.
+;H10;SYBR;CDC42;Pos Ctrl;MouseCaecum4;23,2938838075961;n. def.
+;H11;SYBR;;Neg Ctrl;;n. def.;n. def.

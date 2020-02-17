@@ -1,0 +1,488 @@
+;Well;Fluor;Target;Content;Sample;Melt Temp
+;A01;Cy5;;Unkn;;None
+;A02;Cy5;;Unkn;;None
+;A03;Cy5;;Unkn;;93
+;A04;Cy5;;Unkn;;None
+;A05;Cy5;;Unkn;;None
+;A06;Cy5;;Unkn;;None
+;A07;Cy5;;Unkn;;None
+;A08;Cy5;;Unkn;;None
+;A09;Cy5;;Unkn;;None
+;A10;Cy5;;Unkn;;None
+;A11;Cy5;;Unkn;;94,5
+;A12;Cy5;;Unkn;;None
+;B01;Cy5;;Unkn;;None
+;B02;Cy5;;Unkn;;None
+;B03;Cy5;;Unkn;;94
+;B04;Cy5;;Unkn;;None
+;B05;Cy5;;Unkn;;None
+;B06;Cy5;;Unkn;;None
+;B07;Cy5;;Unkn;;None
+;B08;Cy5;;Unkn;;94,5
+;B09;Cy5;;Unkn;;None
+;B10;Cy5;;Unkn;;None
+;B11;Cy5;;Unkn;;None
+;B12;Cy5;;Unkn;;None
+;C01;Cy5;;Unkn;;None
+;C02;Cy5;;Unkn;;94,5
+;C03;Cy5;;Unkn;;None
+;C04;Cy5;;Unkn;;None
+;C05;Cy5;;Unkn;;None
+;C06;Cy5;;Unkn;;None
+;C07;Cy5;;Unkn;;94,5
+;C08;Cy5;;Unkn;;94,5
+;C09;Cy5;;Unkn;;94,5
+;C10;Cy5;;Unkn;;94,5
+;C11;Cy5;;Unkn;;94,5
+;C12;Cy5;;Unkn;;None
+;D01;Cy5;;Unkn;;94,5
+;D02;Cy5;;Unkn;;None
+;D03;Cy5;;Unkn;;94,5
+;D04;Cy5;;Unkn;;None
+;D05;Cy5;;Unkn;;94,5
+;D06;Cy5;;Unkn;;94,5
+;D07;Cy5;;Unkn;;94,5
+;D08;Cy5;;Unkn;;93
+;D09;Cy5;;Unkn;;None
+;D10;Cy5;;Unkn;;None
+;D11;Cy5;;Unkn;;None
+;D12;Cy5;;Unkn;;91,5
+;E01;Cy5;;Unkn;;None
+;E02;Cy5;;Unkn;;None
+;E03;Cy5;;Unkn;;None
+;E04;Cy5;;Unkn;;None
+;E05;Cy5;;Unkn;;None
+;E06;Cy5;;Unkn;;None
+;E07;Cy5;;Unkn;;None
+;E08;Cy5;;Unkn;;94,5
+;E09;Cy5;;Unkn;;None
+;E10;Cy5;;Unkn;;None
+;E11;Cy5;;Unkn;;94,5
+;E12;Cy5;;Unkn;;None
+;F01;Cy5;;Unkn;;None
+;F02;Cy5;;Unkn;;94,5
+;F03;Cy5;;Unkn;;None
+;F04;Cy5;;Unkn;;None
+;F05;Cy5;;Unkn;;94,5
+;F06;Cy5;;Unkn;;None
+;F07;Cy5;;Unkn;;None
+;F08;Cy5;;Unkn;;None
+;F09;Cy5;;Unkn;;None
+;F10;Cy5;;Unkn;;None
+;F11;Cy5;;Unkn;;None
+;F12;Cy5;;Unkn;;None
+;G01;Cy5;;Unkn;;94,5
+;G02;Cy5;;Unkn;;None
+;G03;Cy5;;Unkn;;94,5
+;G04;Cy5;;Unkn;;None
+;G05;Cy5;;Unkn;;None
+;G06;Cy5;;Unkn;;94,5
+;G07;Cy5;;Unkn;;94,5
+;G08;Cy5;;Unkn;;None
+;G09;Cy5;;Unkn;;94,5
+;G10;Cy5;;Unkn;;None
+;G11;Cy5;;Unkn;;None
+;G12;Cy5;;Unkn;;None
+;H01;Cy5;;Unkn;;None
+;H02;Cy5;;Unkn;;None
+;H03;Cy5;;Unkn;;None
+;H04;Cy5;;Unkn;;94,5
+;H05;Cy5;;Unkn;;94,5
+;H06;Cy5;;Unkn;;None
+;H07;Cy5;;Unkn;;94,5
+;H08;Cy5;;Unkn;;None
+;H09;Cy5;;Unkn;;None
+;H10;Cy5;;Unkn;;94,5
+;H11;Cy5;;Unkn;;None
+;H12;Cy5;;Unkn;;94,5
+;A01;FAM;;Unkn;;None
+;A02;FAM;;Unkn;;None
+;A03;FAM;;Unkn;;79,5
+;A04;FAM;;Unkn;;79,5
+;A05;FAM;;Unkn;;None
+;A06;FAM;;Unkn;;79
+;A07;FAM;;Unkn;;79
+;A08;FAM;;Unkn;;79,5
+;A09;FAM;;Unkn;;79,5
+;A10;FAM;;Unkn;;79
+;A11;FAM;;Unkn;;None
+;A12;FAM;;Unkn;;None
+;B01;FAM;;Unkn;;None
+;B02;FAM;;Unkn;;None
+;B03;FAM;;Unkn;;None
+;B04;FAM;;Unkn;;79,5
+;B05;FAM;;Unkn;;79
+;B06;FAM;;Unkn;;79
+;B07;FAM;;Unkn;;79,5
+;B08;FAM;;Unkn;;79,5
+;B09;FAM;;Unkn;;79,5
+;B10;FAM;;Unkn;;None
+;B11;FAM;;Unkn;;None
+;B12;FAM;;Unkn;;None
+;C01;FAM;;Unkn;;83,5
+;C02;FAM;;Unkn;;84
+;C03;FAM;;Unkn;;84
+;C04;FAM;;Unkn;;79,5
+;C05;FAM;;Unkn;;79,5
+;C06;FAM;;Unkn;;79
+;C07;FAM;;Unkn;;None
+;C08;FAM;;Unkn;;None
+;C09;FAM;;Unkn;;None
+;C10;FAM;;Unkn;;84
+;C11;FAM;;Unkn;;85
+;C12;FAM;;Unkn;;None
+;D01;FAM;;Unkn;;76
+;D02;FAM;;Unkn;;76
+;D03;FAM;;Unkn;;75
+;D04;FAM;;Unkn;;76
+;D05;FAM;;Unkn;;76
+;D06;FAM;;Unkn;;75,5
+;D07;FAM;;Unkn;;76
+;D08;FAM;;Unkn;;None
+;D09;FAM;;Unkn;;76
+;D10;FAM;;Unkn;;75,5
+;D11;FAM;;Unkn;;76
+;D12;FAM;;Unkn;;None
+;E01;FAM;;Unkn;;None
+;E02;FAM;;Unkn;;79,5
+;E03;FAM;;Unkn;;None
+;E04;FAM;;Unkn;;78,5
+;E05;FAM;;Unkn;;79
+;E06;FAM;;Unkn;;79
+;E07;FAM;;Unkn;;79,5
+;E08;FAM;;Unkn;;79
+;E09;FAM;;Unkn;;79
+;E10;FAM;;Unkn;;79,5
+;E11;FAM;;Unkn;;81
+;E12;FAM;;Unkn;;None
+;F01;FAM;;Unkn;;81,5
+;F02;FAM;;Unkn;;None
+;F03;FAM;;Unkn;;81
+;F04;FAM;;Unkn;;81,5
+;F05;FAM;;Unkn;;81
+;F06;FAM;;Unkn;;81
+;F07;FAM;;Unkn;;81
+;F08;FAM;;Unkn;;None
+;F09;FAM;;Unkn;;81
+;F10;FAM;;Unkn;;81
+;F11;FAM;;Unkn;;81
+;F12;FAM;;Unkn;;None
+;G01;FAM;;Unkn;;81,5
+;G02;FAM;;Unkn;;None
+;G03;FAM;;Unkn;;81,5
+;G04;FAM;;Unkn;;82
+;G05;FAM;;Unkn;;81,5
+;G06;FAM;;Unkn;;81,5
+;G07;FAM;;Unkn;;81,5
+;G08;FAM;;Unkn;;81
+;G09;FAM;;Unkn;;82
+;G10;FAM;;Unkn;;81,5
+;G11;FAM;;Unkn;;81,5
+;G12;FAM;;Unkn;;81,5
+;H01;FAM;;Unkn;;None
+;H02;FAM;;Unkn;;None
+;H03;FAM;;Unkn;;None
+;H04;FAM;;Unkn;;None
+;H05;FAM;;Unkn;;None
+;H06;FAM;;Unkn;;None
+;H07;FAM;;Unkn;;None
+;H08;FAM;;Unkn;;None
+;H09;FAM;;Unkn;;None
+;H10;FAM;;Unkn;;None
+;H11;FAM;;Unkn;;None
+;H12;FAM;;Unkn;;None
+;A01;HEX;;Unkn;;None
+;A02;HEX;;Unkn;;None
+;A03;HEX;;Unkn;;None
+;A04;HEX;;Unkn;;79,5
+;A05;HEX;;Unkn;;None
+;A06;HEX;;Unkn;;79
+;A07;HEX;;Unkn;;None
+;A08;HEX;;Unkn;;None
+;A09;HEX;;Unkn;;None
+;A10;HEX;;Unkn;;None
+;A11;HEX;;Unkn;;None
+;A12;HEX;;Unkn;;None
+;B01;HEX;;Unkn;;None
+;B02;HEX;;Unkn;;None
+;B03;HEX;;Unkn;;None
+;B04;HEX;;Unkn;;None
+;B05;HEX;;Unkn;;None
+;B06;HEX;;Unkn;;None
+;B07;HEX;;Unkn;;None
+;B08;HEX;;Unkn;;None
+;B09;HEX;;Unkn;;79
+;B10;HEX;;Unkn;;None
+;B11;HEX;;Unkn;;None
+;B12;HEX;;Unkn;;None
+;C01;HEX;;Unkn;;83,5
+;C02;HEX;;Unkn;;83,5
+;C03;HEX;;Unkn;;None
+;C04;HEX;;Unkn;;None
+;C05;HEX;;Unkn;;None
+;C06;HEX;;Unkn;;None
+;C07;HEX;;Unkn;;None
+;C08;HEX;;Unkn;;None
+;C09;HEX;;Unkn;;None
+;C10;HEX;;Unkn;;None
+;C11;HEX;;Unkn;;None
+;C12;HEX;;Unkn;;None
+;D01;HEX;;Unkn;;None
+;D02;HEX;;Unkn;;None
+;D03;HEX;;Unkn;;75
+;D04;HEX;;Unkn;;None
+;D05;HEX;;Unkn;;None
+;D06;HEX;;Unkn;;None
+;D07;HEX;;Unkn;;None
+;D08;HEX;;Unkn;;None
+;D09;HEX;;Unkn;;None
+;D10;HEX;;Unkn;;None
+;D11;HEX;;Unkn;;None
+;D12;HEX;;Unkn;;None
+;E01;HEX;;Unkn;;None
+;E02;HEX;;Unkn;;None
+;E03;HEX;;Unkn;;None
+;E04;HEX;;Unkn;;None
+;E05;HEX;;Unkn;;None
+;E06;HEX;;Unkn;;None
+;E07;HEX;;Unkn;;None
+;E08;HEX;;Unkn;;None
+;E09;HEX;;Unkn;;None
+;E10;HEX;;Unkn;;None
+;E11;HEX;;Unkn;;None
+;E12;HEX;;Unkn;;None
+;F01;HEX;;Unkn;;None
+;F02;HEX;;Unkn;;None
+;F03;HEX;;Unkn;;None
+;F04;HEX;;Unkn;;None
+;F05;HEX;;Unkn;;None
+;F06;HEX;;Unkn;;None
+;F07;HEX;;Unkn;;None
+;F08;HEX;;Unkn;;None
+;F09;HEX;;Unkn;;None
+;F10;HEX;;Unkn;;None
+;F11;HEX;;Unkn;;None
+;F12;HEX;;Unkn;;None
+;G01;HEX;;Unkn;;None
+;G02;HEX;;Unkn;;None
+;G03;HEX;;Unkn;;None
+;G04;HEX;;Unkn;;None
+;G05;HEX;;Unkn;;None
+;G06;HEX;;Unkn;;None
+;G07;HEX;;Unkn;;None
+;G08;HEX;;Unkn;;81,5
+;G09;HEX;;Unkn;;None
+;G10;HEX;;Unkn;;None
+;G11;HEX;;Unkn;;None
+;G12;HEX;;Unkn;;None
+;H01;HEX;;Unkn;;None
+;H02;HEX;;Unkn;;None
+;H03;HEX;;Unkn;;None
+;H04;HEX;;Unkn;;None
+;H05;HEX;;Unkn;;None
+;H06;HEX;;Unkn;;None
+;H07;HEX;;Unkn;;None
+;H08;HEX;;Unkn;;None
+;H09;HEX;;Unkn;;None
+;H10;HEX;;Unkn;;None
+;H11;HEX;;Unkn;;None
+;H12;HEX;;Unkn;;None
+;A01;Quasar 705;;Unkn;;None
+;A02;Quasar 705;;Unkn;;94,5
+;A02;Quasar 705;;Unkn;;89,5
+;A03;Quasar 705;;Unkn;;88
+;A04;Quasar 705;;Unkn;;87,5
+;A05;Quasar 705;;Unkn;;88
+;A06;Quasar 705;;Unkn;;87,5
+;A07;Quasar 705;;Unkn;;88
+;A08;Quasar 705;;Unkn;;86
+;A08;Quasar 705;;Unkn;;94,5
+;A09;Quasar 705;;Unkn;;82
+;A10;Quasar 705;;Unkn;;84,5
+;A11;Quasar 705;;Unkn;;82
+;A12;Quasar 705;;Unkn;;None
+;B01;Quasar 705;;Unkn;;89,5
+;B02;Quasar 705;;Unkn;;86,5
+;B03;Quasar 705;;Unkn;;86
+;B04;Quasar 705;;Unkn;;88
+;B05;Quasar 705;;Unkn;;85,5
+;B06;Quasar 705;;Unkn;;86,5
+;B07;Quasar 705;;Unkn;;85
+;B08;Quasar 705;;Unkn;;85,5
+;B09;Quasar 705;;Unkn;;83
+;B09;Quasar 705;;Unkn;;94,5
+;B10;Quasar 705;;Unkn;;81,5
+;B11;Quasar 705;;Unkn;;74,5
+;B12;Quasar 705;;Unkn;;82,5
+;C01;Quasar 705;;Unkn;;87,5
+;C02;Quasar 705;;Unkn;;86,5
+;C03;Quasar 705;;Unkn;;84
+;C04;Quasar 705;;Unkn;;85
+;C04;Quasar 705;;Unkn;;94,5
+;C05;Quasar 705;;Unkn;;84,5
+;C06;Quasar 705;;Unkn;;85
+;C07;Quasar 705;;Unkn;;85,5
+;C08;Quasar 705;;Unkn;;83
+;C09;Quasar 705;;Unkn;;78
+;C10;Quasar 705;;Unkn;;81,5
+;C11;Quasar 705;;Unkn;;71,5
+;C12;Quasar 705;;Unkn;;82,5
+;D01;Quasar 705;;Unkn;;81,5
+;D02;Quasar 705;;Unkn;;84,5
+;D03;Quasar 705;;Unkn;;84,5
+;D04;Quasar 705;;Unkn;;88
+;D05;Quasar 705;;Unkn;;84,5
+;D06;Quasar 705;;Unkn;;85,5
+;D07;Quasar 705;;Unkn;;83
+;D08;Quasar 705;;Unkn;;82,5
+;D09;Quasar 705;;Unkn;;82,5
+;D10;Quasar 705;;Unkn;;78,5
+;D11;Quasar 705;;Unkn;;74
+;D11;Quasar 705;;Unkn;;70,5
+;D12;Quasar 705;;Unkn;;86
+;E01;Quasar 705;;Unkn;;88,5
+;E02;Quasar 705;;Unkn;;84
+;E03;Quasar 705;;Unkn;;90
+;E04;Quasar 705;;Unkn;;88,5
+;E05;Quasar 705;;Unkn;;86
+;E06;Quasar 705;;Unkn;;86,5
+;E07;Quasar 705;;Unkn;;86,5
+;E08;Quasar 705;;Unkn;;86
+;E09;Quasar 705;;Unkn;;84,5
+;E10;Quasar 705;;Unkn;;86
+;E11;Quasar 705;;Unkn;;86,5
+;E12;Quasar 705;;Unkn;;83,5
+;F01;Quasar 705;;Unkn;;84
+;F02;Quasar 705;;Unkn;;85
+;F03;Quasar 705;;Unkn;;86
+;F04;Quasar 705;;Unkn;;87
+;F05;Quasar 705;;Unkn;;85,5
+;F06;Quasar 705;;Unkn;;88,5
+;F07;Quasar 705;;Unkn;;85,5
+;F08;Quasar 705;;Unkn;;85
+;F09;Quasar 705;;Unkn;;85
+;F10;Quasar 705;;Unkn;;86,5
+;F11;Quasar 705;;Unkn;;86,5
+;F12;Quasar 705;;Unkn;;87,5
+;G01;Quasar 705;;Unkn;;89,5
+;G02;Quasar 705;;Unkn;;85,5
+;G03;Quasar 705;;Unkn;;84,5
+;G04;Quasar 705;;Unkn;;86
+;G05;Quasar 705;;Unkn;;86,5
+;G06;Quasar 705;;Unkn;;88,5
+;G07;Quasar 705;;Unkn;;86,5
+;G08;Quasar 705;;Unkn;;85,5
+;G09;Quasar 705;;Unkn;;87
+;G10;Quasar 705;;Unkn;;89
+;G11;Quasar 705;;Unkn;;87,5
+;G12;Quasar 705;;Unkn;;87
+;H01;Quasar 705;;Unkn;;None
+;H02;Quasar 705;;Unkn;;89
+;H03;Quasar 705;;Unkn;;88
+;H04;Quasar 705;;Unkn;;87,5
+;H05;Quasar 705;;Unkn;;87,5
+;H06;Quasar 705;;Unkn;;89,5
+;H07;Quasar 705;;Unkn;;89,5
+;H08;Quasar 705;;Unkn;;None
+;H09;Quasar 705;;Unkn;;None
+;H10;Quasar 705;;Unkn;;None
+;H11;Quasar 705;;Unkn;;94,5
+;H12;Quasar 705;;Unkn;;None
+;A01;Texas Red;;Unkn;;None
+;A02;Texas Red;;Unkn;;None
+;A03;Texas Red;;Unkn;;None
+;A04;Texas Red;;Unkn;;None
+;A05;Texas Red;;Unkn;;None
+;A06;Texas Red;;Unkn;;None
+;A07;Texas Red;;Unkn;;None
+;A08;Texas Red;;Unkn;;None
+;A09;Texas Red;;Unkn;;None
+;A10;Texas Red;;Unkn;;None
+;A11;Texas Red;;Unkn;;None
+;A12;Texas Red;;Unkn;;None
+;B01;Texas Red;;Unkn;;None
+;B02;Texas Red;;Unkn;;None
+;B03;Texas Red;;Unkn;;None
+;B04;Texas Red;;Unkn;;None
+;B05;Texas Red;;Unkn;;None
+;B06;Texas Red;;Unkn;;None
+;B07;Texas Red;;Unkn;;None
+;B08;Texas Red;;Unkn;;None
+;B09;Texas Red;;Unkn;;None
+;B10;Texas Red;;Unkn;;None
+;B11;Texas Red;;Unkn;;None
+;B12;Texas Red;;Unkn;;92,5
+;C01;Texas Red;;Unkn;;None
+;C02;Texas Red;;Unkn;;None
+;C03;Texas Red;;Unkn;;None
+;C04;Texas Red;;Unkn;;None
+;C05;Texas Red;;Unkn;;None
+;C06;Texas Red;;Unkn;;None
+;C07;Texas Red;;Unkn;;None
+;C08;Texas Red;;Unkn;;None
+;C09;Texas Red;;Unkn;;None
+;C10;Texas Red;;Unkn;;None
+;C11;Texas Red;;Unkn;;None
+;C12;Texas Red;;Unkn;;None
+;D01;Texas Red;;Unkn;;None
+;D02;Texas Red;;Unkn;;None
+;D03;Texas Red;;Unkn;;None
+;D04;Texas Red;;Unkn;;None
+;D05;Texas Red;;Unkn;;None
+;D06;Texas Red;;Unkn;;None
+;D07;Texas Red;;Unkn;;None
+;D08;Texas Red;;Unkn;;None
+;D09;Texas Red;;Unkn;;None
+;D10;Texas Red;;Unkn;;None
+;D11;Texas Red;;Unkn;;None
+;D12;Texas Red;;Unkn;;None
+;E01;Texas Red;;Unkn;;None
+;E02;Texas Red;;Unkn;;None
+;E03;Texas Red;;Unkn;;None
+;E04;Texas Red;;Unkn;;None
+;E05;Texas Red;;Unkn;;None
+;E06;Texas Red;;Unkn;;None
+;E07;Texas Red;;Unkn;;None
+;E08;Texas Red;;Unkn;;None
+;E09;Texas Red;;Unkn;;None
+;E10;Texas Red;;Unkn;;None
+;E11;Texas Red;;Unkn;;94,5
+;E11;Texas Red;;Unkn;;88,5
+;E12;Texas Red;;Unkn;;None
+;F01;Texas Red;;Unkn;;None
+;F02;Texas Red;;Unkn;;None
+;F03;Texas Red;;Unkn;;None
+;F04;Texas Red;;Unkn;;None
+;F05;Texas Red;;Unkn;;None
+;F06;Texas Red;;Unkn;;None
+;F07;Texas Red;;Unkn;;None
+;F08;Texas Red;;Unkn;;None
+;F09;Texas Red;;Unkn;;None
+;F10;Texas Red;;Unkn;;None
+;F11;Texas Red;;Unkn;;None
+;F12;Texas Red;;Unkn;;None
+;G01;Texas Red;;Unkn;;94,5
+;G02;Texas Red;;Unkn;;None
+;G03;Texas Red;;Unkn;;None
+;G04;Texas Red;;Unkn;;None
+;G05;Texas Red;;Unkn;;None
+;G06;Texas Red;;Unkn;;None
+;G07;Texas Red;;Unkn;;None
+;G08;Texas Red;;Unkn;;None
+;G09;Texas Red;;Unkn;;None
+;G10;Texas Red;;Unkn;;None
+;G11;Texas Red;;Unkn;;None
+;G12;Texas Red;;Unkn;;None
+;H01;Texas Red;;Unkn;;None
+;H02;Texas Red;;Unkn;;None
+;H03;Texas Red;;Unkn;;None
+;H04;Texas Red;;Unkn;;None
+;H05;Texas Red;;Unkn;;None
+;H06;Texas Red;;Unkn;;81,5
+;H06;Texas Red;;Unkn;;94,5
+;H07;Texas Red;;Unkn;;None
+;H08;Texas Red;;Unkn;;None
+;H09;Texas Red;;Unkn;;None
+;H10;Texas Red;;Unkn;;None
+;H11;Texas Red;;Unkn;;None
+;H12;Texas Red;;Unkn;;None

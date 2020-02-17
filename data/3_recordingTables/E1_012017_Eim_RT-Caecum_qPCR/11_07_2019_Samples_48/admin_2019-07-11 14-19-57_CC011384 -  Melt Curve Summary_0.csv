@@ -1,0 +1,23 @@
+;Well;Fluor;Target;Content;Sample;Melt Temp
+;A01;SYBR;CXCL9;Unkn;MouseCaecum1;78
+;A02;SYBR;IL-10;Unkn;MouseCaecum1;None
+;A03;SYBR;IL-12;Unkn;MouseCaecum1;None
+;A04;SYBR;IL-6;Unkn;MouseCaecum1;75
+;A05;SYBR;IFN-g;Unkn;MouseCaecum1;79,5
+;A06;SYBR;STAT6;Unkn;MouseCaecum1;82,5
+;A07;SYBR;TGF-b;Unkn;MouseCaecum1;83
+;A08;SYBR;Ppia;Unkn;MouseCaecum1;83
+;A09;SYBR;Ppib;Pos Ctrl;MouseCaecum1;83
+;A10;SYBR;CDC42;Pos Ctrl;MouseCaecum1;80
+;A11;SYBR;;Neg Ctrl;;None
+;B01;SYBR;CXCL9;Unkn;MouseCaecum1;78
+;B02;SYBR;IL-10;Unkn;MouseCaecum1;None
+;B03;SYBR;IL-12;Unkn;MouseCaecum1;84,5
+;B04;SYBR;IL-6;Unkn;MouseCaecum1;75
+;B05;SYBR;IFN-g;Unkn;MouseCaecum1;73
+;B06;SYBR;STAT6;Unkn;MouseCaecum1;82
+;B07;SYBR;TGF-b;Unkn;MouseCaecum1;81,5
+;B08;SYBR;Ppia;Unkn;MouseCaecum1;81,5
+;B09;SYBR;Ppib;Pos Ctrl;MouseCaecum1;82,5
+;B10;SYBR;CDC42;Pos Ctrl;MouseCaecum1;80
+;B11;SYBR;;Neg Ctrl;;None

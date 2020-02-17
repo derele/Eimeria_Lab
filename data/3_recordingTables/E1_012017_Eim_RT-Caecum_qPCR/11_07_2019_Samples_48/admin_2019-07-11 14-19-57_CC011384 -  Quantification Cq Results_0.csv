@@ -1,0 +1,23 @@
+;Well;Fluor;Target;Content;Sample;Biological Set Name;Cq;Cq Mean;Cq Std. Dev;Starting Quantity (SQ);Log Starting Quantity;SQ Mean;SQ Std. Dev;Set Point;Well Note
+;A01;SYBR;CXCL9;Unkn;MouseCaecum1;;32,9435548944301;32,9435548944301;0;n. def.;n. def.;n. def.;0;60;
+;A02;SYBR;IL-10;Unkn;MouseCaecum1;;36,8842817921892;36,8842817921892;0;n. def.;n. def.;n. def.;0;60;
+;A03;SYBR;IL-12;Unkn;MouseCaecum1;;n. def.;0;0;n. def.;n. def.;0;0;60;
+;A04;SYBR;IL-6;Unkn;MouseCaecum1;;30,2018363244071;30,2018363244071;0;n. def.;n. def.;n. def.;0;60;
+;A05;SYBR;IFN-g;Unkn;MouseCaecum1;;32,7370432444502;32,7370432444502;0;n. def.;n. def.;n. def.;0;60;
+;A06;SYBR;STAT6;Unkn;MouseCaecum1;;29,4600645894395;29,4600645894395;0;n. def.;n. def.;n. def.;0;60;
+;A07;SYBR;TGF-b;Unkn;MouseCaecum1;;31,1724573341078;31,1724573341078;0;n. def.;n. def.;n. def.;0;60;
+;A08;SYBR;Ppia;Unkn;MouseCaecum1;;22,6514546486333;22,6514546486333;0;n. def.;n. def.;n. def.;0;60;
+;A09;SYBR;Ppib;Pos Ctrl;MouseCaecum1;;25,3877493214262;25,3877493214262;0;n. def.;n. def.;n. def.;0;60;
+;A10;SYBR;CDC42;Pos Ctrl;MouseCaecum1;;26,3477414492421;26,3477414492421;0;n. def.;n. def.;n. def.;0;60;
+;A11;SYBR;;Neg Ctrl;;;n. def.;0;0;n. def.;n. def.;0;0;60;
+;B01;SYBR;CXCL9;Unkn;MouseCaecum1;;33,2156803342873;33,2156803342873;0;n. def.;n. def.;n. def.;0;60;
+;B02;SYBR;IL-10;Unkn;MouseCaecum1;;n. def.;0;0;n. def.;n. def.;0;0;60;
+;B03;SYBR;IL-12;Unkn;MouseCaecum1;;33,093025702925;33,093025702925;0;n. def.;n. def.;n. def.;0;60;
+;B04;SYBR;IL-6;Unkn;MouseCaecum1;;30,4477213342473;30,4477213342473;0;n. def.;n. def.;n. def.;0;60;
+;B05;SYBR;IFN-g;Unkn;MouseCaecum1;;33,1511527684809;33,1511527684809;0;n. def.;n. def.;n. def.;0;60;
+;B06;SYBR;STAT6;Unkn;MouseCaecum1;;30,0837291479235;30,0837291479235;0;n. def.;n. def.;n. def.;0;60;
+;B07;SYBR;TGF-b;Unkn;MouseCaecum1;;32,0270972871937;32,0270972871937;0;n. def.;n. def.;n. def.;0;60;
+;B08;SYBR;Ppia;Unkn;MouseCaecum1;;22,7975610352682;22,7975610352682;0;n. def.;n. def.;n. def.;0;60;
+;B09;SYBR;Ppib;Pos Ctrl;MouseCaecum1;;25,340410320629;25,340410320629;0;n. def.;n. def.;n. def.;0;60;
+;B10;SYBR;CDC42;Pos Ctrl;MouseCaecum1;;26,1395509484406;26,1395509484406;0;n. def.;n. def.;n. def.;0;60;
+;B11;SYBR;;Neg Ctrl;;;n. def.;0;0;n. def.;n. def.;0;0;60;

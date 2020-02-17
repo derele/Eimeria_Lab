@@ -1,0 +1,29 @@
+;True;Target;Sample;Normalized Expression
+;True;CXCL9;MouseCaecum1;n. def.
+;True;CXCL9;MouseCaecum2;0,00944301819933235
+;True;CXCL9;MouseCaecum3;0,261411630975384
+;True;CXCL9;MouseCaecum4;299,591583935483
+;True;IFN-g;MouseCaecum1;n. def.
+;True;IFN-g;MouseCaecum2;0,00145453807145477
+;True;IFN-g;MouseCaecum3;0,000239991621684582
+;True;IFN-g;MouseCaecum4;0,00155402080019672
+;True;IL-10;MouseCaecum1;n. def.
+;True;IL-10;MouseCaecum2;3,53817634443993E-05
+;True;IL-10;MouseCaecum3;n. def.
+;True;IL-10;MouseCaecum4;0,000113568039638013
+;True;IL-12;MouseCaecum1;n. def.
+;True;IL-12;MouseCaecum2;4,05680470474831E-05
+;True;IL-12;MouseCaecum3;0,000303810321137697
+;True;IL-12;MouseCaecum4;0,000353749550922311
+;True;IL-6;MouseCaecum1;n. def.
+;True;IL-6;MouseCaecum2;0,00628452623742523
+;True;IL-6;MouseCaecum3;0,025204856151372
+;True;IL-6;MouseCaecum4;0,00849059861432367
+;True;STAT6;MouseCaecum1;n. def.
+;True;STAT6;MouseCaecum2;0,0208888212063061
+;True;STAT6;MouseCaecum3;0,0137482331847019
+;True;STAT6;MouseCaecum4;0,00249330451428448
+;True;TGF-b;MouseCaecum1;n. def.
+;True;TGF-b;MouseCaecum2;0,0252049386759433
+;True;TGF-b;MouseCaecum3;0,00554744884401522
+;True;TGF-b;MouseCaecum4;0,00926278866238167
