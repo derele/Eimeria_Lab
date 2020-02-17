@@ -17,11 +17,20 @@ P3_qPCR$X <- NULL
 # load in RT-qPCRs
 P3_RT <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_RT-qPCR_complete.csv"
 P3_RT <- read.csv(text = getURL(P3_RT))
+P3_RT$X <- NULL
 
 # load in CEWE ELISA
-P3_CEWE_ELISA <- ""
+P3_CEWE_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_CEWE_ELISAs/P3_112019_Eim_CEWE_ELISA1_complete.csv"
 P3_CEWE_ELISA <- read.csv(text = getURL(P3_CEWE_ELISA))
+colnames(P3_CEWE_ELISA)[1] <- "labels"
+colnames(P3_CEWE_ELISA)[2] <- "IFNy_CEWE"
 
 # load in FEC ELISA
 P3_FEC_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_FEC_ELISAs/P3_112019_Eim_FEC_ELISA1_complete.csv"
 P3_FEC_ELISA <- read.csv(text = getURL(P3_FEC_ELISA))
+colnames(P3_FEC_ELISA)[1] <- "labels"
+colnames(P3_CEWE_ELISA)[2] <- "IFNy_FEC"
+
+# start merging
+P3 <- merge(P3_weightANDoocysts, P3_CEWE_ELISA, all = T)
+P3 <- merge(P3, P3_FEC_ELISA, all = T) # ZQY introduces errors
