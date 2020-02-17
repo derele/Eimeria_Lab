@@ -10,14 +10,15 @@ library(reshape2)
 library(drc)
 
 ##### add clean tables
+# standards
 E1_std <- "https://raw.githubusercontent.com/LubomirBednar/Manuscript_1/master/clean_data/P3_112019_Eim_feces_ELISA1_std.csv"
 E1_std <- read.csv(text = getURL(E1_std))
-
+# samples
 E1_samples <- "https://raw.githubusercontent.com/LubomirBednar/Manuscript_1/master/clean_data/P3_112019_Eim_feces_ELISA1_samples.csv"
 E1_samples <- read.csv(text = getURL(E1_samples))
 E1_samples$label <- sub("^", "P3a", E1_samples$label)
 
-###### use drc to construct standard curve and pinpointprotein content
+###### use drc to construct standard curve and pinpoint protein content
 
 model1<-drm(OD~Conc,
             fct=LL.4(names=c("Slope", "Lower", "Upper", "ED50")),
@@ -35,5 +36,5 @@ colnames(E1)[1] <- "IFNy"
 E1 <- dplyr::select(E1, IFNy)
 # the 0 replacement is just temporary
 E1[E1=="NaN"]<- 0
-
+# write out
 write.csv(E1, "./Manuscript_1/clean_data/P3_112019_Eim_feces_ELISA1_complete.csv")
