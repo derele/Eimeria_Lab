@@ -10,12 +10,12 @@ P3_weightANDoocysts <- read.csv(text = getURL(P3_weightANDoocysts))
 P3_weightANDoocysts$X <- NULL
 
 # load in qPCRs
-P3_qPCR <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_qPCRs/P3_112019_Eim_qPCR1_clean.csv"
+P3_qPCR <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_qPCRs/P3_112019_Eim_qPCR_complete.csv"
 P3_qPCR <- read.csv(text = getURL(P3_qPCR))
 P3_qPCR$X <- NULL
 
 # load in RT-qPCRs
-P3_RT <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_RT-qPCR_complete.csv"
+P3_RT <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_RTqPCR_complete.csv"
 P3_RT <- read.csv(text = getURL(P3_RT))
 P3_RT$X <- NULL
 
@@ -32,8 +32,12 @@ P3_FEC_ELISA$X <- NULL
 colnames(P3_FEC_ELISA)[2] <- "IFNy_FEC"
 
 # start merging (important to merge CEWE ELISAs with qPCR and RTqPCR to give them labels)
-P3 <- merge(P3_weightANDoocysts, P3_CEWE_ELISA, all = T)
-P3 <- merge(P3, P3_FEC_ELISA, all = T) 
+P3 <- merge(P3_CEWE_ELISA, P3_qPCR)
+P3 <- merge(P3, P3_RT)
+names(P3_weightANDoocysts)[names(P3_weightANDoocysts) == "labels"] <- "label"
+P3 <- merge(P3, P3_weightANDoocysts, all = T)
+
+write.csv(P3, "C:/Users/Luke Bednar/Documents/fuckup.csv")
 
 #####################################################################################################
 
