@@ -22,10 +22,10 @@ E7_qPCR$X <- NULL
 ###################################################
 
 # # load in CEWE ELISA
-E7_CEWE_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_CEWE_ELISAs/E7_112018_Eim_CEWE_ELISA1_complete.csv"
+E7_CEWE_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_CEWE_ELISAs/E7_112018_Eim_CEWE_ELISA1_samples.csv"
 E7_CEWE_ELISA <- read.csv(text = getURL(E7_CEWE_ELISA))
 E7_CEWE_ELISA$X <- NULL
-colnames(E7_CEWE_ELISA)[1] <- "labels"
+colnames(E7_CEWE_ELISA)[3] <- "labels"
 colnames(E7_CEWE_ELISA)[2] <- "IFNy_CEWE"
 
 # load in FEC ELISA
@@ -34,6 +34,7 @@ E7_FEC_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/dat
 E7_FEC_ELISA <- read.csv(text = getURL(E7_FEC_ELISA))
 E7_FEC_ELISA$X <- NULL
 colnames(E7_FEC_ELISA)[2] <- "IFNy_FEC"
+colnames(E7_FEC_ELISA)[1] <- "labels"
 
 # merge (E7 vs E7a and E7b makes mess, go back to E7_FEC_ELISA and rewrite labels (consult collection info table and boxes))
 E7 <- merge(E7_weightANDoocysts, E7_FEC_ELISA, all = T)

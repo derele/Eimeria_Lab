@@ -81,6 +81,7 @@ E7_record$OPG <- E7_record$totalOocysts / E7_record$fecweight
 # Merge all, #
 E7 <- merge(E7_design, E7_record)
 E7$infHistory <- E7$primary:E7$challenge
+E7$EH_ID <- sub("..", "LM_", E7$EH_ID)
 
 # removing batches for now because they were causing havoc 
 # E7primary <- filter(E7, batch == "a")
