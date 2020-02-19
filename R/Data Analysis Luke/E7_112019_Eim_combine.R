@@ -37,3 +37,4 @@ colnames(E7_FEC_ELISA)[2] <- "IFNy_FEC"
 
 # merge (E7 vs E7a and E7b makes mess, go back to E7_FEC_ELISA and rewrite labels (consult collection info table and boxes))
 E7 <- merge(E7_weightANDoocysts, E7_FEC_ELISA, all = T)
+E7 <- merge(E7, E7_CEWE_ELISA, all = T)
