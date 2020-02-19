@@ -22,10 +22,11 @@ E7_qPCR$X <- NULL
 ###################################################
 
 # # load in CEWE ELISA
-# E7_CEWE_ELISA <- "doesn't exist yet"
-# E7_CEWE_ELISA <- read.csv(text = getURL(E7_CEWE_ELISA))
-# colnames(E7_CEWE_ELISA)[1] <- "labels"
-# colnames(E7_CEWE_ELISA)[2] <- "IFNy_CEWE"
+E7_CEWE_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_CEWE_ELISAs/E7_112018_Eim_CEWE_ELISA1_complete.csv"
+E7_CEWE_ELISA <- read.csv(text = getURL(E7_CEWE_ELISA))
+E7_CEWE_ELISA$X <- NULL
+colnames(E7_CEWE_ELISA)[1] <- "labels"
+colnames(E7_CEWE_ELISA)[2] <- "IFNy_CEWE"
 
 # load in FEC ELISA
 # missing labels fix in E7 FEC ELISA script
