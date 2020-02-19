@@ -34,8 +34,8 @@ colnames(P3_FEC_ELISA)[2] <- "IFNy_FEC"
 # start merging (important to merge CEWE ELISAs with qPCR and RTqPCR to give them labels)
 P3 <- merge(P3_weightANDoocysts, P3_CEWE_ELISA, all = T)
 P3 <- merge(P3, P3_FEC_ELISA, all = T) 
-# how to keep qPCRs only on last days of batch b?
-#################################################################################
+
+#####################################################################################################
 
 
 
