@@ -5,7 +5,7 @@ library(dplyr)
 library(Rmisc)
 
 # load in weight and oocysts
-E7_weightANDoocysts <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"
+E7_weightANDoocysts <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_Weight%26Oocyst_complete.csv"
 E7_weightANDoocysts <- read.csv(text = getURL(E7_weightANDoocysts))
 E7_weightANDoocysts$X <- NULL
 
