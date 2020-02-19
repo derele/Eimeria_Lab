@@ -19,8 +19,8 @@ P3_RT <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_rec
 P3_RT <- read.csv(text = getURL(P3_RT))
 P3_RT$X <- NULL
 
-# load in CEWE ELISA
-P3_CEWE_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_CEWE_ELISAs/P3_112019_Eim_CEWE_ELISA1_complete.csv"
+# load in CEWE ELISA (important to merge CEWE ELISAs with qPCR and RTqPCR to give them labels)
+P3_CEWE_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_CEWE_ELISAs/P3_112019_Eim_CEWE_ELISAs_complete.csv"
 P3_CEWE_ELISA <- read.csv(text = getURL(P3_CEWE_ELISA))
 P3_CEWE_ELISA$X <- NULL
 colnames(P3_CEWE_ELISA)[2] <- "IFNy_CEWE"
@@ -31,7 +31,7 @@ P3_FEC_ELISA <- read.csv(text = getURL(P3_FEC_ELISA))
 P3_FEC_ELISA$X <- NULL
 colnames(P3_FEC_ELISA)[2] <- "IFNy_FEC"
 
-# start merging
+# start merging (important to merge CEWE ELISAs with qPCR and RTqPCR to give them labels)
 P3 <- merge(P3_weightANDoocysts, P3_CEWE_ELISA, all = T)
 P3 <- merge(P3, P3_FEC_ELISA, all = T) 
 # how to keep qPCRs only on last days of batch b?
