@@ -3,6 +3,10 @@ library(httr)
 library(RCurl)
 library(dplyr)
 library(Rmisc)
+library(ggplot2)
+library(tidyverse)
+library(modelr)
+library(ggrepel)
 
 # load in weight and oocysts
 E7_weightANDoocysts <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_Weight%26Oocyst_complete.csv"
@@ -30,7 +34,7 @@ colnames(E7_CEWE_ELISA)[2] <- "IFNy_CEWE"
 
 # load in FEC ELISA
 # missing labels fix in E7 FEC ELISA script
-E7_FEC_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISAs_complete.csv"
+E7_FEC_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISAs_COMPLETE.csv"
 E7_FEC_ELISA <- read.csv(text = getURL(E7_FEC_ELISA))
 E7_FEC_ELISA$X <- NULL
 colnames(E7_FEC_ELISA)[2] <- "IFNy_FEC"
@@ -44,39 +48,4 @@ E7 <- merge(E7, E7_qPCR, all = T)
 
 write.csv(E7, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_COMPLETE.csv")
 
-################# merge with P3
-P3 <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_COMPLETE.csv"
-P3 <- read.csv(text = getURL(P3))
-colnames(P3)[2] <- "labels"
-P3$X <- NULL
-P3$Caecum <- NA
-E7$comment <- NULL
 
-ggplot(subset(x = E7, dpi == 8), aes(x = IFNy_CEWE, y = IFNy_FEC, color = challenge)) +
-  geom_point() +
-  facet_wrap("primary") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("P3 oocyst shedding by parasite strain OPG")
-
-ggplot(P3, aes(y = IFNy_CEWE, x = delta, color = challenge)) +
-  geom_point() +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("P3 oocyst shedding by parasite strain OPG")
-
-ggplot(P3, aes(y = IFNy_CEWE, x = delta, color = N.oocyst)) +
-  geom_point() +
-  facet_wrap("challenge") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("P3 oocyst shedding by parasite strain OPG")
