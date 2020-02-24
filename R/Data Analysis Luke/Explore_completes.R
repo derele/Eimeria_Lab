@@ -1,5 +1,12 @@
+library(tidyverse)
+library(ggplot2)
+library(Rmisc)
+library(httr)
+library(RCurl)
+
 E7 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"))
 E7$X <- NULL
+E7 <- E7[-c(489, 490), ]
 
 P3 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_COMPLETE.csv"))
 colnames(P3)[2] <- "labels"
@@ -27,7 +34,7 @@ ggplot(P3, aes(y = IFNy_CEWE, x = delta, color = challenge)) +
   ggtitle("")
 
 
-ggplot(P3, aes(y = IFNy_CEWE, x = delta, color = N.oocyst)) +
+ggplot(P3, aes(y = IFNy_CEWE, x = delta, color = OPG)) +
   geom_point() +
   facet_wrap("challenge") +
   theme(axis.text=element_text(size=12, face = "bold"), 
@@ -72,6 +79,18 @@ ggplot(P3_UNI, aes(OPG, IFNy_CEWE)) +
 
 ggplot(P3, aes(y = IFNy_CEWE, x = OPG)) +
   geom_text_repel(aes(label=delta)) +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("")
+
+IRG6 <- E7 %>% drop_na(IRG6)
+
+ggplot(IRG6, aes(y = IRG6, x = delta)) +
+  geom_point() +
+  facet_wrap("challenge", scales = "free") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
