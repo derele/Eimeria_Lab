@@ -71,7 +71,7 @@ ggplot(P3b_record, aes(x = dpi, y = wloss)) +
 oocysts <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_oocysts.csv"
 oocysts <- read.csv(text = getURL(oocysts))
 oocysts$X <- NULL 
-
+oocysts <- oocysts[-c(1), ]
 # make overall table with labels
 P3_record <- rbind(P3a_record, P3b_record)
 P3_record_full <- merge(P3_record, oocysts, by = "labels")
@@ -96,20 +96,33 @@ P3_record_full <- merge(P3_record, oocysts, by = "labels")
 #   infHistory == "E64:UNI" ~ "Efer",
 #   
 #   infHistory == "UNI:UNI" ~ "uni"))
+oocysts$totalOocysts <- ((oocysts$oocyst_1 
+                             + oocysts$oocyst_2 
+                             + oocysts$oocyst_3 
+                             + oocysts$oocyst_4) / 4) * 
+  10000 * # because volume chamber
+  2
 
-# calculate OPG
-P3_record_full$OPG <- P3_record_full$AVG / P3_record_full$faeces_weight
-P3_record_full$N.oocyst <- (P3_record_full$AVG * 10^4)/2
+
+oocysts <- select(oocysts, labels, AVG, totalOocysts)
 # write this beuty out
-write.csv(P3_record_full, "./Eimeria_Lab/data/3_recordingTables/P3_112019_Eim_Weight&Oocyst_complete.csv")
+
 
 
 
 ############################create just primary and challenge oocyst and weightloss graphs
 P3a <- merge(P3a_record, oocysts)
+P3a$OPG <- P3a$totalOocysts / P3a$faeces_weight
+P3_record_full <- merge(oocysts, P3_record_full, all =T)
 
-P3a$N.oocyst <- (P3a$AVG * 10^4)/2
-P3a$OPG <- P3a$N.oocyst / P3a$faeces_weight
+P3_record_full$OPG <- P3_record_full$totalOocysts/ P3_record_full$faeces_weight
+
+P3_record_full <- P3_record_full[-c(1), ]
+
+
+write.csv(P3_record_full, "./Eimeria_Lab/data/3_recordingTables/P3_112019_Eim_Weight&Oocyst_complete.csv")
+
+
 
 ggplot(P3a, aes(x = dpi, y = N.oocyst)) +
   geom_point() +

@@ -34,7 +34,7 @@ colnames(E7_CEWE_ELISA)[2] <- "IFNy_CEWE"
 
 # load in FEC ELISA
 # missing labels fix in E7 FEC ELISA script
-E7_FEC_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISAs_COMPLETE.csv"
+E7_FEC_ELISA <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FEC_ELISAs/E7_112018_Eim_FEC_ELISAs_complete.csv"
 E7_FEC_ELISA <- read.csv(text = getURL(E7_FEC_ELISA))
 E7_FEC_ELISA$X <- NULL
 colnames(E7_FEC_ELISA)[2] <- "IFNy_FEC"

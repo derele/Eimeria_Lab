@@ -37,10 +37,9 @@ ggplot(P3, aes(y = IFNy_CEWE, x = delta, color = N.oocyst)) +
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("")
 
-ggplot(E7, aes(y = IFNy_FEC, x = dpi , color = EH_ID)) +
+ggplot(E7, aes(y = IFNy_FEC, x = IFNy_CEWE , shape = Caecum)) +
   geom_point() +
-  geom_line() +
-  facet_wrap("challenge") +
+  facet_wrap("infHistory") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
