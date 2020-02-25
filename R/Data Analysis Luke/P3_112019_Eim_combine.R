@@ -31,9 +31,15 @@ P3_FEC_ELISA <- read.csv(text = getURL(P3_FEC_ELISA))
 P3_FEC_ELISA$X <- NULL
 colnames(P3_FEC_ELISA)[2] <- "IFNy_FEC"
 
+# load in qPCR MCs for Eimeria
+P3_MC <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7%26P3_Eim_MCs.csv"), sep = ";")
+P3_MC$X <- NULL
+P3_MC$X.1 <- NULL
+
 # start merging (important to merge CEWE ELISAs with qPCR and RTqPCR to give them labels)
 P3 <- merge(P3_CEWE_ELISA, P3_qPCR)
 P3 <- merge(P3, P3_RT)
+P3 <- merge(P3, P3_MC)
 names(P3_weightANDoocysts)[names(P3_weightANDoocysts) == "labels"] <- "label"
 # P3bXAK is an unmeasured early sacrifice
 P3 <- merge(P3, P3_weightANDoocysts, all = T)
