@@ -79,14 +79,14 @@ RT <- RT[!grepl("IL-12rb1", RT$Name),]
 RT <- RT[!grepl("B-actin", RT$Name),]
 RT <- RT[!grepl("GAPDH", RT$Name),]
 # load in MC analysis of RT
-RTMC <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_RT-qPCRs/E7_112018_Eim_RT-qPCR_MC1.csv"
-RTMC <- read.csv(sep = ";", text = getURL(RTMC))
-names(RTMC)[names(RTMC) == "EH_ID"] <- "Name"
-names(RTMC)[names(RTMC) == "Target"] <- "Target.SYBR"
-RT <- merge(RT, RTMC)
-#RT <- RT[!(RT$Caecum == "neg"),]
-RT$Observer <- NULL
-RT$Date <- NULL 
+# RTMC <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_RT-qPCRs/E7_112018_Eim_RT-qPCR_MC1.csv"
+# RTMC <- read.csv(sep = ";", text = getURL(RTMC))
+# names(RTMC)[names(RTMC) == "EH_ID"] <- "Name"
+# names(RTMC)[names(RTMC) == "Target"] <- "Target.SYBR"
+# RT <- merge(RT, RTMC)
+# #RT <- RT[!(RT$Caecum == "neg"),]
+# RT$Observer <- NULL
+# RT$Date <- NULL 
 # name columns to match other data sets (Mouse_ID, Target) + make RT.CT numeric
 names(RT)[names(RT) == "Target.SYBR"] <- "Target"
 names(RT)[names(RT) == "Ct.SYBR"] <- "RT.Ct"
@@ -113,16 +113,16 @@ complete <- read.csv(text = getURL(complete))
 names(RT.wide)[names(RT.wide) == "Mouse_ID"] <- "EH_ID"
 names(RT.long)[names(RT.long) == "Mouse_ID"] <- "EH_ID"
 complete$X <- NULL
-# split EH_ID name and make with "_"
-complete$EH_ID <- gsub("LM", "LM_", complete$EH_ID)
 # complete <- merge(complete, RT.long, by = "EH_ID", all = T)
 #quick basic subtract before merge (based on E7 melting curves)
-E7EimMC <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_detection_MC.csv"
-E7EimMC <- read.csv(text = getURL(E7EimMC))
+E7EimMC <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7%26P3_Eim_MCs.csv"
+E7EimMC <- read.csv(text = getURL(E7EimMC), sep = ";")
 E7EimMCprep <- subset(complete, subset = dpi == 8)
-E7EimMC <- merge(E7EimMC, E7EimMCprep)
+E7EimMC$X <- NULL
+E7EimMC$X.1 <- NULL
+E7EimMC <- merge(E7EimMC, E7EimMCprep, by = "EH_ID")
 complete <- merge(complete, E7EimMC, all = T)
-
+complete <- filter(complete)
 # add intensity 
 E7_inf <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_Anna_qPCR_DNA_ct_Zusammenfassung.csv"
 E7_inf <- read.csv(text = getURL(E7_inf))

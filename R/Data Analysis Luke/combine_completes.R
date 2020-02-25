@@ -28,11 +28,10 @@ E7$oocyst_4 <- NULL
 E7$totalOocysts <- NULL
 E7$volume_PBS_mL <- NULL
 
-colnames(E7)[1] <- "MC"
-P3$MC <- NA
+colnames(E7)[1] <- "Eim_MC"
 colnames(E7)[7] <- "faeces_weight"
-colnames(P3)[12] <- "labels"
+colnames(P3)[13] <- "labels"
 P3$HybridStatus <- NA
-P3$Strain <- NA
+P3$Strain <- "SWISS"
 
 complete <- rbind(P3, E7)
