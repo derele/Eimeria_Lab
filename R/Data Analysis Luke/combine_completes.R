@@ -33,5 +33,10 @@ colnames(E7)[7] <- "faeces_weight"
 colnames(P3)[13] <- "labels"
 P3$HybridStatus <- NA
 P3$Strain <- "SWISS"
+colnames(P3)[21] <- "Wchange"
+P3$totalOocysts <- NULL
+
 
 complete <- rbind(P3, E7)
+
+write.csv(complete, "./Eimeria_Lab/data/3_recordingTables/E7andP3_complete.csv")
