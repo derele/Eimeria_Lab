@@ -14,9 +14,10 @@ P3$X <- NULL
 P3$Caecum <- NA
 E7$comment <- NULL
 
-ggplot(subset(x = E7, dpi == 8), aes(x = IFNy_CEWE, y = IFNy_FEC, color = challenge)) +
+ggplot(subset(complete, dpi == 8 & EXP %in% "E7"), 
+       aes(x = IFNy_CEWE, y = IFNy_FEC, color = currentInf)) +
   geom_point() +
-  facet_wrap("primary", scales = "free") +
+  ## facet_wrap(~isChallenge, scales = "free") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
@@ -24,8 +25,23 @@ ggplot(subset(x = E7, dpi == 8), aes(x = IFNy_CEWE, y = IFNy_FEC, color = challe
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("")
 
-ggplot(P3, aes(y = IFNy_CEWE, x = delta, color = challenge)) +
+cor.test(~IFNy_FEC+IFNy_CEWE, subset(complete, dpi == 8 & EXP %in% "E7"))
+### NS!
+
+ggplot(subset(complete, EXP%in%"P3"), 
+       aes(y = IFNy_CEWE, x = delta, color = challenge, shape=Eim_MC)) +
   geom_point() +
+  facet_wrap(~primary)+
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("")
+
+ggplot(complete, aes(y = IFNy_FEC, x = dpi, color = currentInf)) +
+  geom_jitter(width=0.2) +
+  facet_grid(EXP~isChallenge%in%"primary", scales="free_y") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),

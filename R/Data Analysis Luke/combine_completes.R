@@ -6,6 +6,8 @@ library(RCurl)
 
 P3 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_COMPLETE.csv"))
 E7 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"))
+E5 <- read.csv(text = getURL(""))
+
 
 P3 <- P3[,order(colnames(P3))]
 P3$AVG <- NULL
@@ -35,8 +37,20 @@ P3$HybridStatus <- NA
 P3$Strain <- "SWISS"
 colnames(P3)[21] <- "Wchange"
 P3$totalOocysts <- NULL
-
+P3$EXP <- "P3"
+E7$EXP <- "E7"
 
 complete <- rbind(P3, E7)
 
+complete %>% transform(currentInf=ifelse(grepl("(P3|E7)a", labels), 
+                                         as.character(primary), 
+                                         as.character(challenge))) -> 
+  complete
+
+complete %>% transform(isChallenge=ifelse(grepl("(P3|E7)a", labels), 
+                                         "primary", 
+                                         as.character(challenge))) -> 
+  complete
+
 write.csv(complete, "./Eimeria_Lab/data/3_recordingTables/E7andP3_complete.csv")
+
