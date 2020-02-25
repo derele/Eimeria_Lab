@@ -1,3 +1,9 @@
+library(tidyverse)
+library(ggplot2)
+library(Rmisc)
+library(httr)
+library(RCurl)
+
 P3 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_COMPLETE.csv"))
 E7 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"))
 
