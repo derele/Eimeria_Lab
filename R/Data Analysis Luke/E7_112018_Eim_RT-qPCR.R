@@ -8,6 +8,7 @@ library(reshape2)
 library(ggpubr)
 library(ggplot2)
 library(naniar)
+library(tidyr)
 
 # load in raw tables
 RT1 <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_RT-qPCRs/E7_RT-qPCR1/E7_112018_Eim_RT-qPCR1.csv"
@@ -64,12 +65,12 @@ RT7$Pos <- NULL
 # RT7$Ct.SYBR <- as.numeric(levels(RT7$Ct.SYBR))[RT7$Ct.SYBR]
 
 # bind
-RT <- bind_rows(RT1, RT2)
-RT <- bind_rows(RT, RT3)
-RT <- bind_rows(RT, RT4)
-RT <- bind_rows(RT, RT5)
-RT <- bind_rows(RT, RT6)
-RT <- bind_rows(RT, RT7)
+RT <- rbind(RT1, RT2)
+RT <- rbind(RT, RT3)
+RT <- rbind(RT, RT4)
+RT <- rbind(RT, RT5)
+RT <- rbind(RT, RT6)
+RT <- rbind(RT, RT7)
 
 
 #remove negative controls
@@ -144,48 +145,49 @@ intensity <- dplyr::select(complete, EH_ID, delta, infHistory, Caecum)
 intensity <- dplyr::distinct(intensity)
 
 # substract ref genes individually to check whether they might influence the gene expression when averaged together
-B_actin <- RT.wide
-B_actin$CXCR3 <- (B_actin$RT.Ct.B.actin - B_actin$RT.Ct.CXCR3)
-B_actin$IRG6 <- (B_actin$RT.Ct.B.actin - B_actin$RT.Ct.IRG6)
-B_actin$IL12 <- (B_actin$RT.Ct.B.actin - B_actin$RT.Ct.IL.12)
-
-GAPDH <- RT.wide
-GAPDH$CXCR3 <- (GAPDH$RT.Ct.GAPDH - GAPDH$RT.Ct.CXCR3)
-GAPDH$IRG6 <- (GAPDH$RT.Ct.GAPDH - GAPDH$RT.Ct.IRG6)
-GAPDH$IL12 <- (GAPDH$RT.Ct.GAPDH - GAPDH$RT.Ct.IL.12)
-#graph out to compare (B actin)
-B_actin.long <- gather(B_actin, Target, NE, CXCR3:IL12, factor_key=TRUE)
-B_actin.long$RT.Ct.B.actin <- NULL
-B_actin.long$RT.Ct.CXCR3 <- NULL
-B_actin.long$RT.Ct.GAPDH <- NULL
-B_actin.long$RT.Ct.IL.12 <- NULL
-B_actin.long$RT.Ct.IRG6 <- NULL
-B_actin.long$refMean <- NULL
-B_actin.long <- merge(B_actin.long, intensity)
-
-ggplot(B_actin.long, aes(infHistory, NE)) +
-  geom_jitter() +
-  geom_boxplot() + 
-  facet_wrap("Target",  scales = "free_y")
-#graph out to compare (GAPH)
-GAPDH.long <- gather(GAPDH, Target, NE, CXCR3:IL12, factor_key=TRUE)
-GAPDH.long$RT.Ct.B.actin <- NULL
-GAPDH.long$RT.Ct.CXCR3 <- NULL
-GAPDH.long$RT.Ct.GAPDH <- NULL
-GAPDH.long$RT.Ct.IL.12 <- NULL
-GAPDH.long$RT.Ct.IRG6 <- NULL
-GAPDH.long$refMean <- NULL
-GAPDH.long <- merge(GAPDH.long, intensity)
-
-ggplot(GAPDH.long, aes(infHistory, NE)) +
-  geom_jitter() +
-  geom_boxplot() + 
-  facet_wrap("Target",  scales = "free_y")
+# B_actin <- RT.wide
+# B_actin$CXCR3 <- (B_actin$RT.Ct.B.actin - B_actin$RT.Ct.CXCR3)
+# B_actin$IRG6 <- (B_actin$RT.Ct.B.actin - B_actin$RT.Ct.IRG6)
+# B_actin$IL12 <- (B_actin$RT.Ct.B.actin - B_actin$RT.Ct.IL.12)
+# 
+# GAPDH <- RT.wide
+# GAPDH$CXCR3 <- (GAPDH$RT.Ct.GAPDH - GAPDH$RT.Ct.CXCR3)
+# GAPDH$IRG6 <- (GAPDH$RT.Ct.GAPDH - GAPDH$RT.Ct.IRG6)
+# GAPDH$IL12 <- (GAPDH$RT.Ct.GAPDH - GAPDH$RT.Ct.IL.12)
+# #graph out to compare (B actin)
+# B_actin.long <- gather(B_actin, Target, NE, CXCR3:IL12, factor_key=TRUE)
+# B_actin.long$RT.Ct.B.actin <- NULL
+# B_actin.long$RT.Ct.CXCR3 <- NULL
+# B_actin.long$RT.Ct.GAPDH <- NULL
+# B_actin.long$RT.Ct.IL.12 <- NULL
+# B_actin.long$RT.Ct.IRG6 <- NULL
+# B_actin.long$refMean <- NULL
+# B_actin.long <- merge(B_actin.long, intensity)
+# 
+# ggplot(B_actin.long, aes(infHistory, NE)) +
+#   geom_jitter() +
+#   geom_boxplot() + 
+#   facet_wrap("Target",  scales = "free_y")
+# #graph out to compare (GAPH)
+# GAPDH.long <- gather(GAPDH, Target, NE, CXCR3:IL12, factor_key=TRUE)
+# GAPDH.long$RT.Ct.B.actin <- NULL
+# GAPDH.long$RT.Ct.CXCR3 <- NULL
+# GAPDH.long$RT.Ct.GAPDH <- NULL
+# GAPDH.long$RT.Ct.IL.12 <- NULL
+# GAPDH.long$RT.Ct.IRG6 <- NULL
+# GAPDH.long$refMean <- NULL
+# GAPDH.long <- merge(GAPDH.long, intensity)
+# 
+# ggplot(GAPDH.long, aes(infHistory, NE)) +
+#   geom_jitter() +
+#   geom_boxplot() + 
+#   facet_wrap("Target",  scales = "free_y")
 
 # continue with averaging refgenes and subtracting targets from them
 RT.wide$CXCR3 <- (RT.wide$refMean - RT.wide$RT.Ct.CXCR3)
 RT.wide$IRG6 <- (RT.wide$refMean - RT.wide$RT.Ct.IRG6)
 RT.wide$IL.12 <- (RT.wide$refMean - RT.wide$RT.Ct.IL.12)
+RT.wide[RT.wide=="NaN"]<-NA
 
 RT.long <- reshape(RT.wide, 
             direction = "long",
@@ -203,9 +205,10 @@ RT.wide$RT.Ct.IL.12 <- NULL
 RT.wide$RT.Ct.GAPDH <- NULL
 RT.wide$RT.Ct.B.actin <- NULL
 RT.wide$refMean <- NULL
-RT.wide <- merge(RT.wide, E7EimMCprep, all = T)
-
-
+RT.wide <- filter(RT.wide)
+RT.wide <- merge(RT.wide, E7EimMCprep)
+E7EimMCprep <- distinct(E7EimMCprep)
+RT.wide <- distinct(RT.wide)
 complete <- merge(complete, RT.wide, all = T)
 complete$Date <- NULL
 complete$observer <- NULL
