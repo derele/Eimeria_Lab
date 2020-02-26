@@ -4,15 +4,7 @@ library(Rmisc)
 library(httr)
 library(RCurl)
 
-E7 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"))
-E7$X <- NULL
-E7 <- E7[-c(489, 490), ]
-
-P3 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_COMPLETE.csv"))
-colnames(P3)[2] <- "labels"
-P3$X <- NULL
-P3$Caecum <- NA
-E7$comment <- NULL
+complete <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_P3_E6_complete.csv"))
 
 ggplot(subset(complete, dpi == 8 & EXP %in% "E7"), 
        aes(x = IFNy_CEWE, y = IFNy_FEC, color = currentInf)) +
