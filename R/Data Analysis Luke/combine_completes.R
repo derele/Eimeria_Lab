@@ -55,21 +55,24 @@ P3$totalOocysts <- NULL
 colnames(P3)[18] <- "Wchange"
 P3$EXP <- "P3"
 E7$EXP <- "E7"
+E5$weightloss <- NULL
+E7$primary <- NA
 
 complete <- rbind(P3, E7)
+complete <- rbind(complete, E5)
 
 
+# let's see if the NAs in primary and challenge worked
+# complete %>% transform(currentInf=ifelse(grepl("(P3|E7)a", labels), 
+#                                          as.character(primary), 
+#                                          as.character(challenge))) -> 
+#   complete
+# 
+# complete %>% transform(isChallenge=ifelse(grepl("(P3|E7)a", labels), 
+#                                          "primary", 
+#                                          as.character(challenge))) -> 
+#   complete
 
+write.csv(complete, "./Eimeria_Lab/data/3_recordingTables/E7_P3_E6_complete.csv")
 
-complete %>% transform(currentInf=ifelse(grepl("(P3|E7)a", labels), 
-                                         as.character(primary), 
-                                         as.character(challenge))) -> 
-  complete
-
-complete %>% transform(isChallenge=ifelse(grepl("(P3|E7)a", labels), 
-                                         "primary", 
-                                         as.character(challenge))) -> 
-  complete
-
-write.csv(complete, "./Eimeria_Lab/data/3_recordingTables/E7andP3_complete.csv")
 
