@@ -26,7 +26,7 @@ E6_oocyst$oocyst_mean <- ((E6_oocyst$oocyst_sq1
   E6_oocyst$dilution
 # clean up and merge
 E6_oocyst <- select(E6_oocyst, labels, oocyst_mean, OPG, Expe)
-E6_weight <- select(E6_weight, EH_ID, labels, dpi, weight_dpi0, weightloss, Expe, Eimeria, fecweight)
+E6_weight <- select(E6_weight, EH_ID, labels, dpi, weight_dpi0, weightloss, weight, Expe, Eimeria, fecweight)
 E6_WandO <- merge(E6_oocyst, E6_weight, all = T)
 
 # calculate OPG

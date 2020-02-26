@@ -6,7 +6,7 @@ library(RCurl)
 
 P3 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_COMPLETE.csv"))
 E7 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"))
-E5 <- read.csv(text = getURL(""))
+E5 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E6_062018_Eim_WandO_complete.csv"))
 
 
 P3 <- P3[,order(colnames(P3))]
@@ -30,17 +30,36 @@ E7$oocyst_4 <- NULL
 E7$totalOocysts <- NULL
 E7$volume_PBS_mL <- NULL
 
+E5$X <- NULL
+E5 <- E5[,order(colnames(E5))]
+E5$Batch <- NULL
+E5$Eim_MC <- NA
+E5$CXCR3 <- NA
+E5$IL.12 <- NA
+E5$IRG6 <- NA
+E5$delta <- NA
+colnames(E5)[5] <- "faeces_weight"
+E5$IFNy_FEC <- NA #temporary
+E5$IFNy_CEWE <- NA
+E5$InfectionStrain <- NULL
+E5$oocyst_mean <- NULL
+E5$infHistory  <- NA
+
+
 colnames(E7)[1] <- "Eim_MC"
 colnames(E7)[7] <- "faeces_weight"
 colnames(P3)[13] <- "labels"
 P3$HybridStatus <- NA
 P3$Strain <- "SWISS"
-colnames(P3)[21] <- "Wchange"
 P3$totalOocysts <- NULL
+colnames(P3)[18] <- "Wchange"
 P3$EXP <- "P3"
 E7$EXP <- "E7"
 
 complete <- rbind(P3, E7)
+
+
+
 
 complete %>% transform(currentInf=ifelse(grepl("(P3|E7)a", labels), 
                                          as.character(primary), 
