@@ -6,8 +6,8 @@ library(RCurl)
 
 complete <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_P3_E6_complete.csv"))
 
-ggplot(subset(complete, dpi == 8 & EXP %in% "E7"), 
-       aes(x = IFNy_CEWE, y = IFNy_FEC, color = currentInf)) +
+ggplot(complete, 
+       aes(x = OPG, y = IFNy_FEC, color = primary)) +
   geom_point() +
   ## facet_wrap(~isChallenge, scales = "free") +
   theme(axis.text=element_text(size=12, face = "bold"), 
@@ -31,16 +31,25 @@ ggplot(subset(complete, EXP%in%"P3"),
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("")
 
-ggplot(complete, aes(y = IFNy_FEC, x = dpi, color = currentInf)) +
+ggplot(complete, aes(y = OPG, x = dpi, color = EXP)) +
   geom_jitter(width=0.2) +
-  facet_grid(EXP~isChallenge%in%"primary", scales="free_y") +
+  facet_grid(primary~challenge, scales="free_y") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("")
+  ggtitle("OPG_x_dpi_in_EXP_by_primaryxchallenge")
 
+ggplot(complete, aes(y = OPG, x = dpi, color = primary)) +
+  geom_jitter(width=0.2) +
+  facet_wrap("EXP", scales="free_y") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("OPG_x_dpi_by_EXP")
 
 ggplot(P3, aes(y = IFNy_CEWE, x = delta, color = OPG)) +
   geom_point() +

@@ -72,9 +72,11 @@ oocysts <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_r
 oocysts <- read.csv(text = getURL(oocysts))
 oocysts$X <- NULL 
 oocysts <- oocysts[-c(1), ]
-# make overall table with labels
+# make overall table with labels + delete primary for P3b and challenge for P3a
+P3a_record$challenge <- NA
+P3b_record$primary <- NA
 P3_record <- rbind(P3a_record, P3b_record)
-P3_record_full <- merge(P3_record, oocysts, by = "labels")
+
 
 # add Eim species column
 # P3_record_full <- P3_record_full %>% mutate(Eim_sp = case_when(
@@ -106,13 +108,13 @@ oocysts$totalOocysts <- ((oocysts$oocyst_1
 
 oocysts <- select(oocysts, labels, AVG, totalOocysts)
 # write this beuty out
-
+P3_record_full <- merge(P3_record, oocysts, by = "labels")
 
 
 
 ############################create just primary and challenge oocyst and weightloss graphs
-P3a <- merge(P3a_record, oocysts)
-P3a$OPG <- P3a$totalOocysts / P3a$faeces_weight
+#P3a <- merge(P3a_record, oocysts)
+#P3a$OPG <- P3a$totalOocysts / P3a$faeces_weight
 P3_record_full <- merge(oocysts, P3_record_full, all =T)
 
 P3_record_full$OPG <- P3_record_full$totalOocysts/ P3_record_full$faeces_weight
