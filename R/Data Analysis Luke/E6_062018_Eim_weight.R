@@ -65,7 +65,7 @@ E6_complete[E6_complete=="Expe005_2b"] <- "5.2b"
 E6_complete$labels <- paste(E6_complete$EXP, E6_complete$labels, sep =  "")
 E6_complete$challenge <- NA
 E6_complete$weight <- as.numeric(as.character(E6_complete$weight))
-E6_complete$Wchange <- (E6_complete$weight_dpi0/E6_complete$weight)*100
+E6_complete$Wchange <- (E6_complete$weight/E6_complete$weight_dpi0)*100
 
 
 # write out

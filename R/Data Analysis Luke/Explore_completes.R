@@ -5,11 +5,16 @@ library(httr)
 library(RCurl)
 
 complete <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_P3_E6_complete.csv"))
+# make negative MCs into NAs in a new column
+complete$delta_clean <- complete$delta
+complete <- mutate(complete, delta_clean = ifelse(Eim_MC == "neg", -20, delta_clean))
 
-ggplot(complete, 
-       aes(x = OPG, y = IFNy_FEC, color = primary)) +
+
+ggplot(subset(complete, !is.na(complete$primary)), 
+       aes(x = dpi, y = Wchange, color = primary, group = primary)) +
   geom_point() +
-  ## facet_wrap(~isChallenge, scales = "free") +
+  geom_smooth() +
+  facet_wrap("EXP", scales = "free") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
@@ -41,7 +46,7 @@ ggplot(complete, aes(y = OPG, x = dpi, color = EXP)) +
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("OPG_x_dpi_in_EXP_by_primaryxchallenge")
 
-ggplot(complete, aes(y = OPG, x = dpi, color = primary)) +
+ggplot(complete, aes(y = OPG, x = dpi, color = primary, group_by("EH_ID"))) +
   geom_jitter(width=0.2) +
   facet_wrap("EXP", scales="free_y") +
   theme(axis.text=element_text(size=12, face = "bold"), 
