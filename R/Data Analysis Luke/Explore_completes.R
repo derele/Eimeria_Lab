@@ -10,8 +10,9 @@ complete$delta_clean <- complete$delta
 complete <- mutate(complete, delta_clean = ifelse(Eim_MC == "neg", -20, delta_clean))
 complete$dpi <- as.factor(complete$dpi)
 
-ggplot(subset(complete, !is.na(complete$primary)), 
-       aes(x = dpi, y = Wchange, color = primary, group = primary)) +
+################## Wchange graphs ###########################################################################
+ggplot(subset(complete, !is.na(complete$challenge)), 
+       aes(x = dpi, y = Wchange, color = challenge, group = challenge)) +
   geom_point() +
   geom_smooth() +
   facet_wrap("EXP", scales = "free") +
@@ -20,7 +21,115 @@ ggplot(subset(complete, !is.na(complete$primary)),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("")
+  ggtitle("WchangeXdpi_by_EXP_challenge")
+
+ggplot(subset(complete, !is.na(complete$challenge)), 
+       aes(x = dpi, y = Wchange, color = challenge, group = challenge)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap("EXP", scales = "free") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("WchangeXdpi_by_EXP_challenge")
+##########################################################################################################
+##################### OPG graphs
+ggplot(subset(complete, !is.na(complete$primary)), 
+       aes(x = dpi, y = OPG, color = primary, group = primary)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap("EXP", scales = "free") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("OPGXdpi_by_EXP_primary")
+
+ggplot(subset(complete, !is.na(complete$challenge)), 
+       aes(x = dpi, y = OPG, color = challenge, group = challenge)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap("EXP", scales = "free") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("OPGXdpi_by_EXP_challenge")
+
+#####################################################################################################################
+########## gene expression
+ggplot(subset(complete, !is.na(complete$challenge)), 
+       aes(x = challenge, y = CXCR3, color = EXP)) +
+  geom_jitter() +
+  geom_boxplot() +
+ facet_wrap("challenge") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("CXCR3_experiment_difference")
+
+ggplot(subset(complete, !is.na(complete$challenge)), 
+       aes(x = challenge, y = IRG6, color = EXP)) +
+  geom_jitter() +
+  geom_boxplot() +
+  # facet_wrap("infHistory") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("IRG6_experiment_difference")
+
+ggplot(subset(complete, !is.na(complete$challenge)), 
+       aes(x = challenge, y = IL.12, color = EXP)) +
+  geom_jitter() +
+  geom_boxplot() +
+  # facet_wrap("infHistory") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("IL.12_experiment_difference")
+
+##################################################################################################
+################### IFN_CEWE 
+ggplot(subset(complete, !is.na(complete$IFNy_CEWE)), 
+       aes(x = OPG, y = IFNy_CEWE, color = challenge)) +
+  geom_jitter() +
+  #geom_boxplot() +
+  facet_wrap("EXP") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("IFNy_CEWE_X_OPG_in_challenge_EXP")
+
+ggplot(subset(complete, !is.na(complete$IFNy_CEWE)), 
+       aes(x = infHistory, y = IFNy_CEWE, color = challenge)) +
+  geom_jitter() +
+  geom_boxplot() +
+  # facet_wrap("challenge", scales = "free") +
+  theme(axis.text=element_text(size=12, face = "bold", angle = 45), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("IFNy_CEWE_X_OPG_in_challenge_EXP")
+
+
+
+
+
+
+
 
 cor.test(~IFNy_FEC+IFNy_CEWE, subset(complete, dpi == 8 & EXP %in% "E7"))
 ### NS!
