@@ -108,7 +108,7 @@ oocysts$totalOocysts <- ((oocysts$oocyst_1
 
 oocysts <- select(oocysts, labels, AVG, totalOocysts)
 # write this beuty out
-P3_record_full <- merge(P3_record, oocysts, by = "labels")
+P3_record_full <- merge(P3_record, oocysts, by = "labels", all = T)
 
 
 

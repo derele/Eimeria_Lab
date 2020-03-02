@@ -8,7 +8,7 @@ complete <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eim
 # make negative MCs into NAs in a new column
 complete$delta_clean <- complete$delta
 complete <- mutate(complete, delta_clean = ifelse(Eim_MC == "neg", -20, delta_clean))
-
+complete$dpi <- as.factor(complete$dpi)
 
 ggplot(subset(complete, !is.na(complete$primary)), 
        aes(x = dpi, y = Wchange, color = primary, group = primary)) +
