@@ -3,16 +3,18 @@ library(ggplot2)
 library(Rmisc)
 library(httr)
 library(RCurl)
+library(dplyr)
 
 complete <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_P3_E6_complete.csv"))
 # make negative MCs into NAs in a new column
 complete$delta_clean <- complete$delta
 complete <- mutate(complete, delta_clean = ifelse(Eim_MC == "neg", -20, delta_clean))
 complete$dpi <- as.factor(complete$dpi)
+complete$X <- NULL
 
 ################## Wchange graphs ###########################################################################
-ggplot(subset(complete, !is.na(complete$challenge)), 
-       aes(x = dpi, y = Wchange, color = challenge, group = challenge)) +
+ggplot(subset(complete, !is.na(complete$primary)), 
+       aes(x = dpi, y = Wchange, color = primary, group = primary)) +
   geom_point() +
   geom_smooth() +
   facet_wrap("EXP", scales = "free") +
@@ -21,7 +23,7 @@ ggplot(subset(complete, !is.na(complete$challenge)),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("WchangeXdpi_by_EXP_challenge")
+  ggtitle("WchangeXdpi_by_EXP_primary")
 
 ggplot(subset(complete, !is.na(complete$challenge)), 
        aes(x = dpi, y = Wchange, color = challenge, group = challenge)) +
@@ -62,11 +64,39 @@ ggplot(subset(complete, !is.na(complete$challenge)),
 
 #####################################################################################################################
 ########## gene expression
+genes <- select(complete, EH_ID, CXCR3, IL.12, IRG6, EXP)
+Eim <- select(complete, Eim_MC, EH_ID)
+Eim <- distinct(Eim)
+genes <- distinct(genes)
+genes <- merge(genes, Eim, by.y = "EH_ID")
+
+# tranform into long
+# genes <- 
+genes <- melt(genes,
+     direction = "long",
+     varying = list(names(genes)[2:4]),
+     v.names = "NE",
+     na.rm = T, value.name = "NE", 
+     id.vars = c("EH_ID", "EXP", "Eim_MC"))
+genes <- na.omit(genes)
+names(genes)[names(genes) == "variable"] <- "Target"
+
+
+ggplot(genes, 
+       aes(x = Target, y = NE, color = Eim_MC)) +
+  geom_jitter() +
+  geom_boxplot() +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("Experiments_gene_expression")
+
 ggplot(subset(complete, !is.na(complete$challenge)), 
        aes(x = challenge, y = CXCR3, color = EXP)) +
   geom_jitter() +
   geom_boxplot() +
- facet_wrap("challenge") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
@@ -86,17 +116,9 @@ ggplot(subset(complete, !is.na(complete$challenge)),
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("IRG6_experiment_difference")
 
-ggplot(subset(complete, !is.na(complete$challenge)), 
-       aes(x = challenge, y = IL.12, color = EXP)) +
-  geom_jitter() +
-  geom_boxplot() +
-  # facet_wrap("infHistory") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("IL.12_experiment_difference")
+
+
+
 
 ##################################################################################################
 ################### IFN_CEWE 
