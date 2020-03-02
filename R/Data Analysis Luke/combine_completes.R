@@ -6,7 +6,7 @@ library(RCurl)
 
 P3 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_COMPLETE.csv"))
 E7 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"))
-E5 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E6_062018_Eim_WandO_complete.csv"))
+E6 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E6_062018_Eim_WandO_complete.csv"))
 
 
 P3 <- P3[,order(colnames(P3))]
@@ -30,20 +30,20 @@ E7$oocyst_4 <- NULL
 E7$totalOocysts <- NULL
 E7$volume_PBS_mL <- NULL
 
-E5$X <- NULL
-E5 <- E5[,order(colnames(E5))]
-E5$Batch <- NULL
-E5$Eim_MC <- NA
-E5$CXCR3 <- NA
-E5$IL.12 <- NA
-E5$IRG6 <- NA
-E5$delta <- NA
-colnames(E5)[5] <- "faeces_weight"
-E5$IFNy_FEC <- NA #temporary
-E5$IFNy_CEWE <- NA
-E5$InfectionStrain <- NULL
-E5$oocyst_mean <- NULL
-E5$infHistory  <- NA
+E6$X <- NULL
+E6 <- E6[,order(colnames(E6))]
+E6$Batch <- NULL
+E6$Eim_MC <- NA
+E6$CXCR3 <- NA
+E6$IL.12 <- NA
+E6$IRG6 <- NA
+E6$delta <- NA
+colnames(E6)[5] <- "faeces_weight"
+E6$IFNy_FEC <- NA #temporary
+E6$IFNy_CEWE <- NA
+E6$InfectionStrain <- NULL
+E6$oocyst_mean <- NULL
+E6$infHistory  <- NA
 
 
 colnames(E7)[1] <- "Eim_MC"
@@ -55,11 +55,11 @@ P3$totalOocysts <- NULL
 colnames(P3)[18] <- "Wchange"
 P3$EXP <- "P3"
 E7$EXP <- "E7"
-E5$weightloss <- NULL
+E6$weightloss <- NULL
 E7$primary <- NA
 
 complete <- rbind(P3, E7)
-complete <- rbind(complete, E5)
+complete <- rbind(complete, E6)
 
 
 # let's see if the NAs in primary and challenge worked
