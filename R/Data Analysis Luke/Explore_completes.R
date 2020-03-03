@@ -64,12 +64,12 @@ ggplot(subset(complete, !is.na(complete$challenge)),
 
 #####################################################################################################################
 ########## gene expression
-genes <- select(complete, EH_ID, CXCR3, IL.12, IRG6, EXP)
-Eim <- select(complete, Eim_MC, EH_ID)
-Eim <- distinct(Eim)
-genes <- distinct(genes)
+genes <- dplyr::select(complete, EH_ID, CXCR3, IL.12, IRG6, EXP)
+Eim <- dplyr::select(complete, Eim_MC, EH_ID)
+Eim <- dplyr::distinct(Eim)
+genes <- dplyr::distinct(genes)
 genes <- merge(genes, Eim, by.y = "EH_ID")
-
+genes <- dplyr::distinct(genes)
 # tranform into long
 # genes <- 
 genes <- melt(genes,
@@ -86,6 +86,7 @@ ggplot(genes,
        aes(x = Target, y = NE, color = Eim_MC)) +
   geom_jitter() +
   geom_boxplot() +
+  facet_wrap("Target", scales = "free") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
@@ -250,3 +251,67 @@ ggplot(IRG6, aes(y = IRG6, x = delta)) +
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("")
+
+######## rope in FACS stuff for E7 too ###########################
+FACS <- read.csv(text = getURL(""))
+FACS <- dplyr::select(E7, EH_ID, ThCD4p, TcCD8p, Th1IFNgp_in_CD4p, Th17IL17Ap_in_CD4p, Tc1IFNgp_in_CD8p, Treg_Foxp3_in_CD4p,
+                      Dividing_Ki67p_in_Foxp3p, RORgtp_in_Foxp3p, Th1Tbetp_in_CD4pFoxp3n, Dividing_Ki67p_in_Tbetp,
+                      Th17RORgp_in_CD4pFoxp3n, Dividing_Ki67p_in_RORgtp, Position, infHistory)
+
+FACS <- dplyr::distinct(FACS)
+# tranform into long
+
+FACS <- melt(FACS,
+              direction = "long",
+              varying = list(names(FACS)[2:13]),
+              v.names = "cell.pop",
+              na.rm = T, value.name = "counts", 
+              id.vars = c("EH_ID", "Position", "infHistory"))
+FACS <- na.omit(FACS)
+names(FACS)[names(FACS) == "variable"] <- "pop"
+
+# merge with genes
+immuno <- merge(FACS, genes)
+inf <- dplyr::select(complete, EH_ID, challenge, primary, infHistory)
+inf <- distinct(inf)
+immuno <- merge(immuno, inf)
+immuno1 <- merge(FACS, genes)
+immuno1 <- merge(immuno1, inf)
+############# CXCR3 graphs ###################################
+# CXCR3 is a chemokine receptor that is highly expressed on effector T cells and plays an important role in 
+# T cell trafficking and function. CXCR3 is rapidly induced on naïve cells following activation and preferentially 
+# remains highly expressed on Th1-type CD4+ T cells and effector CD8+ T cells.
+
+# let's name the populations better
+levels(immuno$pop)
+levels(immuno$pop) <- c("CD4+", "CTL", "Th1 IFNy+", "TH17 IL17+", "CTL IFNy+", "Treg", "X^ Treg", "Treg17", "Th1 T-bet", 
+                        "X^ T-bet", "Th17", "X^ Th17/Treg17")
+ggplot(subset(immuno, challenge == "E64"), aes(y = IFNy_CEWE, x = counts, color = Position)) +
+  geom_point() +
+  # ylim(2, -17) +
+  facet_wrap("pop", scales = "free") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("")
+
+IFN <- dplyr::select(complete, EH_ID, IFNy_FEC, IFNy_CEWE)
+immuno <- merge(immuno, IFN)
+immuno <- distinct(immuno)
+
+ggplot(immuno, aes(y = NE, x = IFNy_CEWE, color = Eim_MC)) +
+  geom_point() +
+  # ylim(2, -17) +
+  facet_grid(Target~infHistory, scales = "free") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("")
+
+####################################### try
+
+

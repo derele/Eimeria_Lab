@@ -27,9 +27,51 @@ paraURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_r
 E7 <- read.csv(text=getURL(paraURL))
 E7$X = NULL
 #merge FACS with para data
+cell.counts$EH_ID <- as.character(cell.counts$EH_ID)
+cell.counts$EH_ID <- gsub(x = cell.counts$EH_ID, pattern = "LM", replacement = "LM_")
 E7 <- merge(E7[E7$dpi%in%8,], cell.counts, by = "EH_ID")
+
+write.csv(E7, "~/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FACS_complete.csv")
 #include combined infection history
 E7$infHistory <- E7$primary:E7$challenge
+####### graph out IFN CEWE and IFN pivotal cells #################################################################################
+
+ggplot(subset(E7, !is.na(E7$IFNy_CEWE)), 
+       aes(x = TcCD8p, y = IFNy_CEWE, color = infHistory)) +
+  geom_jitter() +
+  #geom_boxplot() +
+  facet_wrap("Position") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("CTLs and IFNy CEWE")
+
+ggplot(subset(E7, !is.na(E7$IFNy_CEWE)), 
+       aes(x = Th1IFNgp_in_CD4p, y = IFNy_CEWE, color = infHistory)) +
+  geom_jitter() +
+  #geom_boxplot() +
+  facet_wrap("Position") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("Th1 IFN-y+ CD4+ and IFNy CEWE")
+
+ggplot(subset(E7, !is.na(E7$IFNy_CEWE)), 
+       aes(x = Tc1IFNgp_in_CD8p , y = IFNy_CEWE, color = infHistory)) +
+  geom_jitter() +
+  #geom_boxplot() +
+  facet_wrap("Position") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("CTL IFN-y+ CD8+ and IFNy CEWE")
+
 
 ##select cell population names (now using .cells to calculate with actual cell populations)
 facs.measure.cols <- c("ThCD4p", "TcCD8p", "Th1IFNgp_in_CD4p", "Th17IL17Ap_in_CD4p", 
@@ -72,10 +114,8 @@ E7_inf <- E7_inf %>%
   dcast(Name ~ Target.SYBR, value.var = "Ct.Mean.SYBR", fill = 0) %>% 
   mutate(delta = eimeria - mouse) %>% 
   dplyr::select(Name,delta)
-E7_inf <- E7_inf %>% tidyr::separate(Name, c("LM", "EH_ID"))
-E7_inf$EH_ID <- sub("^", "LM", E7_inf$EH_ID )
-E7_inf$LM <- NULL
-E7 <- merge(E7, E7_inf, by = "EH_ID")
+colnames(E7_inf)[1]<- "EH_ID"
+E7 <- merge(E7, E7_inf)
 
 # graph with intensity
 ggplot(E7, aes(delta, cell_counts, color = infHistory)) +
@@ -186,6 +226,22 @@ E7cells <- merge(E7cells,E7Dividing_Ki67p_in_RORgtp, by = "EH_ID")
 # summary(E7Strain.lm)
 # interplot(m = E7Strain.lm, var1 = "cell_counts", var2 = "Strain")
 
+######################## gap for sake of graphing unrelated to previous sections
+# try with Tc1IFNgp_in_CD8p, Th1Tbetp_in_CD4pFoxp3n, Th1IFNgp_in_CD4p, TcCD8p
+ggplot(E7, 
+       aes(x = Tc1IFNgp_in_CD8p, y = IRG6, color = infHistory)) +
+  geom_jitter() +
+  #geom_boxplot() +
+  facet_wrap("challenge") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("")
+
+
+###########################
 
 #check distribution infHistory
 plotCells.inf <- function (col){
