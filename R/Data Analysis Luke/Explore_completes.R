@@ -253,12 +253,16 @@ ggplot(IRG6, aes(y = IRG6, x = delta)) +
   ggtitle("")
 
 ######## rope in FACS stuff for E7 too ###########################
-FACS <- read.csv(text = getURL(""))
+FACS <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FACS_complete.csv"))
 FACS <- dplyr::select(E7, EH_ID, ThCD4p, TcCD8p, Th1IFNgp_in_CD4p, Th17IL17Ap_in_CD4p, Tc1IFNgp_in_CD8p, Treg_Foxp3_in_CD4p,
                       Dividing_Ki67p_in_Foxp3p, RORgtp_in_Foxp3p, Th1Tbetp_in_CD4pFoxp3n, Dividing_Ki67p_in_Tbetp,
                       Th17RORgp_in_CD4pFoxp3n, Dividing_Ki67p_in_RORgtp, Position, infHistory)
 
 FACS <- dplyr::distinct(FACS)
+
+
+
+
 # tranform into long
 
 FACS <- melt(FACS,
@@ -270,6 +274,9 @@ FACS <- melt(FACS,
 FACS <- na.omit(FACS)
 names(FACS)[names(FACS) == "variable"] <- "pop"
 
+##### make a summary for comparing with wild (no Pos or Ant difference)
+FACSt <- FACS %>% dplyr::group_by(EH_ID, pop, infHistory) %>% dplyr::summarise(counts = mean(counts, na.rm = T))
+write.csv(FACSt, "~/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FACSt.csv")
 # merge with genes
 immuno <- merge(FACS, genes)
 inf <- dplyr::select(complete, EH_ID, challenge, primary, infHistory)
