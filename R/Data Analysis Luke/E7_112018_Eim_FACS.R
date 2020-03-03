@@ -30,10 +30,10 @@ E7$X = NULL
 cell.counts$EH_ID <- as.character(cell.counts$EH_ID)
 cell.counts$EH_ID <- gsub(x = cell.counts$EH_ID, pattern = "LM", replacement = "LM_")
 E7 <- merge(E7[E7$dpi%in%8,], cell.counts, by = "EH_ID")
+E7$infHistory <- E7$primary:E7$challenge
 
 write.csv(E7, "~/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FACS_complete.csv")
-#include combined infection history
-E7$infHistory <- E7$primary:E7$challenge
+
 ####### graph out IFN CEWE and IFN pivotal cells #################################################################################
 
 ggplot(subset(E7, !is.na(E7$IFNy_CEWE)), 
