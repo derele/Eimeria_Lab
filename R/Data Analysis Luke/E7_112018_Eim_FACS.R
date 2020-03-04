@@ -1,38 +1,55 @@
 # because of large number of conflicting packages, use "package::function" when necessary
 library(httr)
 library(RCurl)
+library(Rmisc)
+library(tidyverse)
+library(readxl)
 library(dplyr)
-library(magrittr)
-library(ggplot2)
-library(ggpubr)
-library(lattice)
-library(data.table)
-library(ggeffects)
-library(multcomp)
-library(fitdistrplus)
-library(interplot)
-library(reshape2)
 
-#read in cell counts (FACS) data
-cell.countsURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FACS_cell_counts_processed.csv"
-cell.counts <- read.csv(text = getURL(cell.countsURL))
-
-#remove mouse 293 as it was mixed both posterior and anterior + remove everpresent X column
-cell.counts$X = NULL
-cell.counts <- cell.counts[!cell.counts$EH_ID%in%"LM0293",] 
+# guess this one will have to be hard coded
+FACSraw1 <- read_xlsx("~/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_Lubomir_FACS_data.xlsx", sheet = 1)
+FACSraw2 <- read_xlsx("~/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_Lubomir_FACS_data.xlsx", sheet = 2)
+FACSraw3 <- read_xlsx("~/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_Lubomir_FACS_data.xlsx", sheet = 3)
+FACSraw4 <- read_xlsx("~/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_Lubomir_FACS_data.xlsx", sheet = 4)
+#remove NA rows and rubbish
+FACSraw1 <- FACSraw1[-c(52:53),]
+FACSraw2 <- FACSraw2[-c(52:53),]
+FACSraw3 <- FACSraw3[-c(28:35),]
+FACSraw3 <- FACSraw3[-c(55:56),]
+FACSraw4 <- FACSraw4[-c(59:60),]
+# extract sample names and position 
+FACSraw1$EH_ID <-gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "LM_02\\2", FACSraw1$Sample)
+FACSraw1$Position <- gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "\\1", FACSraw1$Sample)
+FACSraw2$EH_ID <-gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "LM_02\\2", FACSraw2$Sample)
+FACSraw2$Position <- gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "\\1", FACSraw2$Sample)
+FACSraw3$EH_ID <-gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "LM_02\\2", FACSraw3$Sample)
+FACSraw3$Position <- gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "\\1", FACSraw3$Sample)
+FACSraw4$EH_ID <-gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "LM_02\\2", FACSraw4$Sample)
+FACSraw4$Position <- gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "\\1", FACSraw4$Sample)
+# remove that strage Sample column
+FACSraw1 <- FACSraw1[,-c(1)]
+FACSraw2 <- FACSraw2[,-c(1)]
+FACSraw3 <- FACSraw3[,-c(1)]
+FACSraw4 <- FACSraw4[,-c(1)]
+# combine into one and remove wrong sample (Hongwei said)
+FACS1 <- full_join(FACSraw1, FACSraw2)
+FACS2 <- full_join(FACSraw3, FACSraw4)
+FACS <- full_join(FACS1,FACS2)
+FACS <- FACS[!FACS$EH_ID%in%"LM_0293",] 
 
 #####################################################################################################################################
 #introduce parasitological data
-paraURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"
+E7 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"))
 E7 <- read.csv(text=getURL(paraURL))
-E7$X = NULL
-#merge FACS with para data
-cell.counts$EH_ID <- as.character(cell.counts$EH_ID)
-cell.counts$EH_ID <- gsub(x = cell.counts$EH_ID, pattern = "LM", replacement = "LM_")
-E7 <- merge(E7[E7$dpi%in%8,], cell.counts, by = "EH_ID")
-E7$infHistory <- E7$primary:E7$challenge
+E7 <- select(E7, EH_ID, labels, dpi, Strain, HybridStatus, primary, challenge, weight, Wchange, OPG, infHistory, IFNy_FEC,
+             IFNy_CEWE, Caecum, delta, CXCR3, IRG6, IL.12)
+#merge FACS with para data (maybe replace with less stringent join)
+E7 <- merge(E7[E7$dpi%in%8,], FACS, by = "EH_ID")
+# might have to create R friendly column names
 
 write.csv(E7, "~/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FACS_complete.csv")
+
+
 
 ####### graph out IFN CEWE and IFN pivotal cells #################################################################################
 

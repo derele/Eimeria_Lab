@@ -4,6 +4,7 @@ library(Rmisc)
 library(httr)
 library(RCurl)
 library(dplyr)
+library(reshape2)
 
 complete <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_P3_E6_complete.csv"))
 # make negative MCs into NAs in a new column
@@ -72,7 +73,7 @@ genes <- merge(genes, Eim, by.y = "EH_ID")
 genes <- dplyr::distinct(genes)
 # tranform into long
 # genes <- 
-genes <- melt(genes,
+genes <- reshape2::melt(genes,
      direction = "long",
      varying = list(names(genes)[2:4]),
      v.names = "NE",
@@ -254,9 +255,7 @@ ggplot(IRG6, aes(y = IRG6, x = delta)) +
 
 ######## rope in FACS stuff for E7 too ###########################
 FACS <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FACS_complete.csv"))
-FACS <- dplyr::select(E7, EH_ID, ThCD4p, TcCD8p, Th1IFNgp_in_CD4p, Th17IL17Ap_in_CD4p, Tc1IFNgp_in_CD8p, Treg_Foxp3_in_CD4p,
-                      Dividing_Ki67p_in_Foxp3p, RORgtp_in_Foxp3p, Th1Tbetp_in_CD4pFoxp3n, Dividing_Ki67p_in_Tbetp,
-                      Th17RORgp_in_CD4pFoxp3n, Dividing_Ki67p_in_RORgtp, Position, infHistory)
+FACS <- dplyr::select(E7, EH_ID, #####Position, infHistory)
 
 FACS <- dplyr::distinct(FACS)
 
