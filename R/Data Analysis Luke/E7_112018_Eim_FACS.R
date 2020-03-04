@@ -45,7 +45,22 @@ E7 <- select(E7, EH_ID, labels, dpi, Strain, HybridStatus, primary, challenge, w
              IFNy_CEWE, Caecum, delta, CXCR3, IRG6, IL.12)
 #merge FACS with para data (maybe replace with less stringent join)
 E7 <- merge(E7[E7$dpi%in%8,], FACS, by = "EH_ID")
-# might have to create R friendly column names
+#create R and .csv friendly column names
+colnames(E7)[19]<- "CD4"
+colnames(E7)[20]<- "Treg"
+colnames(E7)[21]<- "Div_Treg"
+colnames(E7)[22]<- "Treg17"
+colnames(E7)[24]<- "Th1"
+colnames(E7)[25]<- "Div_Th1"
+colnames(E7)[26]<- "Th17"
+colnames(E7)[27]<- "Div_Th17"
+colnames(E7)[28]<- "CD8"
+colnames(E7)[29]<- "Act_CD8"
+colnames(E7)[30]<- "Div_Act_CD8"
+colnames(E7)[32]<- "IFNy_CD4"
+colnames(E7)[33]<- "IL17A_CD4"
+colnames(E7)[34]<- "IFNy_CD8"
+colnames(E7)[23]<- "Treg_prop"
 
 write.csv(E7, "~/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FACS_complete.csv")
 
