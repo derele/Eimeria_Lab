@@ -117,10 +117,67 @@ IFN <- distinct(IFN)
 immuno <- merge(immuno, IFN, all = T)
 immuno <- distinct(immuno)
 
-##################### pure graphing from here, any general code above ####################################################
+
 delta <- select(complete, delta, delta_clean, EH_ID)
 genes <- merge(delta, genes)
 genes <- distinct(genes)
+
+
+Wch.p <- subset(complete, Eimeria.p == "E.ferrisi")
+Wch.p1 <- subset(complete, Eimeria.p == "E.falciformis")
+Wch.p <- full_join(Wch.p, Wch.p1)
+
+Wch.c <- subset(complete, Eimeria.c == "E.ferrisi")
+Wch.c1 <- subset(complete, Eimeria.c == "E.falciformis")
+Wch.c <- full_join(Wch.c, Wch.c1)
+
+Wch.c <- select(Wch.c, Eimeria.c, Eimeria.p, EH_ID)
+genes <- merge(genes, Wch.c)
+genes <- distinct(genes)
+genes <- genes[-c(122, 123, 3),]
+
+immuno <- merge(immuno, Wch.c)
+immuno <- distinct(immuno)
+immuno1 <- immuno[-c(5908:5910),]
+
+
+sig <- subset(FACScombine, subset = pop %in% c("CD4", "Div_Treg", "Treg17", "Th17", "Div_Th17", "CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8"))
+sig <- data.frame(sig)
+sig$pop <- as.character(sig$pop)
+# remove horrible outliers
+sig <- sig[-c(1174),]
+sig <- sig[-c(1173),]
+sig <- sig[-c(634),]
+
+sig1 <- merge(sig, Wch.c, by = "EH_ID")
+Pos <- select(immuno, EH_ID, Position)
+sig1 <- distinct(sig1)
+sig1 <- merge(Pos, sig1, by = "EH_ID")
+sig1 <- distinct(sig1)
+
+PosHZ <- select(FACSHZ, Mouse_ID, Position, CD4)
+colnames(PosHZ)[1] <- "EH_ID"
+FACStHZ <- full_join(PosHZ, FACStHZ)
+immuno <- distinct(immuno)
+
+##################### pure graphing from here, any general code above ####################################################
+ggplot(subset(immuno, !is.na(immuno$Position)), aes(x = Position, y = counts, color = Position)) +
+      geom_boxplot(outlier.shape = NA) +
+      geom_jitter() +
+      facet_wrap("pop", scales = "free") +
+      labs(y="deltaCT = Target - HKG", x = "infected", colour = "infected") +
+      theme(axis.text=element_text(size=12, face = "bold"),
+               title = element_text(size = 16, face = "bold"),
+               axis.title=element_text(size=14,face="bold"),
+               strip.text.x = element_text(size = 14, face = "bold"),
+               legend.text=element_text(size=12, face = "bold"),
+               legend.title = element_text(size = 12, face = "bold"))+
+      ggtitle("Gene expression in wild samples")
+
+
+
+
+
 ggplot(genes, 
        aes(y = NE, x = delta_clean, color = Eimeria.c)) +
   geom_point() +
@@ -144,9 +201,7 @@ ggplot(subset(complete, !is.na(complete$Eimeria.p)),
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("WchangeXdpi_by_EXP_primary")
 
-Wch.p <- subset(complete, Eimeria.p == "E.ferrisi")
-Wch.p1 <- subset(complete, Eimeria.p == "E.falciformis")
-Wch.p <- full_join(Wch.p, Wch.p1)
+
 
 ggplot(Wch.p, 
        aes(x = dpi, y = Wchange, color = Eimeria.p, group = Eimeria.p)) +
@@ -174,9 +229,7 @@ ggplot(subset(complete, !is.na(complete$challenge)),
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("WchangeXdpi_by_EXP_challenge")
 
-Wch.c <- subset(complete, Eimeria.c == "E.ferrisi")
-Wch.c1 <- subset(complete, Eimeria.c == "E.falciformis")
-Wch.c <- full_join(Wch.c, Wch.c1)
+
 
 ggplot(Wch.c,
        aes(x = dpi, y = Wchange, color = Eimeria.c, group = Eimeria.c)) +
@@ -233,10 +286,7 @@ ggplot(subset(complete, !is.na(complete$challenge)),
 
 #####################################################################################################################
 ############ genes
-Wch.c <- select(Wch.c, Eimeria.c, Eimeria.p, EH_ID)
-genes <- merge(genes, Wch.c)
-genes <- distinct(genes)
-genes <- genes[-c(122, 123, 3),]
+
 
 ggplot(subset(genes, Eim_MC == "pos"), 
        aes(x = Eimeria.c, y = NE, color = Eimeria.c)) +
@@ -406,29 +456,6 @@ ggplot(E7, aes(y = IFNy_FEC, x = IFNy_CEWE , shape = Caecum)) +
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("")
 
-ggplot(P3, aes(wloss, IFNy_CEWE)) +
-  geom_point()
-
-P3_88 <- P3[P3$challenge == "E88",]
-P3_64 <- P3[P3$challenge == "E64",]
-P3_UNI <- P3[P3$challenge == "UNI",]
-
-mod88 <- lm(wloss ~ IFNy_CEWE, data = P3_88)
-mod64 <- lm(wloss ~ IFNy_CEWE, data = P3_64)
-modUNI <- lm(wloss ~ IFNy_CEWE, data = P3_UNI)
-
-ggplot(P3_88, aes(OPG, IFNy_CEWE)) +
-  geom_abline(data = mod88) + 
-  geom_point() 
-
-ggplot(P3_64, aes(OPG, IFNy_CEWE)) +
-  geom_abline(data = mod64) +
-  geom_point()
-
-ggplot(P3_UNI, aes(OPG, IFNy_CEWE)) +
-  geom_abline(data = modUNI) +
-  geom_point()
-
 ggplot(P3, aes(y = IFNy_CEWE, x = OPG)) +
   geom_text_repel(aes(label=delta)) +
   theme(axis.text=element_text(size=12, face = "bold"), 
@@ -438,7 +465,7 @@ ggplot(P3, aes(y = IFNy_CEWE, x = OPG)) +
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("")
 
-IRG6 <- E7 %>% drop_na(IRG6)
+
 
 ggplot(IRG6, aes(y = IRG6, x = delta)) +
   geom_point() +
@@ -450,9 +477,7 @@ ggplot(IRG6, aes(y = IRG6, x = delta)) +
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("")
 ################################################### Enter FACS
-immuno <- merge(immuno, Wch.c)
-immuno <- distinct(immuno)
-immuno1 <- immuno[-c(5908:5910),]
+
 
 ggplot(immuno1, aes(x = Eimeria.c, y = counts, color = Eimeria.c)) +
   geom_boxplot() +
@@ -543,14 +568,7 @@ ggplot(FACScombine,
   ggtitle("FACS comparison of wild and lab")
 
 ##### keep only significant ones
-sig <- subset(FACScombine, subset = pop %in% c("CD4", "Div_Treg", "Treg17", "Th17", "Div_Th17", "CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8"))
-sig <- data.frame(sig)
-sig$pop <- as.character(sig$pop)
-# remove horrible outliers
-sig <- sig[-c(1174),]
-sig <- sig[-c(1173),]
-sig <- sig[-c(634),]
- 
+
 
 
 
@@ -571,11 +589,6 @@ ggplot(sig,
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("FACS comparison of wild and lab")
 
-  sig1 <- merge(sig, Wch.c, by = "EH_ID")
-Pos <- select(immuno, EH_ID, Position)
-sig1 <- distinct(sig1)
-sig1 <- merge(Pos, sig1, by = "EH_ID")
-sig1 <- distinct(sig1)
 
 ggplot(FACScombine,
        aes(x = Eimeria.c , y = counts)) +
@@ -632,10 +645,7 @@ ggplot(subset(immuno, !is.na(immuno$counts)),
   ggtitle("Caecum IFNy effect on cell populations")
 
 # wild
-PosHZ <- select(FACSHZ, Mouse_ID, Position, CD4)
-colnames(PosHZ)[1] <- "EH_ID"
-FACStHZ <- full_join(PosHZ, FACStHZ)
-  
+
 ggplot(FACStHZ, 
        aes(x = Position , y = counts)) +
   geom_boxplot() +
