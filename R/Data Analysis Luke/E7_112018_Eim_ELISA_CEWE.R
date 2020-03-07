@@ -16,7 +16,7 @@ E1_std <- read.csv(text = getURL(E1_std))
 E1_samples <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_CEWE_ELISAs/E7_112018_Eim_CEWE_ELISA1_samples.csv"
 E1_samples <- read.csv(text = getURL(E1_samples))
 
-###### use drc to construct standard curve and pinpointprotein content
+  ###### use drc to construct standard curve and pinpointprotein content
 
 model1<-drm(OD~Conc,
             fct=LL.4(names=c("Slope", "Lower", "Upper", "ED50")),
@@ -39,3 +39,36 @@ E1$OD <- NULL
 
 write.csv(E1, "./Eimeria_Lab/data/3_recordingTables/E7_112019_Eim_CEWE_ELISAs/EP_112019_Eim_CEWE_ELISA1_complete.csv")
 write.csv(E1, "C:/Users/Luke Bednar/Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CEWE_ELISAs/E7_112018_Eim_CEWE_ELISA1_complete.csv")
+####################################
+######################### second plate ##############
+E2_std <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_CEWE_ELISAs/E7_112019_Eim_CEWE_ELISA2_std.csv"))
+E2_samples <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_CEWE_ELISAs/E7_112018_Eim_CEWE_ELISA2_samples.csv"))
+
+###### use drc to construct standard curve and pinpointprotein content
+
+model2<-drm(OD~Conc,
+            fct=LL.4(names=c("Slope", "Lower", "Upper", "ED50")),
+            data=E2_std)
+plot(model2)
+
+E2<-ED(model2, E2_samples$OD, type="absolute", display=F)
+row.names(E2) <- E2_samples$label
+
+points(y=E2_samples$OD,x=E2[,1],col="lightblue",pch=19,cex=2)
+text(y =E2_samples$OD, x = E2[,1], labels=E2_samples$label, data=E2, cex=0.9, font=2)
+
+E2 <- data.frame(E2)
+colnames(E2)[1] <- "IFNy"
+E2 <- dplyr::select(E2, IFNy)
+setDT(E2, keep.rownames = TRUE)[]
+colnames(E2)[1] <- "label"
+E2 <- merge(E2, E2_samples)
+E2$OD <- NULL
+
+write.csv(E2, "./Eimeria_Lab/data/3_recordingTables/E7_112019_Eim_CEWE_ELISAs/E7_112019_Eim_CEWE_ELISA2_complete.csv")
+write.csv(E2, "C:/Users/Luke Bednar/Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CEWE_ELISAs/E7_112018_Eim_CEWE_ELISA2_complete.csv")
+
+############ that was the last samples
+E <- rbind(E1,E2)
+
+write.csv(E, "~/Documents/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_CEWE_ELISAs/E7_112018_Eim_CEWE_ELISA_complete.csv")
