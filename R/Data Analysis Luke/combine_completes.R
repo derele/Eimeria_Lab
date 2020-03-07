@@ -60,7 +60,7 @@ E7$primary <- NA
 
 complete <- rbind(P3, E7)
 complete <- rbind(complete, E6)
-
+complete <- distinct(complete)
 
 # let's see if the NAs in primary and challenge worked
 # complete %>% transform(currentInf=ifelse(grepl("(P3|E7)a", labels), 
@@ -75,4 +75,4 @@ complete <- rbind(complete, E6)
 
 write.csv(complete, "./Eimeria_Lab/data/3_recordingTables/E7_P3_E6_complete.csv")
 
-
+write.csv(complete, "~/Documents/Eimeria_Lab/data/3_recordingTables/E7_P3_E6_complete.csv")
