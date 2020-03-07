@@ -15,12 +15,14 @@ E7_weightANDoocysts$X <- NULL
 E7_weightANDoocysts <- distinct(E7_weightANDoocysts)
 
 ################## at the moment one and the same
-# load in qPCRs
+# load in qPCRs 
 E7_qPCR <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_RT_and_qPCR_complete.csv"
 E7_qPCR <- read.csv(text = getURL(E7_qPCR))
 E7_qPCR$X <- NULL
 E7_qPCR <- distinct(E7_qPCR)
-
+# creating a mess when merging so let"s reduce it to only the necessary
+E7_qPCR <- dplyr::select(E7_qPCR, EH_ID, delta, CXCR3, IL.12, IRG6, labels, Caecum, Eim_MC, infHistory)
+E7_qPCR <- distinct(E7_qPCR)
 # # load in RT-qPCRs
 # P3_RT <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_RT-qPCR_complete.csv"
 # P3_RT <- read.csv(text = getURL(P3_RT))
@@ -51,7 +53,7 @@ E7 <- distinct(E7)
 E7 <- merge(E7, E7_CEWE_ELISA, all.x = T)
 E7 <- distinct(E7)
 
-E7 <- merge(E7, E7_qPCR, all.x = T)
+E7 <- merge(E7, E7_qPCR)
 E7 <- distinct(E7)
 
 write.csv(E7, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_COMPLETE.csv")

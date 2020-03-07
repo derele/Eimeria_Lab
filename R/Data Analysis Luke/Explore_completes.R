@@ -28,7 +28,7 @@ library(stats)
 complete <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_P3_E6_complete.csv"))
 # make negative MCs into NAs in a new column
 complete$delta_clean <- complete$delta
-complete <- mutate(complete, delta_clean = ifelse(Eim_MC == "neg", -20, delta_clean))
+complete <- mutate(complete, delta_clean = ifelse(Eim_MC == "neg", -30, delta_clean))
 complete$dpi <- as.factor(complete$dpi)
 complete$X <- NULL
 ########## make column with E. ferrisi and E. falciformis only
@@ -118,7 +118,7 @@ immuno <- merge(immuno, IFN, all = T)
 immuno <- distinct(immuno)
 
 
-delta <- select(complete, delta, delta_clean, EH_ID)
+delta <- dplyr::select(complete, delta, delta_clean, EH_ID)
 genes <- merge(delta, genes)
 genes <- distinct(genes)
 
@@ -131,12 +131,13 @@ Wch.c <- subset(complete, Eimeria.c == "E.ferrisi")
 Wch.c1 <- subset(complete, Eimeria.c == "E.falciformis")
 Wch.c <- full_join(Wch.c, Wch.c1)
 
-Wch.c <- select(Wch.c, Eimeria.c, Eimeria.p, EH_ID)
-genes <- merge(genes, Wch.c)
+Wch <- dplyr::select(Wch.c, Eimeria.c, Eimeria.p, EH_ID)
+genes <- merge(genes, Wch)
 genes <- distinct(genes)
-genes <- genes[-c(122, 123, 3),]
+genes <- na.omit(genes)
+# genes <- genes[-c(122, 123, 3),]
 
-immuno <- merge(immuno, Wch.c)
+immuno <- merge(immuno, genes)
 immuno <- distinct(immuno)
 immuno1 <- immuno[-c(5908:5910),]
 
