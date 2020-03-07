@@ -5,7 +5,7 @@ library(httr)
 library(RCurl)
 
 P3 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/P3_112019_Eim_COMPLETE.csv"))
-E7 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"))
+E7 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_COMPLETE.csv"))
 E6 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E6_062018_Eim_WandO_complete.csv"))
 
 
@@ -29,6 +29,7 @@ E7$oocyst_3 <- NULL
 E7$oocyst_4 <- NULL 
 E7$totalOocysts <- NULL
 E7$volume_PBS_mL <- NULL
+E7$Caecum <- NULL
 
 E6$X <- NULL
 E6 <- E6[,order(colnames(E6))]
@@ -45,8 +46,6 @@ E6$InfectionStrain <- NULL
 E6$oocyst_mean <- NULL
 E6$infHistory  <- NA
 
-
-colnames(E7)[1] <- "Eim_MC"
 colnames(E7)[7] <- "faeces_weight"
 colnames(P3)[13] <- "labels"
 P3$HybridStatus <- NA
@@ -57,6 +56,11 @@ P3$EXP <- "P3"
 E7$EXP <- "E7"
 E6$weightloss <- NULL
 E7$primary <- NA
+
+
+P3 <- P3[,order(colnames(P3))]
+E7 <- E7[,order(colnames(E7))]
+
 
 complete <- rbind(P3, E7)
 complete <- rbind(complete, E6)
