@@ -8,6 +8,7 @@ library(reshape2)
 library(tidyverse)
 library(ggpubr)
 library(stats)
+library(ggsignif)
 
 # good graphing
 # ggplot(HZgraph, 
@@ -106,21 +107,70 @@ colnames(FACStHZ)[1] <- "EH_ID"
 FACScombine <- rbind(FACSt, FACStHZ)
 
 ################################################################################################################################
+# test Pos vs ANT 
+Eim <- distinct(Eim)
+Eim <- na.omit(Eim)
+POSvsANT <- full_join(FACS.long, Eim)
+POSvsANT <- distinct(POSvsANT)
+POSvsANT <- na.omit(POSvsANT)
+POSvsANT$Eim_MC <- as.character(POSvsANT$Eim_MC)
+POSvsANT$Eim_MC[POSvsANT$Eim_MC == "pos"] <- "positive"
+POSvsANT$Eim_MC[POSvsANT$Eim_MC == "neg"] <- "negative"
+
+ggplot(POSvsANT,
+  aes(x = pop, y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  #geom_text() +
+  stat_compare_means(aes(label = ..p.signif..), size = 6, label.y = 110) + 
+  #geom_jitter() +
+  geom_vline(xintercept = c(0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5)) +
+  #facet_wrap("pop", scales = "free") +
+  #geom_signif(comparisons = list(c("Anterior", "Posterior")), map_signif_level=TRUE) +
+  labs(y="% of cell populations", x = "Gated population", colour = "infection") +
+  theme(panel.grid = element_blank(),
+        axis.text=element_text(size=14, face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        title = element_text(size = 16, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))
+   #ggtitle("Gene expression in wild samples")
+       
+#####################################################################################################################################
+
 # merge with genes
-immuno <- merge(FACS.long, genes, all = T)
-inf <- dplyr::select(complete, EH_ID, challenge, primary, infHistory)
+FACScombine <- data.frame(FACScombine)
+genes$EXP <- as.character(genes$EXP)
+genes$EXP[genes$EXP == "E7"] <- "lab"
+genes$EXP[genes$EXP == "P3"] <- "lab"
+
+immuno <- full_join(FACScombine, genes, all.x = T)
+
+inf <- dplyr::select(complete, EH_ID, challenge)
 inf <- distinct(inf)
-immuno <- merge(immuno, inf, all = T)
-# add IFN ELISA results
-IFN <- dplyr::select(complete, EH_ID, IFNy_FEC, IFNy_CEWE)
+inf <- na.omit(inf)
+immuno <- full_join(immuno, inf, all.x = T)
+
+
+# add IFN ELISA results``````````````````````
+IFN <- dplyr::select(complete, EH_ID, IFNy_FEC, IFNy_CEWE, dpi)
+IFN <- subset(IFN, IFN$dpi == "8")
+IFN <- dplyr::select(IFN, EH_ID, IFNy_FEC, IFNy_CEWE)
 IFN <- distinct(IFN)
-immuno <- merge(immuno, IFN, all = T)
+# super desructive but will have to do for now
+IFN <- IFN[complete.cases(IFN[ , 2:3]),]
+immuno <- full_join(immuno, IFN)
 immuno <- distinct(immuno)
 
 
 delta <- dplyr::select(complete, delta, delta_clean, EH_ID)
-genes <- merge(delta, genes)
-genes <- distinct(genes)
+delta <- na.omit(delta)
+immuno <- full_join(immuno, delta)
+immuno <- distinct(immuno)
+
+immuno$species <- gsub("E64|E139", replacement = "E.ferrisi", immuno$challenge)
+immuno$species <- paste(gsub("E88|Eflab", replacement = "E.falciformis", immuno$species))
 
 
 Wch.p <- subset(complete, Eimeria.p == "E.ferrisi")
@@ -137,8 +187,8 @@ genes <- distinct(genes)
 genes <- na.omit(genes)
 # genes <- genes[-c(122, 123, 3),]
 
-immuno <- merge(immuno, genes)
-immuno <- distinct(immuno)
+# immuno <- merge(immuno, genes)
+# immuno <- distinct(immuno)
 immuno1 <- immuno[-c(5908:5910),]
 
 
@@ -179,71 +229,38 @@ ggplot(subset(immuno, !is.na(immuno$Position)), aes(x = Position, y = counts, co
 
 
 
-ggplot(genes, 
-       aes(y = NE, x = delta_clean, color = Eimeria.c)) +
-  geom_point() +
-  facet_wrap("Target", scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("WchangeXdpi_by_EXP_primary")
 ################## Wchange graphs ###########################################################################
-ggplot(subset(complete, !is.na(complete$Eimeria.p)), 
-       aes(x = dpi, y = Wchange, color = Eimeria.p, group = Eimeria.p)) +
-  geom_point() +
+
+# falciformis plot
+ggplot(subset(Wch.p, Wch.p$Eimeria.p == "E.falciformis"), 
+       aes(x = dpi, y = Wchange, group = Eimeria.p, color = Eimeria.p)) +
+  geom_jitter(width = 0.2) +
   geom_smooth() +
-  #facet_wrap("EXP", scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("WchangeXdpi_by_EXP_primary")
-
-
-
-ggplot(Wch.p, 
-       aes(x = dpi, y = Wchange, color = Eimeria.p, group = Eimeria.p)) +
-  geom_point() +
-  geom_smooth() +
+  labs(y="% Weight change", x = "days post infection", colour = "species") +
   #facet_wrap("EXP", scales = "free") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         title = element_text(size = 16, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("Weight change per dpi by Eimeria strain")
+        legend.title = element_text(size = 12, face = "bold"))
+#ggtitle("Weight change per dpi by Eimeria strain")
 
-
-ggplot(subset(complete, !is.na(complete$challenge)), 
-       aes(x = dpi, y = Wchange, color = challenge, group = challenge)) +
-  geom_point() +
+# complete plot
+ggplot(Wch.p,
+       aes(x = dpi, y = Wchange, color = Eimeria.p, group = Eimeria.p)) +
+  geom_jitter(width = 0.2) +
   geom_smooth() +
-  facet_wrap("EXP", scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("WchangeXdpi_by_EXP_challenge")
-
-
-
-ggplot(Wch.c,
-       aes(x = dpi, y = Wchange, color = Eimeria.c, group = Eimeria.c)) +
-  geom_point() +
-  geom_smooth() +
+  labs(y="% Weight change", x = "days post infection", colour = "species") +
   #facet_wrap("EXP", scales = "free") +
   theme(axis.text=element_text(size=12, face = "bold"),
         title = element_text(size = 16, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("Weight change per dpi by Eimeria strain")
+        legend.title = element_text(size = 12, face = "bold"))
+  #ggtitle("Weight change per dpi by Eimeria strain")
+
 ##########################################################################################################
 ##################### OPG graphs
 ggplot(subset(complete, !is.na(complete$primary)), 
