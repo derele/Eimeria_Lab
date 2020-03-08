@@ -9,6 +9,7 @@ library(tidyverse)
 library(ggpubr)
 library(stats)
 library(ggsignif)
+library(ggpmisc)
 
 # good graphing
 # ggplot(HZgraph, 
@@ -40,11 +41,12 @@ complete$Eimeria.c <- gsub("E64|E139", replacement = "E.ferrisi", complete$chall
 complete$Eimeria.c <- paste(gsub("E88|Eflab", replacement = "E.falciformis", complete$Eimeria.c))
 
 ########## gene expression
-genes <- dplyr::select(complete, EH_ID, CXCR3, IL.12, IRG6, EXP)
+genes <- dplyr::select(complete, EH_ID, CXCR3, IL.12, IRG6)
 Eim <- dplyr::select(complete, Eim_MC, EH_ID)
 Eim <- dplyr::distinct(Eim)
+Eim <- na.omit(Eim)
 genes <- dplyr::distinct(genes)
-genes <- merge(genes, Eim, by.y = "EH_ID")
+genes <- merge(genes, Eim, by.y = "EH_ID", all = T)
 genes <- dplyr::distinct(genes)
 # tranform into long
 # genes <- 
@@ -53,8 +55,7 @@ genes <- reshape2::melt(genes,
                         varying = list(names(genes)[2:4]),
                         v.names = "NE",
                         na.rm = T, value.name = "NE", 
-                        id.vars = c("EH_ID", "EXP", "Eim_MC"))
-genes <- na.omit(genes)
+                        id.vars = c("EH_ID", "Eim_MC"))
 names(genes)[names(genes) == "variable"] <- "Target"
 
 ############################### rope in FACS stuff for E7 too ###########################
@@ -141,11 +142,7 @@ ggplot(POSvsANT,
 
 # merge with genes
 FACScombine <- data.frame(FACScombine)
-genes$EXP <- as.character(genes$EXP)
-genes$EXP[genes$EXP == "E7"] <- "lab"
-genes$EXP[genes$EXP == "P3"] <- "lab"
-
-immuno <- full_join(FACScombine, genes, all.x = T)
+immuno <- merge(FACScombine, genes, all = T)
 
 inf <- dplyr::select(complete, EH_ID, challenge)
 inf <- distinct(inf)
@@ -154,19 +151,20 @@ immuno <- full_join(immuno, inf, all.x = T)
 
 
 # add IFN ELISA results``````````````````````
-IFN <- dplyr::select(complete, EH_ID, IFNy_FEC, IFNy_CEWE, dpi)
+IFN <- dplyr::select(complete, EH_ID, IFNy_CEWE, dpi)
 IFN <- subset(IFN, IFN$dpi == "8")
-IFN <- dplyr::select(IFN, EH_ID, IFNy_FEC, IFNy_CEWE)
+IFN <- dplyr::select(IFN, EH_ID, IFNy_CEWE)
+IFN <- na.omit(IFN) 
 IFN <- distinct(IFN)
 # super desructive but will have to do for now
-IFN <- IFN[complete.cases(IFN[ , 2:3]),]
-immuno <- full_join(immuno, IFN)
+# IFN <- IFN[complete.cases(IFN[ , 2:3]),]
+immuno <- merge(immuno, IFN, by = "EH_ID")
 immuno <- distinct(immuno)
 
 
-delta <- dplyr::select(complete, delta, delta_clean, EH_ID)
+delta <- dplyr::select(complete, delta, delta_clean, EH_ID, Eim_MC)
 delta <- na.omit(delta)
-immuno <- full_join(immuno, delta)
+immuno <- merge(immuno, delta)
 immuno <- distinct(immuno)
 
 immuno$species <- gsub("E64|E139", replacement = "E.ferrisi", immuno$challenge)
@@ -187,9 +185,22 @@ genes <- distinct(genes)
 genes <- na.omit(genes)
 
 #### add wild gene expression
-HZgenes <- read.csv(text = getURL(""))
+HZgenes <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Gene_expression/HZ16-18_gene_expression.csv"))
+HZgenes$X <- NULL
 colnames(HZgenes)[1] <- "EH_ID"
-genes$EXP[genes$EXP == "E7"] <- "lab"
+colnames(HZgenes)[6] <- "Eim_MC"
+HZgenes$Eim_MC[HZgenes$Eim_MC == "TRUE"] <- "positive"
+HZgenes$Eim_MC[HZgenes$Eim_MC == "FALSE"] <- "negative"
+HZgenes$EXP <- "wild"
+immuno$Eim_MC <- as.character(immuno$Eim_MC)
+immuno$Eim_MC[immuno$Eim_MC == "pos"] <- "positive"
+immuno$Eim_MC[immuno$Eim_MC == "neg"] <- "negative"
+genes$Eim_MC <- as.character(genes$Eim_MC)
+genes$Eim_MC[genes$Eim_MC == "pos"] <- "positive"
+genes$Eim_MC[genes$Eim_MC == "neg"] <- "negative"
+
+# god knows what happens here (investigate later)
+immuno <- merge(HZgenes, immuno, all = T)
 
 # sig <- subset(FACScombine, subset = pop %in% c("CD4", "Div_Treg", "Treg17", "Th17", "Div_Th17", "CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8"))
 # sig <- data.frame(sig)
@@ -286,8 +297,9 @@ ggplot(Wch.p,
 
 #####################################################################################################################
 ############ genes
-# lab gene expression
-ggplot(subset(immuno, immuno$EXP == "lab")), aes(x = Eim_MC, y = NE, colour = Eim_MC)) +
+# wild gene expression
+ggplot(HZgenes,
+       aes(x = Eim_MC, y = NE, colour = Eim_MC)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter() +
   stat_compare_means(aes(label = ..p.signif..)) +
@@ -298,11 +310,11 @@ ggplot(subset(immuno, immuno$EXP == "lab")), aes(x = Eim_MC, y = NE, colour = Ei
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))
+        legend.title = element_text(size = 12, face = "bold"),
+        legend.position = c(0.8, 0.2))
 
-# wild gene expression
-ggplot(immuno, 
-       aes(x = Eim_MC, y = NE, color = Eim_MC, group = Eim_MC)) +
+# lab gene expression
+ggplot(genes, aes(x = Eim_MC, y = NE, color = Eim_MC, group = Eim_MC)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter() +
   stat_compare_means(aes(label = ..p.signif..)) +
@@ -318,175 +330,55 @@ ggplot(immuno,
 
 ##################################################################################################
 ################### IFN_CEWE 
-ggplot(subset(complete, !is.na(complete$IFNy_CEWE)), 
-       aes(x = OPG, y = IFNy_CEWE, color = challenge)) +
-  geom_jitter() +
-  #geom_boxplot() +
-  facet_wrap("EXP") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("IFNy_CEWE_X_OPG_in_challenge_EXP")
 
-ggplot(subset(complete, !is.na(complete$IFNy_CEWE)), 
-       aes(x = infHistory, y = IFNy_CEWE, color = challenge)) +
-  geom_jitter() +
-  geom_boxplot() +
-  # facet_wrap("challenge", scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold", angle = 45), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("IFNy_CEWE_X_OPG_in_challenge_EXP")
-
-
-cor.test(~IFNy_FEC+IFNy_CEWE, subset(complete, dpi == 8 & EXP %in% "E7"))
-### NS!
-
-ggplot(subset(complete, EXP%in%"P3"), 
-       aes(y = IFNy_CEWE, x = delta, color = challenge, shape=Eim_MC)) +
-  geom_point() +
-  facet_wrap(~primary)+
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("")
-
-ggplot(complete, aes(y = OPG, x = dpi, color = EXP)) +
-  geom_jitter(width=0.2) +
-  facet_grid(primary~challenge, scales="free_y") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("OPG_x_dpi_in_EXP_by_primaryxchallenge")
-
-ggplot(complete, aes(y = OPG, x = dpi, color = primary, group_by("EH_ID"))) +
-  geom_jitter(width=0.2) +
-  facet_wrap("EXP", scales="free_y") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("OPG_x_dpi_by_EXP")
-
-ggplot(P3, aes(y = IFNy_CEWE, x = delta, color = OPG)) +
-  geom_point() +
-  facet_wrap("challenge") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("")
-
-ggplot(E7, aes(y = IFNy_FEC, x = IFNy_CEWE , shape = Caecum)) +
-  geom_point() +
-  facet_wrap("infHistory") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("")
-
-ggplot(P3, aes(y = IFNy_CEWE, x = OPG)) +
-  geom_text_repel(aes(label=delta)) +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("")
-
-
-
-ggplot(IRG6, aes(y = IRG6, x = delta)) +
-  geom_point() +
-  facet_wrap("challenge", scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("")
-################################################### Enter FACS
-
-
-ggplot(immuno1, aes(x = Eimeria.c, y = counts, color = Eimeria.c)) +
-  geom_boxplot() +
-  geom_jitter() +
-  # ylim(2, -17) +
-  facet_wrap("pop", scales = "free") +
-  stat_compare_means(aes(label = ..p.signif..)) +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("")
+#################### FACS
 
 ###### IFN CEWE vs cell populations
 
-ggplot(immuno,
-       aes(x = IFNy_CEWE , y = counts, color = Position)) +
+### don't have that yet
+# # IFN effect on wild
+# wild <- subset(immuno, immuno$EXP == "wild")
+# ggplot(subset(wild, !is.na(wild$Eim_MC)),
+#        aes(x = IFNy_CEWE , y = counts, color = Eim_MC)) +
+#   geom_point() +
+#   geom_smooth(method = "lm") +
+#   facet_wrap("pop", scales = "free", drop = T) +
+#   labs(y="% of populations", x = "IFNy (ng/mL)", colour = "infected") +
+#   theme(axis.text=element_text(size=12, face = "bold"),
+#         axis.text.x = element_text(angle = 45, hjust = 1),
+#         title = element_text(size = 16, face = "bold"),
+#         axis.title=element_text(size=14,face="bold"),
+#         strip.text.x = element_text(size = 14, face = "bold"),
+#         legend.text=element_text(size=12, face = "bold"),
+#         legend.title = element_text(size = 12, face = "bold"))
+
+
+lab <- subset(immuno, immuno$EXP == "lab")
+
+ggplot(lab,aes(x = IFNy_CEWE , y = counts, color = Eim_MC)) +
   geom_point() +
   geom_smooth(method = "lm") +
-  facet_grid(Eimeria.c~pop, scales = "free") +
+  facet_wrap("pop", scales = "free", drop = T) +
   labs(y="% of populations", x = "IFNy (ng/mL)", colour = "infected") +
   theme(axis.text=element_text(size=12, face = "bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        title = element_text(size = 16, face = "bold"),
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("Caecum IFNy effect on cell populations")
+               axis.text.x = element_text(angle = 45, hjust = 1),
+               title = element_text(size = 16, face = "bold"),
+               axis.title=element_text(size=14,face="bold"),
+               strip.text.x = element_text(size = 14, face = "bold"),
+               legend.text=element_text(size=12, face = "bold"),
+               legend.title = element_text(size = 12, face = "bold")) 
 
-######## ferrisi only
-ggplot(subset(immuno, challenge == "E64"), aes(y = counts, x = IFNy_CEWE, color = Eim_MC)) +
+
+########### lab genes vs cell populations
+ggplot(lab, aes(y = counts, x = NE, color = Eim_MC)) +
   geom_point() +
   geom_smooth(method = "lm") +
-  # ylim(2, -17) +
-  facet_grid(Position~pop, scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("IFNy Caecum vs cell populations")
-
-######### falciformis only
-ggplot(subset(immuno, challenge == "E88"), aes(y = counts, x = IFNy_CEWE, color = Eim_MC)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  # ylim(2, -17) +
-  facet_grid(Position~pop, scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("IFNy Caecum vs cell populations")
-
-########### genes vs cell populations
-ggplot(immuno, aes(y = counts, x = NE, color = Eim_MC)) +
-  geom_point() +
-  xlim(2, -17) +
   facet_grid(Target~pop, scales = "free") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("Gene expression vs cell populations")
+        legend.title = element_text(size = 12, face = "bold"))
 ############ ferrisi only
 
 ########## E7 vs HZ19
