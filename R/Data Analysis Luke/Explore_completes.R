@@ -185,49 +185,45 @@ Wch <- dplyr::select(Wch.c, Eimeria.c, Eimeria.p, EH_ID)
 genes <- merge(genes, Wch)
 genes <- distinct(genes)
 genes <- na.omit(genes)
-# genes <- genes[-c(122, 123, 3),]
 
-# immuno <- merge(immuno, genes)
+#### add wild gene expression
+HZgenes <- read.csv(text = getURL(""))
+colnames(HZgenes)[1] <- "EH_ID"
+genes$EXP[genes$EXP == "E7"] <- "lab"
+
+# sig <- subset(FACScombine, subset = pop %in% c("CD4", "Div_Treg", "Treg17", "Th17", "Div_Th17", "CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8"))
+# sig <- data.frame(sig)
+# sig$pop <- as.character(sig$pop)
+# # remove horrible outliers
+# sig <- sig[-c(1174),]
+# sig <- sig[-c(1173),]
+# sig <- sig[-c(634),]
+# 
+# sig1 <- merge(sig, Wch.c, by = "EH_ID")
+# Pos <- select(immuno, EH_ID, Position)
+# sig1 <- distinct(sig1)
+# sig1 <- merge(Pos, sig1, by = "EH_ID")
+# sig1 <- distinct(sig1)
+# 
+# PosHZ <- select(FACSHZ, Mouse_ID, Position, CD4)
+# colnames(PosHZ)[1] <- "EH_ID"
+# FACStHZ <- full_join(PosHZ, FACStHZ)
 # immuno <- distinct(immuno)
-immuno1 <- immuno[-c(5908:5910),]
-
-
-sig <- subset(FACScombine, subset = pop %in% c("CD4", "Div_Treg", "Treg17", "Th17", "Div_Th17", "CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8"))
-sig <- data.frame(sig)
-sig$pop <- as.character(sig$pop)
-# remove horrible outliers
-sig <- sig[-c(1174),]
-sig <- sig[-c(1173),]
-sig <- sig[-c(634),]
-
-sig1 <- merge(sig, Wch.c, by = "EH_ID")
-Pos <- select(immuno, EH_ID, Position)
-sig1 <- distinct(sig1)
-sig1 <- merge(Pos, sig1, by = "EH_ID")
-sig1 <- distinct(sig1)
-
-PosHZ <- select(FACSHZ, Mouse_ID, Position, CD4)
-colnames(PosHZ)[1] <- "EH_ID"
-FACStHZ <- full_join(PosHZ, FACStHZ)
-immuno <- distinct(immuno)
 
 ##################### pure graphing from here, any general code above ####################################################
-ggplot(subset(immuno, !is.na(immuno$Position)), aes(x = Position, y = counts, color = Position)) +
-      geom_boxplot(outlier.shape = NA) +
-      geom_jitter() +
-      facet_wrap("pop", scales = "free") +
-      labs(y="deltaCT = Target - HKG", x = "infected", colour = "infected") +
-      theme(axis.text=element_text(size=12, face = "bold"),
-               title = element_text(size = 16, face = "bold"),
-               axis.title=element_text(size=14,face="bold"),
-               strip.text.x = element_text(size = 14, face = "bold"),
-               legend.text=element_text(size=12, face = "bold"),
-               legend.title = element_text(size = 12, face = "bold"))+
-      ggtitle("Gene expression in wild samples")
-
-
-
-
+# ggplot(immuno, aes(x = EXP, y = counts)) +
+#   geom_boxplot(outlier.shape = NA) +
+#   geom_jitter() +
+#   facet_wrap("pop", scales = "free") +
+#   labs(y="deltaCT = Target - HKG", x = "infected", colour = "infected") +
+#   theme(axis.text=element_text(size=12, face = "bold"),
+#         title = element_text(size = 16, face = "bold"),
+#         axis.title=element_text(size=14,face="bold"),
+#         strip.text.x = element_text(size = 14, face = "bold"),
+#         legend.text=element_text(size=12, face = "bold"),
+#         legend.title = element_text(size = 12, face = "bold"))+
+#   ggtitle("Gene expression in wild samples")
+# 
 
 ################## Wchange graphs ###########################################################################
 
@@ -263,95 +259,49 @@ ggplot(Wch.p,
 
 ##########################################################################################################
 ##################### OPG graphs
-ggplot(subset(complete, !is.na(complete$primary)), 
-       aes(x = dpi, y = OPG, color = primary, group = primary)) +
+# falciformis shedding
+ggplot(subset(Wch.p, Wch.p$Eimeria.p == "E.falciformis"), 
+       aes(x = dpi, y = OPG, color = Eimeria.p, group = Eimeria.p)) +
   geom_point() +
   geom_smooth() +
-  facet_wrap("EXP", scales = "free") +
+  labs(y="oocysts per gramm of feces", x = "days post infection", colour = "species") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("OPGXdpi_by_EXP_primary")
+        legend.title = element_text(size = 12, face = "bold"))
 
+# falciformis and ferrisi shedding
 ggplot(Wch.p, 
        aes(x = dpi, y = OPG, color = Eimeria.p, group = Eimeria.p)) +
   geom_point() +
   geom_smooth() +
-  #facet_wrap("EXP", scales = "free") +
+  labs(y="oocysts per gramm of feces", x = "days post infection", colour = "species") +
   theme(axis.text=element_text(size=12, face = "bold"), 
         title = element_text(size = 16, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("OPG per dpi by Eimeria strain")
-
-
-
-ggplot(subset(complete, !is.na(complete$challenge)), 
-       aes(x = dpi, y = OPG, color = challenge, group = challenge)) +
-  geom_point() +
-  geom_smooth() +
-  facet_wrap("EXP", scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("OPGXdpi_by_EXP_challenge")
+        legend.title = element_text(size = 12, face = "bold"))
 
 #####################################################################################################################
 ############ genes
-
-
-ggplot(subset(genes, Eim_MC == "pos"), 
-       aes(x = Eimeria.c, y = NE, color = Eimeria.c)) +
-  geom_boxplot() +
+# lab gene expression
+ggplot(subset(immuno, immuno$EXP == "lab")), aes(x = Eim_MC, y = NE, colour = Eim_MC)) +
+  geom_boxplot(outlier.shape = NA) +
   geom_jitter() +
   stat_compare_means(aes(label = ..p.signif..)) +
   facet_wrap("Target", scales = "free") +
-  labs(y="deltaCT = Target - HKG", x = "infection strain", colour = "infection strain") +
+  labs(y="deltaCT = Target - HKG", x = "infected", colour = "infected") +
   theme(axis.text=element_text(size=12, face = "bold"),
         title = element_text(size = 16, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("Gene expression difference between Eimeria infections")
+        legend.title = element_text(size = 12, face = "bold"))
 
-
-ggplot(subset(genes, EXP == "E7"| Eim_MC == "pos"), 
-       aes(x = Eimeria.c, y = NE,  group = Eimeria.c)) +
-  geom_boxplot() +
-  geom_jitter() +
-  stat_compare_means(aes(label = ..p.signif..)) +
-  facet_wrap("Target", scales = "free") +
-  labs(y="deltaCT = Target - HKG", x = "infection strain") +
-  theme(axis.text=element_text(size=12, face = "bold"),
-        title = element_text(size = 16, face = "bold"),
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("Eimeria positive mice gene expression")
-
-
-
-ggplot(genes, 
-       aes(x = Eim_MC, y = NE, color = Eim_MC, group = Eim_MC)) +
-  geom_boxplot() +
-  geom_jitter() +
-  facet_grid(Target~EXP, scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("")
-
-ggplot(genes, 
+# wild gene expression
+ggplot(immuno, 
        aes(x = Eim_MC, y = NE, color = Eim_MC, group = Eim_MC)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter() +
@@ -363,34 +313,7 @@ ggplot(genes,
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("Gene expression in laboratory samples")
-###########################################################
-ggplot(subset(complete, !is.na(complete$challenge)), 
-       aes(x = challenge, y = CXCR3, color = EXP)) +
-  geom_jitter() +
-  geom_boxplot() +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("CXCR3_experiment_difference")
-
-ggplot(subset(complete, !is.na(complete$challenge)), 
-       aes(x = challenge, y = IRG6, color = EXP)) +
-  geom_jitter() +
-  geom_boxplot() +
-  # facet_wrap("infHistory") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("IRG6_experiment_difference")
-
-
-
+        legend.title = element_text(size = 12, face = "bold"))
 
 
 ##################################################################################################
