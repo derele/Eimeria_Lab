@@ -108,36 +108,8 @@ colnames(FACStHZ)[1] <- "EH_ID"
 FACScombine <- rbind(FACSt, FACStHZ)
 
 ################################################################################################################################
-# test Pos vs ANT 
-Eim <- distinct(Eim)
-Eim <- na.omit(Eim)
-POSvsANT <- full_join(FACS.long, Eim)
-POSvsANT <- distinct(POSvsANT)
-POSvsANT <- na.omit(POSvsANT)
-POSvsANT$Eim_MC <- as.character(POSvsANT$Eim_MC)
-POSvsANT$Eim_MC[POSvsANT$Eim_MC == "pos"] <- "positive"
-POSvsANT$Eim_MC[POSvsANT$Eim_MC == "neg"] <- "negative"
 
-ggplot(POSvsANT,
-  aes(x = pop, y = counts, color = Eim_MC)) +
-  geom_boxplot() +
-  #geom_text() +
-  stat_compare_means(aes(label = ..p.signif..), size = 6, label.y = 110) + 
-  #geom_jitter() +
-  geom_vline(xintercept = c(0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5)) +
-  #facet_wrap("pop", scales = "free") +
-  #geom_signif(comparisons = list(c("Anterior", "Posterior")), map_signif_level=TRUE) +
-  labs(y="% of cell populations", x = "Gated population", colour = "infection") +
-  theme(panel.grid = element_blank(),
-        axis.text=element_text(size=14, face = "bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        title = element_text(size = 16, face = "bold"),
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))
-   #ggtitle("Gene expression in wild samples")
-       
+
 #####################################################################################################################################
 
 # merge with genes
