@@ -173,6 +173,15 @@ genes$Eim_MC[genes$Eim_MC == "neg"] <- "negative"
 
 # god knows what happens here (investigate later)
 immuno <- merge(HZgenes, immuno, all = T)
+#### add IFN CEWE HZ19
+IFN_HZ <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/ELISAs/HZ19_CEWE_ELISAs_complete.csv"))
+IFN_HZ$X <- NULL
+colnames(IFN_HZ)[1] <- "EH_ID"
+colnames(IFN_HZ)[2] <- "IFNy_CEWE"
+
+IFNcomplete <- rbind(IFN, IFN_HZ)
+WxL <- merge(IFNcomplete, FACScombine, all = T)
+WxL <- merge(WxL, MC, all =T)
 
 # sig <- subset(FACScombine, subset = pop %in% c("CD4", "Div_Treg", "Treg17", "Th17", "Div_Th17", "CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8"))
 # sig <- data.frame(sig)
@@ -245,7 +254,7 @@ ggplot(Wch.p,
 # falciformis shedding
 ggplot(subset(Wch.p, Wch.p$Eimeria.p == "E.falciformis"), 
        aes(x = dpi, y = OPG, color = Eimeria.p, group = Eimeria.p)) +
-  geom_point() +
+  geom_jitter(width = 0.2) +
   geom_smooth() +
   labs(y="oocysts per gramm of feces", x = "days post infection", colour = "species") +
   theme(axis.text=element_text(size=12, face = "bold"), 
@@ -257,7 +266,7 @@ ggplot(subset(Wch.p, Wch.p$Eimeria.p == "E.falciformis"),
 # falciformis and ferrisi shedding
 ggplot(Wch.p, 
        aes(x = dpi, y = OPG, color = Eimeria.p, group = Eimeria.p)) +
-  geom_point() +
+  geom_jitter(width = 0.2) +
   geom_smooth() +
   labs(y="oocysts per gramm of feces", x = "days post infection", colour = "species") +
   theme(axis.text=element_text(size=12, face = "bold"), 
@@ -274,7 +283,7 @@ ggplot(HZgenes,
        aes(x = Eim_MC, y = NE, colour = Eim_MC)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter() +
-  stat_compare_means(aes(label = ..p.signif..)) +
+  stat_compare_means(aes(label = ..p.signif.., size = 5)) +
   facet_wrap("Target", scales = "free") +
   labs(y="deltaCT = Target - HKG", x = "infected", colour = "infected") +
   theme(axis.text=element_text(size=12, face = "bold"),
@@ -372,21 +381,17 @@ ggplot(FACScombine,
         legend.title = element_text(size = 12, face = "bold"))+
   ggtitle("FACS comparison of wild and lab")
 
-##### keep only significant ones
-
-
-
-
-
-ggplot(sig,
-       aes(x = EXP , y = counts, color = EXP)) +
+##### infected lab vs uninfected lab populations
+ggplot(subset(WxL, !is.na(WxL$Eim_MC)), # subset by only present MCs
+       aes(x =  Eim_MC, y = counts, color = Eim_MC)) +
   geom_boxplot() +
   geom_jitter() +
-  stat_compare_means(aes(label = ..p.signif..)) +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =0.9) + # set size of stars and position of label
   facet_wrap("pop", scales = "free") +
   labs(y="% of populations", x = "population", colour = "origin") +
   theme(axis.text=element_text(size=12, face = "bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.text.x = element_blank(),# remove the x axis labels
+        # axis.text.x = element_text(angle = 45, hjust = 1), # adjust x axis labels to rotate
         title = element_text(size = 16, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
@@ -395,75 +400,6 @@ ggplot(sig,
   ggtitle("FACS comparison of wild and lab")
 
 
-ggplot(FACScombine,
-       aes(x = Eimeria.c , y = counts)) +
-  geom_boxplot() +
-  geom_jitter() +
-  stat_compare_means(aes(label = ..p.signif..)) +
-  facet_wrap("pop", scales = "free") +
-  labs(y="% of populations", x = "Eimeria species", colour = "origin") +
-  theme(axis.text=element_text(size=12, face = "bold"),
-        #axis.text.x = element_text(angle = 45, hjust = 1),
-        title = element_text(size = 16, face = "bold"),
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("Eimeria immune cell populations comparison")
-
-ggplot(sig1,
-       aes(x = Position , y = counts, color = EXP)) +
-  geom_boxplot() +
-  geom_jitter() +
-  stat_compare_means(aes(label = ..p.signif..)) +
-  facet_grid("pop", scales = "free") +
-  labs(y="% of populations", x = "Eimeria species", colour = "origin") +
-  theme(axis.text=element_text(size=12, face = "bold"),
-        #axis.text.x = element_text(angle = 45, hjust = 1),
-        title = element_text(size = 16, face = "bold"),
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("Eimeria immune cell populations comparison")
 
 
-
-
-
-ggplot(subset(immuno, !is.na(immuno$counts)),
-       aes(x = IFNy_CEWE , y = counts, color = Eimeria.c)) +
-  geom_smooth(method = "lm") +
-  geom_point() +
-  
-  #stat_compare_means(aes(label = ..p.signif..)) +
-  
-  facet_wrap("pop", scales = "free") +
-  labs(y="% of populations", x = "IFNy (ng/mL)", colour = "infected") +
-  theme(axis.text=element_text(size=12, face = "bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        title = element_text(size = 16, face = "bold"),
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("Caecum IFNy effect on cell populations")
-
-# wild
-
-ggplot(FACStHZ, 
-       aes(x = Position , y = counts)) +
-  geom_boxplot() +
-  geom_jitter() +
-  stat_compare_means(aes(label = ..p.signif..)) +
-  facet_wrap("pop", scales = "free") +
-  labs(y="% of populations", x = "IFNy (ng/mL)", colour = "infected") +
-  theme(axis.text=element_text(size=12, face = "bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        title = element_text(size = 16, face = "bold"),
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("Caecum IFNy effect on cell populations")
 
