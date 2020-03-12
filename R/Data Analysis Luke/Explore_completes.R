@@ -181,7 +181,19 @@ colnames(IFN_HZ)[2] <- "IFNy_CEWE"
 
 IFNcomplete <- rbind(IFN, IFN_HZ)
 WxL <- merge(IFNcomplete, FACScombine, all = T)
+MC <- dplyr::select(delta, EH_ID, Eim_MC)
 WxL <- merge(WxL, MC, all =T)
+
+Wch.p <- subset(Wch.p, !Wch.p$dpi == 0)
+Wch.p$OPG[is.na(Wch.p$OPG)] <- 0
+
+lab <- subset(immuno, immuno$EXP == "lab")
+wild <- subset(immuno, immuno$EXP == "wild")
+lab$species[lab$species == "E.falciformis"] <- "uninfected"
+
+FACS_IFN <- merge(FACScombine, IFNcomplete, all = T)
+
+
 
 # sig <- subset(FACScombine, subset = pop %in% c("CD4", "Div_Treg", "Treg17", "Th17", "Div_Th17", "CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8"))
 # sig <- data.frame(sig)
@@ -230,9 +242,9 @@ ggplot(subset(Wch.p, Wch.p$Eimeria.p == "E.falciformis"),
         title = element_text(size = 16, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))
-#ggtitle("Weight change per dpi by Eimeria strain")
+        legend.text=element_text(size=12, face = "bold.italic"),
+        legend.title = element_blank(),
+        legend.position = c(0.2, 0.1))
 
 # complete plot
 ggplot(Wch.p,
@@ -245,13 +257,14 @@ ggplot(Wch.p,
         title = element_text(size = 16, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))
-  #ggtitle("Weight change per dpi by Eimeria strain")
-
+        legend.text=element_text(size=12, face = "bold.italic"),
+        legend.title = element_blank(),
+        legend.position = c(0.2, 0.1))
+  
 ##########################################################################################################
 ##################### OPG graphs
 # falciformis shedding
+
 ggplot(subset(Wch.p, Wch.p$Eimeria.p == "E.falciformis"), 
        aes(x = dpi, y = OPG, color = Eimeria.p, group = Eimeria.p)) +
   geom_jitter(width = 0.2) +
@@ -260,8 +273,9 @@ ggplot(subset(Wch.p, Wch.p$Eimeria.p == "E.falciformis"),
   theme(axis.text=element_text(size=12, face = "bold"), 
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))
+        legend.text=element_text(size=12, face = "bold.italic"),
+        legend.title = element_blank(),
+        legend.position = c(0.2, 0.7))
 
 # falciformis and ferrisi shedding
 ggplot(Wch.p, 
@@ -273,8 +287,9 @@ ggplot(Wch.p,
         title = element_text(size = 16, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))
+        legend.text=element_text(size=12, face = "bold.italic"),
+        legend.title = element_blank(),
+        legend.position = c(0.2, 0.7))
 
 #####################################################################################################################
 ############ genes
@@ -283,59 +298,57 @@ ggplot(HZgenes,
        aes(x = Eim_MC, y = NE, colour = Eim_MC)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter() +
-  stat_compare_means(aes(label = ..p.signif.., size = 5)) +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =0.95) +
   facet_wrap("Target", scales = "free") +
   labs(y="deltaCT = Target - HKG", x = "infected", colour = "infected") +
   theme(axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
         title = element_text(size = 16, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"),
+        legend.title = element_blank(),
         legend.position = c(0.8, 0.2))
 
 # lab gene expression
 ggplot(genes, aes(x = Eim_MC, y = NE, color = Eim_MC, group = Eim_MC)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter() +
-  stat_compare_means(aes(label = ..p.signif..)) +
+  stat_compare_means(aes(label = ..p.signif..),  size = 8, label.y.npc =0.95) +
   facet_wrap("Target", scales = "free") +
   labs(y="deltaCT = Target - HKG", x = "infected", colour = "infected") +
   theme(axis.text=element_text(size=12, face = "bold"),
+        title = element_text(size = 16, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
+
+
+##################################################################################################
+###### IFN CEWE vs cell populations
+
+### don't have that yet
+# # IFN effect on wild
+
+ggplot(subset(FACS_IFN, (FACS_IFN$EXP == "wild")),
+       aes(x = IFNy_CEWE , y = counts)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap("pop", scales = "free", drop = T) +
+  labs(y="% of populations", x = "IFNy (ng/mL)", colour = "infected") +
+  theme(axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1),
         title = element_text(size = 16, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_text(size = 12, face = "bold"))
 
-
-##################################################################################################
-################### IFN_CEWE 
-
-#################### FACS
-
-###### IFN CEWE vs cell populations
-
-### don't have that yet
-# # IFN effect on wild
-# wild <- subset(immuno, immuno$EXP == "wild")
-# ggplot(subset(wild, !is.na(wild$Eim_MC)),
-#        aes(x = IFNy_CEWE , y = counts, color = Eim_MC)) +
-#   geom_point() +
-#   geom_smooth(method = "lm") +
-#   facet_wrap("pop", scales = "free", drop = T) +
-#   labs(y="% of populations", x = "IFNy (ng/mL)", colour = "infected") +
-#   theme(axis.text=element_text(size=12, face = "bold"),
-#         axis.text.x = element_text(angle = 45, hjust = 1),
-#         title = element_text(size = 16, face = "bold"),
-#         axis.title=element_text(size=14,face="bold"),
-#         strip.text.x = element_text(size = 14, face = "bold"),
-#         legend.text=element_text(size=12, face = "bold"),
-#         legend.title = element_text(size = 12, face = "bold"))
-
-
-lab <- subset(immuno, immuno$EXP == "lab")
-
+# lab IFN CEWE vs populations
 ggplot(lab,aes(x = IFNy_CEWE , y = counts, color = Eim_MC)) +
   geom_point() +
   geom_smooth(method = "lm") +
@@ -360,10 +373,31 @@ ggplot(lab, aes(y = counts, x = NE, color = Eim_MC)) +
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_text(size = 12, face = "bold"))
+#### genes vs IFN
+ggplot(lab, aes(y = NE, x = IFNy_CEWE, color = Eim_MC)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~Target, scales = "free") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))
+
+# IFN vs cell populations
+ggplot(lab, aes(y = counts, x = IFNy_CEWE, color = Eim_MC)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~pop, scales = "free") +
+  theme(axis.text=element_text(size=12, face = "bold"), 
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))
 ############ ferrisi only
 
-########## E7 vs HZ19
-FACScombine <- merge(FACScombine, Wch.c, by = "EH_ID")
+########## E7 vs HZ19 FACS
+FACScombine <- merge(FACScombine, Wch.c)
 FACScombine <- distinct(FACScombine)
 ggplot(FACScombine,
        aes(x = EXP , y = counts, color = EXP)) +
@@ -372,14 +406,48 @@ ggplot(FACScombine,
   stat_compare_means(aes(label = ..p.signif..)) +
   facet_wrap("pop", scales = "free") +
   labs(y="% of populations", x = "population", colour = "origin") +
-  theme(axis.text=element_text(size=12, face = "bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1),
+  theme(axis.text=element_blank(),
         title = element_text(size = 16, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("FACS comparison of wild and lab")
+        legend.title = element_blank())
+########## E7 vs HZ19 CEWE IFNy
+
+
+ggplot(FACScombine,
+       aes(x = EXP , y = counts, color = EXP)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(aes(label = ..p.signif..)) +
+  facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "population", colour = "origin") +
+  theme(axis.text=element_text(size = 12, face = "bold"),
+        axis.text.x = element_blank(),
+        title = element_text(size = 16, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
+
+
+ggplot(subset(FACS_IFN, !is.na(FACS_IFN$EXP)),
+       aes(x = EXP , y = IFNy_CEWE)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(aes(label = ..p.signif..)) +
+  facet_wrap("EXP", scales = "free") +
+  labs(y="% of populations", x = "population", colour = "origin") +
+  theme(axis.text=element_text(size = 12, face = "bold"),
+        axis.text.x = element_blank(),
+        title = element_text(size = 16, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
+
+
+
 
 ##### infected lab vs uninfected lab populations
 ggplot(subset(WxL, !is.na(WxL$Eim_MC)), # subset by only present MCs
