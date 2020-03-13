@@ -192,7 +192,7 @@ wild <- subset(immuno, immuno$EXP == "wild")
 lab$species[lab$species == "E.falciformis"] <- "uninfected"
 
 FACS_IFN <- merge(FACScombine, IFNcomplete, all = T)
-
+FACScombine <- merge(FACScombine, Eim, all =T)
 
 
 # sig <- subset(FACScombine, subset = pop %in% c("CD4", "Div_Treg", "Treg17", "Th17", "Div_Th17", "CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8"))
@@ -312,6 +312,8 @@ ggplot(HZgenes,
         legend.position = c(0.8, 0.2))
 
 # lab gene expression
+genes <- genes[!(genes$Target=="IRG6"& genes$NE > 19),]
+
 ggplot(genes, aes(x = Eim_MC, y = NE, color = Eim_MC, group = Eim_MC)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter() +
@@ -363,16 +365,7 @@ ggplot(lab,aes(x = IFNy_CEWE , y = counts, color = Eim_MC)) +
                legend.title = element_text(size = 12, face = "bold")) 
 
 
-########### lab genes vs cell populations
-ggplot(lab, aes(y = counts, x = NE, color = Eim_MC)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  facet_grid(Target~pop, scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))
+
 #### genes vs IFN
 ggplot(lab, aes(y = NE, x = IFNy_CEWE, color = Eim_MC)) +
   geom_point() +
@@ -384,90 +377,448 @@ ggplot(lab, aes(y = NE, x = IFNy_CEWE, color = Eim_MC)) +
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_text(size = 12, face = "bold"))
 
-# IFN vs cell populations
-ggplot(lab, aes(y = counts, x = IFNy_CEWE, color = Eim_MC)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  facet_wrap(~pop, scales = "free") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))
-############ ferrisi only
 
 ########## E7 vs HZ19 FACS
-FACScombine <- merge(FACScombine, Wch.c)
-FACScombine <- distinct(FACScombine)
-ggplot(FACScombine,
+# overall
+FACScombine <- FACScombine[!(FACScombine$pop=="Treg_prop"),]
+FACScombine <- FACScombine[!(FACScombine$pop=="Treg"& FACScombine$counts > 40),]
+FACScombine <- FACScombine[!(FACScombine$pop=="Th17"& FACScombine$counts > 20),]
+FACScombine <- FACScombine[!(FACScombine$pop=="Treg17"& FACScombine$counts > 50),]
+
+
+ggplot(subset(FACScombine, !is.na(FACScombine$EXP)),
        aes(x = EXP , y = counts, color = EXP)) +
   geom_boxplot() +
   geom_jitter() +
-  stat_compare_means(aes(label = ..p.signif..)) +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
   facet_wrap("pop", scales = "free") +
-  labs(y="% of populations", x = "population", colour = "origin") +
-  theme(axis.text=element_blank(),
-        title = element_text(size = 16, face = "bold"),
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_blank())
-########## E7 vs HZ19 CEWE IFNy
-
-
-ggplot(FACScombine,
-       aes(x = EXP , y = counts, color = EXP)) +
-  geom_boxplot() +
-  geom_jitter() +
-  stat_compare_means(aes(label = ..p.signif..)) +
-  facet_wrap("pop", scales = "free") +
-  labs(y="% of populations", x = "population", colour = "origin") +
-  theme(axis.text=element_text(size = 12, face = "bold"),
+  labs(y="% of populations", x = "origin", colour = "origin") +
+  scale_color_manual(values=c("red", "darkgreen"))+
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
         axis.text.x = element_blank(),
-        title = element_text(size = 16, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_blank())
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1))
 
+immunogenes <- dplyr::select(immuno, EXP, NE, Target, EH_ID)
+immunogenes <- distinct(immunogenes)
 
-ggplot(subset(FACS_IFN, !is.na(FACS_IFN$EXP)),
-       aes(x = EXP , y = IFNy_CEWE)) +
+ggplot(subset(immunogenes, !is.na(immunogenes$EXP)),
+       aes(x = EXP , y = NE, color = EXP)) +
   geom_boxplot() +
   geom_jitter() +
-  stat_compare_means(aes(label = ..p.signif..)) +
-  facet_wrap("EXP", scales = "free") +
-  labs(y="% of populations", x = "population", colour = "origin") +
-  theme(axis.text=element_text(size = 12, face = "bold"),
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  facet_wrap("Target", scales = "free") +
+  labs(y="delta", x = "origin", colour = "origin") +
+  scale_color_manual(values=c("red", "darkgreen"))+
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
         axis.text.x = element_blank(),
-        title = element_text(size = 16, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1))
+
+
+
+############################################################ infected lab
+ggplot(subset(FACScombine, FACScombine$EXP == "lab"),
+       aes(x = Eim_MC , y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "infected", colour = "infected") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
+################## graph the flow chart style of populations
+### lab CD4
+ggplot(subset(lab, (lab$pop == "CD4")),
+       aes(x = Eim_MC , y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  #facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "infection", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1)) +
+  ggtitle("CD4+ in laboratory mice")
+### lab Th1
+ggplot(subset(lab, (lab$pop == "Th1")),
+       aes(x = Eim_MC , y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  #facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "infection", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1))+
+  ggtitle("Th1 in laboratory mice")
+
+### lab Dividing Th1
+ggplot(subset(lab, (lab$pop == "Div_Th1")),
+       aes(x = Eim_MC , y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  #facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "infection", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1)) +
+  ggtitle("Actively dividing Th1 in laboratory mice")
+
+### CD4 IFN+
+ggplot(subset(lab, (lab$pop == "IFNy_CD4")),
+       aes(x = Eim_MC , y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  #facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "infection", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1))
+
+#### CD8
+ggplot(subset(lab, (lab$pop == "CD8")),
+       aes(x = Eim_MC , y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  #facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "infection", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1)) +
+  ggtitle("CD8+ in laboratory mice")
+#### activated CD8
+
+ggplot(subset(lab, (lab$pop == "Act_CD8")),
+       aes(x = Eim_MC , y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  #facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "infection", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1)) +
+  ggtitle("T-bet+ (activated) CD8+ in laboratory mice")
+
+ggplot(subset(lab, (lab$pop == "Div_Act_CD8")),
+       aes(x = Eim_MC , y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  #facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "infection", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1))+
+  ggtitle("Dividing T-bet+ (activated) CD8+ in laboratory mice")
+
+# lab regulatory
+reg <- filter(lab, lab$pop == "Treg")
+reg1 <- filter(lab, lab$pop == "Div_Treg")
+reg2 <- filter(lab, lab$pop == "Th17")
+reg3 <- filter(lab, lab$pop == "Treg17")
+reg4 <- filter(lab, lab$pop == "Div_Th17")
+reg5 <- filter(lab, lab$pop == "IL17A_CD4")
+
+reg <- rbind(reg, reg1)
+reg <- rbind(reg,reg2)
+reg <- rbind(reg,reg3)
+reg <- rbind(reg,reg4)
+reg <- rbind(reg, reg5)
+
+reg <- reg[!(reg$pop=="Treg"& reg$counts > 20),]
+reg <- reg[!(reg$pop=="Th17"& reg$counts > 3),]
+
+ggplot(reg,
+       aes(x = Eim_MC , y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =0.9) +
+  facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "infection", colour = "origin") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_blank())
 
+########################### lab
+########## IFNy CEWE vs IFNy+ CD8 lab
+Lab_IFNCD8 <- dplyr::select(FACScombine, EH_ID, pop, counts, EXP, Eim_MC)
+Lab_IFNCD8 <- subset(Lab_IFNCD8, Lab_IFNCD8$EXP== "lab")
+Lab_IFNCD8 <- subset(Lab_IFNCD8, Lab_IFNCD8$pop== "IFNy_CD8")
+IFN_CD8 <- merge(Lab_IFNCD8, IFN)
+IFN_CD8$Eim_MC <- as.character(IFN_CD8$Eim_MC)
+IFN_CD8$Eim_MC[IFN_CD8$Eim_MC == "pos"] <- "positive"
+IFN_CD8$Eim_MC[IFN_CD8$Eim_MC == "neg"] <- "negative"
 
-
-
-##### infected lab vs uninfected lab populations
-ggplot(subset(WxL, !is.na(WxL$Eim_MC)), # subset by only present MCs
-       aes(x =  Eim_MC, y = counts, color = Eim_MC)) +
-  geom_boxplot() +
-  geom_jitter() +
-  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =0.9) + # set size of stars and position of label
-  facet_wrap("pop", scales = "free") +
-  labs(y="% of populations", x = "population", colour = "origin") +
-  theme(axis.text=element_text(size=12, face = "bold"),
-        axis.text.x = element_blank(),# remove the x axis labels
-        # axis.text.x = element_text(angle = 45, hjust = 1), # adjust x axis labels to rotate
-        title = element_text(size = 16, face = "bold"),
+ggplot(IFN_CD8,
+       aes(x = IFNy_CEWE, y = counts, color = Eim_MC)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  #facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "IFN-g (ng/mL)", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
         axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"))+
-  ggtitle("FACS comparison of wild and lab")
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1))
+  # ggtitle("IFN-g+ abundance correlates to increased IFN-g+ CD8+ in laboratory mice")
+########## IFNy CEWE vs IFNy+ CD4 lab
+Lab_IFNCD4 <- dplyr::select(FACScombine, EH_ID, pop, counts, EXP, Eim_MC)
+Lab_IFNCD4 <- subset(Lab_IFNCD4, Lab_IFNCD4$EXP== "lab")
+Lab_IFNCD4 <- subset(Lab_IFNCD4, Lab_IFNCD4$pop== "IFNy_CD4")
+IFN_CD4 <- merge(Lab_IFNCD4, IFN)
+IFN_CD4$Eim_MC <- as.character(IFN_CD4$Eim_MC)
+IFN_CD4$Eim_MC[IFN_CD4$Eim_MC == "pos"] <- "positive"
+IFN_CD4$Eim_MC[IFN_CD4$Eim_MC == "neg"] <- "negative"
 
+ggplot(IFN_CD4,
+       aes(x = IFNy_CEWE, y = counts, color = Eim_MC)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  #facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "IFN-g (ng/mL)", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1))
+##################################################################################################################################
+######################################################################## IFNy CEWE vs IFNy+ CD4 wild
+Wild_IFNCD4 <- dplyr::select(FACScombine, EH_ID, pop, counts, EXP)
+Wild_IFNCD4 <- subset(Wild_IFNCD4, Wild_IFNCD4$EXP== "wild")
+Wild_IFNCD4 <- subset(Wild_IFNCD4, Wild_IFNCD4$pop== "IFNy_CD4")
+IFN_HZCD4 <- merge(Wild_IFNCD4, IFN_HZ)
 
+ggplot(IFN_HZCD4,
+       aes(x = IFNy_CEWE, y = counts)) +
+  geom_point() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  #facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "infection", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1))+
+  ggtitle("IFN-g+ CD4+ in wild mice")
+########## IFNy CEWE vs IFNy+ CD8 wild
+Wild_IFNCD8 <- dplyr::select(FACScombine, EH_ID, pop, counts, EXP)
+Wild_IFNCD8 <- subset(Wild_IFNCD8, Wild_IFNCD8$EXP== "wild")
+Wild_IFNCD8 <- subset(Wild_IFNCD8, Wild_IFNCD8$pop== "IFNy_CD8")
+IFN_HZCD8 <- merge(Wild_IFNCD8, IFN_HZ)
 
+ggplot(IFN_HZCD8,
+       aes(x = IFNy_CEWE, y = counts)) +
+  geom_point() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  #facet_wrap("pop", scales = "free") +
+  labs(y="% of populations", x = "infection", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.text.x = element_blank(),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank(),
+        legend.position = c(0.91, 0.1))+
+  ggtitle("IFN-g+ CD8+ in wild mice")
 
+#################################################################################################################################
+# let's look at genes
+# remove outlier 0287
+lab <- lab[!(lab$EH_ID=="LM_0287"),]
+lab <- lab[!(lab$EH_ID=="LM_0294"),]
+lab <- lab[!(lab$EH_ID=="LM_0275"),]
 
+ggplot(lab, aes(x = delta, y = NE, color = Eim_MC)) +
+  geom_point() +
+  #stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  geom_smooth(method = "lm") +
+  facet_grid(Target~Eim_MC, scales = "free_y") +
+  labs(y="deltaCT = Target - HKG", x = "deltaCT = Mouse - Eimeria", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.position = "none",
+        legend.text=element_blank(),
+        legend.title = element_blank())
+        #legend.position = c(0.91, 0.1))+
+  #ggtitle("delta NE lab")
+
+ggplot(wild, aes(x = delta, y = NE, color = Eim_MC)) +
+  geom_point() +
+  #stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  geom_smooth(method = "lm") +
+  facet_grid(Target~Eim_MC, scales = "free_y") +
+  labs(y="deltaCT = Target - HKG", x = "deltaCT = Mouse - Eimeria", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        legend.position = "none",
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
+        #legend.position = c(0.91, 0.1))+
+  #ggtitle("delta NE wild")
+
+##################### check this on cell sorting
+ggplot(lab, aes(x = delta, y = counts, color = Eim_MC)) +
+  geom_point() +
+  #stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~pop, scales = "free") +
+  labs(y="deltaCT = Target - HKG", x = "deltaCT = Mouse - Eimeria", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        legend.position = "none",
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
+#legend.position = c(0.91, 0.1))+
+#ggtitle("delta NE wild")
+
+#### and genes
+ggplot(subset(lab, lab$Target == "IL.12"), aes(x = NE, y = counts, color = Eim_MC)) +
+  geom_point() +
+  #stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  geom_smooth(method = "lm") +
+  facet_grid(Target~pop, scales = "free_x") +
+  labs(y="deltaCT = Target - HKG", x = "deltaCT = Mouse - Eimeria", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        legend.position = "none",
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
+#legend.position = c(0.91, 0.1))+
+#ggtitle("delta NE wild")
+
+################################## lab Th1 and Th17 IL-12 decline?
+labTh1 <- filter(lab, pop == "Th1")
+labTh1div <- filter(lab, pop == "Div_Th1")
+labTh1 <- full_join(labTh1, labTh1div)
+labTh17 <- filter(lab, pop == "Th17")
+labTh17div <- filter(lab, pop == "Div_Th17")
+labTh1 <- full_join(labTh1, labTh17div)
+labTh1 <- full_join(labTh1, labTh17)
+CXCR3 <- filter(labTh1, Target == "CXCR3")
+IL.12 <- filter(labTh1, Target == "IL.12")
+IRG6 <- filter(labTh1, Target == "IRG6")
+CXCR3.1 <- filter(lab, Target == "CXCR3")
+IL.12.1 <- filter(lab, Target =="IL.12")
+wildIL12 <- filter(wild, Target == "IL.12")
+IL12.1 <- filter(lab, Target == "IL.12")
+IRG6.1 <- filter(lab, Target == "IRG6")
+wildIRG6 <- filter(wild, Target == "IRG6")
+
+ggplot(wildIRG6, aes(x = NE, y = counts)) +
+  geom_point() +
+  #stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~pop, scales = "free") +
+  labs(y="deltaCT = Target - HKG", x = "deltaCT = Mouse - Eimeria", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        legend.position = "none",
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
+
+ggplot(IL.12, aes(x = NE, y = counts, color = Eim_MC)) +
+  geom_point() +
+  #stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~pop, scales = "free_y") +
+  labs(y="% of populations", x = "deltaCT = Target - HKG", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        legend.position = "none",
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
+
+ggplot(IRG6.1, aes(x = NE, y = counts, color = Eim_MC)) +
+  geom_point() +
+  #stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~pop, scales = "free") +
+  labs(y="deltaCT = Target - HKG", x = "deltaCT = Mouse - Eimeria", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        legend.position = "none",
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
