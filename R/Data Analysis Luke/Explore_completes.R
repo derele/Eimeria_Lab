@@ -134,8 +134,9 @@ immuno <- merge(immuno, IFN, by = "EH_ID")
 immuno <- distinct(immuno)
 
 
-delta <- dplyr::select(complete, delta, delta_clean, EH_ID, Eim_MC)
+delta <- dplyr::select(complete, delta, delta_clean, EH_ID, Eim_MC, Eimeria.c)
 delta <- na.omit(delta)
+delta <- data.frame(delta)
 immuno <- merge(immuno, delta)
 immuno <- distinct(immuno)
 
@@ -278,18 +279,7 @@ ggplot(subset(Wch.p, Wch.p$Eimeria.p == "E.falciformis"),
         legend.position = c(0.2, 0.7))
 
 # falciformis and ferrisi shedding
-ggplot(Wch.p, 
-       aes(x = dpi, y = OPG, color = Eimeria.p, group = Eimeria.p)) +
-  geom_jitter(width = 0.2) +
-  geom_smooth() +
-  labs(y="oocysts per gramm of feces", x = "days post infection", colour = "species") +
-  theme(axis.text=element_text(size=12, face = "bold"), 
-        title = element_text(size = 16, face = "bold"),
-        axis.title=element_text(size=14,face="bold"),
-        strip.text.x = element_text(size = 14, face = "bold"),
-        legend.text=element_text(size=12, face = "bold.italic"),
-        legend.title = element_blank(),
-        legend.position = c(0.2, 0.7))
+
 
 #####################################################################################################################
 ############ genes
@@ -819,6 +809,53 @@ ggplot(IRG6.1, aes(x = NE, y = counts, color = Eim_MC)) +
         axis.text=element_text(size=12, face = "bold"),
         axis.title=element_text(size=14,face="bold"),
         legend.position = "none",
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
+
+############ qPCR intensity
+Efer <- filter(.data = delta, Eimeria.c == "E.ferrisi")
+
+ggplot(Efer, aes(x = Eim_MC, y = delta, color = Eim_MC)) +
+  geom_point() +
+  geom_boxplot() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  labs(y="deltaCT = Target - HKG", x = "deltaCT = Mouse - Eimeria", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        legend.position = "none",
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
+
+uni <- filter(.data = delta, Eimeria.c == "UNI")
+uni1 <- filter(.data = delta, Eimeria.c == "E.falciformis")
+uni <- rbind(uni, uni1)
+
+ggplot(uni, aes(x = Eim_MC, y = delta, color = Eimeria.c)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  labs(y="deltaCT = Target - HKG", x = "deltaCT = Mouse - Eimeria", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank())
+
+delta2 <- rbind(uni, Efer)
+
+ggplot(delta2, aes(x = Eim_MC, y = delta, color = Eimeria.c)) +
+  geom_boxplot() +
+  geom_jitter() +
+  facet_wrap(~Eimeria.c)
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  labs(y="deltaCT = Target - HKG", x = "deltaCT = Mouse - Eimeria", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_blank())
