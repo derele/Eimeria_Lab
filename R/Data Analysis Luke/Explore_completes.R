@@ -127,16 +127,17 @@ FACS_long <- rbind(wild_FACS_long, lab_FACS_long)
 lab_IFN <- dplyr::select(complete, EH_ID, IFNy_CEWE, dpi)
 lab_IFN <- subset(lab_IFN, !is.na(lab_IFN$IFNy_CEWE))
 lab_IFN <- dplyr::select(lab_IFN, EH_ID, IFNy_CEWE)
-# super desructive but will have to do for now
-# IFN <- IFN[complete.cases(IFN[ , 2:3]),]
+#
+
 lab_IFN$EXP_type <- "lab"
-immuno <- merge(immuno, lab_IFN, all.x = T)
-immuno <- distinct(immuno)
-immuno <- subset(immuno, !is.na(immuno$pop))
+lab_immuno <- merge(lab_immuno, lab_IFN, all.x = T)
+lab_immuno <- distinct(lab_immuno)
+lab_immuno <- subset(lab_immuno, !is.na(lab_immuno$pop))
 
 lab_delta <- dplyr::select(complete, delta, delta_clean, EH_ID, Eim_MC, Eimeria_c)
 lab_delta <- na.omit(lab_delta)
 lab_delta <- data.frame(lab_delta)
+# 22.05.2020
 immuno <- merge(immuno, lab_delta, all.x = T)
 immuno <- distinct(immuno)
 
