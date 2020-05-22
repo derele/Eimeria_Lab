@@ -26,7 +26,7 @@ library(ggpmisc)
 #         legend.title = element_text(size = 12, face = "bold"))+
 #   ggtitle("Gene expression in wild samples")
 
-######
+###### 
 complete <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_P3_E6_complete.csv"))
 # make negative MCs into NAs in a new column
 complete$delta_clean <- complete$delta
@@ -34,156 +34,150 @@ complete <- mutate(complete, delta_clean = ifelse(Eim_MC == "neg", -30, delta_cl
 complete$dpi <- as.factor(complete$dpi)
 complete$X <- NULL
 ########## make column with E. ferrisi and E. falciformis only
-complete$Eimeria.p <- gsub("E64|E139", replacement = "E.ferrisi", complete$primary)
-complete$Eimeria.p <- paste(gsub("E88|Eflab", replacement = "E.falciformis", complete$Eimeria.p))
+complete$Eimeria_p <- gsub("E64|E139", replacement = "E.ferrisi", complete$primary)
+complete$Eimeria_p <- paste(gsub("E88|Eflab", replacement = "E.falciformis", complete$Eimeria_p))
 
-complete$Eimeria.c <- gsub("E64|E139", replacement = "E.ferrisi", complete$challenge)
-complete$Eimeria.c <- paste(gsub("E88|Eflab", replacement = "E.falciformis", complete$Eimeria.c))
-
-########## gene expression
-genes <- dplyr::select(complete, EH_ID, CXCR3, IL.12, IRG6)
-Eim <- dplyr::select(complete, Eim_MC, EH_ID)
-Eim <- dplyr::distinct(Eim)
-Eim <- na.omit(Eim)
-genes <- dplyr::distinct(genes)
-genes <- merge(genes, Eim, by.y = "EH_ID", all = T)
-genes <- dplyr::distinct(genes)
+complete$Eimeria_c <- gsub("E64|E139", replacement = "E.ferrisi", complete$challenge)
+complete$Eimeria_c <- paste(gsub("E88|Eflab", replacement = "E.falciformis", complete$Eimeria_c))
+complete$EXP_type <- "lab"
+########## start creating lab_immuno from complete to avoid NAs in wrong places
+##### first delta then genes then FACS then para
+### 1) delta
+lab_delta <- dplyr::select(complete, EH_ID, delta, delta_clean, Eim_MC, EXP_type, challenge)
+lab_delta <- dplyr::distinct(lab_delta)
+### 2) genes
+lab_genes <- dplyr::select(complete, EH_ID, CXCR3, IL.12, IRG6)
+lab_genes <- dplyr::distinct(lab_genes)
+#lab_genes <- subset(lab_genes, !is.na(lab_genes$CXCR3))
 # tranform into long
-# genes <- 
-genes <- reshape2::melt(genes,
+lab_genes_long <- reshape2::melt(lab_genes,
+
                         direction = "long",
-                        varying = list(names(genes)[2:4]),
+                        varying = list(names(lab_genes)[2:4]),
                         v.names = "NE",
                         na.rm = T, value.name = "NE", 
-                        id.vars = c("EH_ID", "Eim_MC"))
-names(genes)[names(genes) == "variable"] <- "Target"
-
-############################### rope in FACS stuff for E7 too ###########################
-FACS <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FACS_complete.csv"))
-FACS$X <- NULL
-FACS.long <- dplyr::select(FACS, EH_ID, Position, infHistory, CD4, Treg, Div_Treg, Treg17, Treg_prop, Th1, Div_Th1,
+                        id.vars = c("EH_ID"))
+names(lab_genes_long)[names(lab_genes_long) == "variable"] <- "Target"
+### 3) FACS
+lab_FACS <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FACS_complete.csv"))
+lab_FACS$X <- NULL
+lab_FACS <- dplyr::select(lab_FACS, EH_ID, Position, infHistory, CD4, Treg, Div_Treg, Treg17, Treg_prop, Th1, Div_Th1,
                            Th17, Div_Th17, CD8, Act_CD8, Div_Act_CD8, IFNy_CD4, IL17A_CD4, IFNy_CD8)
-FACS.long <- dplyr::distinct(FACS.long)
+lab_FACS <- dplyr::distinct(lab_FACS)
 # transform into long
-FACS.long <- reshape2::melt(FACS.long,
+lab_FACS_long <- reshape2::melt(lab_FACS,
              direction = "long",
-             varying = list(names(FACS.long)[19:34]),
+             varying = list(names(lab_FACS)[19:34]),
              v.names = "cell.pop",
              na.rm = T, value.name = "counts", 
              id.vars = c("EH_ID", "Position", "infHistory"))
-FACS.long <- na.omit(FACS.long)
-names(FACS.long)[names(FACS.long) == "variable"] <- "pop"
+names(lab_FACS_long)[names(lab_FACS_long) == "variable"] <- "pop"
+# make a summary for comparing with wild (no Pos or Ant difference)
+lab_FACS_long <- lab_FACS_long %>% dplyr::group_by(EH_ID, pop, infHistory) %>% dplyr::summarise(counts = mean(counts, na.rm = T))
+# write.csv(lab_FACS_long, "~/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_lab_FACS_long.csv")
 
-##### make a summary for comparing with wild (no Pos or Ant difference)
-FACSt <- FACS.long %>% dplyr::group_by(EH_ID, pop, infHistory) %>% dplyr::summarise(counts = mean(counts, na.rm = T))
+### para data
+#lab_para <- dplyr::select(complete, )
 
-write.csv(FACSt, "~/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FACSt.csv")
+### finally join into lab_immuno
 
-############################### rope in FACS stuff for HZ19 too ###########################
-FACSHZ <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Field_data/HZ19_FACS_complete.csv"))
-FACSHZ$X <- NULL
-FACSHZ.long <- dplyr::select(FACSHZ, Mouse_ID, Position, CD4, Treg, Div_Treg, Treg17, Treg_prop, Th1, Div_Th1,
+lab_immuno <- merge(lab_genes_long, lab_delta)
+lab_immuno <- subset(lab_immuno, !is.na(lab_immuno$delta))
+lab_immuno <- merge(lab_immuno, lab_FACS_long)
+
+
+########## start creating wild_immuno 
+##### first delta then genes then FACS then para
+
+
+
+
+wild_FACS <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Field_data/HZ19_FACS_complete.csv"))
+wild_FACS$X <- NULL
+wild_FACS <- dplyr::select(wild_FACS, Mouse_ID, Position, CD4, Treg, Div_Treg, Treg17, Treg_prop, Th1, Div_Th1,
                            Th17, Div_Th17, CD8, Act_CD8, Div_Act_CD8, IFNy_CD4, IL17A_CD4, IFNy_CD8)
-FACSHZ.long <- dplyr::distinct(FACSHZ.long)
+wild_FACS <- dplyr::distinct(wild_FACS)
 # transform into long
-FACSHZ.long <- reshape2::melt(FACSHZ.long,
+wild_FACS_long <- reshape2::melt(wild_FACS,
                             direction = "long",
-                            varying = list(names(FACSHZ.long)[3:17]),
+                            varying = list(names(wild_FACS)[3:17]),
                             v.names = "cell.pop",
                             na.rm = T, value.name = "counts", 
                             id.vars = c("Mouse_ID", "Position"))
-FACSHZ.long <- na.omit(FACSHZ.long)
-names(FACSHZ.long)[names(FACSHZ.long) == "variable"] <- "pop"
+wild_FACS_long <- na.omit(wild_FACS_long)
+names(wild_FACS_long)[names(wild_FACS_long) == "variable"] <- "pop"
 
 ##### make a summary for comparing with wild (no Pos or Ant difference)
-FACStHZ <- subset(FACSHZ.long, Position == "mLN")
-FACStHZ <- FACSHZ.long %>% dplyr::group_by(Mouse_ID, pop) %>% dplyr::summarise(counts = mean(counts, na.rm = T))
+wild_FACS_long <- subset(wild_FACS_long, Position == "mLN")
+wild_FACS_long <- wild_FACS_long %>% dplyr::group_by(Mouse_ID, pop) %>% dplyr::summarise(counts = mean(counts, na.rm = T))
 
-write.csv(FACStHZ, "~/Documents/Mouse_Eimeria_Databasing/data/Field_data/HZ19_FACSt.csv")
-# add EXP columns to FACSt and FACStHZ, make dummy infHistory column and rename Mouse ID to EH ID for sake of merging
-FACSt$EXP <- "lab"
-FACStHZ$EXP <- "wild"
-FACStHZ$infHistory <- NA
-colnames(FACStHZ)[1] <- "EH_ID"
-FACScombine <- rbind(FACSt, FACStHZ)
+# write.csv(wild_FACS_long, "~/Documents/Mouse_Eimeria_Databasing/data/Field_data/HZ19_FACSt.csv")
+# add EXP columns, dummy infHistory column and rename Mouse ID to EH ID for sake of merging
+lab_FACS_long$EXP_type <- "lab"
+wild_FACS_long$EXP_type <- "wild"
+wild_FACS_long$infHistory <- NA
+colnames(wild_FACS_long)[1] <- "EH_ID"
+wild_FACS_long <- data.frame(wild_FACS_long)
+lab_FACS_long <- data.frame(lab_FACS_long)
+FACS_long <- rbind(wild_FACS_long, lab_FACS_long)
 
-################################################################################################################################
-
-
-#####################################################################################################################################
-
-# merge with genes
-FACScombine <- data.frame(FACScombine)
-immuno <- merge(FACScombine, genes, all = T)
-
-inf <- dplyr::select(complete, EH_ID, challenge)
-inf <- distinct(inf)
-inf <- na.omit(inf)
-immuno <- full_join(immuno, inf, all.x = T)
 
 
 # add IFN ELISA results``````````````````````
-IFN <- dplyr::select(complete, EH_ID, IFNy_CEWE, dpi)
-IFN <- subset(IFN, IFN$dpi == "8")
-IFN <- dplyr::select(IFN, EH_ID, IFNy_CEWE)
-IFN <- na.omit(IFN) 
-IFN <- distinct(IFN)
+lab_IFN <- dplyr::select(complete, EH_ID, IFNy_CEWE, dpi)
+lab_IFN <- subset(lab_IFN, !is.na(lab_IFN$IFNy_CEWE))
+lab_IFN <- dplyr::select(lab_IFN, EH_ID, IFNy_CEWE)
 # super desructive but will have to do for now
 # IFN <- IFN[complete.cases(IFN[ , 2:3]),]
-immuno <- merge(immuno, IFN, by = "EH_ID")
+lab_IFN$EXP_type <- "lab"
+immuno <- merge(immuno, lab_IFN, all.x = T)
 immuno <- distinct(immuno)
+immuno <- subset(immuno, !is.na(immuno$pop))
 
-
-delta <- dplyr::select(complete, delta, delta_clean, EH_ID, Eim_MC, Eimeria.c)
-delta <- na.omit(delta)
-delta <- data.frame(delta)
-immuno <- merge(immuno, delta)
+lab_delta <- dplyr::select(complete, delta, delta_clean, EH_ID, Eim_MC, Eimeria_c)
+lab_delta <- na.omit(lab_delta)
+lab_delta <- data.frame(lab_delta)
+immuno <- merge(immuno, lab_delta, all.x = T)
 immuno <- distinct(immuno)
 
 immuno$species <- gsub("E64|E139", replacement = "E.ferrisi", immuno$challenge)
 immuno$species <- paste(gsub("E88|Eflab", replacement = "E.falciformis", immuno$species))
 
-
-Wch.p <- subset(complete, Eimeria.p == "E.ferrisi")
-Wch.p1 <- subset(complete, Eimeria.p == "E.falciformis")
-Wch.p <- full_join(Wch.p, Wch.p1)
-
-Wch.c <- subset(complete, Eimeria.c == "E.ferrisi")
-Wch.c1 <- subset(complete, Eimeria.c == "E.falciformis")
-Wch.c <- full_join(Wch.c, Wch.c1)
-
-Wch <- dplyr::select(Wch.c, Eimeria.c, Eimeria.p, EH_ID)
-genes <- merge(genes, Wch)
-genes <- distinct(genes)
-genes <- na.omit(genes)
-
 #### add wild gene expression
-HZgenes <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Gene_expression/HZ16-18_gene_expression.csv"))
-HZgenes$X <- NULL
-colnames(HZgenes)[1] <- "EH_ID"
-colnames(HZgenes)[6] <- "Eim_MC"
-HZgenes$Eim_MC[HZgenes$Eim_MC == "TRUE"] <- "positive"
-HZgenes$Eim_MC[HZgenes$Eim_MC == "FALSE"] <- "negative"
-HZgenes$EXP <- "wild"
+wild_genes_long <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Gene_expression/HZ16-18_gene_expression.csv"))
+wild_genes_long$X <- NULL
+colnames(wild_genes_long)[1] <- "EH_ID"
+colnames(wild_genes_long)[6] <- "Eim_MC"
+wild_genes_long$Eim_MC[wild_genes_long$Eim_MC == "TRUE"] <- "positive"
+wild_genes_long$Eim_MC[wild_genes_long$Eim_MC == "FALSE"] <- "negative"
+wild_genes_long$EXP <- "wild"
 immuno$Eim_MC <- as.character(immuno$Eim_MC)
 immuno$Eim_MC[immuno$Eim_MC == "pos"] <- "positive"
 immuno$Eim_MC[immuno$Eim_MC == "neg"] <- "negative"
-genes$Eim_MC <- as.character(genes$Eim_MC)
-genes$Eim_MC[genes$Eim_MC == "pos"] <- "positive"
-genes$Eim_MC[genes$Eim_MC == "neg"] <- "negative"
+lab_genes$Eim_MC <- as.character(lab_genes$Eim_MC)
+lab_genes$Eim_MC[lab_genes$Eim_MC == "pos"] <- "positive"
+lab_genes$Eim_MC[lab_genes$Eim_MC == "neg"] <- "negative"
 
 # god knows what happens here (investigate later)
-immuno <- merge(HZgenes, immuno, all = T)
-#### add IFN CEWE HZ19
-IFN_HZ <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/ELISAs/HZ19_CEWE_ELISAs_complete.csv"))
-IFN_HZ$X <- NULL
-colnames(IFN_HZ)[1] <- "EH_ID"
-colnames(IFN_HZ)[2] <- "IFNy_CEWE"
+immuno <- merge(wild_genes_long, immuno, all.y = T)
 
-IFNcomplete <- rbind(IFN, IFN_HZ)
-WxL <- merge(IFNcomplete, FACScombine, all = T)
-MC <- dplyr::select(delta, EH_ID, Eim_MC)
-WxL <- merge(WxL, MC, all =T)
+#### add IFN CEWE HZ19
+wild_IFN <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/ELISAs/HZ19_CEWE_ELISAs_complete.csv"))
+wild_IFN$X <- NULL
+colnames(wild_IFN)[1] <- "EH_ID"
+colnames(wild_IFN)[2] <- "IFNy_CEWE"
+lab_IFN$EXP <- "E7"
+lab_IFN$EXP_type <- "lab"
+wild_IFN$EXP <- "HZ19"
+wild_IFN$EXP_type <- "wild"
+
+IFN <- rbind(lab_IFN, wild_IFN)
+# why?
+immuno <- merge(immuno, IFN, all = T)
+immuno <- merge(immuno, FACS, all = T)
+
+WxL <- merge(IFN, FACS, all = T)
+WxL <- merge(WxL, Eim_MC, all =T)
 
 Wch.p <- subset(Wch.p, !Wch.p$dpi == 0)
 Wch.p$OPG[is.na(Wch.p$OPG)] <- 0
@@ -194,26 +188,6 @@ lab$species[lab$species == "E.falciformis"] <- "uninfected"
 
 FACS_IFN <- merge(FACScombine, IFNcomplete, all = T)
 FACScombine <- merge(FACScombine, Eim, all =T)
-
-
-# sig <- subset(FACScombine, subset = pop %in% c("CD4", "Div_Treg", "Treg17", "Th17", "Div_Th17", "CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8"))
-# sig <- data.frame(sig)
-# sig$pop <- as.character(sig$pop)
-# # remove horrible outliers
-# sig <- sig[-c(1174),]
-# sig <- sig[-c(1173),]
-# sig <- sig[-c(634),]
-# 
-# sig1 <- merge(sig, Wch.c, by = "EH_ID")
-# Pos <- select(immuno, EH_ID, Position)
-# sig1 <- distinct(sig1)
-# sig1 <- merge(Pos, sig1, by = "EH_ID")
-# sig1 <- distinct(sig1)
-# 
-# PosHZ <- select(FACSHZ, Mouse_ID, Position, CD4)
-# colnames(PosHZ)[1] <- "EH_ID"
-# FACStHZ <- full_join(PosHZ, FACStHZ)
-# immuno <- distinct(immuno)
 
 ##################### pure graphing from here, any general code above ####################################################
 # ggplot(immuno, aes(x = EXP, y = counts)) +
@@ -282,9 +256,9 @@ ggplot(subset(Wch.p, Wch.p$Eimeria.p == "E.falciformis"),
 
 
 #####################################################################################################################
-############ genes
+############ lab_genes
 # wild gene expression
-ggplot(HZgenes,
+ggplot(HZlab_genes,
        aes(x = Eim_MC, y = NE, colour = Eim_MC)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter() +
@@ -302,9 +276,9 @@ ggplot(HZgenes,
         legend.position = c(0.8, 0.2))
 
 # lab gene expression
-genes <- genes[!(genes$Target=="IRG6"& genes$NE > 19),]
+lab_genes <- lab_genes[!(lab_genes$Target=="IRG6"& lab_genes$NE > 19),]
 
-ggplot(genes, aes(x = Eim_MC, y = NE, color = Eim_MC, group = Eim_MC)) +
+ggplot(lab_genes, aes(x = Eim_MC, y = NE, color = Eim_MC, group = Eim_MC)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter() +
   stat_compare_means(aes(label = ..p.signif..),  size = 8, label.y.npc =0.95) +
@@ -356,7 +330,7 @@ ggplot(lab,aes(x = IFNy_CEWE , y = counts, color = Eim_MC)) +
 
 
 
-#### genes vs IFN
+#### lab_genes vs IFN
 ggplot(lab, aes(y = NE, x = IFNy_CEWE, color = Eim_MC)) +
   geom_point() +
   geom_smooth(method = "lm") +
@@ -393,10 +367,10 @@ ggplot(subset(FACScombine, !is.na(FACScombine$EXP)),
         legend.title = element_blank(),
         legend.position = c(0.91, 0.1))
 
-immunogenes <- dplyr::select(immuno, EXP, NE, Target, EH_ID)
-immunogenes <- distinct(immunogenes)
+immunolab_genes <- dplyr::select(immuno, EXP, NE, Target, EH_ID)
+immunolab_genes <- distinct(immunolab_genes)
 
-ggplot(subset(immunogenes, !is.na(immunogenes$EXP)),
+ggplot(subset(immunolab_genes, !is.na(immunolab_genes$EXP)),
        aes(x = EXP , y = NE, color = EXP)) +
   geom_boxplot() +
   geom_jitter() +
@@ -681,11 +655,39 @@ ggplot(IFN_HZCD8,
   ggtitle("IFN-g+ CD8+ in wild mice")
 
 #################################################################################################################################
-# let's look at genes
+# let's look at lab_genes
 # remove outlier 0287
 lab <- lab[!(lab$EH_ID=="LM_0287"),]
 lab <- lab[!(lab$EH_ID=="LM_0294"),]
 lab <- lab[!(lab$EH_ID=="LM_0275"),]
+
+immuno_compare <- subset(immuno, !immuno$Target == "GBP2")
+immuno_compare <- subset(immuno_compare, !immuno_compare$Target == "IL-6")
+immuno_compare <- subset(immuno_compare, !is.na(immuno_compare$NE))
+ggplot(immuno_compare, aes(x = delta, y = NE, color = EXP)) +
+  geom_point() +
+  #stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  geom_smooth(method = "lm") +
+  facet_grid(Target~Eim_MC, scales = "free_y") +
+  labs(y="deltaCT = Target - HKG", x = "deltaCT = Mouse - Eimeria", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.position = "none",
+        legend.text=element_blank(),
+        legend.title = element_blank())
+#legend.position = c(0.91, 0.1))+
+#ggtitle("delta NE lab")
+
+ggscatter(immuno, x = "delta", y = "NE", add = "reg.line", color = "EXP") +
+  facet_grid(Eim_MC~Target)+
+  stat_cor(label.x = -10, label.y = 2) +
+  stat_regline_equation(label.x = -10, label.y = 4) + 
+  ggtitle("")
+
+
+
 
 ggplot(lab, aes(x = delta, y = NE, color = Eim_MC)) +
   geom_point() +
@@ -736,7 +738,7 @@ ggplot(lab, aes(x = delta, y = counts, color = Eim_MC)) +
 #legend.position = c(0.91, 0.1))+
 #ggtitle("delta NE wild")
 
-#### and genes
+#### and lab_genes
 ggplot(subset(lab, lab$Target == "IL.12"), aes(x = NE, y = counts, color = Eim_MC)) +
   geom_point() +
   #stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
@@ -850,7 +852,7 @@ delta2 <- rbind(uni, Efer)
 ggplot(delta2, aes(x = Eim_MC, y = delta, color = Eimeria.c)) +
   geom_boxplot() +
   geom_jitter() +
-  facet_wrap(~Eimeria.c)
+  facet_wrap(~Eimeria.c)+
   stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
   labs(y="deltaCT = Target - HKG", x = "deltaCT = Mouse - Eimeria", colour = "infection") +
   theme(title = element_text(size = 16, face = "bold"),
@@ -859,3 +861,161 @@ ggplot(delta2, aes(x = Eim_MC, y = delta, color = Eimeria.c)) +
         strip.text.x = element_text(size = 14, face = "bold"),
         legend.text=element_text(size=12, face = "bold"),
         legend.title = element_blank())
+
+################### check IFN abundance vs cell counts
+  
+ggplot(IFNcomplete, aes(x = EXP, y = IFNy_CEWE)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2)
+
+IFN_eim <- merge(IFN, Eim)
+
+ggplot(IFN_eim, aes(x = Eim_MC, y = IFNy_CEWE, color = Eim_MC)) +
+  geom_boxplot() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  geom_jitter(width = 0.2)
+
+# T17s vs IFN
+
+IL17A_CD4 <- filter(lab, pop == "IL17A_CD4")
+Th17 <- filter(lab, pop == "Th17")
+Treg17 <- filter(lab, pop == "Treg17")
+Div_Th17 <- filter(lab, pop == "Div_Th17")
+T17s <- rbind(IL17A_CD4, Th17)
+T17s <- rbind(T17s, Treg17)
+T17s <- rbind(T17s, Div_Th17)
+
+ggscatter(T17s, x = "IFNy_CEWE", y = "counts", add = "reg.line", color = "Eim_MC") +
+  facet_grid(Eim_MC~pop)+
+  stat_cor(label.x = 50, label.y = 60) +
+  stat_regline_equation(label.x = 50, label.y = 63) + 
+  ggtitle("IL-17 related cell populations")
+
+# Cd4s vs IFN
+CD4 <- filter(lab, pop == "CD4")
+Treg <- filter(lab, pop == "Treg")
+Div_Treg <- filter(lab, pop == "Div_Treg")
+Th1 <- filter(lab, pop == "Th1")
+Div_Th1 <- filter(lab, pop == "Div_Th1")
+IFNy_CD4 <- filter(lab, pop == "IFNy_CD4")
+CD4s <- rbind(CD4, Treg)
+CD4s <- rbind(CD4s, Div_Treg)
+CD4s <- rbind(CD4s, Th1)
+CD4s <- rbind(CD4s, Div_Th1)
+CD4s <- rbind(CD4s, IFNy_CD4)
+
+ggscatter(CD4s, x = "IFNy_CEWE", y = "counts", add = "reg.line", color = "Eim_MC") +
+  facet_grid(Eim_MC~pop)+
+  stat_cor(label.x = 30, label.y = 80) +
+  stat_regline_equation(label.x = 30, label.y = 83) + 
+  ggtitle("CD4 related cell populations")
+
+# CD8s vs IFN
+CD8 <- filter(lab, pop == "CD8")
+Act_CD8 <- filter(lab, pop == "Act_CD8")
+Div_Act_CD8 <- filter(lab, pop == "Div_Act_CD8")
+IFNy_CD8 <- filter(lab, pop == "IFNy_CD8")
+CD8s <- rbind(CD8, Act_CD8)
+CD8s <- rbind(CD8s, Div_Act_CD8)
+CD8s <- rbind(CD8s, IFNy_CD8)
+
+ggscatter(CD8s, x = "IFNy_CEWE", y = "counts", add = "reg.line", color = "Eim_MC") +
+  facet_grid(Eim_MC~pop)+
+  stat_cor(label.x = 30, label.y = 80) +
+  stat_regline_equation(label.x = 30, label.y = 83) + 
+  ggtitle("CD8+ related cell populations")
+
+################### check IFN abundance vs lab_genes
+
+lab_lab_genes <- filter(immuno, Target == c("CXCR3", "IL.12", "IRG6"))
+lab_lab_genes <- filter(lab_lab_genes, EXP == "lab")
+
+#CXCR3
+ggscatter(subset(lab_lab_genes, lab_lab_genes$Target == "CXCR3"), x = "IFNy_CEWE", y = "NE", add = "reg.line", color = "Eim_MC") +
+  facet_grid(Eim_MC~Target)+
+  stat_cor(label.x = 50, label.y = 0) +
+  stat_regline_equation(label.x = 50, label.y = 2) + 
+  ggtitle("IFN-y and CXCR3")
+
+#irg6
+ggscatter(subset(lab_lab_genes, lab_lab_genes$Target == "IRG6"), x = "IFNy_CEWE", y = "NE", add = "reg.line", color = "Eim_MC") +
+  facet_grid(Eim_MC~Target)+
+  stat_cor(label.x = 50, label.y = 0) +
+  stat_regline_equation(label.x = 50, label.y = 2) + 
+  ggtitle("IFN-y and IRG6")
+
+ggscatter(subset(lab_lab_genes, lab_lab_genes$Target == "IL.12"), x = "IFNy_CEWE", y = "NE", add = "reg.line", color = "Eim_MC") +
+  facet_grid(Eim_MC~Target)+
+  stat_cor(label.x = 50, label.y = 0) +
+  stat_regline_equation(label.x = 50, label.y = 2) + 
+  ggtitle("IFN-y and IL-12")
+
+############# check gene expression vs cell counts
+
+lab1 <- lab[!(lab$pop== "Treg_prop"),]
+lab1 <- lab1[!(lab1$pop== "Div_Th1"),]
+lab1 <- lab1[!(lab1$pop== "Div_Act_CD8"),]
+lab1 <- lab1[!(lab1$pop== "Div_Treg"),]
+lab1 <- lab1[!(lab1$pop== "Div_Th17"),]
+
+ggscatter(lab1, x = "counts", y = "NE", add = "reg.line", color = "Eim_MC") +
+  facet_grid(pop~Target)+
+  stat_cor(label.x = 50, label.y = 30) +
+  stat_regline_equation(label.x = 50, label.y = 34) + 
+  ggtitle("lab_genes and populations")
+# still too big, filter by lab_genes
+IRG6_counts <- filter(lab1, Target == "IRG6")
+CXCR3_counts <- filter(lab1, Target == "CXCR3")
+IL12_counts <- filter(lab1, Target == "IL.12")
+
+ggscatter(IRG6_counts, x = "counts", y = "NE", add = "reg.line", color = "Eim_MC") +
+  facet_grid(Eim_MC~pop)+
+  stat_cor(label.x = 0, label.y = 2) +
+  stat_regline_equation(label.x = 0, label.y = 4) + 
+  ggtitle("IRG6 and cell counts")
+
+ggscatter(CXCR3_counts, x = "counts", y = "NE", add = "reg.line", color = "Eim_MC") +
+  facet_grid(Eim_MC~pop)+
+  stat_cor(label.x = 0, label.y = 0) +
+  stat_regline_equation(label.x = 0, label.y = 2) + 
+  ggtitle("CXCR3 and cell counts")
+
+ggscatter(IL12_counts, x = "counts", y = "NE", add = "reg.line", color = "Eim_MC") +
+  facet_grid(Eim_MC~pop)+
+  stat_cor(label.x = 0, label.y = 0) +
+  stat_regline_equation(label.x = 0, label.y = 2) + 
+  ggtitle("IL-12 and cell counts")
+
+
+
+immunopar <- filter(complete, dpi == 7:8)
+immunopar <- select(immunopar, EH_ID, Wchange)
+immunopar <- distinct(immunopar)
+immunopar <- merge(immunopar, immuno, by.y = "EH_ID")
+immunopar <- distinct(immunopar)
+
+# check weightloss (weight change at day of dissection against cell counts)
+ggscatter(subset(immunopar, immunopar$pop == "Treg17"), x = "Wchange", y = "counts", add = "reg.line", color = "Eim_MC") +
+  facet_grid(Eim_MC~pop)+
+  stat_cor(label.x = 80, label.y = 1.5) +
+  stat_regline_equation(label.x = 80, label.y = 2) + 
+  ggtitle("whatever")
+
+# check weightloss vs IFN.
+ggscatter(immunopar, y = "Wchange", x = "IFNy_CEWE", add = "reg.line", color = "Eim_MC") +
+  facet_wrap(~Eim_MC) +
+  stat_cor(label.x = 150, label.y = 110) +
+  stat_regline_equation(label.x = 150, label.y = 120) + 
+  ggtitle("IFN-y vs wchange")
+
+IFNpoop <- select(complete, delta, dpi,IFNy_CEWE, IFNy_FEC, EH_ID, Wchange, weight, OPG, Eim_MC)
+ggplot(IFNpoop, aes(x = delta, y = Wchange)) + 
+  geom_point() +
+  facet_wrap(~Eim_MC)
+
+########## 
+ggscatter(FACS, x = "Treg17", y = "IL17A_CD4", color = "Caecum") +
+  facet_wrap(~Caecum)+
+  stat_cor(label.x = 0, label.y = 3) +
+  stat_regline_equation(label.x = 0, label.y = 3.1) + 
+  ggtitle("whatever")

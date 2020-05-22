@@ -99,6 +99,26 @@ RT.long <- RT %>% dplyr::group_by(Mouse_ID, Target) %>% dplyr::summarise(RT.Ct =
 RT.long <- data.frame(RT.long)
 RT.wide <- reshape(RT.long[, c("Target", "Mouse_ID","RT.Ct")],
                    timevar = "Target", idvar = "Mouse_ID", direction = "wide")
+# compare graphically becaus I'm just disabled like that
+HKG1 <- dplyr::filter(RT.long, Target == "B-actin")
+HKG2 <- dplyr::filter(RT.long, Target ==  "GAPDH")
+HKG <- rbind(HKG1, HKG2)
+ggplot(HKG, aes(x = Target, y = RT.Ct, color = Target)) +
+  geom_point() +
+  geom_boxplot() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =1) +
+  labs(y="deltaCT = Target - HKG", x = "deltaCT = Mouse - Eimeria", colour = "infection") +
+  theme(title = element_text(size = 16, face = "bold"),
+        axis.text=element_text(size=12, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        legend.position = "none",
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_blank()) +
+  ggtitle("HKG differences E7")
+HKG$EXP <- "E7"
+write.csv(HKG, "C:/Users/Luke Bednar/Eimeria_Lab/data/3_recordingTables/HKG_E7.csv")
+
 # set ref and target genes
 refGenes <- c("RT.Ct.B-actin", "RT.Ct.GAPDH")
 targetGenes <- c("RT.Ct.CXCR3", "RT.Ct.IL-12", "RT.Ct.IRG6")
@@ -118,7 +138,7 @@ complete$X <- NULL
 #quick basic subtract before merge (based on E7 melting curves)
 E7EimMC <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7%26P3_Eim_MCs.csv"
 E7EimMC <- read.csv(text = getURL(E7EimMC), sep = ";")
-E7EimMCprep <- subset(complete, subset = dpi == 8)
+E7EimMCprep <- subset(complete, complete$dpi == 8)
 E7EimMC$X <- NULL
 E7EimMC$X.1 <- NULL
 E7EimMC <- merge(E7EimMC, E7EimMCprep, by = "EH_ID")
