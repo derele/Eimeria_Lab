@@ -138,11 +138,11 @@ lab_delta <- dplyr::select(complete, delta, delta_clean, EH_ID, Eim_MC, Eimeria_
 lab_delta <- na.omit(lab_delta)
 lab_delta <- data.frame(lab_delta)
 # 22.05.2020
-immuno <- merge(immuno, lab_delta, all.x = T)
-immuno <- distinct(immuno)
-
-immuno$species <- gsub("E64|E139", replacement = "E.ferrisi", immuno$challenge)
-immuno$species <- paste(gsub("E88|Eflab", replacement = "E.falciformis", immuno$species))
+lab_immuno <- merge(lab_immuno, lab_delta, all.x = T)
+lab_immuno <- distinct(lab_immuno)
+ 
+lab_immuno$species <- gsub("E64|E139", replacement = "E.ferrisi", lab_immuno$challenge)
+lab_immuno$species <- paste(gsub("E88|Eflab", replacement = "E.falciformis", lab_immuno$species))
 
 #### add wild gene expression
 wild_genes_long <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Gene_expression/HZ16-18_gene_expression.csv"))
@@ -152,15 +152,13 @@ colnames(wild_genes_long)[6] <- "Eim_MC"
 wild_genes_long$Eim_MC[wild_genes_long$Eim_MC == "TRUE"] <- "positive"
 wild_genes_long$Eim_MC[wild_genes_long$Eim_MC == "FALSE"] <- "negative"
 wild_genes_long$EXP <- "wild"
-immuno$Eim_MC <- as.character(immuno$Eim_MC)
-immuno$Eim_MC[immuno$Eim_MC == "pos"] <- "positive"
-immuno$Eim_MC[immuno$Eim_MC == "neg"] <- "negative"
+lab_immuno$Eim_MC <- as.character(lab_immuno$Eim_MC)
+lab_immuno$Eim_MC[lab_immuno$Eim_MC == "pos"] <- "positive"
+lab_immuno$Eim_MC[lab_immuno$Eim_MC == "neg"] <- "negative"
 lab_genes$Eim_MC <- as.character(lab_genes$Eim_MC)
 lab_genes$Eim_MC[lab_genes$Eim_MC == "pos"] <- "positive"
 lab_genes$Eim_MC[lab_genes$Eim_MC == "neg"] <- "negative"
 
-# god knows what happens here (investigate later)
-immuno <- merge(wild_genes_long, immuno, all.y = T)
 
 #### add IFN CEWE HZ19
 wild_IFN <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/ELISAs/HZ19_CEWE_ELISAs_complete.csv"))
@@ -171,24 +169,18 @@ lab_IFN$EXP <- "E7"
 lab_IFN$EXP_type <- "lab"
 wild_IFN$EXP <- "HZ19"
 wild_IFN$EXP_type <- "wild"
-
+# merge IFNs
 IFN <- rbind(lab_IFN, wild_IFN)
-# why?
-immuno <- merge(immuno, IFN, all = T)
-immuno <- merge(immuno, FACS, all = T)
+# merge genes
+wild_delta <- select(wild_genes_long, delta, MC, Mouse_ID)
+wild_genes_long$delta <- NULL
+wild_genes_long$MC <- NULL
+wild_genes_long$HI <- NULL
 
-WxL <- merge(IFN, FACS, all = T)
-WxL <- merge(WxL, Eim_MC, all =T)
+genes <- rbind(lab_genes_long, wild_genes_long)
 
-Wch.p <- subset(Wch.p, !Wch.p$dpi == 0)
-Wch.p$OPG[is.na(Wch.p$OPG)] <- 0
+wild_delta <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Eimeria_detection/HZ19_qPCR.csv"))
 
-lab <- subset(immuno, immuno$EXP == "lab")
-wild <- subset(immuno, immuno$EXP == "wild")
-lab$species[lab$species == "E.falciformis"] <- "uninfected"
-
-FACS_IFN <- merge(FACScombine, IFNcomplete, all = T)
-FACScombine <- merge(FACScombine, Eim, all =T)
 
 ##################### pure graphing from here, any general code above ####################################################
 # ggplot(immuno, aes(x = EXP, y = counts)) +
