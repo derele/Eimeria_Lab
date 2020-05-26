@@ -155,9 +155,10 @@ wild_genes_long$EXP <- "wild"
 lab_immuno$Eim_MC <- as.character(lab_immuno$Eim_MC)
 lab_immuno$Eim_MC[lab_immuno$Eim_MC == "pos"] <- "positive"
 lab_immuno$Eim_MC[lab_immuno$Eim_MC == "neg"] <- "negative"
-lab_genes$Eim_MC <- as.character(lab_genes$Eim_MC)
-lab_genes$Eim_MC[lab_genes$Eim_MC == "pos"] <- "positive"
-lab_genes$Eim_MC[lab_genes$Eim_MC == "neg"] <- "negative"
+# 
+# lab_genes$Eim_MC <- as.character(lab_genes$Eim_MC)
+# lab_genes$Eim_MC[lab_genes$Eim_MC == "pos"] <- "positive"
+# lab_genes$Eim_MC[lab_genes$Eim_MC == "neg"] <- "negative"
 
 
 #### add IFN CEWE HZ19
@@ -172,15 +173,38 @@ wild_IFN$EXP_type <- "wild"
 # merge IFNs
 IFN <- rbind(lab_IFN, wild_IFN)
 # merge genes
-wild_delta <- select(wild_genes_long, delta, MC, Mouse_ID)
+wild_delta <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Eimeria_detection/HZ19_qPCR.csv"))
+
+# wild_delta <- select(wild_genes_long, delta, MC, Mouse_ID)
 wild_genes_long$delta <- NULL
 wild_genes_long$MC <- NULL
 wild_genes_long$HI <- NULL
+wild_genes_long$Eim_MC <- NULL
+wild_genes_long$EXP <- NULL
 
 genes <- rbind(lab_genes_long, wild_genes_long)
 
-wild_delta <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Eimeria_detection/HZ19_qPCR.csv"))
+FACS <- rbind(lab_FACS_long, wild_FACS_long)
 
+# deltas
+wild_delta$X <- NULL
+lab_delta$delta_clean <- NULL
+lab_delta$Eimeria_c <- NULL
+wild_delta$Ct.Eimeria <- NULL
+wild_delta$Ct.Mus <- NULL
+wild_delta$EXP_type <- NULL
+lab_delta$Eim_MC <- NULL
+colnames(wild_delta)[1] <- "EH_ID"
+
+delta <- rbind(lab_delta, wild_delta)
+
+immuno <- merge(FACS,genes, all = T)
+immuno <- merge(immuno, IFN, all = T)
+immuno <- merge(immuno, delta, all = T)
+
+ggplot(immuno, aes(x = counts, y = delta, color = EXP)) +
+  geom_point() + 
+  facet_wrap(~pop)
 
 ##################### pure graphing from here, any general code above ####################################################
 # ggplot(immuno, aes(x = EXP, y = counts)) +
