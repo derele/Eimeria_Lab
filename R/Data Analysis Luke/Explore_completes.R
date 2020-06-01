@@ -79,15 +79,48 @@ lab_FACS_long <- lab_FACS_long %>% dplyr::group_by(EH_ID, pop, infHistory) %>% d
 ### para data
 #lab_para <- dplyr::select(complete, )
 
+# IFNy data ELISA
+lab_ELISA_CEWE <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_CEWE_ELISAs/E7_112018_Eim_CEWE_ELISA_complete.csv"))
+lab_ELISA_CEWE$X <- NULL
+lab_ELISA_CEWE$label <- NULL
+
 ### finally join into lab_immuno
 
 lab_immuno <- merge(lab_genes_long, lab_delta)
 lab_immuno <- subset(lab_immuno, !is.na(lab_immuno$delta))
 lab_immuno <- merge(lab_immuno, lab_FACS_long)
+lab_immuno <- merge(lab_immuno, lab_ELISA_CEWE)
 
+########## create wild_immuno in it's own script
+##### add and process so that both tables can be rbound
+wild_immuno <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/HZ19_wild_immuno_long.csv"))
+lab_immuno_compare <- select(lab_immuno, EH_ID, delta, Eim_MC, EXP_type, pop, counts, IFNy)
+wild_immuno_compare <- select(wild_immuno, Mouse_ID, delta, MC.Eimeria, EXP_type, IFNy, pop, counts)
+names(lab_immuno_compare)[names(lab_immuno_compare) == "EH_ID"] <- "Mouse_ID"
+names(wild_immuno_compare)[names(wild_immuno_compare) == "MC.Eimeria"] <- "Eim_MC"
+wild_immuno_compare$Eim_MC[wild_immuno_compare$Eim_MC == "TRUE"] <- "infected"
+wild_immuno_compare$Eim_MC[wild_immuno_compare$Eim_MC == "FALSE"] <- "uninfected"
+lab_immuno_compare$Eim_MC <- as.character(lab_immuno_compare$Eim_MC)
+lab_immuno_compare$Eim_MC[lab_immuno_compare$Eim_MC == "pos"] <- "infected"
+lab_immuno_compare$Eim_MC[lab_immuno_compare$Eim_MC == "neg"] <- "uninfected"
 
-########## start creating wild_immuno 
-##### first delta then genes then FACS then para
+immuno <- rbind(lab_immuno_compare, wild_immuno_compare)
+immuno <- subset(immuno, !immuno$pop == "Treg_prop")
+# graph out
+
+ggscatter(immuno, x = "IFNy", y = "delta", add = "reg.line", color = "EXP_type") +
+  facet_grid(EXP_type~Eim_MC)+
+  stat_cor(label.x = 50, label.y = 0) +
+  stat_regline_equation(label.x = 50, label.y = 2) + 
+  ggtitle("IFN-y and delta")
+
+ggplot(subset(immuno, immuno$Eim_MC == "uninfected"), aes(x = pop, y = counts, color = EXP_type, fill = EXP_type)) +
+  geom_bar(position = "dodge", stat = "identity") + 
+  ggtitle("Uninfected mice cell counts comparison (HZ19 vs E7)")
+
+ggplot(subset(immuno, immuno$Eim_MC == "infected"), aes(x = pop, y = counts, color = EXP_type, fill = EXP_type)) +
+  geom_bar(position = "dodge", stat = "identity") + 
+  ggtitle("Infected mice cell counts comparison (HZ19 vs E7)")
 
 
 
