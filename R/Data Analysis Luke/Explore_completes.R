@@ -108,21 +108,22 @@ immuno <- rbind(lab_immuno_compare, wild_immuno_compare)
 immuno <- subset(immuno, !immuno$pop == "Treg_prop")
 # graph out
 
-ggscatter(immuno, x = "IFNy", y = "delta", add = "reg.line", color = "EXP_type") +
+ggscatter(immuno, x = "delta", y = "IFNy", add = "reg.line", color = "EXP_type") +
   facet_grid(EXP_type~Eim_MC)+
-  stat_cor(label.x = 50, label.y = 0) +
-  stat_regline_equation(label.x = 50, label.y = 2) + 
+  stat_cor(label.x =0, label.y = 0) +
+  stat_regline_equation(label.x = 0, label.y = 100) + 
   ggtitle("IFN-y and delta")
 
-ggplot(subset(immuno, immuno$Eim_MC == "uninfected"), aes(x = pop, y = counts, color = EXP_type, fill = EXP_type)) +
-  geom_bar(position = "dodge", stat = "identity") + 
+ggplot(immuno, aes(x = pop, y = counts, color = Eim_MC, fill = Eim_MC)) +
+  geom_boxplot() + 
+  facet_wrap(~EXP_type, nrow = 2) +
   ggtitle("Uninfected mice cell counts comparison (HZ19 vs E7)")
 
-ggplot(subset(immuno, immuno$Eim_MC == "infected"), aes(x = pop, y = counts, color = EXP_type, fill = EXP_type)) +
-  geom_bar(position = "dodge", stat = "identity") + 
-  ggtitle("Infected mice cell counts comparison (HZ19 vs E7)")
 
 
+ggscatter(subset(immuno, grepl("CD8", immuno$pop)), x = "delta", y = "counts", add = "reg.line", color = "Eim_MC") +
+  facet_grid(EXP_type~pop)+ 
+  ggtitle("")
 
 
 wild_FACS <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Field_data/HZ19_FACS_complete.csv"))
