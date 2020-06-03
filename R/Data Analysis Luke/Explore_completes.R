@@ -106,24 +106,74 @@ lab_immuno_compare$Eim_MC[lab_immuno_compare$Eim_MC == "neg"] <- "uninfected"
 
 immuno <- rbind(lab_immuno_compare, wild_immuno_compare)
 immuno <- subset(immuno, !immuno$pop == "Treg_prop")
-# graph out
 
+# graph out infection intensity effect on IFN-y abundance
 ggscatter(immuno, x = "delta", y = "IFNy", add = "reg.line", color = "EXP_type") +
-  facet_grid(EXP_type~Eim_MC)+
-  stat_cor(label.x =0, label.y = 0) +
-  stat_regline_equation(label.x = 0, label.y = 100) + 
-  ggtitle("IFN-y and delta")
+  facet_grid(EXP_type~Eim_MC, scales = "free")+
+  stat_cor(label.x =-5, label.y = 600) +
+  stat_regline_equation(label.x = -5, label.y = 500) + 
+  labs(y = "IFN-y (pg/mL)", x = "deltaCT = Mouse - Eimeria") +
+     theme(axis.text=element_text(size=12, face = "bold"),
+          title = element_text(size = 16, face = "bold"),
+          axis.title=element_text(size=14,face="bold"),
+          strip.text.x = element_text(size = 14, face = "bold"),
+          legend.text=element_text(size=12, face = "bold"),
+          legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("infection intensity effect on IFN-y abundance")
 
-ggplot(immuno, aes(x = pop, y = counts, color = Eim_MC, fill = Eim_MC)) +
-  geom_boxplot() + 
-  facet_wrap(~EXP_type, nrow = 2) +
-  ggtitle("Uninfected mice cell counts comparison (HZ19 vs E7)")
+# see what wild mice cell populations are relevant during infection 
+# (Treg up, Treg 17 down, Th17 down, IFNy CD4 down, IFNy CD8 down)
+ggplot(subset(immuno, immuno$EXP_type == "wild"), aes(x = Eim_MC, y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  facet_wrap(~pop, scales = "free_y") +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =0.95) +
+  ggtitle("wild mice cell counts")
+# same for lab mice
+# (CD4 down, Treg up, Th1 up, Div_Th1 up, Div_Th17 up, Act_CD8 up, Div_Act_CD8 up, IFNy_CD4 up, IFNy_CD8 up)
+ggplot(subset(immuno, immuno$EXP_type == "lab"), aes(x = Eim_MC, y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  facet_wrap(~pop, scales = "free_y") +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =0.95) +
+  ggtitle("lab mice cell counts")
 
+# now let's compare groups of interest between wild and lab
+# Tregs
+ggplot(subset(immuno, immuno$pop == "Treg"), aes(x = EXP_type, y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =0.95) +
+  labs(y = "cell counts %", x = "origin", color = "") +
+  theme(axis.text=element_text(size=12, face = "bold"),
+        title = element_text(size = 16, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("Tregs")
+# IFNy CD4s
+ggplot(subset(immuno, immuno$pop == "IFNy_CD4"), aes(x = EXP_type, y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =0.95) +
+  labs(y = "cell counts %", x = "origin", color = "") +
+  theme(axis.text=element_text(size=12, face = "bold"),
+        title = element_text(size = 16, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("IFNy_CD4s")
+# IFNy CD8s
+ggplot(subset(immuno, immuno$pop == "IFNy_CD8"), aes(x = EXP_type, y = counts, color = Eim_MC)) +
+  geom_boxplot() +
+  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =0.95) +
+  labs(y = "cell counts %", x = "origin", color = "") +
+  theme(axis.text=element_text(size=12, face = "bold"),
+        title = element_text(size = 16, face = "bold"),
+        axis.title=element_text(size=14,face="bold"),
+        strip.text.x = element_text(size = 14, face = "bold"),
+        legend.text=element_text(size=12, face = "bold"),
+        legend.title = element_text(size = 12, face = "bold"))+
+  ggtitle("IFNy_CD8s")
 
-
-ggscatter(subset(immuno, grepl("CD8", immuno$pop)), x = "delta", y = "counts", add = "reg.line", color = "Eim_MC") +
-  facet_grid(EXP_type~pop)+ 
-  ggtitle("")
 
 
 wild_FACS <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Databasing/master/data/Field_data/HZ19_FACS_complete.csv"))
