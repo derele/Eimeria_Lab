@@ -110,7 +110,7 @@ immuno <- subset(immuno, !immuno$pop == "Treg_prop")
 # graph out infection intensity effect on IFN-y abundance
 ggscatter(immuno, x = "delta", y = "IFNy", add = "reg.line", color = "EXP_type") +
   facet_grid(EXP_type~Eim_MC, scales = "free")+
-  stat_cor(label.x =-5, label.y = 600) +
+  stat_cor(method = "spearman", label.x =-5, label.y = 600) +
   stat_regline_equation(label.x = -5, label.y = 500) + 
   labs(y = "IFN-y (pg/mL)", x = "deltaCT = Mouse - Eimeria") +
      theme(axis.text=element_text(size=12, face = "bold"),
@@ -136,7 +136,7 @@ ggplot(distinct(subset(immuno, immuno$EXP_type == "lab")), aes(x = Eim_MC, y = c
   geom_boxplot(outlier.shape=NA) + 
   geom_point(position=position_jitterdodge()) +
   facet_wrap(~pop, scales = "free_y") +
-  stat_compare_means(aes(label = ..p.signif..), size = 8, label.y.npc =0.95) +
+  stat_compare_means(method = "wilcox.test", aes(label = ..p.signif..), size = 8, label.y.npc =0.95) +
   ggtitle("lab mice cell counts")
 
 # now let's compare groups of interest between wild and lab
