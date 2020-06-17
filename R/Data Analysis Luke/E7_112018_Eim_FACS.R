@@ -39,8 +39,7 @@ FACS <- FACS[!FACS$EH_ID%in%"LM_0293",]
 
 #####################################################################################################################################
 #introduce parasitological data
-E7 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_complete.csv"))
-E7 <- read.csv(text=getURL(paraURL))
+E7 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_COMPLETE.csv"))
 E7 <- select(E7, EH_ID, labels, dpi, Strain, HybridStatus, primary, challenge, weight, Wchange, OPG, infHistory, IFNy_FEC,
              IFNy_CEWE, Caecum, delta, CXCR3, IRG6, IL.12)
 #merge FACS with para data (maybe replace with less stringent join)
