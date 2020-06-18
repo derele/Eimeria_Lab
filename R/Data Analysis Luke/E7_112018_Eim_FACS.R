@@ -16,7 +16,9 @@ FACSraw1 <- FACSraw1[-c(52:53),]
 FACSraw2 <- FACSraw2[-c(52:53),]
 FACSraw3 <- FACSraw3[-c(28:35),]
 FACSraw3 <- FACSraw3[-c(55:56),]
-FACSraw4 <- FACSraw4[-c(59:60),]
+FACSraw4 <- FACSraw4[-c(55:60),]
+
+
 # extract sample names and position 
 FACSraw1$EH_ID <-gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "LM_02\\2", FACSraw1$Sample)
 FACSraw1$Position <- gsub("\\d+: (Anterior|Posterior) LN_(\\d{2})_\\d{3}.fcs", "\\1", FACSraw1$Sample)
@@ -37,6 +39,10 @@ FACS2 <- full_join(FACSraw3, FACSraw4)
 FACS <- full_join(FACS1,FACS2)
 FACS <- FACS[!FACS$EH_ID%in%"LM_0293",] 
 
+FACS <- FACS %>%
+  group_by(EH_ID) %>%
+  summarise_at(vars(-Position), funs(mean(., na.rm=TRUE)))
+
 #####################################################################################################################################
 #introduce parasitological data
 E7 <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_COMPLETE.csv"))
@@ -56,9 +62,9 @@ colnames(E7)[27]<- "Div_Th17"
 colnames(E7)[28]<- "CD8"
 colnames(E7)[29]<- "Act_CD8"
 colnames(E7)[30]<- "Div_Act_CD8"
-colnames(E7)[32]<- "IFNy_CD4"
-colnames(E7)[33]<- "IL17A_CD4"
-colnames(E7)[34]<- "IFNy_CD8"
+colnames(E7)[31]<- "IFNy_CD4"
+colnames(E7)[32]<- "IL17A_CD4"
+colnames(E7)[33]<- "IFNy_CD8"
 colnames(E7)[23]<- "Treg_prop"
 
 write.csv(E7, "~/Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FACS_complete.csv")
