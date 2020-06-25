@@ -1,0 +1,91 @@
+;Well;Fluor;Target;Content;Sample;Melt Temp
+;A01;SYBR;CXCL9;Unkn;MouseCaecum1;None
+;A02;SYBR;IL-10;Unkn;MouseCaecum1;79
+;A03;SYBR;IL-12;Unkn;MouseCaecum1;None
+;A04;SYBR;IL-6;Unkn;MouseCaecum1;77
+;A05;SYBR;IFN-g;Unkn;MouseCaecum1;79,5
+;A06;SYBR;STAT6;Unkn;MouseCaecum1;None
+;A07;SYBR;TGF-b;Unkn;MouseCaecum1;82,5
+;A08;SYBR;Ppia;Unkn;MouseCaecum1;81
+;A09;SYBR;Ppib;Pos Ctrl;MouseCaecum1;82
+;A10;SYBR;CDC42;Pos Ctrl;MouseCaecum1;None
+;A11;SYBR;;Neg Ctrl;;None
+;B01;SYBR;CXCL9;Unkn;MouseCaecum1;78,5
+;B02;SYBR;IL-10;Unkn;MouseCaecum1;79
+;B03;SYBR;IL-12;Unkn;MouseCaecum1;None
+;B04;SYBR;IL-6;Unkn;MouseCaecum1;76,5
+;B05;SYBR;IFN-g;Unkn;MouseCaecum1;79,5
+;B06;SYBR;STAT6;Unkn;MouseCaecum1;None
+;B07;SYBR;TGF-b;Unkn;MouseCaecum1;82,5
+;B08;SYBR;Ppia;Unkn;MouseCaecum1;81,5
+;B09;SYBR;Ppib;Pos Ctrl;MouseCaecum1;82,5
+;B10;SYBR;CDC42;Pos Ctrl;MouseCaecum1;None
+;B11;SYBR;;Neg Ctrl;;None
+;C01;SYBR;CXCL9;Unkn;MouseCaecum2;78,5
+;C02;SYBR;IL-10;Unkn;MouseCaecum2;79
+;C03;SYBR;IL-12;Unkn;MouseCaecum2;78,5
+;C04;SYBR;IL-6;Unkn;MouseCaecum2;76
+;C05;SYBR;IFN-g;Unkn;MouseCaecum2;79
+;C06;SYBR;STAT6;Unkn;MouseCaecum2;82
+;C07;SYBR;TGF-b;Unkn;MouseCaecum2;82,5
+;C08;SYBR;Ppia;Unkn;MouseCaecum2;81
+;C09;SYBR;Ppib;Pos Ctrl;MouseCaecum2;82,5
+;C10;SYBR;CDC42;Pos Ctrl;MouseCaecum2;None
+;C11;SYBR;;Neg Ctrl;;None
+;D01;SYBR;CXCL9;Unkn;MouseCaecum2;78,5
+;D02;SYBR;IL-10;Unkn;MouseCaecum2;79
+;D03;SYBR;IL-12;Unkn;MouseCaecum2;79
+;D04;SYBR;IL-6;Unkn;MouseCaecum2;76
+;D05;SYBR;IFN-g;Unkn;MouseCaecum2;79,5
+;D06;SYBR;STAT6;Unkn;MouseCaecum2;82,5
+;D07;SYBR;TGF-b;Unkn;MouseCaecum2;82,5
+;D08;SYBR;Ppia;Unkn;MouseCaecum2;81
+;D09;SYBR;Ppib;Pos Ctrl;MouseCaecum2;82,5
+;D10;SYBR;CDC42;Pos Ctrl;MouseCaecum2;79
+;D11;SYBR;;Neg Ctrl;;None
+;E01;SYBR;CXCL9;Unkn;MouseCaecum3;78
+;E02;SYBR;IL-10;Unkn;MouseCaecum3;79,5
+;E03;SYBR;IL-12;Unkn;MouseCaecum3;None
+;E04;SYBR;IL-6;Unkn;MouseCaecum3;76
+;E05;SYBR;IFN-g;Unkn;MouseCaecum3;None
+;E06;SYBR;STAT6;Unkn;MouseCaecum3;82
+;E07;SYBR;TGF-b;Unkn;MouseCaecum3;82,5
+;E08;SYBR;Ppia;Unkn;MouseCaecum3;80
+;E09;SYBR;Ppib;Pos Ctrl;MouseCaecum3;81,5
+;E09;SYBR;Ppib;Pos Ctrl;MouseCaecum3;85
+;E10;SYBR;CDC42;Pos Ctrl;MouseCaecum3;79,5
+;E11;SYBR;;Neg Ctrl;;None
+;F01;SYBR;CXCL9;Unkn;MouseCaecum3;78
+;F02;SYBR;IL-10;Unkn;MouseCaecum3;None
+;F03;SYBR;IL-12;Unkn;MouseCaecum3;None
+;F04;SYBR;IL-6;Unkn;MouseCaecum3;76
+;F05;SYBR;IFN-g;Unkn;MouseCaecum3;85,5
+;F06;SYBR;STAT6;Unkn;MouseCaecum3;82
+;F07;SYBR;TGF-b;Unkn;MouseCaecum3;82,5
+;F08;SYBR;Ppia;Unkn;MouseCaecum3;80
+;F09;SYBR;Ppib;Pos Ctrl;MouseCaecum3;81,5
+;F09;SYBR;Ppib;Pos Ctrl;MouseCaecum3;85
+;F10;SYBR;CDC42;Pos Ctrl;MouseCaecum3;79,5
+;F11;SYBR;;Neg Ctrl;;None
+;G01;SYBR;CXCL9;Unkn;MouseCaecum4;78,5
+;G02;SYBR;IL-10;Unkn;MouseCaecum4;79
+;G03;SYBR;IL-12;Unkn;MouseCaecum4;None
+;G04;SYBR;IL-6;Unkn;MouseCaecum4;76
+;G05;SYBR;IFN-g;Unkn;MouseCaecum4;82
+;G06;SYBR;STAT6;Unkn;MouseCaecum4;82
+;G07;SYBR;TGF-b;Unkn;MouseCaecum4;83
+;G08;SYBR;Ppia;Unkn;MouseCaecum4;80
+;G09;SYBR;Ppib;Pos Ctrl;MouseCaecum4;81,5
+;G10;SYBR;CDC42;Pos Ctrl;MouseCaecum4;79
+;G11;SYBR;;Neg Ctrl;;None
+;H01;SYBR;CXCL9;Unkn;MouseCaecum4;None
+;H02;SYBR;IL-10;Unkn;MouseCaecum4;None
+;H03;SYBR;IL-12;Unkn;MouseCaecum4;None
+;H04;SYBR;IL-6;Unkn;MouseCaecum4;76
+;H05;SYBR;IFN-g;Unkn;MouseCaecum4;None
+;H06;SYBR;STAT6;Unkn;MouseCaecum4;82
+;H07;SYBR;TGF-b;Unkn;MouseCaecum4;83
+;H08;SYBR;Ppia;Unkn;MouseCaecum4;80
+;H09;SYBR;Ppib;Pos Ctrl;MouseCaecum4;81,5
+;H10;SYBR;CDC42;Pos Ctrl;MouseCaecum4;75
+;H11;SYBR;;Neg Ctrl;;None

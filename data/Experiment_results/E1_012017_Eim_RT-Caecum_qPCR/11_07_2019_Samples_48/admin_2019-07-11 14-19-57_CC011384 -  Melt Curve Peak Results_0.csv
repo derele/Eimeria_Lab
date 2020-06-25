@@ -1,0 +1,23 @@
+;Well;Fluor;Target;Content;Sample;Melt Temperature;Peak Height;Begin Temperature;End Temperature;Well Note
+;A01;SYBR;CXCL9;Unkn;MouseCaecum1;78;311,854172703451;67,5;85,5;
+;A02;SYBR;IL-10;Unkn;MouseCaecum1;None;None;None;None;
+;A03;SYBR;IL-12;Unkn;MouseCaecum1;None;None;None;None;
+;A04;SYBR;IL-6;Unkn;MouseCaecum1;75;351,062026867765;67,5;82;
+;A05;SYBR;IFN-g;Unkn;MouseCaecum1;79,5;183,054478915931;73;88;
+;A06;SYBR;STAT6;Unkn;MouseCaecum1;82,5;343,403367561135;67,5;89,5;
+;A07;SYBR;TGF-b;Unkn;MouseCaecum1;83;265,012372756817;67,5;89,5;
+;A08;SYBR;Ppia;Unkn;MouseCaecum1;83;174,726518508046;69;87;
+;A09;SYBR;Ppib;Pos Ctrl;MouseCaecum1;83;176,068811620487;79;91;
+;A10;SYBR;CDC42;Pos Ctrl;MouseCaecum1;80;165,375111104029;75,5;84;
+;A11;SYBR;;Neg Ctrl;;None;None;None;None;
+;B01;SYBR;CXCL9;Unkn;MouseCaecum1;78;304,572781258289;67,5;83,5;
+;B02;SYBR;IL-10;Unkn;MouseCaecum1;None;None;None;None;
+;B03;SYBR;IL-12;Unkn;MouseCaecum1;84,5;263,352522261263;67,5;87,5;
+;B04;SYBR;IL-6;Unkn;MouseCaecum1;75;387,377493758836;67,5;81,5;
+;B05;SYBR;IFN-g;Unkn;MouseCaecum1;73;270,111624144393;67,5;77,5;
+;B06;SYBR;STAT6;Unkn;MouseCaecum1;82;375,829010194073;68;86,5;
+;B07;SYBR;TGF-b;Unkn;MouseCaecum1;81,5;385,414607125591;77;88;
+;B08;SYBR;Ppia;Unkn;MouseCaecum1;81,5;351,310935118077;68;86;
+;B09;SYBR;Ppib;Pos Ctrl;MouseCaecum1;82,5;232,847774511443;72;89;
+;B10;SYBR;CDC42;Pos Ctrl;MouseCaecum1;80;199,410102855916;74,5;84,5;
+;B11;SYBR;;Neg Ctrl;;None;None;None;None;

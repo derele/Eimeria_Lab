@@ -1,0 +1,11 @@
+;True;Target;Sample;Regulation;P-Value;Exceeds P-Value Threshold;Compared to Regulation Threshold
+;True;CDC42;LM37;n. def.;n. def.;No;No change
+;True;CXCL9;LM37;2,2590049232253;0,0182869936631949;Yes;No change
+;True;IFN-y;LM37;-20,6487927924514;0,00273143082995198;No;Down regulated
+;True;IL-10;LM37;198,974438897001;n. def.;No;Up regulated
+;True;IL-12;LM37;-13,2924670603689;0,339034745417574;Yes;Down regulated
+;True;IL-6;LM37;-3,19866562754754;0,0891077509181492;Yes;No change
+;True;Ppia;LM37;n. def.;0,116487632183768;Yes;No change
+;True;Ppip;LM37;n. def.;0,0350718643485919;Yes;No change
+;True;STAT6;LM37;-16,6608445443453;0,00591042620331173;No;Down regulated
+;True;TGF-b;LM37;-2,47864069561152;n. def.;No;No change

@@ -1,0 +1,89 @@
+;Well;Fluor;Target;Content;Sample;End RFU;Call;Sample Type;CallType;Is Control
+;A01;SYBR;CXCL9;Unkn;MouseCaecum1;132,209156860112;;Unknown;NoCall;False
+;A02;SYBR;IL-10;Unkn;MouseCaecum1;1401,28005717629;(+) Positive;Unknown;Positive;False
+;A03;SYBR;IL-12;Unkn;MouseCaecum1;25,827635860064;;Unknown;NoCall;False
+;A04;SYBR;IL-6;Unkn;MouseCaecum1;1100,07195247982;(+) Positive;Unknown;Positive;False
+;A05;SYBR;IFN-g;Unkn;MouseCaecum1;1546,58965770151;(+) Positive;Unknown;Positive;False
+;A06;SYBR;STAT6;Unkn;MouseCaecum1;413,341784364319;(+) Positive;Unknown;Positive;False
+;A07;SYBR;TGF-b;Unkn;MouseCaecum1;1356,03863210791;(+) Positive;Unknown;Positive;False
+;A08;SYBR;Ppia;Unkn;MouseCaecum1;2291,47586507974;(+) Positive;Unknown;Positive;False
+;A09;SYBR;Ppib;Pos Ctrl;MouseCaecum1;1183,2188508836;(+) Positive;ControlPositive;Positive;False
+;A10;SYBR;CDC42;Pos Ctrl;MouseCaecum1;7,28009000759794;;ControlPositive;NoCall;False
+;A11;SYBR;;Neg Ctrl;;344,211613012696;;ControlNegative;Negative;True
+;B01;SYBR;CXCL9;Unkn;MouseCaecum1;1811,76947540542;(+) Positive;Unknown;Positive;False
+;B02;SYBR;IL-10;Unkn;MouseCaecum1;1321,50242702302;(+) Positive;Unknown;Positive;False
+;B03;SYBR;IL-12;Unkn;MouseCaecum1;605,551282493266;(+) Positive;Unknown;Positive;False
+;B04;SYBR;IL-6;Unkn;MouseCaecum1;1264,24387631848;(+) Positive;Unknown;Positive;False
+;B05;SYBR;IFN-g;Unkn;MouseCaecum1;1675,60406997003;(+) Positive;Unknown;Positive;False
+;B06;SYBR;STAT6;Unkn;MouseCaecum1;588,340801678308;(+) Positive;Unknown;Positive;False
+;B07;SYBR;TGF-b;Unkn;MouseCaecum1;1542,28028445643;(+) Positive;Unknown;Positive;False
+;B08;SYBR;Ppia;Unkn;MouseCaecum1;2476,93133068983;(+) Positive;Unknown;Positive;False
+;B09;SYBR;Ppib;Pos Ctrl;MouseCaecum1;1112,42527482434;(+) Positive;ControlPositive;Positive;False
+;B10;SYBR;CDC42;Pos Ctrl;MouseCaecum1;299,133628757421;;ControlPositive;NoCall;False
+;B11;SYBR;;Neg Ctrl;;1,09200296742774;;ControlNegative;Negative;True
+;C01;SYBR;CXCL9;Unkn;MouseCaecum2;2236,52498233919;(+) Positive;Unknown;Positive;False
+;C02;SYBR;IL-10;Unkn;MouseCaecum2;1897,72277436432;(+) Positive;Unknown;Positive;False
+;C03;SYBR;IL-12;Unkn;MouseCaecum2;1690,72926335912;(+) Positive;Unknown;Positive;False
+;C04;SYBR;IL-6;Unkn;MouseCaecum2;1472,29080714225;(+) Positive;Unknown;Positive;False
+;C05;SYBR;IFN-g;Unkn;MouseCaecum2;2368,12691775942;(+) Positive;Unknown;Positive;False
+;C06;SYBR;STAT6;Unkn;MouseCaecum2;697,34998856862;(+) Positive;Unknown;Positive;False
+;C07;SYBR;TGF-b;Unkn;MouseCaecum2;1477,01632113521;(+) Positive;Unknown;Positive;False
+;C08;SYBR;Ppia;Unkn;MouseCaecum2;2413,11484776069;(+) Positive;Unknown;Positive;False
+;C09;SYBR;Ppib;Pos Ctrl;MouseCaecum2;1264,82192558502;(+) Positive;ControlPositive;Positive;False
+;C10;SYBR;CDC42;Pos Ctrl;MouseCaecum2;572,827592834321;(+) Positive;ControlPositive;Positive;False
+;C11;SYBR;;Neg Ctrl;;150,911775090127;;ControlNegative;Negative;True
+;D01;SYBR;CXCL9;Unkn;MouseCaecum2;2193,66769279579;(+) Positive;Unknown;Positive;False
+;D02;SYBR;IL-10;Unkn;MouseCaecum2;2108,68389212603;(+) Positive;Unknown;Positive;False
+;D03;SYBR;IL-12;Unkn;MouseCaecum2;1838,60606060409;(+) Positive;Unknown;Positive;False
+;D04;SYBR;IL-6;Unkn;MouseCaecum2;1546,64394047989;(+) Positive;Unknown;Positive;False
+;D05;SYBR;IFN-g;Unkn;MouseCaecum2;2388,86504926208;(+) Positive;Unknown;Positive;False
+;D06;SYBR;STAT6;Unkn;MouseCaecum2;627,624756998802;(+) Positive;Unknown;Positive;False
+;D07;SYBR;TGF-b;Unkn;MouseCaecum2;1189,10529343568;(+) Positive;Unknown;Positive;False
+;D08;SYBR;Ppia;Unkn;MouseCaecum2;2772,2440663803;(+) Positive;Unknown;Positive;False
+;D09;SYBR;Ppib;Pos Ctrl;MouseCaecum2;1460,51438570211;(+) Positive;ControlPositive;Positive;False
+;D10;SYBR;CDC42;Pos Ctrl;MouseCaecum2;687,153173589349;(+) Positive;ControlPositive;Positive;False
+;D11;SYBR;;Neg Ctrl;;-0,331163714968716;;ControlNegative;Negative;True
+;E01;SYBR;CXCL9;Unkn;MouseCaecum3;1575,29876603674;(+) Positive;Unknown;Positive;False
+;E02;SYBR;IL-10;Unkn;MouseCaecum3;746,861864522943;(+) Positive;Unknown;Positive;False
+;E03;SYBR;IL-12;Unkn;MouseCaecum3;840,038014952594;(+) Positive;Unknown;Positive;False
+;E04;SYBR;IL-6;Unkn;MouseCaecum3;1588,13266971972;(+) Positive;Unknown;Positive;False
+;E05;SYBR;IFN-g;Unkn;MouseCaecum3;1794,13465508636;(+) Positive;Unknown;Positive;False
+;E06;SYBR;STAT6;Unkn;MouseCaecum3;777,5996398881;(+) Positive;Unknown;Positive;False
+;E07;SYBR;TGF-b;Unkn;MouseCaecum3;1048,86899641033;(+) Positive;Unknown;Positive;False
+;E08;SYBR;Ppia;Unkn;MouseCaecum3;2613,07003508746;(+) Positive;Unknown;Positive;False
+;E09;SYBR;Ppib;Pos Ctrl;MouseCaecum3;1758,87012090595;(+) Positive;ControlPositive;Positive;False
+;E10;SYBR;CDC42;Pos Ctrl;MouseCaecum3;1067,46274531845;(+) Positive;ControlPositive;Positive;False
+;E11;SYBR;;Neg Ctrl;;-0,729381289469347;;ControlNegative;Negative;True
+;F01;SYBR;CXCL9;Unkn;MouseCaecum3;1546,06001866906;(+) Positive;Unknown;Positive;False
+;F02;SYBR;IL-10;Unkn;MouseCaecum3;282,062322470764;;Unknown;NoCall;False
+;F03;SYBR;IL-12;Unkn;MouseCaecum3;967,032337669326;(+) Positive;Unknown;Positive;False
+;F04;SYBR;IL-6;Unkn;MouseCaecum3;1650,97417612202;(+) Positive;Unknown;Positive;False
+;F05;SYBR;IFN-g;Unkn;MouseCaecum3;1863,94453447797;(+) Positive;Unknown;Positive;False
+;F06;SYBR;STAT6;Unkn;MouseCaecum3;659,606439287115;(+) Positive;Unknown;Positive;False
+;F07;SYBR;TGF-b;Unkn;MouseCaecum3;907,492997504713;(+) Positive;Unknown;Positive;False
+;F08;SYBR;Ppia;Unkn;MouseCaecum3;2599,04450248116;(+) Positive;Unknown;Positive;False
+;F09;SYBR;Ppib;Pos Ctrl;MouseCaecum3;2176,89782512386;(+) Positive;ControlPositive;Positive;False
+;F10;SYBR;CDC42;Pos Ctrl;MouseCaecum3;1126,12829896956;(+) Positive;ControlPositive;Positive;False
+;F11;SYBR;;Neg Ctrl;;0,70843788475222;;ControlNegative;Negative;True
+;G01;SYBR;CXCL9;Unkn;MouseCaecum4;1686,50089982202;(+) Positive;Unknown;Positive;False
+;G02;SYBR;IL-10;Unkn;MouseCaecum4;839,515996903894;(+) Positive;Unknown;Positive;False
+;G03;SYBR;IL-12;Unkn;MouseCaecum4;906,758843753224;(+) Positive;Unknown;Positive;False
+;G04;SYBR;IL-6;Unkn;MouseCaecum4;1707,68080916838;(+) Positive;Unknown;Positive;False
+;G05;SYBR;IFN-g;Unkn;MouseCaecum4;1682,45166761045;(+) Positive;Unknown;Positive;False
+;G06;SYBR;STAT6;Unkn;MouseCaecum4;625,663868629568;(+) Positive;Unknown;Positive;False
+;G07;SYBR;TGF-b;Unkn;MouseCaecum4;889,444261755261;(+) Positive;Unknown;Positive;False
+;G08;SYBR;Ppia;Unkn;MouseCaecum4;2463,22842738871;(+) Positive;Unknown;Positive;False
+;G09;SYBR;Ppib;Pos Ctrl;MouseCaecum4;2055,65668781496;(+) Positive;ControlPositive;Positive;False
+;G10;SYBR;CDC42;Pos Ctrl;MouseCaecum4;1298,58801735802;(+) Positive;ControlPositive;Positive;False
+;G11;SYBR;;Neg Ctrl;;-2,11672410474093;;ControlNegative;Negative;True
+;H01;SYBR;CXCL9;Unkn;MouseCaecum4;0,128742125304325;;Unknown;NoCall;False
+;H02;SYBR;IL-10;Unkn;MouseCaecum4;489,321193610848;(+) Positive;Unknown;Positive;False
+;H03;SYBR;IL-12;Unkn;MouseCaecum4;451,59728571156;(+) Positive;Unknown;Positive;False
+;H04;SYBR;IL-6;Unkn;MouseCaecum4;1573,30643534282;(+) Positive;Unknown;Positive;False
+;H05;SYBR;IFN-g;Unkn;MouseCaecum4;1379,90936719233;(+) Positive;Unknown;Positive;False
+;H06;SYBR;STAT6;Unkn;MouseCaecum4;589,5593934;(+) Positive;Unknown;Positive;False
+;H07;SYBR;TGF-b;Unkn;MouseCaecum4;970,874631330604;(+) Positive;Unknown;Positive;False
+;H08;SYBR;Ppia;Unkn;MouseCaecum4;2467,49261494638;(+) Positive;Unknown;Positive;False
+;H09;SYBR;Ppib;Pos Ctrl;MouseCaecum4;2253,69636303525;(+) Positive;ControlPositive;Positive;False
+;H10;SYBR;CDC42;Pos Ctrl;MouseCaecum4;1196,01323996671;(+) Positive;ControlPositive;Positive;False
+;H11;SYBR;;Neg Ctrl;;92,9857655583069;;ControlNegative;Negative;True

@@ -1,0 +1,11 @@
+;Data Set;Target;Sample;Ctrl;Relative Quantity;Relative Quantity SD;Corrected Relative Quantity SD;Relative Quantity SEM;Corrected Relative Quantity SEM;Unscaled Expression;Unscaled Expression SD;Corrected Unscaled Expression SD;Unscaled Expression SEM;Corrected Unscaled Expression SEM;Expression;Expression SD;Corrected Expression SD;Expression SEM;Corrected Expression SEM;Wells;Mean Cq;Cq SD;Cq SEM
+;1-SYBR;CDC42;MouseCaecum1;;0;0;0;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;2;26,2436461988414;0,147212914895407;0,10409525040078
+;1-SYBR;CXCL9;MouseCaecum1;;0;0;0;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;2;33,0796176143587;0,192421743856402;0,136062719928603
+;1-SYBR;IFN-g;MouseCaecum1;;0;0;0;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;2;32,9440980064655;0,292819652596001;0,207054762015321
+;1-SYBR;IL-10;MouseCaecum1;;0;0;0;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;1;36,8842817921892;0;0
+;1-SYBR;IL-12;MouseCaecum1;;0;0;0;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;1;33,093025702925;0;0
+;1-SYBR;IL-6;MouseCaecum1;;0;0;0;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;2;30,3247788293272;0,173866957850127;0,1229425049201
+;1-SYBR;Ppia;MouseCaecum1;;0;0;0;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;2;22,7245078419508;0,103312816764235;0,0730531933174738
+;1-SYBR;Ppib;MouseCaecum1;;0;0;0;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;2;25,3640798210276;0,0334737284783191;0,0236695003986167
+;1-SYBR;STAT6;MouseCaecum1;;0;0;0;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;2;29,7718968686815;0,440997438489812;0,311832279242044
+;1-SYBR;TGF-b;MouseCaecum1;;0;0;0;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;n. def.;2;31,5997773106507;0,604321706299983;0,427319976542943

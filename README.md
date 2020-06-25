@@ -2,23 +2,27 @@ Eimeria_Lab repository
 
 This repository is for storage of clean data from experiments conducted at AG Heitlinger. 
 
+
+
+## 1. Accessing data:
+# 1.1. General description:
+
+All data in this repository has been processed and saved as a clean table according to the corresponding template in 
+https://github.com/derele/Eimeria_Lab/tree/master/data/Templates/
+
 All file names contain information to distinguish the number of an experiment, date of infection (MMYYYY), infection agent (e.g. Eimeria, Crypto,
 etc.), format.
-In addition, elements of the name may designate tissue type (see table ......), oocyst, record (record of mouse weight over dpi) or assay
-type(ELISA, qPCR, FACS, etc.). 
+In addition, elements of the name may designate: design (outline of mouse information, infection and label), info (mouse information sheet),
+tissue type (see table ......), oocyst, record (record of mouse weight over dpi) or assay type (ELISA, qPCR, FACS, etc.). 
 
 Exmaple: E7_112018_Eim_CEWE_ELISA.csv
 This means the table contains information generated from Experiment 7, infections started in November 2018, mice were infected with Eimeria, the
 tissue used in the assay was Caecum, the essay was ELISA and tthe table is in a .csv format.
 
-This should give the user (myself and you) the most important info on how to get something out of the data. Examples (1, 2) can be: how to
-tabulate the number of mice per experiment, how to tabulate the samples taken in an experimetn etc.. Examples in the documentation should use code
-in an appropriately named folder.
-
-## 1. Accessing data:
-# 1.1. General description:
-All data in this repository has been processed and saved as a clean table according to the corresponding template in 
-https://github.com/derele/Eimeria_Lab/tree/master/data/templates/
+The data folder is divided into:
+Experimental_design = mouse information sheets containing attributes such as: sex, strain, date of birth, EH_ID, InfectionStrain.
+Experiment_results = clean tables of results obtained from a given experiment and assay/observation
+Templates = examples of what corresponsing tables should look like
 
 
 # 1.2. Examples
@@ -36,6 +40,7 @@ E = Experiment, P = Passaging
 Raw data should be stored here, processed using code saved here as well and both should be subsequently deleted once a clean table exists.
 The raw data and code should be both commited and pushed to git to keep track of events. Commit messages should contain information on what
 files are being handled.
+
 General rule is:
 1. upload raw data table
 2. upload code to process raw data table
@@ -44,7 +49,8 @@ General rule is:
 
 # 2.2. Examples
 2.2.1. Adding genotype data
-2.2.2. Adding qPCR data.
+
+2.2.2. Adding qPCR data
 
 
 

@@ -1,0 +1,41 @@
+;Target;Sample;Mean Cq;Mean Efficiency Corrected Cq;Normalized Expression;Relative Normalized Expression;Regulation;Compared to Regulation Threshold;P-Value;Exceeds P-Value Threshold
+;CDC42;MouseCaecum1;n. def.;n. def.;n. def.;n. def.;n. def.;No change;n. def.;No
+;CDC42;MouseCaecum2;24,3033509755088;24,3033509755088;n. def.;n. def.;n. def.;No change;n. def.;No
+;CDC42;MouseCaecum3;28,296503279734;28,296503279734;n. def.;n. def.;n. def.;No change;n. def.;No
+;CDC42;MouseCaecum4;26,6623251544169;26,6623251544169;n. def.;n. def.;n. def.;No change;n. def.;No
+;CXCL9;MouseCaecum1;30,7439295500171;30,7439295500171;n. def.;n. def.;n. def.;No change;n. def.;No
+;CXCL9;MouseCaecum2;26,3200519042724;26,3200519042724;0,00944301819933235;n. def.;n. def.;No change;n. def.;No
+;CXCL9;MouseCaecum3;28,7981741591305;28,7981741591305;0,261411630975384;n. def.;n. def.;No change;n. def.;No
+;CXCL9;MouseCaecum4;15,6418970634676;15,6418970634676;299,591583935483;n. def.;n. def.;No change;n. def.;No
+;IFN-g;MouseCaecum1;23,6200597604768;23,6200597604768;n. def.;n. def.;n. def.;No change;n. def.;No
+;IFN-g;MouseCaecum2;29,0187388966903;29,0187388966903;0,00145453807145477;n. def.;n. def.;No change;n. def.;No
+;IFN-g;MouseCaecum3;38,8872977351372;38,8872977351372;0,000239991621684582;n. def.;n. def.;No change;n. def.;No
+;IFN-g;MouseCaecum4;33,1985288203781;33,1985288203781;0,00155402080019672;n. def.;n. def.;No change;n. def.;No
+;IL-10;MouseCaecum1;27,947316855368;27,947316855368;n. def.;n. def.;n. def.;No change;n. def.;No
+;IL-10;MouseCaecum2;34,3801501904227;34,3801501904227;3,53817634443993E-05;n. def.;n. def.;No change;n. def.;No
+;IL-10;MouseCaecum3;n. def.;n. def.;n. def.;n. def.;n. def.;No change;n. def.;No
+;IL-10;MouseCaecum4;36,9729058411085;36,9729058411085;0,000113568039638013;n. def.;n. def.;No change;n. def.;No
+;IL-12;MouseCaecum1;30,3046951758644;30,3046951758644;n. def.;n. def.;n. def.;No change;n. def.;No
+;IL-12;MouseCaecum2;34,1828122922325;34,1828122922325;4,05680470474831E-05;n. def.;n. def.;No change;n. def.;No
+;IL-12;MouseCaecum3;38,5471108937641;38,5471108937641;0,000303810321137697;n. def.;n. def.;No change;n. def.;No
+;IL-12;MouseCaecum4;35,333734412794;35,333734412794;0,000353749550922311;n. def.;n. def.;No change;n. def.;No
+;IL-6;MouseCaecum1;24,9825096027251;24,9825096027251;n. def.;n. def.;n. def.;No change;n. def.;No
+;IL-6;MouseCaecum2;26,9074959647339;26,9074959647339;0,00628452623742523;n. def.;n. def.;No change;n. def.;No
+;IL-6;MouseCaecum3;32,1727238656899;32,1727238656899;0,025204856151372;n. def.;n. def.;No change;n. def.;No
+;IL-6;MouseCaecum4;30,7486683624082;30,7486683624082;0,00849059861432367;n. def.;n. def.;No change;n. def.;No
+;Ppia;MouseCaecum1;14,6020292728358;14,6020292728358;n. def.;n. def.;n. def.;No change;n. def.;No
+;Ppia;MouseCaecum2;15,968369009455;15,968369009455;n. def.;n. def.;n. def.;No change;n. def.;No
+;Ppia;MouseCaecum3;24,1000800648903;24,1000800648903;n. def.;n. def.;n. def.;No change;n. def.;No
+;Ppia;MouseCaecum4;22,2798042787797;22,2798042787797;n. def.;n. def.;n. def.;No change;n. def.;No
+;Ppib;MouseCaecum1;17,8396617580958;17,8396617580958;n. def.;n. def.;n. def.;No change;n. def.;No
+;Ppib;MouseCaecum2;18,5088270263348;18,5088270263348;n. def.;n. def.;n. def.;No change;n. def.;No
+;Ppib;MouseCaecum3;28,1911248450766;28,1911248450766;n. def.;n. def.;n. def.;No change;n. def.;No
+;Ppib;MouseCaecum4;22,6641216159602;22,6641216159602;n. def.;n. def.;n. def.;No change;n. def.;No
+;STAT6;MouseCaecum1;26,8648567042052;26,8648567042052;n. def.;n. def.;n. def.;No change;n. def.;No
+;STAT6;MouseCaecum2;25,1746407793775;25,1746407793775;0,0208888212063061;n. def.;n. def.;No change;n. def.;No
+;STAT6;MouseCaecum3;33,0471793596643;33,0471793596643;0,0137482331847019;n. def.;n. def.;No change;n. def.;No
+;STAT6;MouseCaecum4;32,5164755403927;32,5164755403927;0,00249330451428448;n. def.;n. def.;No change;n. def.;No
+;TGF-b;MouseCaecum1;21,5294935448745;21,5294935448745;n. def.;n. def.;n. def.;No change;n. def.;No
+;TGF-b;MouseCaecum2;24,9036654159583;24,9036654159583;0,0252049386759433;n. def.;n. def.;No change;n. def.;No
+;TGF-b;MouseCaecum3;34,3565292226059;34,3565292226059;0,00554744884401522;n. def.;n. def.;No change;n. def.;No
+;TGF-b;MouseCaecum4;30,6230880366066;30,6230880366066;0,00926278866238167;n. def.;n. def.;No change;n. def.;No

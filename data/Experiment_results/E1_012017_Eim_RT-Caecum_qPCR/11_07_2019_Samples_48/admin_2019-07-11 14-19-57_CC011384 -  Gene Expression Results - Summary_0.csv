@@ -1,0 +1,11 @@
+;Target;Sample;Mean Cq;Mean Efficiency Corrected Cq;Normalized Expression;Relative Normalized Expression;Regulation;Compared to Regulation Threshold;P-Value;Exceeds P-Value Threshold
+;CDC42;MouseCaecum1;26,2436461988414;26,2436461988414;n. def.;n. def.;n. def.;No change;n. def.;No
+;CXCL9;MouseCaecum1;33,0796176143587;33,0796176143587;0,00316801234566852;1;1;No change;n. def.;No
+;IFN-g;MouseCaecum1;32,9440980064655;32,9440980064655;0,00348002474731196;1;1;No change;n. def.;No
+;IL-10;MouseCaecum1;36,8842817921892;36,8842817921892;0,000226709032942604;1;1;No change;n. def.;No
+;IL-12;MouseCaecum1;33,093025702925;33,093025702925;0,00313870593433029;1;1;No change;n. def.;No
+;IL-6;MouseCaecum1;30,3247788293272;30,3247788293272;0,0213833612446775;1;1;No change;n. def.;No
+;Ppia;MouseCaecum1;22,7245078419508;22,7245078419508;n. def.;n. def.;n. def.;No change;n. def.;No
+;Ppib;MouseCaecum1;25,3640798210276;25,3640798210276;n. def.;n. def.;n. def.;No change;n. def.;No
+;STAT6;MouseCaecum1;29,7718968686815;29,7718968686815;0,0313696755630714;1;1;No change;n. def.;No
+;TGF-b;MouseCaecum1;31,5997773106507;31,5997773106507;0,00883615215344977;1;1;No change;n. def.;No

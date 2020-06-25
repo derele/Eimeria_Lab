@@ -1,0 +1,481 @@
+;Well;Fluor;Target;Content;Sample;Cq;SQ
+;A01;Cy5;;Unkn;;n. def.;n. def.
+;A02;Cy5;;Unkn;;n. def.;n. def.
+;A03;Cy5;;Unkn;;n. def.;n. def.
+;A04;Cy5;;Unkn;;n. def.;n. def.
+;A05;Cy5;;Unkn;;n. def.;n. def.
+;A06;Cy5;;Unkn;;n. def.;n. def.
+;A07;Cy5;;Unkn;;n. def.;n. def.
+;A08;Cy5;;Unkn;;n. def.;n. def.
+;A09;Cy5;;Unkn;;n. def.;n. def.
+;A10;Cy5;;Unkn;;n. def.;n. def.
+;A11;Cy5;;Unkn;;n. def.;n. def.
+;A12;Cy5;;Unkn;;n. def.;n. def.
+;B01;Cy5;;Unkn;;n. def.;n. def.
+;B02;Cy5;;Unkn;;n. def.;n. def.
+;B03;Cy5;;Unkn;;n. def.;n. def.
+;B04;Cy5;;Unkn;;n. def.;n. def.
+;B05;Cy5;;Unkn;;n. def.;n. def.
+;B06;Cy5;;Unkn;;n. def.;n. def.
+;B07;Cy5;;Unkn;;n. def.;n. def.
+;B08;Cy5;;Unkn;;n. def.;n. def.
+;B09;Cy5;;Unkn;;n. def.;n. def.
+;B10;Cy5;;Unkn;;n. def.;n. def.
+;B11;Cy5;;Unkn;;n. def.;n. def.
+;B12;Cy5;;Unkn;;n. def.;n. def.
+;C01;Cy5;;Unkn;;n. def.;n. def.
+;C02;Cy5;;Unkn;;n. def.;n. def.
+;C03;Cy5;;Unkn;;n. def.;n. def.
+;C04;Cy5;;Unkn;;n. def.;n. def.
+;C05;Cy5;;Unkn;;n. def.;n. def.
+;C06;Cy5;;Unkn;;n. def.;n. def.
+;C07;Cy5;;Unkn;;n. def.;n. def.
+;C08;Cy5;;Unkn;;n. def.;n. def.
+;C09;Cy5;;Unkn;;n. def.;n. def.
+;C10;Cy5;;Unkn;;n. def.;n. def.
+;C11;Cy5;;Unkn;;n. def.;n. def.
+;C12;Cy5;;Unkn;;n. def.;n. def.
+;D01;Cy5;;Unkn;;n. def.;n. def.
+;D02;Cy5;;Unkn;;n. def.;n. def.
+;D03;Cy5;;Unkn;;n. def.;n. def.
+;D04;Cy5;;Unkn;;n. def.;n. def.
+;D05;Cy5;;Unkn;;n. def.;n. def.
+;D06;Cy5;;Unkn;;n. def.;n. def.
+;D07;Cy5;;Unkn;;n. def.;n. def.
+;D08;Cy5;;Unkn;;n. def.;n. def.
+;D09;Cy5;;Unkn;;n. def.;n. def.
+;D10;Cy5;;Unkn;;n. def.;n. def.
+;D11;Cy5;;Unkn;;n. def.;n. def.
+;D12;Cy5;;Unkn;;n. def.;n. def.
+;E01;Cy5;;Unkn;;n. def.;n. def.
+;E02;Cy5;;Unkn;;n. def.;n. def.
+;E03;Cy5;;Unkn;;n. def.;n. def.
+;E04;Cy5;;Unkn;;n. def.;n. def.
+;E05;Cy5;;Unkn;;n. def.;n. def.
+;E06;Cy5;;Unkn;;n. def.;n. def.
+;E07;Cy5;;Unkn;;n. def.;n. def.
+;E08;Cy5;;Unkn;;n. def.;n. def.
+;E09;Cy5;;Unkn;;n. def.;n. def.
+;E10;Cy5;;Unkn;;n. def.;n. def.
+;E11;Cy5;;Unkn;;n. def.;n. def.
+;E12;Cy5;;Unkn;;n. def.;n. def.
+;F01;Cy5;;Unkn;;n. def.;n. def.
+;F02;Cy5;;Unkn;;n. def.;n. def.
+;F03;Cy5;;Unkn;;n. def.;n. def.
+;F04;Cy5;;Unkn;;n. def.;n. def.
+;F05;Cy5;;Unkn;;n. def.;n. def.
+;F06;Cy5;;Unkn;;n. def.;n. def.
+;F07;Cy5;;Unkn;;n. def.;n. def.
+;F08;Cy5;;Unkn;;n. def.;n. def.
+;F09;Cy5;;Unkn;;n. def.;n. def.
+;F10;Cy5;;Unkn;;n. def.;n. def.
+;F11;Cy5;;Unkn;;n. def.;n. def.
+;F12;Cy5;;Unkn;;n. def.;n. def.
+;G01;Cy5;;Unkn;;n. def.;n. def.
+;G02;Cy5;;Unkn;;n. def.;n. def.
+;G03;Cy5;;Unkn;;n. def.;n. def.
+;G04;Cy5;;Unkn;;n. def.;n. def.
+;G05;Cy5;;Unkn;;n. def.;n. def.
+;G06;Cy5;;Unkn;;n. def.;n. def.
+;G07;Cy5;;Unkn;;n. def.;n. def.
+;G08;Cy5;;Unkn;;n. def.;n. def.
+;G09;Cy5;;Unkn;;n. def.;n. def.
+;G10;Cy5;;Unkn;;n. def.;n. def.
+;G11;Cy5;;Unkn;;n. def.;n. def.
+;G12;Cy5;;Unkn;;n. def.;n. def.
+;H01;Cy5;;Unkn;;n. def.;n. def.
+;H02;Cy5;;Unkn;;n. def.;n. def.
+;H03;Cy5;;Unkn;;n. def.;n. def.
+;H04;Cy5;;Unkn;;n. def.;n. def.
+;H05;Cy5;;Unkn;;n. def.;n. def.
+;H06;Cy5;;Unkn;;n. def.;n. def.
+;H07;Cy5;;Unkn;;n. def.;n. def.
+;H08;Cy5;;Unkn;;n. def.;n. def.
+;H09;Cy5;;Unkn;;n. def.;n. def.
+;H10;Cy5;;Unkn;;n. def.;n. def.
+;H11;Cy5;;Unkn;;n. def.;n. def.
+;H12;Cy5;;Unkn;;n. def.;n. def.
+;A01;FAM;;Unkn;;27,3083326837389;n. def.
+;A02;FAM;;Unkn;;27,1200101154797;n. def.
+;A03;FAM;;Unkn;;26,8705733416792;n. def.
+;A04;FAM;;Unkn;;21,7017485323955;n. def.
+;A05;FAM;;Unkn;;n. def.;n. def.
+;A06;FAM;;Unkn;;23,0545662209332;n. def.
+;A07;FAM;;Unkn;;24,8668739190205;n. def.
+;A08;FAM;;Unkn;;24,7868168845595;n. def.
+;A09;FAM;;Unkn;;24,7247186737519;n. def.
+;A10;FAM;;Unkn;;28,5175760618331;n. def.
+;A11;FAM;;Unkn;;29,9031328698501;n. def.
+;A12;FAM;;Unkn;;n. def.;n. def.
+;B01;FAM;;Unkn;;34,4869103775664;n. def.
+;B02;FAM;;Unkn;;34,6642824576477;n. def.
+;B03;FAM;;Unkn;;32,8260803987416;n. def.
+;B04;FAM;;Unkn;;33,0332507345616;n. def.
+;B05;FAM;;Unkn;;33,001630494819;n. def.
+;B06;FAM;;Unkn;;33,2113851267988;n. def.
+;B07;FAM;;Unkn;;33,559695277121;n. def.
+;B08;FAM;;Unkn;;33,0325583748028;n. def.
+;B09;FAM;;Unkn;;32,924267780301;n. def.
+;B10;FAM;;Unkn;;32,4385205698686;n. def.
+;B11;FAM;;Unkn;;35,6048366542672;n. def.
+;B12;FAM;;Unkn;;n. def.;n. def.
+;C01;FAM;;Unkn;;26,0872942869679;n. def.
+;C02;FAM;;Unkn;;25,02200023773;n. def.
+;C03;FAM;;Unkn;;23,5737587403376;n. def.
+;C04;FAM;;Unkn;;30,4525650968362;n. def.
+;C05;FAM;;Unkn;;32,0469727926874;n. def.
+;C06;FAM;;Unkn;;31,7979185637413;n. def.
+;C07;FAM;;Unkn;;31,7493817395442;n. def.
+;C08;FAM;;Unkn;;31,3591050455274;n. def.
+;C09;FAM;;Unkn;;33,2001232543217;n. def.
+;C10;FAM;;Unkn;;25,0463301294898;n. def.
+;C11;FAM;;Unkn;;25,2653349799033;n. def.
+;C12;FAM;;Unkn;;n. def.;n. def.
+;D01;FAM;;Unkn;;23,4236438063155;n. def.
+;D02;FAM;;Unkn;;23,2697234012822;n. def.
+;D03;FAM;;Unkn;;23,2500550897931;n. def.
+;D04;FAM;;Unkn;;28,0908432365011;n. def.
+;D05;FAM;;Unkn;;28,0754026642431;n. def.
+;D06;FAM;;Unkn;;28,6607164374945;n. def.
+;D07;FAM;;Unkn;;27,7341340912199;n. def.
+;D08;FAM;;Unkn;;n. def.;n. def.
+;D09;FAM;;Unkn;;26,8068829516521;n. def.
+;D10;FAM;;Unkn;;23,8992021640305;n. def.
+;D11;FAM;;Unkn;;24,2497626958835;n. def.
+;D12;FAM;;Unkn;;25,3802762860442;n. def.
+;E01;FAM;;Unkn;;25,3683419410299;n. def.
+;E02;FAM;;Unkn;;27,1677884140061;n. def.
+;E03;FAM;;Unkn;;23,3939776350748;n. def.
+;E04;FAM;;Unkn;;30,4832554400032;n. def.
+;E05;FAM;;Unkn;;30,1045311572972;n. def.
+;E06;FAM;;Unkn;;29,9578581852678;n. def.
+;E07;FAM;;Unkn;;31,0398723199895;n. def.
+;E08;FAM;;Unkn;;30,4440298172311;n. def.
+;E09;FAM;;Unkn;;28,5045281099547;n. def.
+;E10;FAM;;Unkn;;30,3877728846054;n. def.
+;E11;FAM;;Unkn;;31,3957392275318;n. def.
+;E12;FAM;;Unkn;;34,1032341877259;n. def.
+;F01;FAM;;Unkn;;23,3318922340084;n. def.
+;F02;FAM;;Unkn;;n. def.;n. def.
+;F03;FAM;;Unkn;;23,1643966741673;n. def.
+;F04;FAM;;Unkn;;28,7689081159993;n. def.
+;F05;FAM;;Unkn;;30,2554892908445;n. def.
+;F06;FAM;;Unkn;;30,2631800753882;n. def.
+;F07;FAM;;Unkn;;30,4010901145023;n. def.
+;F08;FAM;;Unkn;;31,2568400910001;n. def.
+;F09;FAM;;Unkn;;30,3378663468774;n. def.
+;F10;FAM;;Unkn;;24,2336025723805;n. def.
+;F11;FAM;;Unkn;;24,4543911551058;n. def.
+;F12;FAM;;Unkn;;25,0639510777975;n. def.
+;G01;FAM;;Unkn;;29,491644174078;n. def.
+;G02;FAM;;Unkn;;25,708452483084;n. def.
+;G03;FAM;;Unkn;;28,138335311491;n. def.
+;G04;FAM;;Unkn;;31,0221410191871;n. def.
+;G05;FAM;;Unkn;;10,23206039109;n. def.
+;G06;FAM;;Unkn;;31,1571494798304;n. def.
+;G07;FAM;;Unkn;;30,7336522436805;n. def.
+;G08;FAM;;Unkn;;31,1472475080533;n. def.
+;G09;FAM;;Unkn;;28,9834824278702;n. def.
+;G10;FAM;;Unkn;;26,7201932264165;n. def.
+;G11;FAM;;Unkn;;28,0520926812467;n. def.
+;G12;FAM;;Unkn;;29,4214968003314;n. def.
+;H01;FAM;;Unkn;;36,5080734827442;n. def.
+;H02;FAM;;Unkn;;n. def.;n. def.
+;H03;FAM;;Unkn;;37,9946655642583;n. def.
+;H04;FAM;;Unkn;;n. def.;n. def.
+;H05;FAM;;Unkn;;35,3900302089097;n. def.
+;H06;FAM;;Unkn;;38,7871810187185;n. def.
+;H07;FAM;;Unkn;;n. def.;n. def.
+;H08;FAM;;Unkn;;n. def.;n. def.
+;H09;FAM;;Unkn;;n. def.;n. def.
+;H10;FAM;;Unkn;;n. def.;n. def.
+;H11;FAM;;Unkn;;n. def.;n. def.
+;H12;FAM;;Unkn;;n. def.;n. def.
+;A01;HEX;;Unkn;;5,57775466448195;n. def.
+;A02;HEX;;Unkn;;30,9145010787744;n. def.
+;A03;HEX;;Unkn;;29,9554787682697;n. def.
+;A04;HEX;;Unkn;;25,8677438378325;n. def.
+;A05;HEX;;Unkn;;22,3249176875871;n. def.
+;A06;HEX;;Unkn;;15,2524417550161;n. def.
+;A07;HEX;;Unkn;;29,8072283653435;n. def.
+;A08;HEX;;Unkn;;30,0379232963404;n. def.
+;A09;HEX;;Unkn;;3,71656061922262;n. def.
+;A10;HEX;;Unkn;;32,8342151911005;n. def.
+;A11;HEX;;Unkn;;35,3866687891493;n. def.
+;A12;HEX;;Unkn;;19,2342701602066;n. def.
+;B01;HEX;;Unkn;;13,2474356068737;n. def.
+;B02;HEX;;Unkn;;37,1405482990247;n. def.
+;B03;HEX;;Unkn;;7,74587618924736;n. def.
+;B04;HEX;;Unkn;;35,5482959833794;n. def.
+;B05;HEX;;Unkn;;35,5040770714834;n. def.
+;B06;HEX;;Unkn;;36,3500991625488;n. def.
+;B07;HEX;;Unkn;;25,9321859862347;n. def.
+;B08;HEX;;Unkn;;2,58387969121875;n. def.
+;B09;HEX;;Unkn;;35,7452093670905;n. def.
+;B10;HEX;;Unkn;;18,5677425644513;n. def.
+;B11;HEX;;Unkn;;36,4857560142508;n. def.
+;B12;HEX;;Unkn;;37,3536159837793;n. def.
+;C01;HEX;;Unkn;;1,19052547521472;n. def.
+;C02;HEX;;Unkn;;1,9598519091801;n. def.
+;C03;HEX;;Unkn;;29,0578715654683;n. def.
+;C04;HEX;;Unkn;;34,6310310377188;n. def.
+;C05;HEX;;Unkn;;35,0471756215469;n. def.
+;C06;HEX;;Unkn;;31,2778582543767;n. def.
+;C07;HEX;;Unkn;;34,44683241445;n. def.
+;C08;HEX;;Unkn;;34,1479961119458;n. def.
+;C09;HEX;;Unkn;;36,3510853048331;n. def.
+;C10;HEX;;Unkn;;5,77142594883185;n. def.
+;C11;HEX;;Unkn;;1,87644364284081;n. def.
+;C12;HEX;;Unkn;;19,6990792317131;n. def.
+;D01;HEX;;Unkn;;11,2423474773086;n. def.
+;D02;HEX;;Unkn;;10,7090467363839;n. def.
+;D03;HEX;;Unkn;;1,26906683386493;n. def.
+;D04;HEX;;Unkn;;11,9929080372077;n. def.
+;D05;HEX;;Unkn;;37,2401073615602;n. def.
+;D06;HEX;;Unkn;;29,674150796149;n. def.
+;D07;HEX;;Unkn;;2,82420106368554;n. def.
+;D08;HEX;;Unkn;;21,4043141874227;n. def.
+;D09;HEX;;Unkn;;31,8127853445683;n. def.
+;D10;HEX;;Unkn;;4,62956181568805;n. def.
+;D11;HEX;;Unkn;;34,0298094530718;n. def.
+;D12;HEX;;Unkn;;18,3901346515981;n. def.
+;E01;HEX;;Unkn;;34,0148063082305;n. def.
+;E02;HEX;;Unkn;;32,0073149880035;n. def.
+;E03;HEX;;Unkn;;27,8322911113467;n. def.
+;E04;HEX;;Unkn;;3,71287211815602;n. def.
+;E05;HEX;;Unkn;;29,1706868155004;n. def.
+;E06;HEX;;Unkn;;31,0149186582078;n. def.
+;E07;HEX;;Unkn;;30,0722573413855;n. def.
+;E08;HEX;;Unkn;;33,5096211799467;n. def.
+;E09;HEX;;Unkn;;26,5450765517558;n. def.
+;E10;HEX;;Unkn;;34,4629362563541;n. def.
+;E11;HEX;;Unkn;;34,8467924288321;n. def.
+;E12;HEX;;Unkn;;35,4060318713867;n. def.
+;F01;HEX;;Unkn;;26,0907471233565;n. def.
+;F02;HEX;;Unkn;;10,7664318981657;n. def.
+;F03;HEX;;Unkn;;10,7577481772534;n. def.
+;F04;HEX;;Unkn;;32,306108241066;n. def.
+;F05;HEX;;Unkn;;26,8809930285324;n. def.
+;F06;HEX;;Unkn;;20,4446333355105;n. def.
+;F07;HEX;;Unkn;;28,492623074589;n. def.
+;F08;HEX;;Unkn;;34,349769173653;n. def.
+;F09;HEX;;Unkn;;15,6568610294735;n. def.
+;F10;HEX;;Unkn;;16,7328393370764;n. def.
+;F11;HEX;;Unkn;;19,4688901063844;n. def.
+;F12;HEX;;Unkn;;9,66580781235736;n. def.
+;G01;HEX;;Unkn;;35,5975932426414;n. def.
+;G02;HEX;;Unkn;;34,6401020863058;n. def.
+;G03;HEX;;Unkn;;36,0589937835914;n. def.
+;G04;HEX;;Unkn;;35,8097926078929;n. def.
+;G05;HEX;;Unkn;;13,4779951383631;n. def.
+;G06;HEX;;Unkn;;34,4732791159091;n. def.
+;G07;HEX;;Unkn;;35,1614501922486;n. def.
+;G08;HEX;;Unkn;;25,9169557022506;n. def.
+;G09;HEX;;Unkn;;8,9559254442321;n. def.
+;G10;HEX;;Unkn;;33,4821241413026;n. def.
+;G11;HEX;;Unkn;;31,8968430688831;n. def.
+;G12;HEX;;Unkn;;5,13437133023024;n. def.
+;H01;HEX;;Unkn;;17,4633606108765;n. def.
+;H02;HEX;;Unkn;;8,98745839627474;n. def.
+;H03;HEX;;Unkn;;30,6077550150441;n. def.
+;H04;HEX;;Unkn;;28,4076844800732;n. def.
+;H05;HEX;;Unkn;;15,6986928605847;n. def.
+;H06;HEX;;Unkn;;36,8366840052844;n. def.
+;H07;HEX;;Unkn;;4,97106171139161;n. def.
+;H08;HEX;;Unkn;;25,3523968439903;n. def.
+;H09;HEX;;Unkn;;19,2177572984779;n. def.
+;H10;HEX;;Unkn;;10,638915778774;n. def.
+;H11;HEX;;Unkn;;10,0275187701245;n. def.
+;H12;HEX;;Unkn;;22,0751750858088;n. def.
+;A01;Quasar 705;;Unkn;;n. def.;n. def.
+;A02;Quasar 705;;Unkn;;n. def.;n. def.
+;A03;Quasar 705;;Unkn;;n. def.;n. def.
+;A04;Quasar 705;;Unkn;;19,8040092971495;n. def.
+;A05;Quasar 705;;Unkn;;n. def.;n. def.
+;A06;Quasar 705;;Unkn;;n. def.;n. def.
+;A07;Quasar 705;;Unkn;;n. def.;n. def.
+;A08;Quasar 705;;Unkn;;n. def.;n. def.
+;A09;Quasar 705;;Unkn;;n. def.;n. def.
+;A10;Quasar 705;;Unkn;;n. def.;n. def.
+;A11;Quasar 705;;Unkn;;n. def.;n. def.
+;A12;Quasar 705;;Unkn;;n. def.;n. def.
+;B01;Quasar 705;;Unkn;;n. def.;n. def.
+;B02;Quasar 705;;Unkn;;n. def.;n. def.
+;B03;Quasar 705;;Unkn;;n. def.;n. def.
+;B04;Quasar 705;;Unkn;;n. def.;n. def.
+;B05;Quasar 705;;Unkn;;n. def.;n. def.
+;B06;Quasar 705;;Unkn;;n. def.;n. def.
+;B07;Quasar 705;;Unkn;;n. def.;n. def.
+;B08;Quasar 705;;Unkn;;n. def.;n. def.
+;B09;Quasar 705;;Unkn;;n. def.;n. def.
+;B10;Quasar 705;;Unkn;;n. def.;n. def.
+;B11;Quasar 705;;Unkn;;n. def.;n. def.
+;B12;Quasar 705;;Unkn;;n. def.;n. def.
+;C01;Quasar 705;;Unkn;;n. def.;n. def.
+;C02;Quasar 705;;Unkn;;n. def.;n. def.
+;C03;Quasar 705;;Unkn;;n. def.;n. def.
+;C04;Quasar 705;;Unkn;;n. def.;n. def.
+;C05;Quasar 705;;Unkn;;n. def.;n. def.
+;C06;Quasar 705;;Unkn;;n. def.;n. def.
+;C07;Quasar 705;;Unkn;;n. def.;n. def.
+;C08;Quasar 705;;Unkn;;n. def.;n. def.
+;C09;Quasar 705;;Unkn;;n. def.;n. def.
+;C10;Quasar 705;;Unkn;;n. def.;n. def.
+;C11;Quasar 705;;Unkn;;n. def.;n. def.
+;C12;Quasar 705;;Unkn;;n. def.;n. def.
+;D01;Quasar 705;;Unkn;;n. def.;n. def.
+;D02;Quasar 705;;Unkn;;n. def.;n. def.
+;D03;Quasar 705;;Unkn;;n. def.;n. def.
+;D04;Quasar 705;;Unkn;;n. def.;n. def.
+;D05;Quasar 705;;Unkn;;n. def.;n. def.
+;D06;Quasar 705;;Unkn;;n. def.;n. def.
+;D07;Quasar 705;;Unkn;;n. def.;n. def.
+;D08;Quasar 705;;Unkn;;n. def.;n. def.
+;D09;Quasar 705;;Unkn;;n. def.;n. def.
+;D10;Quasar 705;;Unkn;;n. def.;n. def.
+;D11;Quasar 705;;Unkn;;n. def.;n. def.
+;D12;Quasar 705;;Unkn;;n. def.;n. def.
+;E01;Quasar 705;;Unkn;;n. def.;n. def.
+;E02;Quasar 705;;Unkn;;n. def.;n. def.
+;E03;Quasar 705;;Unkn;;n. def.;n. def.
+;E04;Quasar 705;;Unkn;;n. def.;n. def.
+;E05;Quasar 705;;Unkn;;n. def.;n. def.
+;E06;Quasar 705;;Unkn;;n. def.;n. def.
+;E07;Quasar 705;;Unkn;;n. def.;n. def.
+;E08;Quasar 705;;Unkn;;n. def.;n. def.
+;E09;Quasar 705;;Unkn;;n. def.;n. def.
+;E10;Quasar 705;;Unkn;;n. def.;n. def.
+;E11;Quasar 705;;Unkn;;27,8277767764879;n. def.
+;E12;Quasar 705;;Unkn;;13,9823601786862;n. def.
+;F01;Quasar 705;;Unkn;;n. def.;n. def.
+;F02;Quasar 705;;Unkn;;n. def.;n. def.
+;F03;Quasar 705;;Unkn;;n. def.;n. def.
+;F04;Quasar 705;;Unkn;;n. def.;n. def.
+;F05;Quasar 705;;Unkn;;n. def.;n. def.
+;F06;Quasar 705;;Unkn;;n. def.;n. def.
+;F07;Quasar 705;;Unkn;;n. def.;n. def.
+;F08;Quasar 705;;Unkn;;n. def.;n. def.
+;F09;Quasar 705;;Unkn;;n. def.;n. def.
+;F10;Quasar 705;;Unkn;;n. def.;n. def.
+;F11;Quasar 705;;Unkn;;n. def.;n. def.
+;F12;Quasar 705;;Unkn;;n. def.;n. def.
+;G01;Quasar 705;;Unkn;;n. def.;n. def.
+;G02;Quasar 705;;Unkn;;n. def.;n. def.
+;G03;Quasar 705;;Unkn;;n. def.;n. def.
+;G04;Quasar 705;;Unkn;;n. def.;n. def.
+;G05;Quasar 705;;Unkn;;n. def.;n. def.
+;G06;Quasar 705;;Unkn;;n. def.;n. def.
+;G07;Quasar 705;;Unkn;;n. def.;n. def.
+;G08;Quasar 705;;Unkn;;n. def.;n. def.
+;G09;Quasar 705;;Unkn;;n. def.;n. def.
+;G10;Quasar 705;;Unkn;;n. def.;n. def.
+;G11;Quasar 705;;Unkn;;n. def.;n. def.
+;G12;Quasar 705;;Unkn;;n. def.;n. def.
+;H01;Quasar 705;;Unkn;;n. def.;n. def.
+;H02;Quasar 705;;Unkn;;n. def.;n. def.
+;H03;Quasar 705;;Unkn;;n. def.;n. def.
+;H04;Quasar 705;;Unkn;;n. def.;n. def.
+;H05;Quasar 705;;Unkn;;n. def.;n. def.
+;H06;Quasar 705;;Unkn;;n. def.;n. def.
+;H07;Quasar 705;;Unkn;;n. def.;n. def.
+;H08;Quasar 705;;Unkn;;n. def.;n. def.
+;H09;Quasar 705;;Unkn;;n. def.;n. def.
+;H10;Quasar 705;;Unkn;;n. def.;n. def.
+;H11;Quasar 705;;Unkn;;9,81848224788654;n. def.
+;H12;Quasar 705;;Unkn;;n. def.;n. def.
+;A01;Texas Red;;Unkn;;5,64630740852272;n. def.
+;A02;Texas Red;;Unkn;;28,6072309565833;n. def.
+;A03;Texas Red;;Unkn;;22,3860321639685;n. def.
+;A04;Texas Red;;Unkn;;29,279546379136;n. def.
+;A05;Texas Red;;Unkn;;6,75735196434122;n. def.
+;A06;Texas Red;;Unkn;;37,2681153082293;n. def.
+;A07;Texas Red;;Unkn;;9,40454505568519;n. def.
+;A08;Texas Red;;Unkn;;5,76348609157853;n. def.
+;A09;Texas Red;;Unkn;;30,5372561969254;n. def.
+;A10;Texas Red;;Unkn;;11,5620160821432;n. def.
+;A11;Texas Red;;Unkn;;7,56152780744103;n. def.
+;A12;Texas Red;;Unkn;;12,9929348368232;n. def.
+;B01;Texas Red;;Unkn;;34,5383222565516;n. def.
+;B02;Texas Red;;Unkn;;4,96813050510478;n. def.
+;B03;Texas Red;;Unkn;;1,99580169983835;n. def.
+;B04;Texas Red;;Unkn;;35,6806953468581;n. def.
+;B05;Texas Red;;Unkn;;35,4991699732494;n. def.
+;B06;Texas Red;;Unkn;;18,4098871800469;n. def.
+;B07;Texas Red;;Unkn;;9,5223262759298;n. def.
+;B08;Texas Red;;Unkn;;18,9456358636189;n. def.
+;B09;Texas Red;;Unkn;;8,29722247733869;n. def.
+;B10;Texas Red;;Unkn;;28,5890146949876;n. def.
+;B11;Texas Red;;Unkn;;6,74274562641284;n. def.
+;B12;Texas Red;;Unkn;;16,5033386927027;n. def.
+;C01;Texas Red;;Unkn;;31,8157841851412;n. def.
+;C02;Texas Red;;Unkn;;21,6851326116245;n. def.
+;C03;Texas Red;;Unkn;;18,2503690509823;n. def.
+;C04;Texas Red;;Unkn;;34,7564767812849;n. def.
+;C05;Texas Red;;Unkn;;18,4760987643714;n. def.
+;C06;Texas Red;;Unkn;;19,4071155862862;n. def.
+;C07;Texas Red;;Unkn;;18,1948268263024;n. def.
+;C08;Texas Red;;Unkn;;2,72953035805869;n. def.
+;C09;Texas Red;;Unkn;;11,7243898147215;n. def.
+;C10;Texas Red;;Unkn;;6,38723884426269;n. def.
+;C11;Texas Red;;Unkn;;n. def.;n. def.
+;C12;Texas Red;;Unkn;;8,25158248585594;n. def.
+;D01;Texas Red;;Unkn;;26,6443346721322;n. def.
+;D02;Texas Red;;Unkn;;1,59217927306463;n. def.
+;D03;Texas Red;;Unkn;;26,7965541363847;n. def.
+;D04;Texas Red;;Unkn;;1,82376406875725;n. def.
+;D05;Texas Red;;Unkn;;11,5794234741647;n. def.
+;D06;Texas Red;;Unkn;;29,0449059740522;n. def.
+;D07;Texas Red;;Unkn;;2,7140638251454;n. def.
+;D08;Texas Red;;Unkn;;33,3853464789195;n. def.
+;D09;Texas Red;;Unkn;;35,4877052667122;n. def.
+;D10;Texas Red;;Unkn;;9,00419595898925;n. def.
+;D11;Texas Red;;Unkn;;33,541946498199;n. def.
+;D12;Texas Red;;Unkn;;36,6505733052582;n. def.
+;E01;Texas Red;;Unkn;;17,2559853505756;n. def.
+;E02;Texas Red;;Unkn;;14,7759191246024;n. def.
+;E03;Texas Red;;Unkn;;21,9068268179872;n. def.
+;E04;Texas Red;;Unkn;;24,7259355093306;n. def.
+;E05;Texas Red;;Unkn;;26,0347748242535;n. def.
+;E06;Texas Red;;Unkn;;12,6025011809465;n. def.
+;E07;Texas Red;;Unkn;;35,1461598561192;n. def.
+;E08;Texas Red;;Unkn;;37,0904852524766;n. def.
+;E09;Texas Red;;Unkn;;25,0537110600817;n. def.
+;E10;Texas Red;;Unkn;;15,0636164185707;n. def.
+;E11;Texas Red;;Unkn;;29,4485820989677;n. def.
+;E12;Texas Red;;Unkn;;10,9805391368082;n. def.
+;F01;Texas Red;;Unkn;;34,2351199744268;n. def.
+;F02;Texas Red;;Unkn;;8,49039442228092;n. def.
+;F03;Texas Red;;Unkn;;16,4120495118645;n. def.
+;F04;Texas Red;;Unkn;;9,08843004965025;n. def.
+;F05;Texas Red;;Unkn;;37,2674319910457;n. def.
+;F06;Texas Red;;Unkn;;6,88947855619231;n. def.
+;F07;Texas Red;;Unkn;;14,5260014702262;n. def.
+;F08;Texas Red;;Unkn;;1,99993796943374;n. def.
+;F09;Texas Red;;Unkn;;21,3266531196916;n. def.
+;F10;Texas Red;;Unkn;;12,7285157314997;n. def.
+;F11;Texas Red;;Unkn;;2,95813979514696;n. def.
+;F12;Texas Red;;Unkn;;36,5849009871045;n. def.
+;G01;Texas Red;;Unkn;;25,0423346683318;n. def.
+;G02;Texas Red;;Unkn;;24,9605850308108;n. def.
+;G03;Texas Red;;Unkn;;32,5365464583889;n. def.
+;G04;Texas Red;;Unkn;;1,65391235573062;n. def.
+;G05;Texas Red;;Unkn;;13,3405862009937;n. def.
+;G06;Texas Red;;Unkn;;26,834579627565;n. def.
+;G07;Texas Red;;Unkn;;35,2560879725489;n. def.
+;G08;Texas Red;;Unkn;;1,31489874156967;n. def.
+;G09;Texas Red;;Unkn;;10,7330870385055;n. def.
+;G10;Texas Red;;Unkn;;1,65157025252017;n. def.
+;G11;Texas Red;;Unkn;;35,4639337013708;n. def.
+;G12;Texas Red;;Unkn;;34,6257566645269;n. def.
+;H01;Texas Red;;Unkn;;35,5187005990062;n. def.
+;H02;Texas Red;;Unkn;;8,1675034534914;n. def.
+;H03;Texas Red;;Unkn;;36,3344088649147;n. def.
+;H04;Texas Red;;Unkn;;11,2261746704805;n. def.
+;H05;Texas Red;;Unkn;;4,61994681205725;n. def.
+;H06;Texas Red;;Unkn;;3,54262981049458;n. def.
+;H07;Texas Red;;Unkn;;34,3651800360932;n. def.
+;H08;Texas Red;;Unkn;;7,77675590974359;n. def.
+;H09;Texas Red;;Unkn;;9,31213664358563;n. def.
+;H10;Texas Red;;Unkn;;9,07109925534818;n. def.
+;H11;Texas Red;;Unkn;;25,2786336228148;n. def.
+;H12;Texas Red;;Unkn;;29,3495648330141;n. def.

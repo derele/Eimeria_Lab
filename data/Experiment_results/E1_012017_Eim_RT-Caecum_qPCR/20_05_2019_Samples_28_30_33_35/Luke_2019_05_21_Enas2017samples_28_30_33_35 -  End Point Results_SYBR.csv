@@ -1,0 +1,89 @@
+;Well;Fluor;Target;Content;Sample;End RFU;Call;Sample Type;CallType;Is Control
+;A01;SYBR;CXCL9;Unkn;LM28;-3,59021056715173;;Unknown;NoCall;False
+;A02;SYBR;IL-10;Unkn;LM28;3,95865364864894;;Unknown;NoCall;False
+;A03;SYBR;IL-12;Unkn;LM28;-4,1912074679376;;Unknown;NoCall;False
+;A04;SYBR;IL-6;Unkn;LM28;3,92713199941281;;Unknown;NoCall;False
+;A05;SYBR;IFN-y;Unkn;LM28;-11,9974291026902;;Unknown;NoCall;False
+;A06;SYBR;STAT6;Unkn;LM28;-10,4530964254187;;Unknown;NoCall;False
+;A07;SYBR;TGF-b;Unkn;LM28;488,713465574343;(+) Positive;Unknown;Positive;False
+;A08;SYBR;Ppia;Pos Ctrl;LM28;-9,15994297627512;;ControlPositive;NoCall;False
+;A09;SYBR;Ppip;Pos Ctrl;LM28;-4,69881937992213;;ControlPositive;NoCall;False
+;A10;SYBR;CDC42;Pos Ctrl;LM28;-1,80222665922774;;ControlPositive;NoCall;False
+;A11;SYBR;;Neg Ctrl;;-6,56658004926694;;ControlNegative;Negative;True
+;B01;SYBR;CXCL9;Unkn;LM28;-8,68148932372978;;Unknown;NoCall;False
+;B02;SYBR;IL-10;Unkn;LM28;2,52087883765635;;Unknown;NoCall;False
+;B03;SYBR;IL-12;Unkn;LM28;2,69088960614863;;Unknown;NoCall;False
+;B04;SYBR;IL-6;Unkn;LM28;5,09224256796369;;Unknown;NoCall;False
+;B05;SYBR;IFN-y;Unkn;LM28;2,18441723137521;;Unknown;NoCall;False
+;B06;SYBR;STAT6;Unkn;LM28;1,54467128004644;;Unknown;NoCall;False
+;B07;SYBR;TGF-b;Unkn;LM28;0,569046839459133;;Unknown;NoCall;False
+;B08;SYBR;Ppia;Pos Ctrl;LM28;-3,06469864087121;;ControlPositive;NoCall;False
+;B09;SYBR;Ppip;Pos Ctrl;LM28;-8,29121317889794;;ControlPositive;NoCall;False
+;B10;SYBR;CDC42;Pos Ctrl;LM28;-4,7309763299224;;ControlPositive;NoCall;False
+;B11;SYBR;;Neg Ctrl;;-4,41214164437594;;ControlNegative;Negative;True
+;C01;SYBR;CXCL9;Unkn;LM30;7,5133523364113;;Unknown;NoCall;False
+;C02;SYBR;IL-10;Unkn;LM30;-2,60643612623217;;Unknown;NoCall;False
+;C03;SYBR;IL-12;Unkn;LM30;-0,825249432118108;;Unknown;NoCall;False
+;C04;SYBR;IL-6;Unkn;LM30;2,69210044964648;;Unknown;NoCall;False
+;C05;SYBR;IFN-y;Unkn;LM30;-6,24750731674076;;Unknown;NoCall;False
+;C06;SYBR;STAT6;Unkn;LM30;-14,3279940024702;;Unknown;NoCall;False
+;C07;SYBR;TGF-b;Unkn;LM30;9,00856353003646;;Unknown;NoCall;False
+;C08;SYBR;Ppia;Pos Ctrl;LM30;-0,953783006792219;;ControlPositive;NoCall;False
+;C09;SYBR;Ppip;Pos Ctrl;LM30;-1,56984841173644;;ControlPositive;NoCall;False
+;C10;SYBR;CDC42;Pos Ctrl;LM30;2,24462156858181;;ControlPositive;NoCall;False
+;C11;SYBR;;Neg Ctrl;;14,5788393977954;;ControlNegative;Negative;True
+;D01;SYBR;CXCL9;Unkn;LM30;3,83378240340071;;Unknown;NoCall;False
+;D02;SYBR;IL-10;Unkn;LM30;2,32881053409583;;Unknown;NoCall;False
+;D03;SYBR;IL-12;Unkn;LM30;-6,01580276355935;;Unknown;NoCall;False
+;D04;SYBR;IL-6;Unkn;LM30;1,86145735998043;;Unknown;NoCall;False
+;D05;SYBR;IFN-y;Unkn;LM30;-1,11123406036932;;Unknown;NoCall;False
+;D06;SYBR;STAT6;Unkn;LM30;8,93841354282813;;Unknown;NoCall;False
+;D07;SYBR;TGF-b;Unkn;LM30;4,33348291321136;;Unknown;NoCall;False
+;D08;SYBR;Ppia;Pos Ctrl;LM30;1,81098064495027;;ControlPositive;NoCall;False
+;D09;SYBR;Ppip;Pos Ctrl;LM30;-4,74680549332043;;ControlPositive;NoCall;False
+;D10;SYBR;CDC42;Pos Ctrl;LM30;-0,127654890594113;;ControlPositive;NoCall;False
+;D11;SYBR;;Neg Ctrl;;0,513551758495214;;ControlNegative;Negative;True
+;E01;SYBR;CXCL9;Unkn;LM33;-7,09866412535866;;Unknown;NoCall;False
+;E02;SYBR;IL-10;Unkn;LM33;3,36426063238359;;Unknown;NoCall;False
+;E03;SYBR;IL-12;Unkn;LM33;-1,41590217079993;;Unknown;NoCall;False
+;E04;SYBR;IL-6;Unkn;LM33;6,51813670514503;;Unknown;NoCall;False
+;E05;SYBR;IFN-y;Unkn;LM33;-6,84220887999236;;Unknown;NoCall;False
+;E06;SYBR;STAT6;Unkn;LM33;0,228226124532557;;Unknown;NoCall;False
+;E07;SYBR;TGF-b;Unkn;LM33;-3,18938591355909;;Unknown;NoCall;False
+;E08;SYBR;Ppia;Pos Ctrl;LM33;0,777889684639195;;ControlPositive;NoCall;False
+;E09;SYBR;Ppip;Pos Ctrl;LM33;-3,34791145084828;;ControlPositive;NoCall;False
+;E10;SYBR;CDC42;Pos Ctrl;LM33;1,08827618149362;;ControlPositive;NoCall;False
+;E11;SYBR;;Neg Ctrl;;1,6446540957978;;ControlNegative;Negative;True
+;F01;SYBR;CXCL9;Unkn;LM33;2,1565179820409;;Unknown;NoCall;False
+;F02;SYBR;IL-10;Unkn;LM33;-0,0734182415299074;;Unknown;NoCall;False
+;F03;SYBR;IL-12;Unkn;LM33;-0,374975406659814;;Unknown;NoCall;False
+;F04;SYBR;IL-6;Unkn;LM33;1,35265353282884;;Unknown;NoCall;False
+;F05;SYBR;IFN-y;Unkn;LM33;-3,60512814258982;;Unknown;NoCall;False
+;F06;SYBR;STAT6;Unkn;LM33;15,7825070057319;;Unknown;NoCall;False
+;F07;SYBR;TGF-b;Unkn;LM33;3,89403955764565;;Unknown;NoCall;False
+;F08;SYBR;Ppia;Pos Ctrl;LM33;-2,02697608922035;;ControlPositive;NoCall;False
+;F09;SYBR;Ppip;Pos Ctrl;LM33;-1,69736472566819;;ControlPositive;NoCall;False
+;F10;SYBR;CDC42;Pos Ctrl;LM33;-4,44282002279851;;ControlPositive;NoCall;False
+;F11;SYBR;;Neg Ctrl;;3,14803933643889;;ControlNegative;Negative;True
+;G01;SYBR;CXCL9;Unkn;LM35;-12,4327089639144;;Unknown;NoCall;False
+;G02;SYBR;IL-10;Unkn;LM35;9,17561899192815;;Unknown;NoCall;False
+;G03;SYBR;IL-12;Unkn;LM35;2,56266693281941;;Unknown;NoCall;False
+;G04;SYBR;IL-6;Unkn;LM35;-6,74937384813684;;Unknown;NoCall;False
+;G05;SYBR;IFN-y;Unkn;LM35;2,86061809004495;;Unknown;NoCall;False
+;G06;SYBR;STAT6;Unkn;LM35;3,31409282847626;;Unknown;NoCall;False
+;G07;SYBR;TGF-b;Unkn;LM35;0,96441500395149;;Unknown;NoCall;False
+;G08;SYBR;Ppia;Pos Ctrl;LM35;4,85610944169221;;ControlPositive;NoCall;False
+;G09;SYBR;Ppip;Pos Ctrl;LM35;0,266423362373371;;ControlPositive;NoCall;False
+;G10;SYBR;CDC42;Pos Ctrl;LM35;-4,82128898801093;;ControlPositive;NoCall;False
+;G11;SYBR;;Neg Ctrl;;1,11914163690499;;ControlNegative;Negative;True
+;H01;SYBR;CXCL9;Unkn;LM35;4,35989813023934;;Unknown;NoCall;False
+;H02;SYBR;IL-10;Unkn;LM35;-2,0395368201388;;Unknown;NoCall;False
+;H03;SYBR;IL-12;Unkn;LM35;0,632224833436976;;Unknown;NoCall;False
+;H04;SYBR;IL-6;Unkn;LM35;1,73701796608757;;Unknown;NoCall;False
+;H05;SYBR;IFN-y;Unkn;LM35;1,70215609046936;;Unknown;NoCall;False
+;H06;SYBR;STAT6;Unkn;LM35;2,33460345914846;;Unknown;NoCall;False
+;H07;SYBR;TGF-b;Unkn;LM35;0,181099858549351;;Unknown;NoCall;False
+;H08;SYBR;Ppia;Pos Ctrl;LM35;0,840273936024187;;ControlPositive;NoCall;False
+;H09;SYBR;Ppip;Pos Ctrl;LM35;0,129418589776378;;ControlPositive;NoCall;False
+;H10;SYBR;CDC42;Pos Ctrl;LM35;-4,21365107791726;;ControlPositive;NoCall;False
+;H11;SYBR;;Neg Ctrl;;-6,46900706539782;;ControlNegative;Negative;True
