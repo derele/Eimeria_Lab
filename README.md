@@ -6,10 +6,7 @@ This repository is for storage of clean data from experiments conducted at AG He
 ### Experimental_design = mouse information sheets containing attributes such as: sex, strain, date of birth, EH_ID, InfectionStrain.
 ### Experiment_results = clean tables of results obtained from a given experiment and assay/observation
 ### Templates = examples of what corresponsing tables should look like
-#### mouse_paperwork_mandatory = This folder contains all the necessary files for setting up an infection experiment in our
-mouse facilities. There is a complete protocol for animal handling, sampling, euqipment and facility handling. Accompanied
-by a cage placement template to keep a full track of experimental setup and a !Score Sheet! for each mouse to keep track of
-animal health. This sheet is a legal requirement that we must fulfill as per our animal handling license.
+#### mouse_paperwork_mandatory = This folder contains all the necessary files for setting up an infection experiment in our mouse facilities. There is a complete protocol for animal handling, sampling, euqipment and facility handling. Accompanied by a cage placement template to keep a full track of experimental setup and a !Score Sheet! for each mouse to keep track of animal health. This sheet is a legal requirement that we must fulfill as per our animal handling license.
 
 
 
