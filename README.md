@@ -1,11 +1,16 @@
 Eimeria_Lab repository
 
 This repository is for storage of clean data from experiments conducted at AG Heitlinger. 
+# Structure:
+## data :
+### Experimental_design = mouse information sheets containing attributes such as: sex, strain, date of birth, EH_ID, InfectionStrain.
+### Experiment_results = clean tables of results obtained from a given experiment and assay/observation
+### Templates = examples of what corresponsing tables should look like
 
 
 
-## 1. Accessing data:
-# 1.1. General description:
+# 1. Accessing data:
+## 1.1. General description:
 
 All data in this repository has been processed and saved as a clean table according to the corresponding template in 
 https://github.com/derele/Eimeria_Lab/tree/master/data/Templates/
@@ -19,19 +24,13 @@ Exmaple: E7_112018_Eim_CEWE_ELISA.csv
 This means the table contains information generated from Experiment 7, infections started in November 2018, mice were infected with Eimeria, the
 tissue used in the assay was Caecum, the essay was ELISA and tthe table is in a .csv format.
 
-The data folder is divided into:
-Experimental_design = mouse information sheets containing attributes such as: sex, strain, date of birth, EH_ID, InfectionStrain.
-Experiment_results = clean tables of results obtained from a given experiment and assay/observation
-Templates = examples of what corresponsing tables should look like
+## 1.2. Examples
+### 1.2.1. Example 1 (tabulate number of mice per experiment)
 
+### 1.2.1. Example 2 
 
-# 1.2. Examples
-1.2.1. Example 1 (tabulate number of mice per experiment)
-
-1.2.1. Example 2 
-
-## 2. Adding data:
-# 2.1. General description:
+# 2. Adding data:
+## 2.1. General description:
 Each file should be named according to the tamplate of:
 ExperimentNumber_MonthYear_Pathogen_Neccessary_Information_Not_Too_Long.format
 E.g.: E1_012017_Eim_Caecum_cDNA.csv
@@ -47,10 +46,10 @@ General rule is:
 3. upload clean data table
 4. delete raw data table and code
 
-# 2.2. Examples
-2.2.1. Adding genotype data
+## 2.2. Examples
+### 2.2.1. Adding genotype data
 
-2.2.2. Adding qPCR data
+### 2.2.2. Adding qPCR data
 
 
 
