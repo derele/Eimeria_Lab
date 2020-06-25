@@ -6,6 +6,10 @@ This repository is for storage of clean data from experiments conducted at AG He
 ### Experimental_design = mouse information sheets containing attributes such as: sex, strain, date of birth, EH_ID, InfectionStrain.
 ### Experiment_results = clean tables of results obtained from a given experiment and assay/observation
 ### Templates = examples of what corresponsing tables should look like
+#### mouse_paperwork_mandatory = This folder contains all the necessary files for setting up an infection experiment in our
+mouse facilities. There is a complete protocol for animal handling, sampling, euqipment and facility handling. Accompanied
+by a cage placement template to keep a full track of experimental setup and a !Score Sheet! for each mouse to keep track of
+animal health. This sheet is a legal requirement that we must fulfill as per our animal handling license.
 
 
 
@@ -57,31 +61,6 @@ General rule is:
 
 
 
-Folders:
-data = Main folder containing 1_information Tables, 2_design Tables, 3_recording Tables
-	
-	1_infromationTables = Usually large tables containing information on mice when they come in. Must contain "Strain",
-	"Birth_date", "Sex", "Hybrid_status". 
-
-	2_designTables = Tables made based on 1_informationTables, showing the plan for infection experiments 
-	"Infection_strain" and has to have added "EH_ID". Must at minimum contain columns from 1_informationTables specified
-	above.
-
-	3_recordingTables = A large folder containing record tables of any measurements taken during experiments or passaging. 
-	Only raw data should be contained here (work in progress) and named consistently. If many repeated measurements are taken
-	(e.g. raw qPCR outputs), please make a folder dedicated to the raw data using the naming template above. However, 
-	each file in the folder should have a unique name.
-
-figures = A folder containing mostly R generated graphics of data processing, showing trends and distributions. 
-Please label each file using the same template as everywhere else and don't forget to include Title, legend and axis names.
-
-Check redundancy of your own figures and delete/replace appropriately. Basic descriptive graphics are ok 
-but a more focused one should be kept for the manuscript repos.
-
-mouse_paperwork_mandatory = This folder contains all the necessary files for setting up an infection experiment in our
-mouse facilities. There is a complete protocol for animal handling, sampling, euqipment and facility handling. Accompanied
-by a cage placement template to keep a full track of experimental setup and a !Score Sheet! for each mouse to keep track of
-animal health. This sheet is a legal requirement that we must fulfill as per our animal handling license.
 
 R = This folder contains data processing scripts for our experiments. Here you can find all the necessary code 
 for how previous work was processed and help yourself to useful functions to make your analysis easier and !replicable!. 
