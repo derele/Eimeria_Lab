@@ -2,18 +2,15 @@ Eimeria_Lab repository
 
 This repository is for storage of clean data from experiments conducted at AG Heitlinger. 
 # Structure:
-## data = contains all cleaned up data generated during our experiments and templates for tables
-### Experimental_design = mouse information sheets containing attributes such as: sex, strain, date of birth, EH_ID, InfectionStrain.
-### Experiment_results = clean tables of results obtained from a given experiment and assay/observation
-### Templates = examples of what corresponsing tables should look like
-#### mouse_paperwork_mandatory = This folder contains all the necessary files for setting up an infection experiment in our mouse facilities. There is a complete protocol for animal handling, sampling, euqipment and facility handling. Accompanied by a cage placement template to keep a full track of experimental setup and a !Score Sheet! for each mouse to keep track of animal health. This sheet is a legal requirement that we must fulfill as per our animal handling license.
+## [data](https://github.com/derele/Eimeria_Lab/tree/master/data) = contains all cleaned up data generated during our experiments and templates for tables
+### [Experimental_design](https://github.com/derele/Eimeria_Lab/tree/master/data/Experimental_design) = mouse information sheets containing attributes such as: sex, strain, date of birth, EH_ID, InfectionStrain.
+### [Experiment_results](https://github.com/derele/Eimeria_Lab/tree/master/data/Experiment_sresults) = clean tables of results obtained from a given experiment and assay/observation
+### [Templates](https://github.com/derele/Eimeria_Lab/tree/master/data/Templates) = examples of what corresponsing tables should look like
+#### [mouse_paperwork_mandatory](https://github.com/derele/Eimeria_Lab/tree/master/Templates/mouse_paperwork_mandatory) = This folder contains all the necessary files for setting up an infection experiment in our mouse facilities. There is a complete protocol for animal handling, sampling, euqipment and facility handling. Accompanied by a cage placement template to keep a full track of experimental setup and a !Score Sheet! for each mouse to keep track of animal health. This sheet is a legal requirement that we must fulfill as per our animal handling license.
 
-## data_access_code = contains examples of R code related to accessing and reading information from the [data](https://github.com/derele/Eimeria_Lab/tree/master/data) folder.
+## [data_access_code](https://github.com/derele/Eimeria_Lab/tree/master/data_access_code) = contains examples of R code related to accessing and reading information from the [data](https://github.com/derele/Eimeria_Lab/tree/master/data) folder.
 
-## data_creation_code =
-
-
-
+## [data_creation_code](https://github.com/derele/Eimeria_Lab/tree/master/data_creation_code) = contains examples of R code related to processing raw data and making it suitable to be in the [data](https://github.com/derele/Eimeria_Lab/tree/master/data) folder.
 
 # 1. Accessing data:
 ## 1.1. General description:
