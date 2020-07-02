@@ -17,13 +17,11 @@ This repository is for storage of clean data from experiments conducted at AG He
 
 All data in this repository has been processed and saved as a clean table according to the corresponding [template](https://github.com/derele/Eimeria_Lab/tree/master/data/Templates)
 
-All file names contain information to distinguish the number of an experiment, date of infection (MMYYYY), infection agent (e.g. Eimeria, Crypto,
-etc.)and a format.
+All file names contain information to distinguish the number of an experiment, date of infection (MMYYYY), infection agent (e.g. Eimeria, Crypto, etc.)and a format.
 In addition, elements of the name may designate: design (outline of mouse information, infection and label), [tissue type](https://github.com/derele/Eimeria_Lab/blob/master/Tissue_labels.csv), oocyst, record (record of mouse weight over dpi) or assay type (ELISA, qPCR, FACS, etc.). 
 
 Exmaple: E7_112018_Eim_CEWE_ELISA.csv
-This means the table contains information generated from Experiment 7, infections started in November 2018, mice were infected with Eimeria, the
-tissue used in the assay was Caecum, the essay was ELISA and the table is in a .csv format.
+This means the table contains information generated from Experiment 7, infections started in November 2018, mice were infected with Eimeria, the tissue used in the assay was Caecum, the essay was ELISA and the table is in a .csv format.
 
 ## 1.2. Examples:
 ### 1.2.1. Example 1 (tabulate number of mice per experiment)
@@ -37,9 +35,7 @@ ExperimentNumber_MonthYear_Pathogen_Neccessary_Information_Not_Too_Long.format
 E.g.: E1_012017_Eim_Caecum_cDNA.csv
 E = Experiment, P = Passaging
 
-Raw data should be stored here, processed using code saved here as well and both should be subsequently deleted once a clean table exists.
-The raw data and code should be both commited and pushed to git to keep track of events. Commit messages should contain information on what
-files are being handled.
+Raw data should be stored here, processed using code saved here as well and both should be subsequently deleted once a clean table exists. The raw data and code should be both commited and pushed to git to keep track of events. Commit messages should contain information on what files are being handled.
 
 General rule is:
 1. upload raw data table
