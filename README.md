@@ -24,7 +24,7 @@ Exmaple: E7_112018_Eim_CEWE_ELISA.csv
 This means the table contains information generated from Experiment 7, infections started in November 2018, mice were infected with Eimeria, the tissue used in the assay was Caecum, the essay was ELISA and the table is in a .csv format.
 
 ## 1.2. Examples:
-### 1.2.1. Example 1 (tabulate number of mice per experiment)
+### 1.2.1. Example 1 ()
 
 ### 1.2.1. Example 2 
 
@@ -49,35 +49,8 @@ General rule is:
 ### 2.2.2. Adding qPCR data
 
 
-
-
-
-
-
-
-R = This folder contains data processing scripts for our experiments. Here you can find all the necessary code 
-for how previous work was processed and help yourself to useful functions to make your analysis easier and !replicable!. 
-In that spirit, as all scripts and data from the entire Eimeria_Lab are on GitHub, please write your script 
-in a way to load the data from there as well. And same as before, name your scripts by the template + 
-whatever they are made for.
-
-	e.g.: 
-	#load libraries for loading raw github files
-	library(httr)
-	library(RCurl)
-	#read in cell counts (FACS) data
-	cell.countsURL <- "https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/3_recordingTables/E7_112018_Eim_FACS_cell_counts_processed.csv"
-	cell.counts <- read.csv(text = getURL(cell.countsURL)) 
-	................................................................
-	#after processing and cleaning, write to the appropriate repo and Git it
-	write.csv(E7, "./Eimeria_Lab/data/3_recordingTables/E7_112018_Eim_FACS_clean.csv", quote = FALSE)
-
-.git = A folder for GitHub use when initializing new repo or cloning an existing one. I wouldn't touch it unless you know
-what you're doing.
-
-DO NOT edit the raw data in these folders. You can clone the repos, work with the data and generate new tables as you 
-please. The envisioned structure is that each manuscript has it's own folder/repo, the raw data is loaded from the raw.
-GitHub files and saved in the manuscript folder. Then all can be edited and analysed there.
+DO NOT edit the data in these folders. You can clone the repos, work with the data and generate new tables as you 
+please. The envisioned structure is that each manuscript has it's own repository. To avoid hardcoding, it is recommended to load tables via GitHub raw links using the "RCurl" package. See 1.2.1 Example
 
 ### 2. Experiment design
 Fill the experiment design with the help of the information table,
@@ -108,25 +81,7 @@ print(table(designTable$Sex, designTable$Strain, designTable$infection_isolate))
 write.csv(designTable,     "../data/2_designTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_DESIGN.csv", row.names = F)
 ```
 
-### 3. Retrieving data
 
-
-
-## Historic
-
-### Exp001. Parental and F1 wild mice Ploen (x2) cross infection (Eflab, E64) (Francisca)
-
-### Pass001 Nov 2017, passaging 4 isolates (Eflab, E88, E139, E64) in NMRI. 2 mice per cage
-
-### Exp002. NMRI 4 strains passaging, March 2018
-
-### Exp003 & Exp004 Parental wild mice (x4) cross infection (E64, E139) (Vivian) 
-
-#### Exp003 First batch: 02/05/2018
-
-#### Exp004 Second batch:tba
-
-## Diverse R codes
 
 **makeDesignTable.R** is a general function taking as input an *INFO.csv* data.frame,
 and creating a DESIGN.csv one
