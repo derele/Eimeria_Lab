@@ -55,13 +55,13 @@ LM_0293;neg;;
 LM_0294;pos;fal or fer;74 degree
 LM_0332;pos;fal or fer;75 degree
 LM_0333;pos;;
-LM_0334;pos;fal or fer;75
-LM_0335;pos;;
+LM_0334;neg;fal or fer;75
+LM_0335;neg;;
 LM_0336;pos;;
 LM_0337;pos;;
 LM_0338;pos;;
 LM_0339;pos;;
-LM_0340;pos;fal or fer;74
+LM_0340;neg;fal or fer;74
 LM_0341;pos;fal ro fer;74
 LM_0342;pos;;
 LM_0343;neg;;
