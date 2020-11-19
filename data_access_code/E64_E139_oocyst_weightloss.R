@@ -9,9 +9,15 @@ library(RCurl)
 
 # load in data from github and extract E64 and E139 primary infections
 # have to scavenge manually atm
+# consult this table for overview of strains used in experiments and passaging:
+# https://docs.google.com/spreadsheets/d/1ejzceB7z5nZh0V_kQUBDVbW4AQEWwRG2FO5MV-oOX1g/edit?usp=sharing
 # use as many "coplete" (or likewise labeled) tables as possible
 # Capital letter denotes Passaging or Experiment (P,E), number denotes order and small letter denotes primary
 # or challenge infection. In this case we look at "a" (primary).
+# If batch is present in columns, those serve the same purpose
+
+# From the table we can see that E3, E4, E8, P1, P2 and P4 contain E139
+# E64 is in E1, E2, E3, E4, E5, E7, E10, P1, P2, P3 and P4 
 
 ############ load in  and process (down to EH_ID, labels, OPG, dpi, weight loss and Eimeria strain) P3 and P4
 CLS <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/P3_112019_Eim_Weight%26Oocyst_complete.csv"))
