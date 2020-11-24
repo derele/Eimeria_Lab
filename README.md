@@ -48,6 +48,20 @@ General rule is:
 3. upload clean data table
 4. delete raw data table and code
 
+The column names are preordained by the "makeDesignTable.R" and "makeRecordTable.R".
+These should contain the following columns for "design":
+EH_ID (unique mouse identifier), mouse_strain (NMRI, SWISS, PWD, BUSNA, etc.) and experiment (unique experiment identifier). + any other available information about the mice
+primary_infection (Eimeria strain), challenge_infection (if reinfected), infection_history (if reinfected)
+
+For "record":
+### EH_ID (unique mouse identifier), labels (unique timepoint identifier), weight (g), weight_dpi0 (weight on day of infection), relative_weight (percentage change in weight from weight_dpi0) and dpi (days post infection). 
+
+For "oocyst":
+### label (unique timepoint identifier), experiment (unique experiment identifier), oocyst_sq1, oocys_sq2, oocyst_sq3, oocyst_sq4, oocyst_mean, OPG, dilution.
+
+and these for infection intensity qPCRs:
+### label, EH_ID, delta, dpi, Eim_MC (melting curve (positive or negative)), Amp (is amplification good?)
+
 ## 2.2. Examples:
 ### 2.2.1. Adding genotype data
 
