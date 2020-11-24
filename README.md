@@ -24,8 +24,13 @@ Exmaple: E7_112018_Eim_CEWE_ELISA.csv
 This means the table contains information generated from Experiment 7, infections started in November 2018, mice were infected with Eimeria, the tissue used in the assay was Caecum, the essay was ELISA and the table is in a .csv format.
 
 ## 1.2. Examples:
-### 1.2.1. Example 1 ()
+### 1.2.1. Example 1 (extracting maximum weightloss and maximum oocysts shed for the E139 and E64 strains across all experiments where these strains are present)
+```r
+# load libraries
+library(RCurl)
 
+# load 
+```
 ### 1.2.1. Example 2 
 
 # 2. Adding data:

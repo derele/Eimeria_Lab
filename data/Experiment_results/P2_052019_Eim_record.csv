@@ -1,4 +1,4 @@
-experiment,#,Mouse_ID,dpi,weight,weight_dpi0,faeces_weight,infection_isolate,
+experiment,#,EH_ID,dpi,weight,weight_dpi0,faeces_weight,infection_isolate,
 P2,1,LM_320,0,37.99,37.99,NA,Eflab,
 P2,2,LM_321,0,40.02,40.02,NA,Eflab,
 P2,3,LM_322,0,40.6,40.6,NA,Eflab,
