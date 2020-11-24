@@ -1,4 +1,4 @@
-,labels,AVG,totalOocysts,EH_ID,dpi,weight,weight_dpi0,faeces_weight,wloss,batch,primary,challenge,infHistory,OPG
+,labels,AVG,totalOocysts,EH_ID,dpi,weight,weight_dpi0,feces_weight,relative_weight,batch,primary_infection,challenge_infection,infection_history,OPG
 2,P3aATV,16.25,325000,LM_0333,8,49,52.7,1.72,92.9791271347249,a,Eflab,NA,Eflab:E64,188953.488372093
 3,P3aAZR,23.75,475000,LM_0336,9,43.7,51.9,1.02,84.2003853564547,a,E88,NA,E88:E64,465686.274509804
 4,P3aBBD,1,20000,LM_0332,10,47.6,61.2,0.27,77.7777777777778,a,Eflab,NA,Eflab:E88,74074.0740740741

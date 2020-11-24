@@ -1,4 +1,4 @@
-EH_ID,dpi,labels,weight,weight_dpi0,weigh_change,faeces_weight,strain
+EH_ID,dpi,labels,weight,weight_dpi0,relative_weight,feces_weight,mouse_strain
 LM_0368,0,JRO,21.51,21.51,100,NA,SCHUNT
 LM_0369,0,XZT,19.22,19.22,100,NA,SCHUNT
 LM_0370,0,WJG,16.25,16.25,100,NA,PWD

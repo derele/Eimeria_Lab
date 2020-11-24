@@ -1,4 +1,4 @@
-labels,EH_ID,dpi,weight,weightloss,weightRelativeToInfection,fecweight,
+labels,EH_ID,dpi,weight,weightloss,relative_weight,feces_weight,
 EPT,LM0146,0,19.8,,,845,
 EHR,LM0147,0,15.6,,,1198,
 IMX,LM0148,0,17.6,,,1027,

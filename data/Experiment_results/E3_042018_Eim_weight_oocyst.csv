@@ -1,4 +1,4 @@
-Exp_ID,EH_ID,weight,weightloss,fecweight,dpi,infection_isolate,sex,Neubauer1,Neubauer2,Neubauer3,Neubauer4,dilution_ml
+experiment,EH_ID,weight,weightloss,feces_weight,dpi,primary_infection,sex,oocyst_sq1,oocyst_sq2,oocys_sq3,oocyst_sq4,dilution
 Exp_002,1,32.3,0,0,0,EfLab,female,0,0,0,0,1
 Exp_002,2,37,0,0,0,EfLab,female,0,0,0,0,1
 Exp_002,3,42.6,0,0,0,EfLab,male,0,0,0,0,1

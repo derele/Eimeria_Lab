@@ -1,4 +1,4 @@
-,EH_ID,Strain,HybridStatus,InfectionStrain,labels,dpi,weight,weight_dpi0,Wchange,fecweight,batch
+,EH_ID,Strain,HybridStatus,challenge_infection,labels,dpi,weight,weight_dpi0,relative_weight,feces_weight,batch
 1,LM0227,BUSNA_STRA,inter subsp. hybrids,E88,INO,0,23.86,23.86,0,2.11,october2018
 2,LM0227,BUSNA_STRA,inter subsp. hybrids,E88,LNW,6,22.94,23.86,96.14,0.88,october2018
 3,LM0227,BUSNA_STRA,inter subsp. hybrids,E88,MNW,8,23.81,23.86,99.79,2.73,october2018

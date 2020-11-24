@@ -1,4 +1,4 @@
-Exp_ID,labels,EH_ID,dpi,comment,weight,weightloss,weightRelativeToInfection,fecweight
+experiment,labels,EH_ID,dpi,comment,weight,weightloss,relative_weight,feces_weight
 Exp_003,NA,LM0123,-7,anthelminthic,25.9,NA,NA,
 Exp_003,NA,LM0124,-7,anthelminthic,14.8,NA,NA,
 Exp_003,NA,LM0125,-7,anthelminthic,21.4,NA,NA,

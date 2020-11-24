@@ -1,4 +1,4 @@
-,label,EH_ID,dpi,infHistory,weight,weight_dpi0,faeces_weight,wloss,batch,primary,challenge,Eim_MC,delta,Position,CD4,Treg,Div_Treg,Treg17,Th1,Div_Th1,Th17,Div_Th17,CD8,Act_CD8,Div_Act_CD8,IFNy_CD4,IFNy_CD8,label,IFNy_CEWE,totalOocysts,OPG
+,labels,EH_ID,dpi,infection_history,weight,weight_dpi0,feces_weight,relative_weight,batch,primary_infection,challenge_infection,Eim_MC,delta,Position,CD4,Treg,Div_Treg,Treg17,Th1,Div_Th1,Th17,Div_Th17,CD8,Act_CD8,Div_Act_CD8,IFNy_CD4,IFNy_CD8,labels,IFNy_CEWE,totalOocysts,OPG
 1,P4aAAA,LM_0355,7,E64:UNI,43.1,43.9,2.15,98.1776765375854,a,E64,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,640000,297674.418604651
 2,P4aAKA,LM_0364,4,UNI:E88,42.23,41.6,1.98,101.514423076923,a,UNI,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,0,0
 3,P4aAKJ,LM_0350,7,E139:E64,0,54.5,0,0,a,E139,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA

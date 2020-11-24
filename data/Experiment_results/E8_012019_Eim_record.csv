@@ -1,4 +1,4 @@
-labels,EH_ID,dpi,weight,weight_dpi0,weightloss,weightRelativeToInfection,fecweight,oocyst_sq1,oocyst_sq2,oocyst_sq3,oocyst_sq4,oocyst_mean,dilution,OPG
+labels,EH_ID,dpi,weight,weight_dpi0,weightloss,relative_weight,feces_weight,oocyst_sq1,oocyst_sq2,oocyst_sq3,oocyst_sq4,oocyst_mean,dilution,OPG
 BN,LM0296,0,48.2,48.2,,,0.66,,,,,,,
 JW,LM0297,0,48.2,48.2,,,1.32,,,,,,,
 JR,LM0298,0,46,46,,,1.08,,,,,,,

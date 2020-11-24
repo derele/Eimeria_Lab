@@ -1,4 +1,4 @@
-labels,EH_ID,dpi,weight,weight_dpi0,Wchange,fecweight
+labels,EH_ID,dpi,weight,weight_dpi0,relative_weight,feces_weight
 INO,LM0227,0,23.86,23.86,100,2.11
 EJN,LM0228,0,21.23,21.23,100,1.24
 DKR,LM0229,0,19.06,19.06,100,1.4

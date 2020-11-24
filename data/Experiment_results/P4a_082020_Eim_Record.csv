@@ -1,4 +1,4 @@
-EH_ID,dpi,weight,weight_dpi0,faeces_weight,wloss,labels,day_change
+EH_ID,dpi,weight,weight_dpi0,feces_weight,relative_weight,labels,day_change
 LM_0348,0,44.4,44.4,NA,100,MTY,NA
 LM_0349,0,50.5,50.5,NA,100,FNW,NA
 LM_0350,0,54.5,54.5,NA,100,DFW,NA

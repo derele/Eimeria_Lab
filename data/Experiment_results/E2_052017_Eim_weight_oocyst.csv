@@ -1,4 +1,4 @@
-EH_ID,dpi,mouse_id,name,ear,sex,born,age,age_weeks,strain,line,room.rack,cage,comment,Inf_strain,num.inf,Infection_date,weight,rel.weight,label,oocysts.per.g,oocysts.per.tube,fec.weight
+EH_ID,dpi,mouse_id,name,ear,sex,born,age,age_weeks,strain,line,room.rack,cage,comment,primary_infection,num.inf,Infection_date,weight,relative_weight,labels,OPG,oocysts.per.tube,feces_weight
 LM0096,0,50035522,PWD158.1.D.2F,0,f,16.04.2016,353,50,PWD,PWD,WM1.12/5.1,2164,,Eflab,9,11_May_17,17.45,98.3652762119504,HI,0,0,1.55
 LM0096,1,50035522,PWD158.1.D.2F,0,f,16.04.2016,353,50,PWD,PWD,WM1.12/5.1,2164,,Eflab,9,11_May_17,17.74,100,PS,0,0,1.06
 LM0096,2,50035522,PWD158.1.D.2F,0,f,16.04.2016,353,50,PWD,PWD,WM1.12/5.1,2164,,Eflab,9,11_May_17,17.3,97.5197294250282,CP,0,0,2.19

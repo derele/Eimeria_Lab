@@ -1,4 +1,4 @@
-original.label,Exp_ID,prelim_labels,date,comment,weight,weightloss,weightRelativeToInfection,fecweight,dayFollowWeight,PIN,weightAtStart,weightlossBeforeInf,weightRelativeToStart,EH_ID
+original.label,experiment,prelim_labels,date,comment,weight,weightloss,relative_weight,feces_weight,dayFollowWeight,PIN,weight_dpi0,weightlossBeforeInf,weightRelativeToStart,EH_ID
 526,Exp004,1,7-05-18,4g sunflower seed day 0,25.4,NA,NA,NA,0,EX F 526 G55 P2,25.4,0,100,LM0151
 9619,Exp004,2,7-05-18,4g sunflower seed day 0,18,NA,NA,NA,0,SY F 9619 G60 P2,18,0,100,LM0172
 8514,Exp004,3,7-05-18,4g sunflower seed day 0,12.1,NA,NA,NA,0,SY F 8514 G43 P2,12.1,0,100,LM0153

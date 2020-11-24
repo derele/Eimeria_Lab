@@ -1,4 +1,4 @@
-EH_ID,dpi,weight,weight_dpi0,faeces_weight,wloss,labels,day_change
+EH_ID,dpi,weight,weight_dpi0,feces_weight,relative_weight,labels,day_change
 LM_0343,11,51.1,59.8,NA,85.4515050167224,ABJ,-0.199999999999996
 LM_0341,11,53.2,59.1,NA,90.0169204737733,AHL,0.100000000000001
 LM_0346,0,53.9,53.9,NA,100,ANQ,
