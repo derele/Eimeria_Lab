@@ -54,7 +54,7 @@ These should contain the following columns for "design":
 primary_infection (Eimeria strain), challenge_infection (if reinfected), infection_history (if reinfected)
 
 For "record":
-### EH_ID (unique mouse identifier), labels (unique timepoint identifier), weight (g), weight_dpi0 (weight on day of infection), relative_weight (percentage change in weight from weight_dpi0), feces_weight and dpi (days post infection). 
+### EH_ID (unique mouse identifier), labels (unique timepoint identifier), weight (g), weight_dpi0 (weight on day of infection), weightloss, relative_weight (percentage change in weight from weight_dpi0), feces_weight and dpi (days post infection). 
 
 For "oocyst":
 ### label (unique timepoint identifier), experiment (unique experiment identifier), oocyst_sq1, oocys_sq2, oocyst_sq3, oocyst_sq4, oocyst_mean, OPG, dilution.
