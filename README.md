@@ -57,7 +57,7 @@ For "record":
 ### EH_ID (unique mouse identifier), experiment(unique experiment identifier), labels (unique timepoint identifier), weight (g), weight_dpi0 (weight on day of infection), weightloss, relative_weight (percentage change in weight from weight_dpi0), feces_weight and dpi (days post infection). 
 
 For "oocyst":
-### label (unique timepoint identifier), experiment (unique experiment identifier), oocyst_sq1, oocys_sq2, oocyst_sq3, oocyst_sq4, oocyst_mean, OPG, dilution.
+### labels (unique timepoint identifier), experiment (unique experiment identifier), oocyst_sq1, oocys_sq2, oocyst_sq3, oocyst_sq4, oocyst_mean, OPG, dilution.
 
 and these for infection intensity qPCRs:
 ### label, EH_ID, delta, dpi, Eim_MC (melting curve (positive or negative)), Amp (is amplification good?)
