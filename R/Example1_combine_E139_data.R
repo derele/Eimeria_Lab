@@ -1,6 +1,8 @@
 library(RCurl)
+library(dplyr)
+library(magrittr)
 
-OV <- read.csv("./Eimeria_Lab_overview.csv")
+OV <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv"))
 
 loadFromGH <- function(URL){
     if(url.exists(URL)){
@@ -23,12 +25,11 @@ E139W <- E139W[!unlist(lapply(E139W, is.null))]
 Reduce(intersect, lapply(E139W, colnames))
 ## weight is the only common column name!  FIX this!!
 
-
-Reduce(intersect, lapply(E139W[1:2], colnames))
-### four column names common in the first two files
-
 ## Once the files all have the same (number of) columns (and names),
 ## you can do something like:
+#Reduce(rbind, E139W)
 
-## Reduce(rbind, E139W)
+# until separate standardised files are made, this should work
 
+keep <- c("EH_ID", "weight", "faces_weight", "relative_weight", "weight_dpi0")
+weight <- lapply(E139W, function(x) subset(x, select = intersect(keep, colnames(x))))
