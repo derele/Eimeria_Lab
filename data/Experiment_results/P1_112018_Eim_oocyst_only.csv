@@ -1,4 +1,4 @@
-experiment,EH_ID,Mouse_strain,infection_isolate,Eimeria_species,HI_original_host,infection_concentration,infection_volume,infection_date,feces_collection_time,feces_weight(g),cage_number,number_of_mice,mean_oocyst_bigsquare_neubauer,vol_counting_mL,oocyst_per_mL,oocyst_in_tube,OPG,dpi,full_dpi,weight
+experiment,EH_ID,mouse_strain,primary_infection,Eimeria_species,HI_original_host,infection_concentration,infection_volume,infection_date,feces_collection_time,feces_weight,cage_number,number_of_mice,oocyst_mean,dilution,oocyst_per_mL,oocyst_in_tube,OPG,dpi,full_dpi,weight
 P1,NA,NMRI,E64,E.ferrisi,0.08,150oocysts_per_mouse,10microL,15/11/2017,11h00,NA,1,2,0,1,0,0,NA,2,dpi1_2,NA
 P1,NA,NMRI,E64,E.ferrisi,0.08,150oocysts_per_mouse,10microL,15/11/2017,11h00,NA,2,2,0,1,0,0,NA,2,dpi1_2,NA
 P1,NA,NMRI,E88,E.falciformis,0.2,150oocysts_per_mouse,10microL,15/11/2017,11h00,NA,1,2,0,1,0,0,NA,2,dpi1_2,NA
