@@ -21,9 +21,16 @@ E139W <- lapply(OV[OV$E139, "weight"], loadFromGH)
 ## others are read. Remove the empty element in the list
 E139W <- E139W[!unlist(lapply(E139W, is.null))]
 
+## Same for shedding
+E139Shed <- lapply(OV[OV$E139, "shedding"], loadFromGH)
+E139Shed <- E139Shed[!unlist(lapply(E139Shed, is.null))]
 
 Reduce(intersect, lapply(E139W, colnames))
-## weight is the only common column name!  FIX this!!
+## "labels" is the only common column name!  FIX this!!
+
+Reduce(intersect, lapply(E139Shed, colnames))
+lapply(E139Shed, colnames)
+
 
 ## Once the files all have the same (number of) columns (and names),
 ## you can do something like:
