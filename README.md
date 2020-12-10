@@ -1,6 +1,7 @@
-Eimeria_Lab repository
+# Eimeria_Lab repository
 
-This repository is for storage of clean data from experiments conducted at AG Heitlinger. 
+### This repository is for storage of clean data from experiments conducted at AG Heitlinger. 
+
 # Structure:
 ## [data](https://github.com/derele/Eimeria_Lab/tree/master/data) = contains all cleaned up data generated during our experiments and templates for tables
 ### [Experimental_design](https://github.com/derele/Eimeria_Lab/tree/master/data/Experimental_design) = mouse information sheets containing attributes such as: sex, strain, date of birth, EH_ID, InfectionStrain.
@@ -54,7 +55,7 @@ These should contain the following columns for "design":
 primary_infection (Eimeria strain), challenge_infection (if reinfected), infection_history (if reinfected)
 
 For "record":
-### experiment(unique experiment identifier), labels (unique timepoint identifier), weight (g), weight_dpi0 (weight on day of infection), weightloss, relative_weight (percentage change in weight from weight_dpi0), feces_weight and dpi (days post infection). 
+### experiment(unique experiment identifier), EH_ID (unique mouse identifier), labels (unique timepoint identifier), weight (g), weight_dpi0 (weight on day of infection), relative_weight (percentage change in weight from weight_dpi0), feces_weight, dpi (days post infection) and dpi_dissecyion (dpi at which mouse was dissected). 
 
 For "oocyst":
 ### labels (unique timepoint identifier), experiment (unique experiment identifier), oocyst_sq1, oocys_sq2, oocyst_sq3, oocyst_sq4, oocyst_mean, OPG, dilution.
