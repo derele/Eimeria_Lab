@@ -126,7 +126,7 @@ and these for infection intensity qPCRs:
 # Load information table
 library(RCurl)
 # load in initial dataset from GitHub (must be raw.)
-infoTable = read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experimental_design/E10_112020_Eim_INFO.csv"))
+infoTable = read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data_creation_code/E10_112020_Eim_INFO.csv"))
 # check last experiment and get highest EH_ID
 lastEH_ID <- "LM0399"
 # divide dataset into groups as desired
