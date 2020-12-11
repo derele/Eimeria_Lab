@@ -106,7 +106,7 @@ General rule is:
 4. delete raw data table and code
 
 The column names are preordained by the [create_design_table](https://raw.githubusercontent.com/derele/Eimeria_Lab/master/R/create_design_table.R), [create_oocyst_table](https://raw.githubusercontent.com/derele/Eimeria_Lab/master/R/create_oocyst_table.R) and [create_record_table](https://raw.githubusercontent.com/derele/Eimeria_Lab/master/R/create_record_table.R) scripts.
-These should contain the following columns for "design":
+## These should contain the following columns for "design":
 ### EH_ID (unique mouse identifier), mouse_strain (NMRI, SWISS, PWD, BUSNA, etc.), primary_infection (Eimeria strain) and experiment (unique experiment identifier). + any other available information about the mice challenge_infection (if reinfected), infection_history (if reinfected)
 
 ## For "record":
