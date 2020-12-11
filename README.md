@@ -25,12 +25,68 @@ Exmaple: E7_112018_Eim_CEWE_ELISA.csv
 This means the table contains information generated from Experiment 7, infections started in November 2018, mice were infected with Eimeria, the tissue used in the assay was Caecum, the essay was ELISA and the table is in a .csv format.
 
 ## 1.2. Examples:
-### 1.2.1. Example 1 (extracting maximum weightloss and maximum oocysts shed for the E139 and E64 strains across all experiments where these strains are present)
+### 1.2.1. Example 1 getting mean maximal wightloss for E139 isolate over multiple experiments
 ```r
 # load libraries
 library(RCurl)
+library(dplyr)
+library(magrittr)
+library(ggplot2)
 
-# load 
+OV <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv"))
+
+loadFromGH <- function(URL){
+    if(url.exists(URL)){
+        U <- getURL(URL)
+        read.csv(text = U)
+    } else {
+        message("URL \"", URL, "\" does not exist")
+    }
+}
+
+## create a list of dataframes for the weight data subsetting for only
+## the experiments with the E139 used
+E139W <- lapply(OV[OV$E139, "weight"], loadFromGH)
+
+## URL for an empty cell in the table does not exist, that's fine, all
+## others are read. Remove the empty element in the list
+E139W <- E139W[!unlist(lapply(E139W, is.null))]
+
+## Same for shedding
+E139Shed <- lapply(OV[OV$E139, "shedding"], loadFromGH)
+E139Shed <- E139Shed[!unlist(lapply(E139Shed, is.null))]
+
+W139colnames <- Reduce(intersect, lapply(E139W, colnames))
+S139colnames <- Reduce(intersect, lapply(E139Shed, colnames))
+
+E139W <- lapply(E139W, "[", W139colnames)
+E139Shed <- lapply(E139Shed, "[", S139colnames)
+
+W139 <- Reduce(rbind, E139W)
+S139 <- Reduce(rbind, E139Shed)
+
+### calculating max weight loss for each mouse
+as_tibble(W139) %>%
+    group_by(EH_ID) %>%
+    slice_min(n=1, order_by=weight) %>%
+    left_join(OV[, c("Experiment", "Date")],
+              by= c("experiment"="Experiment")) %>%
+    group_by(experiment) %>%
+    mutate(meanMaxWLat = mean(dpi)) %>%
+    mutate(meanMaxWL = mean(1-(weight/weight_dpi0))*100) %>%
+    select(experiment, Date, meanMaxWLat, meanMaxWL) %>%
+    slice_head(n=1) %>%
+    mutate(Date=as.Date(paste0("01/", Date), format="%d/%m/%Y")) ->
+    maxWL
+
+pdf("example_fig/E139_evol_maxWL.pdf", width=6, height=5)
+ggplot(maxWL, aes(Date, meanMaxWLat, size= meanMaxWL)) +
+    geom_point(color="red") +
+    scale_y_continuous("maximal weightloss at dpi (average)") +
+    scale_x_date("date of the experiment") +
+    scale_size_continuous("mean maximal\nweightloss in %")
+dev.off()
+
 ```
 ### 1.2.1. Example 2 
 
@@ -49,10 +105,9 @@ General rule is:
 3. upload clean data table
 4. delete raw data table and code
 
-The column names are preordained by the "makeDesignTable.R" and "makeRecordTable.R".
+The column names are preordained by the [create_design_table](https://raw.githubusercontent.com/derele/Eimeria_Lab/master/R/create_design_table.R), [create_oocyst_table](https://raw.githubusercontent.com/derele/Eimeria_Lab/master/R/create_oocyst_table.R) and [create_record_table](https://raw.githubusercontent.com/derele/Eimeria_Lab/master/R/create_record_table.R) scripts.
 These should contain the following columns for "design":
-### EH_ID (unique mouse identifier), mouse_strain (NMRI, SWISS, PWD, BUSNA, etc.) and experiment (unique experiment identifier). + any other available information about the mice
-primary_infection (Eimeria strain), challenge_infection (if reinfected), infection_history (if reinfected)
+### EH_ID (unique mouse identifier), mouse_strain (NMRI, SWISS, PWD, BUSNA, etc.), primary_infection (Eimeria strain) and experiment (unique experiment identifier). + any other available information about the mice challenge_infection (if reinfected), infection_history (if reinfected)
 
 For "record":
 ### experiment(unique experiment identifier), EH_ID (unique mouse identifier), labels (unique timepoint identifier), weight (g), weight_dpi0 (weight on day of infection), relative_weight (percentage change in weight from weight_dpi0), feces_weight, dpi (days post infection) and dpi_dissecyion (dpi at which mouse was dissected). 
@@ -64,46 +119,53 @@ and these for infection intensity qPCRs:
 ### label, EH_ID, delta, dpi, Eim_MC (melting curve (positive or negative)), Amp (is amplification good?)
 
 ## 2.2. Examples:
-### 2.2.1. Adding genotype data
+### 2.2.1. Creating a design table for experiment E10
+```r
+
+# create design table
+# Load information table
+library(RCurl)
+# load in initial dataset from GitHub (must be raw.)
+infoTable = read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experimental_design/E10_112020_Eim_INFO.csv"))
+# check last experiment and get highest EH_ID
+lastEH_ID <- "LM0399"
+# divide dataset into groups as desired
+## e.g.: 100 mice would divide into c(rep("isolate1", 25), rep("isolate2", 25), 
+##                                  rep("isolate3", 25), rep("uninfected", 25))
+# for challenge infection plans this has to be spread further
+primary_infection <- c(rep("E64", 11), rep("E88", 11), rep("UNI", 10))
+challenge_infection <- c(rep("E64", 11), rep("E88", 11), rep("UNI", 10))
+# number of mice
+Nmice = nrow(infoTable)
+#Give EH_IDs
+num = as.numeric(sub("LM", "", lastEH_ID))
+num = num + (1:(Nmice))
+EH_ID = paste0("LM", sprintf("%04d", num))
+#Assign infection isolate
+designTable <- data.frame(primary_infection = primary_infection,
+                          challenge_infection = challenge_infection,
+                          EH_ID= EH_ID)
+# Spread names and infections randomly among mice (restrict by total amount of mice)
+infoTable$EH_ID <- sample(EH_ID, size = 32)
+infoTable$primary_infection <- sample(primary_infection, size = 32)
+infoTable$challenge_infection <- sample(challenge_infection, size = 32)
+# merge
+finaldesignTable <- merge(infoTable, designTable, all.x = T)
+####### check necessary columns at https://github.com/derele/Eimeria_Lab
+# add experiment column
+finaldesignTable$experiment <- "E10"
+# rename columns to match other design tables as stated in the repo
+names(finaldesignTable)[names(finaldesignTable) == "Strain"] <- "mouse_strain"
+finaldesignTable$infection_history <- paste(finaldesignTable$primary_infection, finaldesignTable$challenge_infection, sep = ":")
+
+
+# write out
+write.csv(finaldesignTable,
+          "~/GitHub/Eimeria_Lab/data_creation_code/design_table_creation_example.csv",
+          row.names = F, quote = F )
+```
 
 ### 2.2.2. Adding qPCR data
 
 
-DO NOT edit the data in these folders. You can clone the repos, work with the data and generate new tables as you 
-please. The envisioned structure is that each manuscript has it's own repository. To avoid hardcoding, it is recommended to load tables via GitHub raw links using the "RCurl" package. See 1.2.1 Example
-
-### 2. Experiment design
-Fill the experiment design with the help of the information table,
-with the help of R function "makeDesignTable.R"
-
-ex:
-
-```r
-
-myDesignTable2 <- makeDesignTable(myseed = 1234 ,
-                                  pathToInfoTable = "../data/1_informationTables/Exp004_May2018_wildmice_Eferrisi_secondbatch_INFO.csv",
-                                  firstEH_Id = "LM0145")
-
-# Separate equally between Mouse_strains
-library(experiment)
-
-expe <- randomize(data = myDesignTable2, group = c("E64", "E139"),
-                   indx = myDesignTable2$EH_id, block = myDesignTable2$Strain)
-
-trt <- data.frame(infection_isolate = expe$treatment)
-trt$EH_id <- rownames(trt)
-rownames(trt) <- NULL
-
-# Create design table
-designTable <- merge(trt, myDesignTable2)
-print(table(designTable$Sex, designTable$Strain, designTable$infection_isolate))
-
-write.csv(designTable,     "../data/2_designTables/Exp004_June2018_wildmice_Eferrisi_Secondbatch_DESIGN.csv", row.names = F)
-```
-
-
-
-**makeDesignTable.R** is a general function taking as input an *INFO.csv* data.frame,
-and creating a DESIGN.csv one
-
-**selectBasedOnAge.R** was used in April 2018 to split our groups in 2. Hard coded.
+DO NOT edit the data in these folders. You can clone the repos, work with the data and generate new tables as you please. The envisioned structure is that each manuscript has it's own repository. To avoid hardcoding, it is recommended to load tables via GitHub raw links using the "RCurl" package. See 1.2.1 Example
