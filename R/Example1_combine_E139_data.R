@@ -37,8 +37,28 @@ E139Shed <- lapply(E139Shed, "[", S139colnames)
 W139 <- Reduce(rbind, E139W)
 S139 <- Reduce(rbind, E139Shed)
 
+
+## Same for design
+D139 <- lapply(OV[OV$E139, "design"], loadFromGH)
+D139 <- D139[!unlist(lapply(D139, is.null))]
+
+D139R <- lapply(D139, "[", Dcolnames)
+D139A <- Reduce(rbind, D139R)
+
+W139 <- inner_join(D139A, W139)
+
+
 ### calculating max weight loss for each mouse
 as_tibble(W139) %>%
+    filter(primary_infection%in%"E139") %>% ## this doesnt work so
+                                            ## easiely as it still
+                                            ## selects mice challenge
+                                            ## infected with something
+                                            ## else and the
+                                            ## measurements from the
+                                            ## challenge infection are
+                                            ## tabulated (see comment
+                                            ## in MergeAll.R)
     group_by(EH_ID) %>%
     slice_min(n=1, order_by=weight) %>%
     left_join(OV[, c("Experiment", "Date")],

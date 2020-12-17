@@ -5,3 +5,4 @@ R/\.RData
 *.pdf
 
 data/3_recordingTables/\.~lock\.P3_112019_Eim_Record\.csv#
+/R/MergeAll.R~
