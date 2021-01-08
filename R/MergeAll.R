@@ -40,9 +40,11 @@ Wcolnames
 ## TODO: only EH_ID is common to all weigth tables as a colname
 
 Ocolnames <- Reduce(intersect, lapply(O, colnames))
+Ocolnames
 ## TODO: NOTHIN is common to all shedding tables as a colname
 
 Dcolnames <- Reduce(intersect, lapply(D, colnames))
+Dcolnames
 ## TODO: only "EH_ID", "primary_infection" and "mouse_strain" are
 ## common for design tables
 
