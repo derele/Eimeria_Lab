@@ -4,7 +4,7 @@
 
 # Structure:
 ## [data](https://github.com/derele/Eimeria_Lab/tree/master/data) = contains all cleaned up data generated during our experiments and templates for tables
-### [Experimental_design](https://github.com/derele/Eimeria_Lab/tree/master/data/Experimental_design) = mouse information sheets containing attributes such as: sex, strain, date of birth, EH_ID, InfectionStrain.
+### [Experimental_design](https://github.com/derele/Eimeria_Lab/tree/master/data/Experimental_design) = mouse information sheets containing attributes such as: sex, strain, date of birth, EH_ID (unique identifier) and infection strain.
 ### [Experiment_results](https://github.com/derele/Eimeria_Lab/tree/master/data/Experiment_results) = clean tables of results obtained from a given experiment and assay/observation
 ### [Templates](https://github.com/derele/Eimeria_Lab/tree/master/data/templates) = examples of what corresponding tables should look like
 #### [mouse_paperwork_mandatory](https://github.com/derele/Eimeria_Lab/tree/master/data/templates/mouse_paperwork_mandatory) = This folder contains all the necessary files for setting up an infection experiment in our mouse facilities. There is a complete protocol for animal handling, sampling, euqipment and facility handling. Accompanied by a cage placement template to keep a full track of experimental setup and a !Score Sheet! for each mouse to keep track of animal health. This sheet is a legal requirement that we must fulfill as per our animal handling license.
@@ -14,6 +14,9 @@
 ## [data_creation_code](https://github.com/derele/Eimeria_Lab/tree/master/data_creation_code) = contains examples of R code related to processing raw data and making it suitable to be in the [data](https://github.com/derele/Eimeria_Lab/tree/master/data) folder.
 
 # 1. Accessing data:
+### All clean and standardised tables are kept in an [overview table](https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv), which can be used to check information availability and retreive said tables. 
+
+
 ## 1.1. General description:
 
 All data in this repository has been processed and saved as a clean table according to the corresponding [template](https://github.com/derele/Eimeria_Lab/tree/master/data/templates)
@@ -110,13 +113,13 @@ The column names are preordained by the [create_design_table](https://raw.github
 ### EH_ID (unique mouse identifier), mouse_strain (NMRI, SWISS, PWD, BUSNA, etc.), primary_infection (Eimeria strain) and experiment (unique experiment identifier). + any other available information about the mice challenge_infection (if reinfected), infection_history (if reinfected)
 
 ## For "record":
-### experiment(unique experiment identifier), EH_ID (unique mouse identifier), labels (unique timepoint identifier), weight (g), weight_dpi0 (weight on day of infection), relative_weight (percentage change in weight from weight_dpi0), feces_weight, dpi (days post infection) and dpi_dissecyion (dpi at which mouse was dissected). 
+### experiment(unique experiment identifier), EH_ID (unique mouse identifier), labels (unique mouse-timepoint identifier), weight (g), weight_dpi0 (weight on day of infection), relative_weight (percentage change in weight from weight_dpi0), feces_weight, dpi (days post infection) and dpi_dissection (dpi at which mouse was dissected). 
 
 ## For "oocyst":
-### labels (unique timepoint identifier), experiment (unique experiment identifier), oocyst_sq1, oocys_sq2, oocyst_sq3, oocyst_sq4, oocyst_mean, OPG, dilution.
+### labels (unique mouse-timepoint identifier), experiment (unique experiment identifier), oocyst_sq1, oocys_sq2, oocyst_sq3, oocyst_sq4 (4 Neubauer counting chambers) and dilution.
 
-## and these for infection intensity qPCRs:
-### label, EH_ID, delta, dpi, Eim_MC (melting curve (positive or negative)), Amp (is amplification good?)
+## For infection intensity qPCRs:
+### labels, EH_ID, Target, Ct (cycle threshold), Ct_SD (standard deviation within sample duplicates/triplicates), dissection_dpi, Eim_MC (melting curve (positive or negative)), Amp (is amplification good?)
 
 ## 2.2. Examples:
 ### 2.2.1. Creating a design table for experiment E10
@@ -126,7 +129,7 @@ The column names are preordained by the [create_design_table](https://raw.github
 # Load information table
 library(RCurl)
 # load in initial dataset from GitHub (must be raw.)
-infoTable = read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data_creation_code/E10_112020_Eim_INFO.csv"))
+infoTable = read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data_creation_code/E10_112020_Eim_INFO.csv")
 # check last experiment and get highest EH_ID
 lastEH_ID <- "LM0399"
 # divide dataset into groups as desired
