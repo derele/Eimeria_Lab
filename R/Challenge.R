@@ -3,6 +3,7 @@
 library(RCurl)
 library(dplyr)
 library(magrittr)
+library(stringr)
 library(ggplot2)
 
 OV <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv"))
@@ -18,37 +19,46 @@ loadFromGH <- function(URL){
 
 ## Only the challenge experiments
 ChallengeEx  <- c("E57", "E10", "E11")
-ExpNames <- OV$Experiment[OV$Experiment%in%ChallengeEx]
 
+## download and append the weigth tables
 W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], loadFromGH)
-names(W) <- ExpNames
-
+Weight <- Reduce(rbind, W)
 
 ## Same for shedding
 O <- lapply(OV[OV$Experiment%in%ChallengeEx, "shedding"], loadFromGH)
-names(O) <- ExpNames
+Oocysts <- Reduce(rbind, O)
 
-O[["E10"]] <- O[["E10"]][, !colnames(O[["E10"]])%in%"X"]
 
-O[["E11"]]$labels <- paste0("E11", O[["E11"]]$batch, O[["E11"]]$labels)
-O[["E11"]]$dilution <- 1
+Results <- merge(Weight, Oocysts, all=TRUE)
+## IDs sometimes with "_" sometimes without
+Results$EH_ID <- gsub("LM_", "LM", Results$EH_ID)
 
-OO.cols <- Reduce(intersect, lapply(O, colnames))
+## We have some NAs in the mouse IDs here: 
+table(is.na(Results$EH_ID))
+Results[is.na(Results$EH_ID), ]
 
-O[["E10"]] <- O[["E10"]][, OO.cols]
-O[["E11"]] <- O[["E11"]][, OO.cols]
-O[["E57"]] <- O[["E57"]][, OO.cols]
+## Labels for which in E11 (both first and challenge infection) no
+## weight was in the table and thus tube labels have no mouse EH_ID
+## association. FIX ME!!!
 
-write.csv(O[["E57"]], "data/Experiment_results/E57_xxxxx_Eim_oocyst.csv",
-          row.names=FALSE)
+## For now we hav to exclude those
+Results <- Results[!is.na(Results$EH_ID), ]
 
-write.csv(O[["E10"]], "data/Experiment_results/E10_112020_Eim_oocyst.csv",
-          row.names=FALSE)
-
-write.csv(O[["E11"]], "data/Experiment_results/E11_Oocyst_CSV.csv",
-          row.names=FALSE)       
 
 ## Same for design
 D <- lapply(OV[OV$Experiment%in%ChallengeEx, "design"], loadFromGH)
-names(D) <- ExpNames
 
+Des.cols <- Reduce(intersect, lapply(D, colnames))
+Design <- Reduce(rbind, lapply(D, "[", Des.cols))
+
+## remove all whitespaces
+Design %>%
+    mutate(across(where(is.character), str_trim)) ->
+    Design
+
+## IDs sometimes with "_" sometimes without
+Design$EH_ID <- gsub("LM_", "LM", Design$EH_ID)
+
+ALL <- merge(Design, Results, all=TRUE)
+
+write.csv(ALL, "data_products/Challenge_infections.csv")
