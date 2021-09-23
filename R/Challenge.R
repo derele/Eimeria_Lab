@@ -24,6 +24,26 @@ ExpNames <- OV$Experiment[OV$Experiment%in%ChallengeEx]
 W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], loadFromGH)
 names(W) <- ExpNames
 
+
+W.cols <- Reduce(intersect, lapply(W, colnames))
+
+
+W[["E57"]] <- W[["E57"]][, W.cols]
+W[["E11"]] <- W[["E11"]][, W.cols]
+W[["E10"]] <- W[["E10"]][, W.cols]
+
+write.csv(W[["E57"]],
+          "data/Experiment_results/E57_xxxxx_Eim_record.csv",
+          row.names=FALSE)
+
+write.csv(W[["E11"]], "data/Experiment_results/E11_012021_Eim_record.csv",
+          row.names=FALSE)
+
+
+write.csv(W[["E10"]], "data/Experiment_results/E10_112020_Eim_record.csv",
+          row.names=FALSE)
+
+
 ## Same for shedding
 O <- lapply(OV[OV$Experiment%in%ChallengeEx, "shedding"], loadFromGH)
 names(O) <- ExpNames
@@ -31,19 +51,4 @@ names(O) <- ExpNames
 ## Same for design
 D <- lapply(OV[OV$Experiment%in%ChallengeEx, "design"], loadFromGH)
 names(D) <- ExpNames
-
-W[["E10"]] <- W[["E10"]][,-c(1,2)]
-
-W[["E11"]] <- W[["E11"]][,-c(1,2)]
-
-write.csv(W[["E57"]],
-          "data/Experiment_results/E57_xxxxx_Eim_record.csv",
-          row.names=FALSE)
-
-write.csv(W[["E10"]],
-          "data/Experiment_results/E10_112020_Eim_record.csv",
-          row.names=FALSE)
-
-write.csv(W[["E11"]], "Experiment_results/E11_012021_Eim_record.csv",
-          row.names=FALSE)
 
