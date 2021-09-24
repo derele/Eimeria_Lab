@@ -22,71 +22,32 @@ ChallengeEx  <- c("E57", "E10", "E11")
 
 ## ## download and append the weigth tables
 W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], loadFromGH)
-
-W57 <- W[[1]]
-
-W57$labels <- gsub("E57aE7", "E57b", W57$labels)
-
-W57$labels <- gsub("E57ba", "E57bx", W57$labels)
-
-W57$labels <- gsub("E57bb", "E57by", W57$labels)
-
-write.csv(W57, "data/Experiment_results/E57_xxxxx_Eim_record.csv",
-          row.names=FALSE)
-
-
-
-
 Weight <- Reduce(rbind, W)
-
-## ## messed up some lables for E7 challenge
-Weight[grepl("aE7", Weight$labels),]
 
 
 ## ## Same for shedding
 O <- lapply(OV[OV$Experiment%in%ChallengeEx, "shedding"], loadFromGH)
 Oocysts <- Reduce(rbind, O)
 
-## ## The same for oocysts
-## head(Oocysts[grepl("aE7", Oocysts$labels), ])
-
 ## ## some don't agree
-## table(Oocysts$labels%in%Weight$labels)
-## table(Weight$labels%in%Oocysts$labels)
+table(Oocysts$labels%in%Weight$labels)
+table(Weight$labels%in%Oocysts$labels)
 
-## ## But that's not the cause for the bigger problems as result are
-## ## still okay, as both the labels are messed up in the same way:
+### FIXME!!!  It's experiment E11!!!
+Oocysts[!Oocysts$labels%in%Weight$labels, ]
+Weight[!Weight$labels%in%Oocysts$labels, ]
 
-## Results <- merge(Weight, Oocysts, all=TRUE)
-## ## IDs sometimes with "_" sometimes without
-## Results$EH_ID <- gsub("LM_", "LM", Results$EH_ID)
+Results <- merge(Weight, Oocysts, all=TRUE)
 
-E57OO <- read.csv("data/Experiment_results/E5_062018_Eim_oocyst.csv")
-E57OO <- E57OO[, !colnames(E57OO)%in%"X"]
-
-E57OO[nchar(E57OO$labels)==3, "labels"] <-
-    paste0("E57a", E57OO[nchar(E57OO$labels)==3, "labels"])
-
-E57OO$labels <- gsub("E7a", "E57bx", E57OO$labels)
-
-E57OO$labels <- gsub("E7b", "E57by", E57OO$labels)
-
-E57OO$dilution <- as.numeric(gsub(",", ".", E57OO$dilution))
-
-E57OO$experiment <- NULL
-
-E57OO$oocyst_mean <- NULL
-
-write.csv(E57OO, "data/Experiment_results/E57_xxxxx_Eim_oocyst.csv",
-          row.names=FALSE)
-
+## IDs sometimes with "_" sometimes without
+Results$EH_ID <- gsub("LM_", "LM", Results$EH_ID)
 
 ## BUT we now have some NAs in the mouse IDs here:
 table(is.na(Results$EH_ID))
 Results[is.na(Results$EH_ID), ]
 ## These are labels for which in E11 (both first and challenge
 ## infection) no weight was in the table and thus tube labels have no
-## mouse EH_ID association. FIX ME!!!
+## mouse EH_ID association. Again: FIX ME!!!
 
 ## For now we hav to exclude those
 Results <- Results[!is.na(Results$EH_ID), ]
@@ -96,10 +57,7 @@ D <- lapply(OV[OV$Experiment%in%ChallengeEx, "design"], loadFromGH)
 
 Des.cols <- Reduce(intersect, lapply(D, colnames))
 
-
 Design <- Reduce(rbind, lapply(D, "[", Des.cols))
-
-
 
 ## remove all whitespaces
 Design %>%
