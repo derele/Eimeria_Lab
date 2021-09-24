@@ -58,6 +58,10 @@ E57OO$labels <- gsub("E7b", "E57by", E57OO$labels)
 
 E57OO$dilution <- as.numeric(gsub(",", ".", E57OO$dilution))
 
+E57OO$experiment <- NULL
+
+E57OO$oocyst_mean <- NULL
+
 write.csv(E57OO, "data/Experiment_results/E57_xxxxx_Eim_oocyst.csv",
           row.names=FALSE)
 
