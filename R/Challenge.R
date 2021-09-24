@@ -58,7 +58,8 @@ E57OO$labels <- gsub("E7b", "E57by", E57OO$labels)
 
 E57OO$dilution <- as.numeric(gsub(",", ".", E57OO$dilution))
 
-write.csv(E57OO, "data/Experiment_results/E57_xxxxx_Eim_oocyst.csv")
+write.csv(E57OO, "data/Experiment_results/E57_xxxxx_Eim_oocyst.csv",
+          row.names=FALSE)
 
 
 ## BUT we now have some NAs in the mouse IDs here:
