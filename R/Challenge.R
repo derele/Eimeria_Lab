@@ -21,11 +21,26 @@ loadFromGH <- function(URL){
 ChallengeEx  <- c("E57", "E10", "E11")
 
 ## ## download and append the weigth tables
-## W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], loadFromGH)
-## Weight <- Reduce(rbind, W)
+W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], loadFromGH)
+
+W57 <- W[[1]]
+
+W57$labels <- gsub("E57aE7", "E57b", W57$labels)
+
+W57$labels <- gsub("E57ba", "E57bx", W57$labels)
+
+W57$labels <- gsub("E57bb", "E57by", W57$labels)
+
+write.csv(W57, "data/Experiment_results/E57_xxxxx_Eim_record.csv",
+          row.names=FALSE)
+
+
+
+
+Weight <- Reduce(rbind, W)
 
 ## ## messed up some lables for E7 challenge
-## Weight[grepl("aE7", Weight$labels),]
+Weight[grepl("aE7", Weight$labels),]
 
 
 ## ## Same for shedding
