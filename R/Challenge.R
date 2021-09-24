@@ -56,26 +56,27 @@ Results[is.na(Results$EH_ID), ]
 ## For now we hav to exclude those
 Results <- Results[!is.na(Results$EH_ID), ]
 
-DesignE7 <- loadFromGH("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experimental_design/E7_112018_Eim_DESIGN.csv")
+## DesignE7 <- loadFromGH("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experimental_design/E7_112018_Eim_DESIGN.csv")
 
 ## Same for design
 D <- lapply(OV[OV$Experiment%in%ChallengeEx, "design"], loadFromGH)
 
 Des.cols <- Reduce(intersect, lapply(D, colnames))
-DesignE5 <- D[[1]]
+## DesignE5 <- D[[1]]
 
-table(DesignE5$EH_ID%in%DesignE7$EH_ID)
-E7IDs <- DesignE7$EH_ID[DesignE7$EH_ID%in%DesignE5$EH_ID]
+## table(DesignE5$EH_ID%in%DesignE7$EH_ID)
+## E7IDs <- DesignE7$EH_ID[DesignE7$EH_ID%in%DesignE5$EH_ID]
 
-DesignE5 <- DesignE5[!DesignE5$EH_ID%in%E7IDs, ]
-colnames(DesignE7)
+## DesignE5 <- DesignE5[!DesignE5$EH_ID%in%E7IDs, ]
+## colnames(DesignE7)
 
-D57.cols <- intersect(colnames(DesignE5), colnames(DesignE7))
+## D57.cols <- intersect(colnames(DesignE5), colnames(DesignE7))
 
-DesignE57 <- rbind(DesignE5[, D57.cols], DesignE7[, D57.cols])
+## DesignE57 <- rbind(DesignE5[, D57.cols], DesignE7[, D57.cols])
 
-write.csv(DesignE57, "data/Experimental_design/E57_xxxxx_Eim_DESIGN.csv",
-          row.names=FALSE)
+## write.csv(DesignE57, "data/Experimental_design/E57_xxxxx_Eim_DESIGN.csv",
+##           row.names=FALSE)
+
 
 
 Design <- Reduce(rbind, lapply(D, "[", Des.cols))
@@ -93,7 +94,7 @@ Design$EH_ID <- gsub("LM_", "LM", Design$EH_ID)
 
 #### NOW ALSO REMOVE EXPERIMENT AND ADD E7 Design to Design!
 
-ALL <- merge(Design, Results, all=TRUE)
+ALL <- merge(Design, Results, all=TRUE, by="EH_ID")
 
 ### some mice don't have an infection history 
 forgotten.mice <- unique(ALL[is.na(ALL$primary_infection), "EH_ID"])
@@ -105,6 +106,8 @@ length(union(Design$EH_ID, Results$EH_ID))
 Design$EH_ID[!Design$EH_ID%in%Results$EH_ID]
 ### Two samples with now result records
 ### [1] "LM0205" "LM0290"
+
+table(ALL$experiment.x, ALL$experiment.y)
 
 
 write.csv(ALL, "data_products/Challenge_infections.csv")
