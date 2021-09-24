@@ -17,34 +17,49 @@ loadFromGH <- function(URL){
     }
 }
 
-## Only the challenge experiments
+## ## Only the challenge experiments
 ChallengeEx  <- c("E57", "E10", "E11")
 
-## download and append the weigth tables
-W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], loadFromGH)
-Weight <- Reduce(rbind, W)
+## ## download and append the weigth tables
+## W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], loadFromGH)
+## Weight <- Reduce(rbind, W)
 
-## messed up some lables for E7 challenge
-Weight[grepl("aE7", Weight$labels),]
+## ## messed up some lables for E7 challenge
+## Weight[grepl("aE7", Weight$labels),]
 
 
-## Same for shedding
+## ## Same for shedding
 O <- lapply(OV[OV$Experiment%in%ChallengeEx, "shedding"], loadFromGH)
 Oocysts <- Reduce(rbind, O)
 
-## The same for oocysts
-head(Oocysts[grepl("aE7", Oocysts$labels), ])
+## ## The same for oocysts
+## head(Oocysts[grepl("aE7", Oocysts$labels), ])
 
-## some don't agree
-table(Oocysts$labels%in%Weight$labels)
-table(Weight$labels%in%Oocysts$labels)
+## ## some don't agree
+## table(Oocysts$labels%in%Weight$labels)
+## table(Weight$labels%in%Oocysts$labels)
 
-## But that's not the cause for the bigger problems as result are
-## still okay, as both the labels are messed up in the same way:
+## ## But that's not the cause for the bigger problems as result are
+## ## still okay, as both the labels are messed up in the same way:
 
-Results <- merge(Weight, Oocysts, all=TRUE)
-## IDs sometimes with "_" sometimes without
-Results$EH_ID <- gsub("LM_", "LM", Results$EH_ID)
+## Results <- merge(Weight, Oocysts, all=TRUE)
+## ## IDs sometimes with "_" sometimes without
+## Results$EH_ID <- gsub("LM_", "LM", Results$EH_ID)
+
+E57OO <- read.csv("data/Experiment_results/E5_062018_Eim_oocyst.csv")
+E57OO <- E57OO[, !colnames(E57OO)%in%"X"]
+
+E57OO[nchar(E57OO$labels)==3, "labels"] <-
+    paste0("E57a", E57OO[nchar(E57OO$labels)==3, "labels"])
+
+E57OO$labels <- gsub("E7a", "E57bx", E57OO$labels)
+
+E57OO$labels <- gsub("E7b", "E57by", E57OO$labels)
+
+E57OO$dilution <- as.numeric(gsub(",", ".", E57OO$dilution))
+
+write.csv(E57OO, "data/Experiment_results/E57_xxxxx_Eim_oocyst.csv")
+
 
 ## BUT we now have some NAs in the mouse IDs here:
 table(is.na(Results$EH_ID))
@@ -56,30 +71,14 @@ Results[is.na(Results$EH_ID), ]
 ## For now we hav to exclude those
 Results <- Results[!is.na(Results$EH_ID), ]
 
-## DesignE7 <- loadFromGH("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experimental_design/E7_112018_Eim_DESIGN.csv")
-
 ## Same for design
 D <- lapply(OV[OV$Experiment%in%ChallengeEx, "design"], loadFromGH)
 
 Des.cols <- Reduce(intersect, lapply(D, colnames))
-## DesignE5 <- D[[1]]
-
-## table(DesignE5$EH_ID%in%DesignE7$EH_ID)
-## E7IDs <- DesignE7$EH_ID[DesignE7$EH_ID%in%DesignE5$EH_ID]
-
-## DesignE5 <- DesignE5[!DesignE5$EH_ID%in%E7IDs, ]
-## colnames(DesignE7)
-
-## D57.cols <- intersect(colnames(DesignE5), colnames(DesignE7))
-
-## DesignE57 <- rbind(DesignE5[, D57.cols], DesignE7[, D57.cols])
-
-## write.csv(DesignE57, "data/Experimental_design/E57_xxxxx_Eim_DESIGN.csv",
-##           row.names=FALSE)
-
 
 
 Design <- Reduce(rbind, lapply(D, "[", Des.cols))
+
 
 
 ## remove all whitespaces
