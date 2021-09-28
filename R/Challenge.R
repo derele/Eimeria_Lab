@@ -95,7 +95,7 @@ ALL <- merge(Design, Results, all=TRUE)
 ### some mice don't have an infection history 
 forgotten.mice <- unique(ALL[is.na(ALL$primary_infection), "EH_ID"])
 ## one mouse "LM0295" got lost?
-forgotten.mice
+
 
 Design$EH_ID[!Design$EH_ID%in%Results$EH_ID]
 ### Two samples with no result records
@@ -104,3 +104,22 @@ Design$EH_ID[!Design$EH_ID%in%Results$EH_ID]
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
+## all the data has a mouse ID
+table(is.na(ALL$EH_ID))
+
+## but feces weights are ZERO
+table(ALL$feces_weight==0)
+
+table(ALL[which(ALL$feces_weight==0), "experiment"])
+table(ALL[which(ALL$feces_weight==0), "dpi"])
+table(ALL[which(ALL$feces_weight==0), "EH_ID"])
+
+## for this just one feces weight is ZERO
+ALL[ALL$EH_ID%in%"LM0236",]
+
+## for this just four feces weights are ZERO
+ALL[ALL$EH_ID%in%"LM0274",]
+
+
+## they are all from primary, let's ask Alice
+table(ALL[which(ALL$feces_weight==0), "infection"])
