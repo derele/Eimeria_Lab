@@ -32,16 +32,30 @@ Oocysts <- Reduce(rbind, O)
 table(Oocysts$labels%in%Weight$labels)
 table(Weight$labels%in%Oocysts$labels)
 
-### FIXME!!!  It's experiment E11!!!
 Oocysts[!Oocysts$labels%in%Weight$labels, ]
 ## FIXED by Franzi, just two labels missing: E11aBMI and E11aJOY
 
 ## there are more in in the weights table which are not found in the
 ## oocysts though
 Weight[!Weight$labels%in%Oocysts$labels, ]
+
+## But if the weight is NA the mouse was dead
+table(Weight[!Weight$labels%in%Oocysts$labels &
+             is.na(Weight$weight), "dpi"])
+### confirmed by the late dpi of these!
+
+
+## we have this prolem remaining:
+OOcystProblem <- Weight[!Weight$labels%in%Oocysts$labels &
+                        !is.na(Weight$weight),]
+
 ## Let's export this for Franzi to have a look:
-write.csv(Weight[!Weight$labels%in%Oocysts$labels, ],
-          "data/Experiment_results/FIXME_E11_Weight.csv", row.names=FALSE)
+write.csv(OOcystProblem,
+          "data/Experiment_results/FIXME_E11_OOcysts.csv", row.names=FALSE)
+
+table(OOcystProblem[,"dpi"])
+## seems like oocyst from dip 4 in primary infection have been omitted
+## Franzi Says one box has been missing for counting
 
 Results <- merge(Weight, Oocysts, all=TRUE)
 
@@ -81,6 +95,7 @@ ALL <- merge(Design, Results, all=TRUE)
 ### some mice don't have an infection history 
 forgotten.mice <- unique(ALL[is.na(ALL$primary_infection), "EH_ID"])
 ## one mouse "LM0295" got lost?
+forgotten.mice
 
 Design$EH_ID[!Design$EH_ID%in%Results$EH_ID]
 ### Two samples with no result records
