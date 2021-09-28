@@ -87,13 +87,13 @@ Design$EH_ID[!Design$EH_ID%in%Results$EH_ID]
 table(ALL$experiment.x, ALL$experiment.y)
 
 
-write.csv(ALL, "data_products/Challenge_infections.csv")
+## write.csv(ALL, "data_products/Challenge_infections.csv")
 
 
-oldE11 <- read.csv("data/Experiment_results/E11_Oocyst_CSV.csv")
+## oldE11 <- read.csv("data/Experiment_results/E11_Oocyst_CSV.csv")
 
-newE11 <- read.delim("data/Experiment_results/E11_Oocyst_updateCSV.csv", sep=";")
+## newE11 <- read.delim("data/Experiment_results/E11_Oocyst_updateCSV.csv", sep=";")
 
-newE11$labels <- paste0("E11", newE11$batch, newE11$labels)
-newE11$dilution <- 1
+## newE11$labels <- paste0("E11", newE11$batch, newE11$labels)
+## newE11$dilution <- 1
 
