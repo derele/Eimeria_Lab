@@ -26,6 +26,8 @@ Weight <- Reduce(rbind, W)
 
 
 ## ## Same for shedding
+
+
 O <- lapply(OV[OV$Experiment%in%ChallengeEx, "shedding"], loadFromGH)
 Oocysts <- Reduce(rbind, O)
 
@@ -96,4 +98,7 @@ table(ALL$experiment.x, ALL$experiment.y)
 
 ## newE11$labels <- paste0("E11", newE11$batch, newE11$labels)
 ## newE11$dilution <- 1
+
+write.csv(newE11[,colnames(oldE11)],
+          "data/Experiment_results/E11_Oocyst_updateCSV.csv", row.names=FALSE)
 
