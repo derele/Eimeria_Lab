@@ -102,6 +102,9 @@ Design$EH_ID[!Design$EH_ID%in%Results$EH_ID]
 ### [1] "LM0205" "LM0290"
 
 
+## somehow lines (dips) for the challenge of experiment 57 were duplicated
+ALL <- unique(ALL)
+
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
 ## all the data has a mouse ID
@@ -119,6 +122,7 @@ ALL[ALL$EH_ID%in%"LM0236",]
 
 ## for this just four feces weights are ZERO
 ALL[ALL$EH_ID%in%"LM0274",]
+
 
 
 ## they are all from primary, let's ask Alice
