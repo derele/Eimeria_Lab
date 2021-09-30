@@ -33,7 +33,7 @@ table(Oocysts$labels%in%Weight$labels)
 table(Weight$labels%in%Oocysts$labels)
 
 Oocysts[!Oocysts$labels%in%Weight$labels, ]
-## FIXED by Franzi, just two labels missing: E11aBMI and E11aJOY
+## FIXED by Franzi, just one labels missing: E11aBMI
 
 ## there are more in in the weights table which are not found in the
 ## oocysts though
@@ -62,8 +62,7 @@ Results <- merge(Weight, Oocysts, all=TRUE)
 ## IDs sometimes with "_" sometimes without
 Results$EH_ID <- gsub("LM_", "LM", Results$EH_ID)
 
-## For now we hav to exclude those E11aBMI and E11aJOY which have no
-## mouse IDs
+## For now we hav to exclude those E11aBMI which have no mouse IDs
 Results <- Results[!is.na(Results$EH_ID), ]
 
 ## Same for design
@@ -102,9 +101,6 @@ Design$EH_ID[!Design$EH_ID%in%Results$EH_ID]
 ### [1] "LM0205" "LM0290"
 
 
-## somehow lines (dips) for the challenge of experiment 57 were duplicated
-ALL <- unique(ALL)
-
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
 ## all the data has a mouse ID
@@ -119,63 +115,62 @@ table(ALL[which(ALL$feces_weight==0), "EH_ID"])
 
 ### need to this data to correct the E57 data 
 
-## Alice
+## ## Alice
 AE5 <- read.csv("https://raw.githubusercontent.com/alicebalard/Article_RelatedParasitesResTol/master/data/ExpeDF_005_Alice.csv")
 
-## make agreeing labels
-AE5$labelsNew <- paste0("E57a", AE5$labels)
+## ## make agreeing labels
+## AE5$labelsNew <- paste0("E57a", AE5$labels)
 
-## Missing feces weight
-WE57 <- read.csv("data/Experiment_results/E57_xxxxx_Eim_record.csv")
+## ## Missing feces weight
+## WE57 <- read.csv("data/Experiment_results/E57_xxxxx_Eim_record.csv")
 
-replace <- WE57$labels[WE57$labels%in%AE5$labelsNew]
+## replace <- WE57$labels[WE57$labels%in%AE5$labelsNew]
 
-## so we replace all the primary infection
-table(nchar(replace))
-table(WE57[WE57$labels%in%replace, "infection"])
+## ## so we replace all the primary infection
+## table(nchar(replace))
+## table(WE57[WE57$labels%in%replace, "infection"])
 
-NEW57.1 <- WE57[!WE57$labels%in%replace, ]
+## NEW57.1 <- WE57[!WE57$labels%in%replace, ]
 
-## and leave only challenge infection in place
-table(NEW57.1$infection)
+## ## and leave only challenge infection in place
+## table(NEW57.1$infection)
 
-NEW57.2<- AE5[AE5$labelsNew%in%replace,
-              c("EH_ID", "labelsNew", "weight", "weight_dpi0",
-                "relativeWeight", "fecweight",
-                "dpi")]
+## NEW57.2<- AE5[AE5$labelsNew%in%replace,
+##               c("EH_ID", "labelsNew", "weight", "weight_dpi0",
+##                 "relativeWeight", "fecweight",
+##                 "dpi")]
 
-NEW57.2$experiment <- "E5"
-NEW57.2$infection <- "primary"
+## NEW57.2$experiment <- "E5"
+## NEW57.2$infection <- "primary"
 
-NEW57.2 <- NEW57.2[, c("EH_ID", "labelsNew", "experiment", "weight",
-                       "weight_dpi0", "relativeWeight", "fecweight",
-                       "dpi", "infection")]
+## NEW57.2 <- NEW57.2[, c("EH_ID", "labelsNew", "experiment", "weight",
+##                        "weight_dpi0", "relativeWeight", "fecweight",
+##                        "dpi", "infection")]
 
-colnames(NEW57.2) <- colnames(NEW57.1)
+## colnames(NEW57.2) <- colnames(NEW57.1)
 
-NEW57 <- rbind(NEW57.2, NEW57.1)
+## NEW57 <- rbind(NEW57.2, NEW57.1)
 
-dupes <- NEW57$labels[duplicated(NEW57$labels)]
+## dupes <- NEW57$labels[duplicated(NEW57$labels)]
 
-foo <- NEW57[NEW57$labels%in%dupes, ]
+## foo <- NEW57[NEW57$labels%in%dupes, ]
 
-foo$EH_ID <- NULL
+## foo$EH_ID <- NULL
 
-dim(foo)
-dim(unique(foo))
+## dim(foo)
+## dim(unique(foo))
 
-NEW57 <- NEW57[!duplicated(NEW57$labels), ]
+## NEW57 <- NEW57[!duplicated(NEW57$labels), ]
 
-write.csv(NEW57, "data/Experiment_results/E57_xxxxx_Eim_record.csv",
-          row.names=FALSE)
+## write.csv(NEW57, "data/Experiment_results/E57_xxxxx_Eim_record.csv",
+##           row.names=FALSE)
+
 
 ## for this just one feces weight is ZERO
 ALL[ALL$EH_ID%in%"LM0236",]
 
 ## for this just four feces weights are ZERO
 ALL[ALL$EH_ID%in%"LM0274",]
-
-
 
 ## they are all from primary, let's ask Alice
 table(ALL[which(ALL$feces_weight==0), "infection"])
