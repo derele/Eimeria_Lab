@@ -32,9 +32,6 @@ Oocysts <- Reduce(rbind, O)
 table(Oocysts$labels%in%Weight$labels)
 table(Weight$labels%in%Oocysts$labels)
 
-Oocysts[!Oocysts$labels%in%Weight$labels, ]
-## FIXED by Franzi, just one labels missing: E11aBMI
-
 ## there are more in in the weights table which are not found in the
 ## oocysts though
 Weight[!Weight$labels%in%Oocysts$labels, ]
@@ -105,20 +102,11 @@ write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 ## all the data has a mouse ID
 table(is.na(ALL$EH_ID))
 
-## but feces weights are ZERO T (only when the oocyst counts are NA ->
-## the mouse was dead!
+## but feces weights are ZERO T ( when the oocyst counts are NA ->
+## the mouse was dead)!
 table(ALL$feces_weight==0)
 
-table(ALL[which(ALL$feces_weight==0), "experiment"])
-table(ALL[which(ALL$feces_weight==0), "dpi"])
-table(ALL[which(ALL$feces_weight==0), "EH_ID"])
-
-## for this just one feces weight is ZERO
-ALL[ALL$EH_ID%in%"LM0236",]
-
-## for this just four feces weights are ZERO
-ALL[ALL$EH_ID%in%"LM0274",]
-
-## they are all from primary, let's ask Alice
-table(ALL[which(ALL$feces_weight==0), "infection"])
+##  only one prolbem remaining after asking Alice for better data...
+ALL[which(ALL$feces_weight==0 &
+          !is.na(ALL$oocyst_sq2)), ]
 
