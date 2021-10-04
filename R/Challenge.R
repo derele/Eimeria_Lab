@@ -122,23 +122,3 @@ ALL[ALL$EH_ID%in%"LM0274",]
 ## they are all from primary, let's ask Alice
 table(ALL[which(ALL$feces_weight==0), "infection"])
 
-
-
-old <- read.csv("data/Experiment_results/E11_Oocyst_updateCSV.csv")
-
-new <- read.delim("data/Experiment_results/E11_Oocyst_CSV.csv", sep=";")
-
-new$labels <- paste0("E11", new$batch, new$labels)
-
-new$dilution <- 1
-
-write.csv(new[, colnames(old)], "data/Experiment_results/E11_Oocyst_updateCSV.csv",
-          row.names=FALSE)
-
-table(new$labels %in% old$labels)
-
-table(old$labels %in% new$labels)
-
-old$labels[!old$labels %in% new$labels]
-
-new$labels[!new$labels %in% old$labels]
