@@ -97,7 +97,6 @@ Design$EH_ID[!Design$EH_ID%in%Results$EH_ID]
 ### Two samples with no result records
 ### [1] "LM0205" "LM0290"
 
-write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
 ## all the data has a mouse ID
 table(is.na(ALL$EH_ID))
@@ -110,3 +109,62 @@ table(ALL$feces_weight==0)
 ALL[which(ALL$feces_weight==0 &
           !is.na(ALL$oocyst_sq2)), ]
 
+ALL %>% filter(!is.na(challenge_infection)) %>%
+    rowwise() %>% mutate(OO4sq = rowSums(across(starts_with("oocyst_")))) %>%
+    ## 0.1µl per square -> *10.000 to scale up to ml
+    mutate(OOC=(OO4sq/4*10000)/dilution) %>%
+    ## we have ZEROS in feces weight (also when we counted oocysts) so we better don't
+    ## calculate OPG for now but just max (see below)
+    ## mutate(OPG=OOC/feces_weight) %>%
+    ## also re-calculate relative weight, as this seems to have errors
+    ## from a spreadsheet program (wtf!)
+    mutate(relative_weight= weight/weight_dpi0*100) %>%
+    ## also look at this for OPG above (by uncommenting)
+    ## select(feces_weight, starts_with("oocyst_"), OO4sq, OOC) %>%
+    ## look at this for controlling the weight calculation
+    ## select(EH_ID, dpi, infection, weight, relative_weight) %>%
+    ## print(n=40)
+    ## the E88 innoculum in E57 challenge infection was "not
+    ## working", these mice are basically unifected controls
+    mutate(challenge_infection=ifelse(!experiment%in%"E57",
+                                      challenge_infection,
+                               ifelse(challenge_infection%in%"E88", "UNI",
+                                      challenge_infection))) %>%
+    ## then correct the infection history
+    mutate(infection_history=paste0(primary_infection, "_",
+                                    challenge_infection)) ->
+    ALL
+
+
+
+## For an analysis of immune protection we want the following
+## categories in one column
+ALL$infection_type <- NA
+## primary_E88
+ALL$infection_type[ALL$infection_history%in%"UNI_E88" &
+                   ALL$infection%in%"challenge"] <-  "primary_E88"
+ALL$infection_type[ALL$primary_infection%in%"E88" &
+                   ALL$infection%in%"primary"] <-  "primary_E88"
+## homologous_E88
+ALL$infection_type[ALL$infection_history%in%"E88_E88" &
+                   ALL$infection%in%"challenge"] <-  "homologous_E88"
+## heterologous_E88 
+ALL$infection_type[ALL$infection_history%in%"E64_E88" &
+                   ALL$infection%in%"challenge"] <-  "heterologous_E88"
+## primary_E64  ("UNI_E64" and challenge in infection) E64_* and primary in infection
+ALL$infection_type[ALL$infection_history%in%"UNI_E64" &
+                   ALL$infection%in%"challenge"] <-  "primary_E64"
+ALL$infection_type[ALL$primary_infection%in%"E64" &
+                   ALL$infection%in%"primary"] <-  "primary_E64"
+## homologous_E64
+ALL$infection_type[ALL$infection_history%in%"E64_E64" &
+                   ALL$infection%in%"challenge"] <-  "homologous_E64"
+## heterologous_E64
+ALL$infection_type[ALL$infection_history%in%"E88_E64" &
+                   ALL$infection%in%"challenge"] <-  "heterologous_E64"
+## the remaining should be UNI?!
+ALL$infection_type[is.na(ALL$infection_type)] <- "UNI"
+
+
+
+write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
