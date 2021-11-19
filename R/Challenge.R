@@ -1,31 +1,22 @@
 ### This could be an example of how to access particular subsets of
 ### the data
-library(RCurl)
 library(dplyr)
 library(magrittr)
 library(stringr)
 library(ggplot2)
 
-OV <- read.csv(text = getURL("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv"))
 
-loadFromGH <- function(URL){
-    if(url.exists(URL)){
-        U <- getURL(URL)
-        read.csv(text = U)
-    } else {
-        message("URL \"", URL, "\" does not exist")
-    }
-}
+OV <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv")
 
 ## ## Only the challenge experiments
 ChallengeEx  <- c("E57", "E10", "E11")
 
 ## ## download and append the weigth tables
-W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], loadFromGH)
+W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], read.csv)
 Weight <- Reduce(rbind, W)
 
 ## ## Same for shedding
-O <- lapply(OV[OV$Experiment%in%ChallengeEx, "shedding"], loadFromGH)
+O <- lapply(OV[OV$Experiment%in%ChallengeEx, "shedding"], read.csv)
 Oocysts <- Reduce(rbind, O)
 
 ## ## some don't agree
@@ -41,19 +32,6 @@ table(Weight[!Weight$labels%in%Oocysts$labels &
              is.na(Weight$weight), "dpi"])
 ### confirmed by the late dpi of these!
 
-
-## we have this prolem remaining:
-OOcystProblem <- Weight[!Weight$labels%in%Oocysts$labels &
-                        !is.na(Weight$weight),]
-
-## Let's export this for Franzi to have a look:
-write.csv(OOcystProblem,
-          "data/Experiment_results/FIXME_E11_OOcysts.csv", row.names=FALSE)
-
-table(OOcystProblem[,"dpi"])
-## seems like oocyst from dip 4 in primary infection have been omitted
-## Franzi Says one box has been missing for counting
-
 Results <- merge(Weight, Oocysts, all=TRUE)
 
 ## IDs sometimes with "_" sometimes without
@@ -63,7 +41,7 @@ Results$EH_ID <- gsub("LM_", "LM", Results$EH_ID)
 Results <- Results[!is.na(Results$EH_ID), ]
 
 ## Same for design
-D <- lapply(OV[OV$Experiment%in%ChallengeEx, "design"], loadFromGH)
+D <- lapply(OV[OV$Experiment%in%ChallengeEx, "design"], read.csv)
 
 Des.cols <- Reduce(intersect, lapply(D, colnames))
 
@@ -168,3 +146,4 @@ ALL$infection_type[is.na(ALL$infection_type)] <- "UNI"
 
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
+
