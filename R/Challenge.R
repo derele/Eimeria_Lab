@@ -9,11 +9,17 @@ library(ggplot2)
 OV <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv")
 
 ## ## Only the challenge experiments
-ChallengeEx  <- c("E57", "E10", "E11")
+ChallengeEx  <- c("E57", "E10", "E11", "P4")
 
 ## ## download and append the weigth tables
 W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], read.csv)
+
+
+W[[1]] %>%
+    select(!X) -> W[[1]]
+
 Weight <- Reduce(rbind, W)
+
 
 ## ## Same for shedding
 O <- lapply(OV[OV$Experiment%in%ChallengeEx, "shedding"], read.csv)
