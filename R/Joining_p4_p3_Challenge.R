@@ -66,17 +66,10 @@ P4_Experiment %>%
     TRUE ~ "other"
   )) -> P4_Experiment
 
-#write the table 
-write.csv(P4_Experiment, "/home/fay/Documents/GitHub/Eimeria-PhD-Project/Lab_mouse_eimeria/Products/P4_Experiment", row.names = FALSE)
-
 #bind the P4 experiments to the challenge infections
 Challenge_infections_with_p4 <- bind_rows(Challenge_Infections, P4_Experiment)
 
-#write the combination table
-write.csv(Challenge_infections_with_p4, "/home/fay/Documents/GitHub/Eimeria-PhD-Project/Lab_mouse_eimeria/Products/Challenge_p4", row.names = FALSE)
-
 #continue now with the p3 data
-
 #read experimental design P3
 P3_Design <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experimental_design/P3_112019_Eim_design.csv")
 
@@ -123,4 +116,4 @@ P3_Experiment$oocyst_mean <- as.character(P3_Experiment$oocyst_mean)
 Challenge_infections_with_p3 <- bind_rows(Challenge_infections_with_p4, P3_Experiment)
 
 #write the combination table
-write.csv(Challenge_infections_with_p3, "/home/fay/Documents/GitHub/Eimeria-PhD-Project/Lab_mouse_eimeria/Products/Challenge_p4_p3.csv", row.names = FALSE)
+write.csv(Challenge_infections_with_p3, "~/Documents/GitHub/Eimeria_Lab/data_products/Challenge_p4_p3.csv", row.names = FALSE)
