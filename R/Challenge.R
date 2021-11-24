@@ -18,7 +18,7 @@ W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], read.csv)
 W[[1]] %>%
     select(!X) -> W[[1]]
 OV[OV$Experiment == "P4", "weight"]
-write.csv(W[[1]], "data/Experiment_results/P4_082020_Eim_record.csv")
+write.csv(W[[1]], "data/Experiment_results/P4_082020_Eim_record.csv", row.names = FALSE)
 
 
 Weight <- Reduce(rbind, W)
