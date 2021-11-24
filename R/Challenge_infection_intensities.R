@@ -5,6 +5,7 @@ library(dplyr)
 library(stringr) #to manipulate strings
 library(magrittr)
 library(janitor)
+library(purrr)
 
 #read challenge infections
 Challenge_Infections <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data_products/Challenge_infections.csv")
@@ -86,7 +87,7 @@ P3_Des_Rec <- join_my_tables(P3_record, P3_Design)
 #add the oocyst counts
 P3_oocysts <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/P3_112019_Eim_oocyst.csv")
 
-#join the oocyst counts to the P4_Des_Rec
+#join the oocyst counts to the P3_Des_Rec
 P3_Experiment <- join_my_tables(P3_Des_Rec, P3_oocysts)
 
 #which column names are common
@@ -110,10 +111,31 @@ P3_Experiment %>%
     TRUE ~ "other"
   )) -> P3_Experiment
 
-#bind the P4 experiments to the challenge infections
+#bind the P4, P3 experiments to the challenge infections
 #error oocyst_mean in one table as character and in the other as factor
 P3_Experiment$oocyst_mean <- as.character(P3_Experiment$oocyst_mean)
-Challenge_infections_with_p3 <- bind_rows(Challenge_infections_with_p4, P3_Experiment)
+Challenge_infections_with_p3_p4 <- bind_rows(Challenge_infections_with_p4, P3_Experiment)
+
+
+#load the infection intensity data
+P4_infection <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/P4_082020_Eim_CEWE_qPCR.csv") 
+E57_infection <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/E7_112018_Eim_CEWE_qPCR.csv") %>%
+  select(!X)
+P3_infection <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/P3_112019_Eim_CEWE_qPCR.csv") %>%
+  select(!X)
+
+#replace LM_
+P4_infection$EH_ID <- replace_LM(P4_infection)
+E57_infection$EH_ID <- replace_LM(E57_infection)
+P3_infection$EH_ID <- replace_LM(P3_infection)
+
+#Eim_MC in some infection intensity column is a character and in others is logical
+#change it so it is the same
+P4_infection$Eim_MC <- as.character(P4_infection$Eim_MC)
+
+#join the tables of challenge infections with infection intensities
+Challenge_intensity <- list(Challenge_infections_with_p3_p4, P4_infection, E57_infection, P3_infection) %>%
+  reduce(join_my_tables)
 
 #write the combination table
-write.csv(Challenge_infections_with_p3, "~/Documents/GitHub/Eimeria_Lab/data_products/Challenge_p4_p3.csv", row.names = FALSE)
+write.csv(Challenge_intensity, "~/Documents/GitHub/Eimeria_Lab/data_products/Challenge_infection_intensity.csv", row.names = FALSE)
