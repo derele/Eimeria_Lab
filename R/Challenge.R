@@ -24,20 +24,8 @@ W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], read.csv)
 #we apply in this case the function rbind
 Weight <- Reduce(rbind, W)
 
-
-
 ## ## Same for shedding
 O <- lapply(OV[OV$Experiment%in%ChallengeEx, "shedding"], read.csv)
-
-
-O[[5]] <- O[[5]] %>%
-    select(colnames(O[[2]]))
-
-O[[1]] <- O[[1]] %>%
-    select(colnames(O[[2]]))
-
-write.csv(O[[5]], "data/Experiment_results/P3_112019_Eim_oocyst.csv")
-write.csv(O[[1]], "data/Experiment_results/P4_082020_Eim_oocyst.csv")
 
 Oocysts <- Reduce(rbind, O)
 
@@ -136,34 +124,15 @@ ALL %>% filter(!is.na(challenge_infection)) %>%
     ALL
 
 
-
-## For an analysis of immune protection we want the following
-## categories in one column
-ALL$infection_type <- NA
-## primary_E88
-ALL$infection_type[ALL$infection_history%in%"UNI_E88" &
-                   ALL$infection%in%"challenge"] <-  "primary_E88"
-ALL$infection_type[ALL$primary_infection%in%"E88" &
-                   ALL$infection%in%"primary"] <-  "primary_E88"
-## homologous_E88
-ALL$infection_type[ALL$infection_history%in%"E88_E88" &
-                   ALL$infection%in%"challenge"] <-  "homologous_E88"
-## heterologous_E88 
-ALL$infection_type[ALL$infection_history%in%"E64_E88" &
-                   ALL$infection%in%"challenge"] <-  "heterologous_E88"
-## primary_E64  ("UNI_E64" and challenge in infection) E64_* and primary in infection
-ALL$infection_type[ALL$infection_history%in%"UNI_E64" &
-                   ALL$infection%in%"challenge"] <-  "primary_E64"
-ALL$infection_type[ALL$primary_infection%in%"E64" &
-                   ALL$infection%in%"primary"] <-  "primary_E64"
-## homologous_E64
-ALL$infection_type[ALL$infection_history%in%"E64_E64" &
-                   ALL$infection%in%"challenge"] <-  "homologous_E64"
-## heterologous_E64
-ALL$infection_type[ALL$infection_history%in%"E88_E64" &
-                   ALL$infection%in%"challenge"] <-  "heterologous_E64"
-## the remaining should be UNI?!
-ALL$infection_type[is.na(ALL$infection_type)] <- "UNI"
+#produce the column infection type
+ALL %>%
+    mutate(infection_type = case_when(
+        ALL$infection == "primary" & primary_infection == "UNI" ~ paste0("UNI"),
+        ALL$infection =="challenge" & challenge_infection == "UNI" ~ paste0("UNI"),
+        ALL$infection == "primary" ~ paste0("primary_", primary_infection),
+        ALL$infection == "challenge" ~ paste0("heterologous_", challenge_infection),
+        TRUE ~ "other"
+    )) -> ALL
 
 
 
