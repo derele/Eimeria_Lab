@@ -5,27 +5,40 @@ library(magrittr)
 library(stringr)
 library(ggplot2)
 
-
+#reading the overview table. In each row there is a link to the raw data for each experiment
 OV <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv")
 
 ## ## Only the challenge experiments
-ChallengeEx  <- c("E57", "E10", "E11", "P4")
+#a list of the names of each experiments
+# you can use it later, to select the experiments from ov 
+ChallengeEx  <- c("E57", "E10", "E11", "P4", "P3")
 
 ## ## download and append the weigth tables
+#lapply: applies a function to every element of the list
+#we select the challenge experimetns and the weight columns 
+#we apply to every element of the list the function read.csv
 W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], read.csv)
 
-
-W[[1]] %>%
-    select(!X) -> W[[1]]
-OV[OV$Experiment == "P4", "weight"]
-write.csv(W[[1]], "data/Experiment_results/P4_082020_Eim_record.csv", row.names = FALSE)
-
-
+#reduce: works on 1st and 2nd element, produces result and then uses the result 
+#with the 3rd element and so on
+#we apply in this case the function rbind
 Weight <- Reduce(rbind, W)
+
 
 
 ## ## Same for shedding
 O <- lapply(OV[OV$Experiment%in%ChallengeEx, "shedding"], read.csv)
+
+
+O[[5]] <- O[[5]] %>%
+    select(colnames(O[[2]]))
+
+O[[1]] <- O[[1]] %>%
+    select(colnames(O[[2]]))
+
+write.csv(O[[5]], "data/Experiment_results/P3_112019_Eim_oocyst.csv")
+write.csv(O[[1]], "data/Experiment_results/P4_082020_Eim_oocyst.csv")
+
 Oocysts <- Reduce(rbind, O)
 
 ## ## some don't agree
