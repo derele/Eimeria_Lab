@@ -128,32 +128,6 @@ ALL %>% filter(!is.na(challenge_infection)) %>%
 #download and append the infection intensity tables (qPCR)
 I <- lapply(OV[OV$Experiment%in%ChallengeEx, "infection_intensity"], read.csv)
 
-#We have to add a column including the experiment to each infection intensity file
-I[[1]] <- I[[1]] %>%
-    mutate(experiment = "P4")
-
-write.csv(I[[1]], "data/Experiment_results/P4_082020_Eim_CEWE_qPCR.csv", row.names = FALSE)
-
-I[[2]] <- I[[2]] %>%
-    mutate(experiment = "E57")
-
-write.csv(I[[2]], "data/Experiment_results/E7_112018_Eim_CEWE_qPCR.csv", row.names = FALSE)
-
-I[[3]] <- I[[3]] %>%
-    mutate(experiment = "E10")
-
-write.csv(I[[3]], "data/Experiment_results/E10_112020_Eim_CEWE_qPCR.csv", row.names = FALSE)
-
-I[[4]] <- I[[4]] %>%
-    mutate(experiment = "E11")
-
-write.csv(I[[4]], "data/Experiment_results/E11_012021_Eim_CEWE_qPCR.csv", row.names = FALSE)
-
-I[[5]] <- I[[5]] %>%
-    mutate(experiment = "P3")
-
-write.csv(I[[5]], "data/Experiment_results/P3_112019_Eim_CEWE_qPCR.csv", row.names = FALSE)
-
 #now combine the infection intensity tables
 Intensity <- Reduce(rbind, I)
 
@@ -167,9 +141,23 @@ Intensity$EH_ID <- gsub("LM_", "LM", Intensity$EH_ID)
 #Should I join to the design table first?
 
 #adding a dpi column to Intensity
+#I am assuming the dpi is 8, according to the experimental planning
+#please verify this is correct
 #in this way it will match the correct observation in the file ALL
-Intensity <- Intensity %>%
-    mutate(dpi = 8)
+#Will assume that the qPCR data originates only from challenge infections
+#please verify this 
+#adding a column infection reflecting this 
 
-write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
+Intensity <- Intensity %>%
+    mutate(dpi = 8) %>%
+    mutate(infection = "challenge")
+
+#now I can join the Intensity data to the file "ALL"
+ALL2 <- ALL %>%
+    left_join(Intensity, by = c(intersect(colnames(ALL), colnames(Intensity))))
+
+#why do we have one extra observation in the new ALL file??
+#please help me solve this one
+
+write.csv(ALL2, "data_products/Challenge_infections.csv", row.names=FALSE)
 
