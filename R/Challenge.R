@@ -124,39 +124,52 @@ ALL %>% filter(!is.na(challenge_infection)) %>%
     ALL
 
 
-#produce the column infection type
-ALL %>%
-    mutate(infection_type = case_when(
-        ALL$infection == "primary" & primary_infection == "UNI" ~ paste0("UNI"),
-        ALL$infection =="challenge" & challenge_infection == "UNI" ~ paste0("UNI"),
-        ALL$infection == "primary" ~ paste0("primary_", primary_infection),
-        ALL$infection == "challenge" ~ paste0("heterologous_", challenge_infection),
-        TRUE ~ "other"
-    )) -> ALL
 
 #download and append the infection intensity tables (qPCR)
 I <- lapply(OV[OV$Experiment%in%ChallengeEx, "infection_intensity"], read.csv)
 
+#We have to add a column including the experiment to each infection intensity file
+I[[1]] <- I[[1]] %>%
+    mutate(experiment = "P4")
+
+write.csv(I[[1]], "data/Experiment_results/P4_082020_Eim_CEWE_qPCR.csv", row.names = FALSE)
+
+I[[2]] <- I[[2]] %>%
+    mutate(experiment = "E57")
+
+write.csv(I[[2]], "data/Experiment_results/E7_112018_Eim_CEWE_qPCR.csv", row.names = FALSE)
+
+I[[3]] <- I[[3]] %>%
+    mutate(experiment = "E10")
+
+write.csv(I[[3]], "data/Experiment_results/E10_112020_Eim_CEWE_qPCR.csv", row.names = FALSE)
+
+I[[4]] <- I[[4]] %>%
+    mutate(experiment = "E11")
+
+write.csv(I[[4]], "data/Experiment_results/E11_012021_Eim_CEWE_qPCR.csv", row.names = FALSE)
+
+I[[5]] <- I[[5]] %>%
+    mutate(experiment = "P3")
+
+write.csv(I[[5]], "data/Experiment_results/P3_112019_Eim_CEWE_qPCR.csv", row.names = FALSE)
+
 #now combine the infection intensity tables
 Intensity <- Reduce(rbind, I)
 
-#remove the column X from 3rd and 4th data frame
-I[[2]] <- I[[2]] %>%
-    select(!X)
+## Corrrect wrong IDs
+Intensity$EH_ID <- gsub("LM_", "LM", Intensity$EH_ID)
 
-write.csv(I[[2]], "data/Experiment_results/E7_112018_Eim_CEWE_qPCR.csv", row.names=FALSE)
+#Combined all of the qPCR data for the challenge infections in "Intensity"
+#Questions on how to go on: 
+#to join this data to the "ALL" file I need to match for EH_ID, Experiment and 
+#dpi. Where should I get this information?
+#Should I join to the design table first?
 
-I[[3]] <- I[[3]] %>%
-    select(!X) %>%
-    select(intersect(colnames(I[[2]]), colnames(I[[3]])))
-
-write.csv(I[[3]], "data/Experiment_results/Experiment_results/E10_112020_Eim_CEWE_qPCR.csv", row.names=FALSE)
-
-I[[4]] <- I[[4]] %>%
-    select(!X) %>%
-    select(intersect(colnames(I[[4]]), colnames(I[[3]])))
-write.csv(I[[4]], "data/Experiment_results/E11_012021_Eim_CEWE_qPCR.csv", row.names=FALSE)
-
+#adding a dpi column to Intensity
+#in this way it will match the correct observation in the file ALL
+Intensity <- Intensity %>%
+    mutate(dpi = 8)
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
