@@ -153,11 +153,8 @@ Intensity <- Intensity %>%
     mutate(infection = "challenge")
 
 #now I can join the Intensity data to the file "ALL"
-ALL2 <- ALL %>%
-    left_join(Intensity, by = c(intersect(colnames(ALL), colnames(Intensity))))
+ALL <- ALL %>%
+    left_join(unique(Intensity), by = c(intersect(colnames(ALL), colnames(Intensity))))
 
-#why do we have one extra observation in the new ALL file??
-#please help me solve this one
 
-write.csv(ALL2, "data_products/Challenge_infections.csv", row.names=FALSE)
-
+write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
