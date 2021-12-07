@@ -39,7 +39,7 @@ Weight[!Weight$labels%in%Oocysts$labels, ]
 
 ## But if the weight is NA the mouse was dead
 table(Weight[!Weight$labels%in%Oocysts$labels &
-             is.na(Weight$weight), "dpi"])
+                 is.na(Weight$weight), "dpi"])
 ### confirmed by the late dpi of these!
 
 Results <- merge(Weight, Oocysts, all=TRUE)
@@ -95,7 +95,7 @@ table(ALL$feces_weight==0)
 
 ##  only one prolbem remaining after asking Alice for better data...
 ALL[which(ALL$feces_weight==0 &
-          !is.na(ALL$oocyst_sq2)), ]
+              !is.na(ALL$oocyst_sq2)), ]
 
 ALL %>% filter(!is.na(challenge_infection)) %>%
     rowwise() %>% mutate(OO4sq = rowSums(across(starts_with("oocyst_")))) %>%
@@ -116,65 +116,47 @@ ALL %>% filter(!is.na(challenge_infection)) %>%
     ## working", these mice are basically unifected controls
     mutate(challenge_infection=ifelse(!experiment%in%"E57",
                                       challenge_infection,
-                               ifelse(challenge_infection%in%"E88", "UNI",
-                                      challenge_infection))) %>%
+                                      ifelse(challenge_infection%in%"E88", "UNI",
+                                             challenge_infection))) %>%
     ## then correct the infection history
     mutate(infection_history=paste0(primary_infection, "_",
                                     challenge_infection)) ->
     ALL
 
 
-## For an analysis of immune protection we want the following
-## categories in one column
-ALL$infection_type <- NA
-## primary_E88
-ALL$infection_type[ALL$infection_history%in%"UNI_E88" &
-                   ALL$infection%in%"challenge"] <-  "primary_E88"
-ALL$infection_type[ALL$primary_infection%in%"E88" &
-                   ALL$infection%in%"primary"] <-  "primary_E88"
-## homologous_E88
-ALL$infection_type[ALL$infection_history%in%"E88_E88" &
-                   ALL$infection%in%"challenge"] <-  "homologous_E88"
-## heterologous_E88 
-ALL$infection_type[ALL$infection_history%in%"E64_E88" &
-                   ALL$infection%in%"challenge"] <-  "heterologous_E88"
-## primary_E64  ("UNI_E64" and challenge in infection) E64_* and primary in infection
-ALL$infection_type[ALL$infection_history%in%"UNI_E64" &
-                   ALL$infection%in%"challenge"] <-  "primary_E64"
-ALL$infection_type[ALL$primary_infection%in%"E64" &
-                   ALL$infection%in%"primary"] <-  "primary_E64"
-## homologous_E64
-ALL$infection_type[ALL$infection_history%in%"E64_E64" &
-                   ALL$infection%in%"challenge"] <-  "homologous_E64"
-## heterologous_E64
-ALL$infection_type[ALL$infection_history%in%"E88_E64" &
-                   ALL$infection%in%"challenge"] <-  "heterologous_E64"
-## the remaining should be UNI?!
-ALL$infection_type[is.na(ALL$infection_type)] <- "UNI"
+#produce the column infection type
+ALL %>%
+    mutate(infection_type = case_when(
+        ALL$infection == "primary" & primary_infection == "UNI" ~ paste0("UNI"),
+        ALL$infection =="challenge" & challenge_infection == "UNI" ~ paste0("UNI"),
+        ALL$infection == "primary" ~ paste0("primary_", primary_infection),
+        ALL$infection == "challenge" ~ paste0("heterologous_", challenge_infection),
+        TRUE ~ "other"
+    )) -> ALL
 
-## ## download and append the infection_intensity tables
-#lapply: applies a function to every element of the list
-#we select the challenge experimetns and the qpcr columns 
-#we apply to every element of the list the function read.csv
+#download and append the infection intensity tables (qPCR)
 I <- lapply(OV[OV$Experiment%in%ChallengeEx, "infection_intensity"], read.csv)
 
-#write a function to left join 
-join_my_tables <- function (x, y) {
-    x %>%
-        left_join(y, by = c(names_common(x, y)))
-}
+#now combine the infection intensity tables
+Intensity <- Reduce(rbind, I)
 
+#remove the column X from 3rd and 4th data frame
 I[[2]] <- I[[2]] %>%
-    select(colnames(I[[1]]))
+    select(!X)
 
-write.csv(I[[2]], "data/Experiment_results/E1_012017_Eim_CEWE_qPCR.csv", row.names = FALSE)
+write.csv(I[[2]], "data/Experiment_results/E7_112018_Eim_CEWE_qPCR.csv", row.names=FALSE)
+
+I[[3]] <- I[[3]] %>%
+    select(!X) %>%
+    select(intersect(colnames(I[[2]]), colnames(I[[3]])))
+
+write.csv(I[[3]], "data/Experiment_results/Experiment_results/E10_112020_Eim_CEWE_qPCR.csv", row.names=FALSE)
+
+I[[4]] <- I[[4]] %>%
+    select(!X) %>%
+    select(intersect(colnames(I[[4]]), colnames(I[[3]])))
+write.csv(I[[4]], "data/Experiment_results/E11_012021_Eim_CEWE_qPCR.csv", row.names=FALSE)
 
 
-#reduce: works on 1st and 2nd element, produces result and then uses the result 
-#with the 3rd element and so on
-#we apply in this case the function rbind
-Intensity <- Reduce(rbind,I)
-
-ALL <- join_my_tables(ALL, I)
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
