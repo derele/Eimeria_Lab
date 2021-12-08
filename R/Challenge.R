@@ -12,7 +12,7 @@ basics <- c("EH_ID", "mouse_strain", "experiment", "primary_infection",
 weight_loss <- c("weight", "weight_dpi0", "relative_weight")
 
 oocysts_counts <- c("feces_weight", "oocyst_sq1", "oocyst_sq2", "oocyst_sq3",
-                    "oocyst_sq4", "dilution", "OOC")
+                    "oocyst_sq4", "dilution", "OOC", "OO4sq")
 
 qPCR <- c("Eim_MC", "delta")
 
@@ -160,17 +160,19 @@ Intensity$EH_ID <- gsub("LM_", "LM", Intensity$EH_ID)
 #adding a column infection reflecting this 
 
 Intensity <- Intensity %>%
-    mutate(infection = "challenge")
+    #all of the data originates from the challenge infections
+    mutate(infection = "challenge") 
+
+## Melting curve sometimes positve sometimes TRUE, and the opposite
+Intensity$Eim_MC <- gsub("pos", TRUE, Intensity$Eim_MC)
+Intensity$Eim_MC <- gsub("neg", FALSE, Intensity$Eim_MC)
+
+#making a character out of Eim_MC, to further work on it
+Intensity$Eim_MC <- as.character(Intensity$Eim_MC)
+
 
 #now I can join the Intensity data to the file "ALL"
-ALL2 <- ALL %>%
-    left_join(Intensity, by = c(intersect(colnames(ALL), colnames(Intensity))))
-
-unique(Intensity)
-distinct(Intensity)
-distinct(ALL2)
-
-ALL2[duplicated(ALL2)]
-sota <- read.csv("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Field/master/data_products/SOTA_Data_Product.csv")
+ALL <- ALL %>%
+    left_join(unique(Intensity), by = c(intersect(colnames(ALL), colnames(Intensity))))
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
