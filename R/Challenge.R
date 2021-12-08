@@ -5,6 +5,17 @@ library(magrittr)
 library(stringr)
 library(ggplot2)
 
+#select columns: 
+basics <- c("EH_ID", "mouse_strain", "experiment", "primary_infection", 
+            "challenge_infection", "labels", "dpi", "infection", "infection_history")
+
+weight_loss <- c("weight", "weight_dpi0", "relative_weight")
+
+oocysts_counts <- c("feces_weight", "oocyst_sq1", "oocyst_sq2", "oocyst_sq3",
+                    "oocyst_sq4", "dilution", "OOC")
+
+qPCR <- c("Eim_MC", "delta")
+
 #reading the overview table. In each row there is a link to the raw data for each experiment
 OV <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv")
 
@@ -149,12 +160,17 @@ Intensity$EH_ID <- gsub("LM_", "LM", Intensity$EH_ID)
 #adding a column infection reflecting this 
 
 Intensity <- Intensity %>%
-    mutate(dpi = 8) %>%
     mutate(infection = "challenge")
 
 #now I can join the Intensity data to the file "ALL"
-ALL <- ALL %>%
-    left_join(unique(Intensity), by = c(intersect(colnames(ALL), colnames(Intensity))))
+ALL2 <- ALL %>%
+    left_join(Intensity, by = c(intersect(colnames(ALL), colnames(Intensity))))
 
+unique(Intensity)
+distinct(Intensity)
+distinct(ALL2)
+
+ALL2[duplicated(ALL2)]
+sota <- read.csv("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Field/master/data_products/SOTA_Data_Product.csv")
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
