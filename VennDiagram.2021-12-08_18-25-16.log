@@ -1,0 +1,13 @@
+INFO [2021-12-08 18:25:16] [[1]]
+INFO [2021-12-08 18:25:16] list_worms
+INFO [2021-12-08 18:25:16] 
+INFO [2021-12-08 18:25:16] $fill
+INFO [2021-12-08 18:25:16] c("red", "green", "white", "blue", "yellow")
+INFO [2021-12-08 18:25:16] 
+INFO [2021-12-08 18:25:16] $alpha
+INFO [2021-12-08 18:25:16] c(0.3, 0.3, 0.3, 0.3)
+INFO [2021-12-08 18:25:16] 
+INFO [2021-12-08 18:25:16] $filename
+INFO [2021-12-08 18:25:16] NULL
+INFO [2021-12-08 18:25:16] 
+ERROR [2021-12-08 18:25:16] Unexpected parameter length for "category"
