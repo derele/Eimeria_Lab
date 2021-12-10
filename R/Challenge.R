@@ -159,9 +159,6 @@ Intensity$EH_ID <- gsub("LM_", "LM", Intensity$EH_ID)
 #please verify this 
 #adding a column infection reflecting this 
 
-Intensity <- Intensity %>%
-    #all of the data originates from the challenge infections
-    mutate(infection = "challenge") 
 
 ## Melting curve sometimes positve sometimes TRUE, and the opposite
 Intensity$Eim_MC <- gsub("pos", TRUE, Intensity$Eim_MC)
@@ -174,5 +171,35 @@ Intensity$Eim_MC <- as.character(Intensity$Eim_MC)
 #now I can join the Intensity data to the file "ALL"
 ALL <- ALL %>%
     left_join(unique(Intensity), by = c(intersect(colnames(ALL), colnames(Intensity))))
+
+
+#on all data set
+#make a column of terminal dpi 
+#is the maximal dpi
+# If challenge exists, then take the maximum dpi from challenge, 
+#else take the max dpi from primary
+#Add a column in ALL (mutate) >> that is the dpi in primary (if it is primary)
+#or if it is challenge, then dpi + 100
+
+
+Max_dpi_infection <- ALL %>%
+    group_by(EH_ID) %>%
+    summarise(Max_dpi = max(dpi[infection %in% "challenge"])) %>%
+    mutate(Max)
+
+#fix it in 1 more line of code 
+#see on top for the idea of adding something to the challenge infections, 
+#make this dissection dpi, challenge_8 for example, 
+#make 2 columns for example, one dissection_dpi, or dissection
+
+
+table(Max_dpi_infection$infection)
+
+Intensity <- 
+    #all of the data originates from the challenge infections
+    #
+    #mutate(infection = "challenge") this is wrong! Not all the qPCR data comes from challenge infections
+    #
+   
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
