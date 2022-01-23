@@ -1,0 +1,34 @@
+---
+title: "Eimeria detection in tissue by qPCR"
+author: "Fay"
+date: "23/01/2022"
+Included in Publication: "Víctor Hugo Jarquín-Díaz, Alice Balard, Jenny Jost, Julia Kraft, Mert Naci Dikmen, Jana Kvičerová Emanuel Heitlinger, Detection and quantification of house mouse Eimeria at the species level – Challenges and solutions for the assessment of coccidia in wildlife, International Journal for Parasitology. Parasites and Wildlife, Volume 10, 2019, https://doi.org/10.1016/j.ijppaw.2019.07.00"
+output: 
+    html_document:
+        theme: readable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Eimeria detection in tissue by qPCR
+## 
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

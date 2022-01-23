@@ -1,0 +1,67 @@
+---
+title: "qPCR_for_faeces_protocol"
+author: "Fay"
+date: "23/01/2022"
+Publication: "Quantification_of_coccidia_EH1208"
+output: 
+    html_document:
+        theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Quantitative real-time PCR for faecal samples
+
+## Eimeria specific primers: 
+
+
+1. Eim_COI_qX_F 5’-TGTCTATTCACTTGGGCTATTGT-3’ 
+2. Eim_COI_qX_R 5’-GGA TCACCGTTAAATGAGGCA-3’
+
+### Each reaction contains: (20 µL)
+
+* 1X iTaqTM Universal SYBRⓇ Green Supermix (Bio-Rad, USA)
+* 400 nM forward and reverse primers 
+* 50 ng template gDNA 
+
+### PCR machine:
+
+* either in the ABI7300 Real-Time PCR system (Applied Biosystems, USA)
+* or in a MasterCycler® RealPlex2 (Eppendorf, Germany) 
+* or in in the CFX96TM Touch System (Bio-Rad, USA) 
+
+### Material used:
+
+DNAs from mock samples, floated oocysts and faecal DNA derived from the infection experiment
+
+
+### Cycling conditions:
+
+
+1. initial denaturation at **95°C** for **2 min**
+2. **40 cycles** of denaturation at **95°C** for **15 s**
+3. annealing at **55 °C** for **15 s** 
+4. and extension at **68°** for **20 s** 
+
+(with data collection at the end of each cycle)
+
+### Melting curve anaylsis:
+
+
+Melting curve analysis was included to discard primer dimer formation and non-specific amplification: after the last amplification cycle temperature was increased from 65 °C to 95 °C with 0.5 °C increments at 3 s/step
+
+### Posisioning on the plate
+
+Amplifications were performed by triplicate and each run included a non-template control (NTC). 
+
+
+### Analysis and interpretation
+
+Samples with all three replicates showing Tm in the range 74.1 ± 1.78 °C (observed on positive controls, Additional file 2: Figure S1) were labelled as “qPCR positive”, samples with only one or two of the triplicates showing peaks were designated as negative samples.
+
+
+For qPCR negative samples, genome copies per gram of faeces were set to 0.  ict genome equivalents from Ct. 
+
+
