@@ -5,30 +5,58 @@ date: "23/01/2022"
 Included in Publication: "Víctor Hugo Jarquín-Díaz, Alice Balard, Jenny Jost, Julia Kraft, Mert Naci Dikmen, Jana Kvičerová Emanuel Heitlinger, Detection and quantification of house mouse Eimeria at the species level – Challenges and solutions for the assessment of coccidia in wildlife, International Journal for Parasitology. Parasites and Wildlife, Volume 10, 2019, https://doi.org/10.1016/j.ijppaw.2019.07.00"
 output: 
     html_document:
-        theme: readable
+        theme: cerulean
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Eimeria detection in tissue by qPCR
-## 
+# Quantitative real-time PCR for tissue samples
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Eimeria specific primers: 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
-```
+1. Eim_COI_qX_F 5’-TGTCTATTCACTTGGGCTATTGT-3’ 
+2. Eim_COI_qX_R 5’-GGA TCACCGTTAAATGAGGCA-3’
 
-## Including Plots
+### Each reaction contains: (20 µL)
 
-You can also embed plots, for example:
+* 1X iTaqTM Universal SYBR® Green Supermix (Bio-Rad Laboratories GmbH, München, Germany)
+* 400 nM forward and reverse primers 
+* 50 ng template gDNA 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+### PCR machine:
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+* Cycling in a Mastercycler® RealPlex 2 (Eppendorf, Hamburg, Germany) 
+
+### Material used:
+
+DNAs from tissue samples (Caecum / Jejunum)
+
+
+### Cycling conditions:
+
+
+1. initial denaturation at **95°C** for **2 min**
+2. **40 cycles** of denaturation at **95°C** for **15 s**
+3. annealing at **55 °C** for **15 s** 
+4. and extension at **68°** for **20 s** 
+
+(with data collection at the end of each cycle)
+
+### Melting curve anaylsis:
+
+Melting curves were analysed to detect eventual primer dimer formation or non-specific amplification. As internal reference for relative quantification the CDC42 gene from the nuclear genome of the house mouse was amplified (Ms_gDNA_CDC42_F CTCTCCTCCCCTCTGTCTTG; Ms_gDNA_CDC42_R TCCTTTTGGGTTGAGTTTCC).
+
+Infection intensity was estimated as the ΔCt between mouse and Eimeria amplification (CtMouse- CtEimeria). 
+
+To correct for background noise a detection threshold was estimated at "ΔCt = −5" and only results above this value were considered infected
+### Positioning on the plate
+
+Amplifications were performed by triplicate and each run included a non-template control (NTC). 
+
+
+### Analysis and interpretation
+
+In samples positive for qPCR, Eimeria genotyping was performed based on DNA extracted from tissue, as described above (see 2.4).
