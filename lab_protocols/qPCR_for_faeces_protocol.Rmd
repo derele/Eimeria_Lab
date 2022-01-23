@@ -52,7 +52,7 @@ DNAs from mock samples, floated oocysts and faecal DNA derived from the infectio
 
 Melting curve analysis was included to discard primer dimer formation and non-specific amplification: after the last amplification cycle temperature was increased from 65 °C to 95 °C with 0.5 °C increments at 3 s/step
 
-### Posisioning on the plate
+### Positioning on the plate
 
 Amplifications were performed by triplicate and each run included a non-template control (NTC). 
 
