@@ -1,0 +1,26 @@
+---
+title: "Documentation_R_Protocols"
+author: "Fay"
+date: "23/01/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# How to rmarkdown for our lab protocols
+
+
+This is some documentation on what the directory Lab_procols includes and on how to produce or edit our Lab_protocols using Rmarkdown.
+
+
+Rmarkdown produces reproducible lab protocols. 
+
+To make or edit a lab protocol open or create a file with the .rmd extension. 
+
+If you want to create a markdown document open Rstudio and click on new file --> R Markdown. 
+
+Here is a cheat sheet on how to format the file: https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf
+
+
