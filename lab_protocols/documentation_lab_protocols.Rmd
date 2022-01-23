@@ -24,3 +24,6 @@ If you want to create a markdown document open Rstudio and click on new file -->
 Here is a cheat sheet on how to format the file: https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf
 
 
+After editing the rmarkdown document, press the knit button to get an output file 
+of the protocol. Please keep only the rmarkdown file on GitHub.
+
