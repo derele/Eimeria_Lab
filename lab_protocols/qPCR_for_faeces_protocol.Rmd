@@ -59,7 +59,7 @@ Prepare the primers and make aliquots
 5. DNA: 1 µL of standardized 50 ng template gDNA
 
 #### Master master mix: Prepare in Eppendorf Tubes
-n = sample + negative control number
+n = sample + negative control number 
 
 ```{r}
 n = 11
@@ -76,11 +76,9 @@ cat("H20 = ", H20,"µL")
 #### Master mix: Prepare in epis or strips
 76 µL MMM + 4 µL DNA template
 
-Finally pipette 20 µL in each well for the reaction
+Finally pipette 20 µL in each well of the 96 plate for the reaction
 
-#### Spreadsheet to calculate pcr reagents quantities
-
-https://docs.google.com/spreadsheets/d/1xxjRkLPJWdI-ALCn_EX0hPdLYyjwd0anVGqt-Ck4kbM/edit?usp=sharing
+File saved as: qPCR_eimeria_field_faeces______________________________________.eds in the thermofisher cloud
 
 ### PCR machine:
 
