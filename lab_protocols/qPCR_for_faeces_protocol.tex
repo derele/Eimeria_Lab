@@ -1,0 +1,215 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={qPCR\_for\_faeces\_protocol},
+  pdfauthor={Fay},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{qPCR\_for\_faeces\_protocol}
+\author{Fay}
+\date{23/01/2022}
+
+\begin{document}
+\maketitle
+
+\hypertarget{quantitative-real-time-pcr-for-faecal-samples}{%
+\section{Quantitative real-time PCR for faecal
+samples}\label{quantitative-real-time-pcr-for-faecal-samples}}
+
+\hypertarget{measuring-amount-of-dna-with-nanodrop}{%
+\subsubsection{Measuring amount of DNA with
+NanoDrop}\label{measuring-amount-of-dna-with-nanodrop}}
+
+\begin{itemize}
+\tightlist
+\item
+  Switch on the PC next to nanodrop
+\item
+  Log in the program of NanoDrop
+\item
+  Add 1 µL of the solution, in which your DNA is diluted and blank
+\item
+  Write the sample name
+\item
+  Add 1 µL of your sample and measure
+\item
+  Save them on a usb stick
+\end{itemize}
+
+\hypertarget{standardizing-the-samples}{%
+\subsubsection{Standardizing the
+samples:}\label{standardizing-the-samples}}
+
+\begin{itemize}
+\tightlist
+\item
+  Easy way: Use this webbsite to calculate the sample dilutions **
+  \url{http://www.desiquintans.com/dilutioncalc}
+\item
+  Add the desired final volume
+\item
+  In this case: 50 ng of DNA
+\item
+  10 ng per µL (5 µL of sample = 50 ng of DNA)
+\end{itemize}
+
+\hypertarget{eimeria-specific-primers}{%
+\subsection{Eimeria specific primers:}\label{eimeria-specific-primers}}
+
+Prepare the primers and make aliquots
+
+Prepare the layout of your plate
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Eim\_COI\_qX\_F 5'-TGTCTATTCACTTGGGCTATTGT-3'
+\item
+  Eim\_COI\_qX\_R 5'-GGA TCACCGTTAAATGAGGCA-3'
+\end{enumerate}
+
+\hypertarget{each-reaction-contains-20-uxb5l}{%
+\subsubsection{Each reaction contains: (20
+µL)}\label{each-reaction-contains-20-uxb5l}}
+
+\begin{itemize}
+\tightlist
+\item
+  1X iTaqTM Universal SYBRⓇ Green Supermix (Bio-Rad, USA)
+\item
+  400 nM forward and reverse primers
+\item
+  50 ng template gDNA
+\end{itemize}
+
+For 3 repeats (calculate 0.5 extra) 1. STBR: 10 µL x 3.5 = 35 µL 2.
+Forward primer: 0.8 µL x 3.5 = 2.8 µL 3. Reverse primer: 0.8 µL x 3.5 =
+2.8 µL 4. DNA: 5 µL x 3.5 = 17.5 µL 5. H20: 3.4 µL x 3.5 = 11.9 µL
+
+\hypertarget{pcr-machine}{%
+\subsubsection{PCR machine:}\label{pcr-machine}}
+
+\begin{itemize}
+\tightlist
+\item
+  either in the ABI7300 Real-Time PCR system (Applied Biosystems, USA)
+\item
+  or in a MasterCycler® RealPlex2 (Eppendorf, Germany)
+\item
+  or in in the CFX96TM Touch System (Bio-Rad, USA)
+\end{itemize}
+
+\hypertarget{material-used}{%
+\subsubsection{Material used:}\label{material-used}}
+
+DNAs from mock samples, floated oocysts and faecal DNA derived from the
+infection experiment
+
+\hypertarget{cycling-conditions}{%
+\subsubsection{Cycling conditions:}\label{cycling-conditions}}
+
+Arrange the plate begore in Thermofischer.com Design Analysis new
+--\textgreater{} set up pkate --\textgreater{} comparative cd - SYBR
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  initial denaturation at \textbf{95°C} for \textbf{2 min}
+\item
+  \textbf{40 cycles} of denaturation at \textbf{95°C} for \textbf{15 s}
+\item
+  annealing at \textbf{55 °C} for \textbf{15 s}
+\item
+  and extension at \textbf{68°} for \textbf{20 s}
+\end{enumerate}
+
+(with data collection at the end of each cycle)
+
+\hypertarget{melting-curve-anaylsis}{%
+\subsubsection{Melting curve anaylsis:}\label{melting-curve-anaylsis}}
+
+Melting curve analysis was included to discard primer dimer formation
+and non-specific amplification: after the last amplification cycle
+temperature was increased from 65 °C to 95 °C with 0.5 °C increments at
+3 s/step
+
+\hypertarget{positioning-on-the-plate}{%
+\subsubsection{Positioning on the
+plate}\label{positioning-on-the-plate}}
+
+Amplifications were performed by triplicate and each run included a
+non-template control (NTC).
+
+\hypertarget{analysis-and-interpretation}{%
+\subsubsection{Analysis and
+interpretation}\label{analysis-and-interpretation}}
+
+Samples with all three replicates showing Tm in the range 74.1 ± 1.78 °C
+(observed on positive controls, Additional file 2: Figure S1) were
+labelled as ``qPCR positive'', samples with only one or two of the
+triplicates showing peaks were designated as negative samples.
+
+For qPCR negative samples, genome copies per gram of faeces were set to
+0. ict genome equivalents from Ct.
+
+\end{document}

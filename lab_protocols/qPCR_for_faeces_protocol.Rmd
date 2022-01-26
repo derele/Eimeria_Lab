@@ -2,21 +2,37 @@
 title: "qPCR_for_faeces_protocol"
 author: "Fay"
 date: "23/01/2022"
-Publication: "Quantification_of_coccidia_EH1208"
-output: 
-    html_document:
-        theme: cerulean
+output:
+  html_document:
+    theme: cerulean
+  word_document: default
+  pdf_document: default
+Publication: Quantification_of_coccidia_EH1208
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Quantitative real-time PCR for faecal samples
+## Quantitative real-time PCR for faecal samples
 
-## Eimeria specific primers: 
+#### Measuring amount of DNA with NanoDrop
+* Switch on the PC next to nanodrop
+* Log in the program of NanoDrop
+* Add 1 µL of the solution, in which your DNA is diluted and blank
+* Write the sample name 
+* Add 1 µL of your sample and measure
+* Save them on a usb stick
 
+#### Standardizing the samples:
+* Easy way: Use this webbsite to calculate the sample dilutions
+  * http://www.desiquintans.com/dilutioncalc
+* Add the desired final volume
+* In this case: 50 ng of DNA 
+* 10 ng per µL (5 µL of sample = 50 ng of DNA)
 
+#### Eimeria specific primers: 
+Prepare the primers and make aliquots
 1. Eim_COI_qX_F 5’-TGTCTATTCACTTGGGCTATTGT-3’ 
 2. Eim_COI_qX_R 5’-GGA TCACCGTTAAATGAGGCA-3’
 
@@ -25,6 +41,46 @@ knitr::opts_chunk$set(echo = TRUE)
 * 1X iTaqTM Universal SYBRⓇ Green Supermix (Bio-Rad, USA)
 * 400 nM forward and reverse primers 
 * 50 ng template gDNA 
+
+#### Steps qPCR:
+
+* Take out the samples /primers from the freezer and put them on ice
+* Prepare the layout of your plate 
+* for every sample we have triplicates and a negative control, which contains all the reagents without DNA
+* set up the plate and the run before you start on: https://apps.thermofisher.com/
+
+![96 well layout ](96-Well_plate.png){height=300px width=500px}
+
+#### Recipe for one Reaction: 
+1. STBR: 10 µL 
+2. Forward primer: 0.8 µL 
+3. Reverse primer: 0.8 µL 
+4. H20: 7.4 µL 
+5. DNA: 1 µL of standardized 50 ng template gDNA
+
+#### Master master mix: Prepare in Eppendorf Tubes
+n = sample + negative control number
+
+```{r}
+n = 11
+STBR = 10 * 4 * n
+cat("STBR = ", STBR,"µL")
+FP = 0.8 * 4 * n
+cat("Forward Primer = ", FP,"µL")
+RP = 0.8 * 4 * n
+cat("Reverse Primer = ", RP,"µL")
+H20 = 7.4 * 4 * n
+cat("H20 = ", H20,"µL")
+```
+
+#### Master mix: Prepare in epis or strips
+76 µL MMM + 4 µL DNA template
+
+Finally pipette 20 µL in each well for the reaction
+
+#### Spreadsheet to calculate pcr reagents quantities
+
+https://docs.google.com/spreadsheets/d/1xxjRkLPJWdI-ALCn_EX0hPdLYyjwd0anVGqt-Ck4kbM/edit?usp=sharing
 
 ### PCR machine:
 
@@ -36,9 +92,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 DNAs from mock samples, floated oocysts and faecal DNA derived from the infection experiment
 
-
 ### Cycling conditions:
-
+Arrange the plate begore in Thermofischer.com
+Design Analysis new --> set up pkate --> comparative cd - SYBR
 
 1. initial denaturation at **95°C** for **2 min**
 2. **40 cycles** of denaturation at **95°C** for **15 s**
@@ -49,13 +105,11 @@ DNAs from mock samples, floated oocysts and faecal DNA derived from the infectio
 
 ### Melting curve anaylsis:
 
-
 Melting curve analysis was included to discard primer dimer formation and non-specific amplification: after the last amplification cycle temperature was increased from 65 °C to 95 °C with 0.5 °C increments at 3 s/step
 
 ### Positioning on the plate
 
 Amplifications were performed by triplicate and each run included a non-template control (NTC). 
-
 
 ### Analysis and interpretation
 
