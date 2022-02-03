@@ -15,7 +15,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Quantitative real-time PCR for faecal samples
-
 #### Measuring amount of DNA with NanoDrop
 * Switch on the PC next to nanodrop
 * Log in the program of NanoDrop
@@ -49,7 +48,7 @@ Prepare the primers and make aliquots
 * for every sample we have triplicates and a negative control, which contains all the reagents without DNA
 * set up the plate and the run before you start on: https://apps.thermofisher.com/
 
-![96 well layout ](96-Well_plate.png){height=300px width=500px}
+![96 well layout ](96-Well_plate.png){height=200px width=300px}
 
 #### Recipe for one Reaction: 
 1. STBR: 10 µL 
@@ -60,9 +59,8 @@ Prepare the primers and make aliquots
 
 #### Master master mix: Prepare in Eppendorf Tubes
 n = sample + negative control number 
-
 ```{r}
-n = 11
+n = 16
 STBR = 10 * 4 * n
 cat("STBR = ", STBR,"µL")
 FP = 0.8 * 4 * n
@@ -75,19 +73,15 @@ cat("H20 = ", H20,"µL")
 
 #### Master mix: Prepare in epis or strips
 76 µL MMM + 4 µL DNA template
-
 Finally pipette 20 µL in each well of the 96 plate for the reaction
-
 File saved as: qPCR_eimeria_field_faeces______________________________________.eds in the thermofisher cloud
 
 ### PCR machine:
-
 * either in the ABI7300 Real-Time PCR system (Applied Biosystems, USA)
 * or in a MasterCycler® RealPlex2 (Eppendorf, Germany) 
 * or in in the CFX96TM Touch System (Bio-Rad, USA) 
 
 ### Material used:
-
 DNAs from mock samples, floated oocysts and faecal DNA derived from the infection experiment
 
 ### Cycling conditions:
@@ -106,7 +100,6 @@ Design Analysis new --> set up pkate --> comparative cd - SYBR
 Melting curve analysis was included to discard primer dimer formation and non-specific amplification: after the last amplification cycle temperature was increased from 65 °C to 95 °C with 0.5 °C increments at 3 s/step
 
 ### Positioning on the plate
-
 Amplifications were performed by triplicate and each run included a non-template control (NTC). 
 
 ### Analysis and interpretation
