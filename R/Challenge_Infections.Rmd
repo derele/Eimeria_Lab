@@ -1,10 +1,26 @@
-### This could be an example of how to access particular subsets of
-### the data
+---
+title: "Challenge_Infections"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Challenge Infections
+
+This is a document on how we have compiled our experimental data on infections of lab mice with the parasite *Eimeria*
+
+Start with loading the libraries:
+```{r}
 library(dplyr)
 library(magrittr)
 library(stringr)
 library(ggplot2)
+```
 
+### Prepare vectors of names, for selecting relevant columns to one specific category
+```{r}
 #select columns: 
 basics <- c("EH_ID", "mouse_strain", "experiment", "primary_infection", 
             "challenge_infection", "labels", "dpi", "infection", "infection_history")
@@ -16,95 +32,136 @@ oocysts_counts <- c("feces_weight", "oocyst_sq1", "oocyst_sq2", "oocyst_sq3",
 
 qPCR <- c("Eim_MC", "delta")
 
-#reading the overview table. In each row there is a link to the raw data for each experiment
+```
+
+
+### Read the overview table. 
+In each row there is a link to the raw data for each experiment
+
+```{r pressure, echo=FALSE}
 OV <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv")
+```
 
-## ## Only the challenge experiments
-#a list of the names of each experiments
-# you can use it later, to select the experiments from ov 
+### Selecting the challenge experiments from our data
+Creating a list of the names of each experiments.
+Use it later, to select the experiments from ov.
+```{r}
 ChallengeEx  <- c("E57", "E10", "E11", "P4", "P3")
+```
 
-## ## download and append the weigth tables
-#lapply: applies a function to every element of the list
-#we select the challenge experimetns and the weight columns 
-#we apply to every element of the list the function read.csv
+### download and append the weigth tables
+lapply: applies a function to every element of the list
+we select the challenge experiments and the weight columns 
+we apply to every element of the list the function read.csv
+
+```{r}
 W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], read.csv)
+```
 
-#reduce: works on 1st and 2nd element, produces result and then uses the result 
-#with the 3rd element and so on
-#we apply in this case the function rbind
+### Binding all the data frames, one after the other
+reduce: works on 1st and 2nd element, produces result and then uses the result with the 3rd element and so on
+We apply in this case the function rbind
+```{r}
 Weight <- Reduce(rbind, W)
+```
 
-## ## Same for shedding
+### Same for shedding
+```{r}
 O <- lapply(OV[OV$Experiment%in%ChallengeEx, "shedding"], read.csv)
-
 Oocysts <- Reduce(rbind, O)
-
-## ## some don't agree
+```
+### some don't agree
+```{r}
 table(Oocysts$labels%in%Weight$labels)
 table(Weight$labels%in%Oocysts$labels)
+```
 
-## there are more in in the weights table which are not found in the
-## oocysts though
+### there are more in in the weights table which are not found in the oocysts though
+```{r}
 Weight[!Weight$labels%in%Oocysts$labels, ]
+```
 
 ## But if the weight is NA the mouse was dead
+```{r}
 table(Weight[!Weight$labels%in%Oocysts$labels &
                  is.na(Weight$weight), "dpi"])
-### confirmed by the late dpi of these!
-
+```
+confirmed by the late dpi of these!
+```{r}
 Results <- merge(Weight, Oocysts, all=TRUE)
+```
 
-## IDs sometimes with "_" sometimes without
+IDs sometimes with "_" sometimes without
+```{r}
 Results$EH_ID <- gsub("LM_", "LM", Results$EH_ID)
+```
 
-## For now we hav to exclude those E11aBMI which have no mouse IDs
+For now we hav to exclude those E11aBMI which have no mouse IDs
+```{r}
 Results <- Results[!is.na(Results$EH_ID), ]
+```
 
-## Same for design
+Same for design
+```{r}
+
 D <- lapply(OV[OV$Experiment%in%ChallengeEx, "design"], read.csv)
 
 Des.cols <- Reduce(intersect, lapply(D, colnames))
 
 Design <- Reduce(rbind, lapply(D, "[", Des.cols))
-
-## remove all whitespaces
+```
+remove all whitespaces
+```{r}
 Design %>%
     mutate(across(where(is.character), str_trim)) ->
     Design
+```
 
-## IDs sometimes with "_" sometimes without
+IDs sometimes with "_" sometimes without
+```{r}
 Design$EH_ID <- gsub("LM_", "LM", Design$EH_ID)
+```
 
-#### NOW ALSO REMOVE EXPERIMENT column?
-### Not for now
+
+NOW ALSO REMOVE EXPERIMENT column?
+*Not for now*
+```{r}
 ALL <- merge(Design, Results, all=TRUE, by="EH_ID")
 table(ALL$experiment.x, ALL$experiment.y)
+```
 
-## let's call experiment 5 and 7 57, like in all tables
-
+let's call experiment 5 and 7 57, like in all tables
+```{r}
 Design$experiment[Design$experiment%in%c("E5", "E7")] <- "E57"
 Results$experiment[Results$experiment%in%c("E5", "E7")] <- "E57"
 ALL <- merge(Design, Results, all=TRUE)
+```
 
-### some mice don't have an infection history 
+some mice don't have an infection history 
+```{r}
 forgotten.mice <- unique(ALL[is.na(ALL$primary_infection), "EH_ID"])
-## one mouse "LM0295" got lost?
+```
+one mouse "LM0295" got lost?
 
-
+wo samples with no result records
+**[1] "LM0205" "LM0290"**
+```{r}
 Design$EH_ID[!Design$EH_ID%in%Results$EH_ID]
-### Two samples with no result records
-### [1] "LM0205" "LM0290"
 
+```
 
-## all the data has a mouse ID
+all the data has a mouse ID
+```{r}
 table(is.na(ALL$EH_ID))
+```
 
-## but feces weights are ZERO T ( when the oocyst counts are NA ->
-## the mouse was dead)!
+but feces weights are ZERO T ( when the oocyst counts are NA ->
+the mouse was dead)!
+```{r}
 table(ALL$feces_weight==0)
-
+```
 ##  only one prolbem remaining after asking Alice for better data...
+```{r}
 ALL[which(ALL$feces_weight==0 &
               !is.na(ALL$oocyst_sq2)), ]
 
@@ -134,48 +191,29 @@ ALL %>% filter(!is.na(challenge_infection)) %>%
                                     challenge_infection)) ->
     ALL
 
+```
 
-
-#download and append the infection intensity tables (qPCR)
+download and append the infection intensity tables (qPCR)
+```{r}
 I <- lapply(OV[OV$Experiment%in%ChallengeEx, "infection_intensity"], read.csv)
+```
 
-#now combine the infection intensity tables
+now combine the infection intensity tables
+```{r}
 Intensity <- Reduce(rbind, I)
+```
 
-## Corrrect wrong IDs
+Corrrect wrong IDs
+```{r}
 Intensity$EH_ID <- gsub("LM_", "LM", Intensity$EH_ID)
-
-## Melting curve sometimes positve sometimes TRUE, and the opposite
-Intensity$Eim_MC <- gsub("pos", TRUE, Intensity$Eim_MC)
-Intensity$Eim_MC <- gsub("neg", FALSE, Intensity$Eim_MC)
-
-#Eim_MC type is character, change to logical
-Intensity$Eim_MC <- as.logical(Intensity$Eim_MC)
-
+```
 
 #Combined all of the qPCR data for the challenge infections in "Intensity"
 #Questions on how to go on: 
-#to join this data to the "ALL" file I need to match for EH_ID, Experiment and dpi
+#to join this data to the "ALL" file I need to match for EH_ID, Experiment and 
+#dpi. Where should I get this information?
+#Should I join to the design table first?
 
-##summarize for the maximum dpi for the challenge infections
-ALL_challenge_max_dpi <- ALL %>%
-    filter(infection == "challenge") %>%
-    group_by(EH_ID, experiment) %>%
-    summarize(max(dpi))
-
-#join the intensity table to the maximum dpi of the challenge infections
-Intensity2 <- Intensity %>% 
-    inner_join(ALL_challenge_max_dpi, by = c("EH_ID", "experiment"))
-
-anti_intensity <- Intensity %>% 
-    anti_join(ALL_challenge_max_dpi, by = c("EH_ID", "experiment"))
-
-Whatismissing <- ALL_challenge_max_dpi %>% anti_join(Intensity,by = "EH_ID")
-Whatismissing2 <- Intensity %>% anti_join(ALL_challenge_max_dpi,by = "EH_ID")
-summary(comparedf(Intensity, ALL_challenge_max_dpi))
-summary(comparedf(Intensity, ALL_challenge_max_dpi, by = "EH_ID"))
-
-?compare
 #adding a dpi column to Intensity
 #I am assuming the dpi is 8, according to the experimental planning
 #please verify this is correct
@@ -185,7 +223,12 @@ summary(comparedf(Intensity, ALL_challenge_max_dpi, by = "EH_ID"))
 #adding a column infection reflecting this 
 
 
+## Melting curve sometimes positve sometimes TRUE, and the opposite
+Intensity$Eim_MC <- gsub("pos", TRUE, Intensity$Eim_MC)
+Intensity$Eim_MC <- gsub("neg", FALSE, Intensity$Eim_MC)
 
+#making a character out of Eim_MC, to further work on it
+Intensity$Eim_MC <- as.character(Intensity$Eim_MC)
 
 
 #now I can join the Intensity data to the file "ALL"
@@ -235,4 +278,6 @@ Intensity <-
    
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
+
+
 
