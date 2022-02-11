@@ -158,24 +158,33 @@ Intensity$Eim_MC <- as.logical(Intensity$Eim_MC)
 #to join this data to the "ALL" file I need to match for EH_ID, Experiment and dpi
 
 ##summarize for the maximum dpi for the challenge infections
-ALL_challenge_max_dpi <- ALL %>%
-    filter(infection == "challenge") %>%
-    group_by(EH_ID, experiment) %>%
-    summarize(max(dpi))
+ALL_Intensity <- ALL %>%
+    group_by(EH_ID, infection, experiment) %>%
+    summarize(max(dpi)) 
 
-#join the intensity table to the maximum dpi of the challenge infections
-Intensity2 <- Intensity %>% 
-    inner_join(ALL_challenge_max_dpi, by = c("EH_ID", "experiment"))
+ALL_Intensity <- unique(ALL_Intensity)
 
-anti_intensity <- Intensity %>% 
-    anti_join(ALL_challenge_max_dpi, by = c("EH_ID", "experiment"))
+anti_intenstity <- Intensity %>% anti_join(ALL_Intensity, by = c("EH_ID", "experiment"))
 
-Whatismissing <- ALL_challenge_max_dpi %>% anti_join(Intensity,by = "EH_ID")
-Whatismissing2 <- Intensity %>% anti_join(ALL_challenge_max_dpi,by = "EH_ID")
-summary(comparedf(Intensity, ALL_challenge_max_dpi))
-summary(comparedf(Intensity, ALL_challenge_max_dpi, by = "EH_ID"))
+##turn the table into wide format,  to see if both max dpi exists for challenge and primary
+ALL_Intensity_2 <- ALL_Intensity %>%
+    pivot_wider(names_from = 'max(dpi)', values_from = infection) %>%
+    rename(dpi_8 = '8', dpi_11 = '11')
 
-?compare
+
+ALL_Intensity_2 <- ALL_Intensity_2 %>%
+    mutate(death = 
+               case_when(
+                   !is.na(dpi_8) ~ "chal_8",
+                   TRUE ~ "prim_11"
+               ))
+    
+#found the source of the disappearing mice when I join Intensity to ALL. 
+#the experiments e10 and e57 infection intensity contain the same mice!
+#have to figure out what happened there 
+
+
+
 #adding a dpi column to Intensity
 #I am assuming the dpi is 8, according to the experimental planning
 #please verify this is correct
