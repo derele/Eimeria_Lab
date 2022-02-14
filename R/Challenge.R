@@ -16,6 +16,7 @@ oocysts_counts <- c("feces_weight", "oocyst_sq1", "oocyst_sq2", "oocyst_sq3",
 
 qPCR <- c("Eim_MC", "delta")
 
+
 #reading the overview table. In each row there is a link to the raw data for each experiment
 OV <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv")
 
@@ -158,90 +159,43 @@ Intensity$Eim_MC <- as.logical(Intensity$Eim_MC)
 #to join this data to the "ALL" file I need to match for EH_ID, Experiment and dpi
 
 ##summarize for the maximum dpi for the challenge infections
-ALL_Intensity <- ALL %>%
+ALL_sum_max_dpi <- ALL %>%
     group_by(EH_ID, infection, experiment) %>%
     summarize(max(dpi)) 
 
-ALL_Intensity <- unique(ALL_Intensity)
+ALL_sum_max_dpi <- unique(ALL_Intensity)
 
-anti_intenstity <- Intensity %>% anti_join(ALL_Intensity, by = c("EH_ID", "experiment"))
 
 ##turn the table into wide format,  to see if both max dpi exists for challenge and primary
-ALL_Intensity_2 <- ALL_Intensity %>%
+ALL_sum_max_dpi <- ALL_sum_max_dpi %>%
     pivot_wider(names_from = 'max(dpi)', values_from = infection) %>%
     rename(dpi_8 = '8', dpi_11 = '11')
 
-
-ALL_Intensity_2 <- ALL_Intensity_2 %>%
+# Make a death column to show when the mice for sacrificed
+#if it is chal_8, then the mouse was sacrificed during the secondary challenge infections
+# on day 8
+#if it is chal_11, then the mouse was sacrificed during the primary infections
+# on day 11
+ALL_sum_max_dpi <- ALL_sum_max_dpi %>%
     mutate(death = 
                case_when(
                    !is.na(dpi_8) ~ "chal_8",
                    TRUE ~ "prim_11"
                ))
-    
-#found the source of the disappearing mice when I join Intensity to ALL. 
-#the experiments e10 and e57 infection intensity contain the same mice!
-#have to figure out what happened there 
 
+#now join the Intensity file to the summarized ALL_sum_max_dpi
+Intensity <- ALL_sum_max_dpi %>%
+    left_join(Intensity, by = c(intersect(colnames(Intensity), colnames(ALL_sum_max_dpi)))) %>%
+    mutate(infection =
+               case_when(
+                   death == "chal_8" ~ "challenge",
+                   TRUE ~ "primary"
+               )) %>% 
+    select(EH_ID, experiment, death, Eim_MC, delta, infection)
 
+#Now join the Intensity to the ALL file, while taking account of the death variable
+ALL <- left_join(ALL, unique(Intensity), by = c(intersect(colnames(Intensity), colnames(ALL))))
 
-#adding a dpi column to Intensity
-#I am assuming the dpi is 8, according to the experimental planning
-#please verify this is correct
-#in this way it will match the correct observation in the file ALL
-#Will assume that the qPCR data originates only from challenge infections
-#please verify this 
-#adding a column infection reflecting this 
-
-
-
-
-
-#now I can join the Intensity data to the file "ALL"
-ALL <- ALL %>%
-    left_join(unique(Intensity), by = c(intersect(colnames(ALL), colnames(Intensity))))
-
-##next ste
-
-
-
-
-
-
-
-
-
-
-
-
-#on all data set
-#make a column of terminal dpi 
-#is the maximal dpi
-# If challenge exists, then take the maximum dpi from challenge, 
-#else take the max dpi from primary
-#Add a column in ALL (mutate) >> that is the dpi in primary (if it is primary)
-#or if it is challenge, then dpi + 100
-
-
-Max_dpi_infection <- ALL %>%
-    group_by(EH_ID) %>%
-    summarise(Max_dpi = max(dpi[infection %in% "challenge"])) %>%
-    mutate(Max)
-
-#fix it in 1 more line of code 
-#see on top for the idea of adding something to the challenge infections, 
-#make this dissection dpi, challenge_8 for example, 
-#make 2 columns for example, one dissection_dpi, or dissection
-
-
-table(Max_dpi_infection$infection)
-
-Intensity <- 
-    #all of the data originates from the challenge infections
-    #
-    #mutate(infection = "challenge") this is wrong! Not all the qPCR data comes from challenge infections
-    #
-   
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
