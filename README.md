@@ -41,6 +41,11 @@ data product is structure in the following columns:
   or primary, homologous or heterologous immunization). This is
   differently coded to infection, as here UNI:E88 (first uninfected,
   then infected with E88) would count as a "primaryE88" infection
+- death = day of death
+  a. chal_8 = mouse sacrificed on the 8th day of the challenge infection
+  b. prim_11 = mouse sacrificed on the 11th day of the primary infection
+- Eim_MC = Melting curve for eimeria
+- delta = delta ct value
 
 
 In order to summarize data by mouse and infection you will use code
