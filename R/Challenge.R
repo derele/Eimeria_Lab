@@ -192,7 +192,9 @@ Intensity <- ALL_sum_max_dpi %>%
                case_when(
                    death == "chal_8" ~ "challenge",
                    TRUE ~ "primary"
-               )) %>% 
+               )) 
+
+Intensity <- Intensity %>%
     select(EH_ID, experiment, death, Eim_MC, delta, infection)
 
 #Now join the Intensity to the ALL file, while taking account of the death variable
