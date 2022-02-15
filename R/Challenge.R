@@ -216,6 +216,8 @@ CEWE_ELISA$EH_ID <- gsub("LM_", "LM", CEWE_ELISA$EH_ID)
 #merge with ALL
 ALL <- left_join(ALL, unique(CEWE_ELISA), by = c(intersect(colnames(CEWE_ELISA), colnames(ALL))))
 
+#why is the variable death missing? Look back and add it 
+
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
 
