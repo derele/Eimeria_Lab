@@ -4,6 +4,7 @@ library(dplyr)
 library(magrittr)
 library(stringr)
 library(ggplot2)
+library(tidyr)
 
 #select columns: 
 basics <- c("EH_ID", "mouse_strain", "experiment", "primary_infection", 
@@ -14,7 +15,7 @@ weight_loss <- c("weight", "weight_dpi0", "relative_weight")
 oocysts_counts <- c("feces_weight", "oocyst_sq1", "oocyst_sq2", "oocyst_sq3",
                     "oocyst_sq4", "dilution", "OOC", "OO4sq")
 
-qPCR <- c("Eim_MC", "delta")
+intensity_qPCR <- c("Eim_MC", "delta")
 
 
 #reading the overview table. In each row there is a link to the raw data for each experiment
@@ -196,6 +197,41 @@ Intensity <- ALL_sum_max_dpi %>%
 #Now join the Intensity to the ALL file, while taking account of the death variable
 ALL <- left_join(ALL, unique(Intensity), by = c(intersect(colnames(Intensity), colnames(ALL))))
 
+### Step: Join the CEWE_ELISA to our challenge infections file
+## ## download and append the CEWE_ELISA tables
+#lapply: applies a function to every element of the list
+C <- OV[OV$Experiment%in%ChallengeEx, "CEWE_ELISA"] 
+
+#I have to apply the read.csv to vector elemnts wich contain the raw data, therefore
+#I have to first select from the OV file the lines with actual links to the raw files
+C <- lapply(C[c(1,2,5)], read.csv)
+
+#let's combine the data frames for CEWE_ELISA
+#reduce and rbind doesn't work, as the numbers of columns of arguments do not match
+#files are not standardized and don't contatain the experiment name
+C[[1]] <- subset (C[[1]], select = -X)  #remove unecessary column x
+C[[1]] <- C[[1]] %>%
+    mutate(experiment = "P4")
+
+write.csv(C[[1]], "data/Experiment_results/P4_082020_Eim_CEWE_ELISA.csv", row.names=FALSE)
+
+C[[2]] <- subset (C[[2]], select = -X)
+C[[2]] <- subset (C[[2]], select = -labels)
+C[[2]] <- C[[2]] %>%
+    mutate(experiment = "E57")
+write.csv(C[[2]], "data/Experiment_results/E7_112018_Eim_CEWE_ELISA.csv", row.names=FALSE)
+
+C[[3]]
+
+C[[3]] <- subset (C[[3]], select = -X)
+C[[3]] <- subset (C[[3]], select = -labels)
+C[[3]] <- C[[3]] %>%
+    mutate(experiment = "P3") %>%
+    rename(IFNy = IFNy_CEWE)
+
+CEWE_ELISA <- Reduce(rbind, C)
+write.csv(C[[3]], "data/Experiment_results/P3_112019_Eim_CEWE_ELISA.csv", row.names=FALSE)
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
+
 
