@@ -17,7 +17,9 @@ oocysts_counts <- c("feces_weight", "oocyst_sq1", "oocyst_sq2", "oocyst_sq3",
 
 intensity_qPCR <- c("Eim_MC", "delta")
 
-cewe_elisa <- "IFNy"
+cewe_elisa <- "IFNy_CEWE"
+
+mes_elisa <- "IFNy_MES"
 
 #reading the overview table. In each row there is a link to the raw data for each experiment
 OV <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv")
@@ -137,6 +139,10 @@ ALL %>% filter(!is.na(challenge_infection)) %>%
                                     challenge_infection)) ->
     ALL
 
+#here is a function to join the following merged data frames to ALL
+join_to_ALL <- function(x) {
+    left_join(ALL, unique(x), by = c(intersect(colnames(x), colnames(ALL)))) 
+}
 
 
 #download and append the infection intensity tables (qPCR)
@@ -198,7 +204,7 @@ Intensity <- Intensity %>%
     select(EH_ID, experiment, death, Eim_MC, delta, infection)
 
 #Now join the Intensity to the ALL file, while taking account of the death variable
-ALL <- left_join(ALL, unique(Intensity), by = c(intersect(colnames(Intensity), colnames(ALL))))
+ALL <- join_to_ALL(Intensity)
 
 ### Step: Join the CEWE_ELISA to our challenge infections file
 ## ## download and append the CEWE_ELISA tables
@@ -215,12 +221,49 @@ CEWE_ELISA <- Reduce(rbind, C)
 ## IDs sometimes with "_" sometimes without
 CEWE_ELISA$EH_ID <- gsub("LM_", "LM", CEWE_ELISA$EH_ID)
 
+#change IFNy to IFNy_cewe to show origin of the measurement
+CEWE_ELISA <- CEWE_ELISA %>% rename(IFNy_CEWE = IFNy)
+
 #merge with ALL
-ALL <- left_join(ALL, unique(CEWE_ELISA), by = c(intersect(colnames(CEWE_ELISA), colnames(ALL))))
+ALL <- join_to_ALL(CEWE_ELISA)
 
-##Joining data on ELISA from the mesentiarl lymphnodes
+##Joining data on ELISA from the mesenterial lymphnodes
+#download and append the data from the ELISA's - Mesentrial Lymphnodes
+#step by step, as there are empty spaces and this won't work
+#C <- OV[OV$Experiment%in%ChallengeEx, "CEWE_ELISA"] 
+M <- OV[OV$Experiment%in%ChallengeEx, "MES_ELISA"]
 
-#why is the variable death missing? Look back and add it 
+#I have to apply the read.csv to vector elemnts wich contain the raw data, therefore
+#I have to first select from the OV file the lines with actual links to the raw files
+#as there is only one row line with row data, lapply is not required 
+MES_ELISA <- read.csv(M[[1]]) %>% select(!X) #and then remove the unecessary X column
+
+## Corrrect wrong IDs
+MES_ELISA$EH_ID <- gsub("LM_", "LM", MES_ELISA$EH_ID)
+
+#change IFNy to IFNy_cewe to show origin of the measurement
+MES_ELISA <- MES_ELISA %>% rename(IFNy_MES = IFNy)
+
+#Now join the MES_ELISA to the ALL file
+ALL <- join_to_ALL(MES_ELISA)
+
+## Moving on to the gene expression data
+#download and append the gene expression data
+G <- OV[OV$Experiment%in%ChallengeEx, "gene_expression"]
+
+G <- lapply(G[c(2,5)], read.csv)
+
+#now combine the infection intensity tables
+Gene_Expression <- Reduce(rbind, G) %>%
+    select(EH_ID, CXCR3, IRG6, IL.12) #remove unecessary column X
+
+## Corrrect wrong IDs
+Gene_Expression$EH_ID <- gsub("LM_", "LM", Gene_Expression$EH_ID)
+
+#join to the ALL file
+ALL <- join_to_ALL(Gene_Expression)
+
+
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
