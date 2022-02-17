@@ -222,8 +222,7 @@ CEWE_ELISA <- Reduce(rbind, C)
 CEWE_ELISA$EH_ID <- gsub("LM_", "LM", CEWE_ELISA$EH_ID)
 
 #change IFNy to IFNy_cewe to show origin of the measurement
-CEWE_ELISA <- CEWE_ELISA %>% rename(IFNy_CEWE = IFNy) %>% 
-    mutate(Experim)
+CEWE_ELISA <- CEWE_ELISA %>% rename(IFNy_CEWE = IFNy) 
 
 #merge with ALL
 ALL <- join_to_ALL(CEWE_ELISA)
@@ -237,13 +236,18 @@ M <- OV[OV$Experiment%in%ChallengeEx, "MES_ELISA"]
 #I have to apply the read.csv to vector elemnts wich contain the raw data, therefore
 #I have to first select from the OV file the lines with actual links to the raw files
 #as there is only one row line with row data, lapply is not required 
-MES_ELISA <- read.csv(M[[1]]) %>% select(!X) #and then remove the unecessary X column
+MES_ELISA <- read.csv(M[[1]]) 
+
+MES_ELISA <- MES_ELISA %>% select(EH_ID, IFNy)
 
 ## Corrrect wrong IDs
 MES_ELISA$EH_ID <- gsub("LM_", "LM", MES_ELISA$EH_ID)
 
 #change IFNy to IFNy_cewe to show origin of the measurement
-MES_ELISA <- MES_ELISA %>% rename(IFNy_MES = IFNy)
+MES_ELISA <- MES_ELISA %>% rename(IFNy_MES = IFNy) %>% 
+    mutate(experiment = "P4")
+
+write.csv(ALL, "data/Experiment_results/P4_082020_Eim_MES_ELISA.csv", row.names=FALSE)
 
 #Now join the MES_ELISA to the ALL file
 ALL <- join_to_ALL(MES_ELISA)
