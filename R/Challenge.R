@@ -222,7 +222,8 @@ CEWE_ELISA <- Reduce(rbind, C)
 CEWE_ELISA$EH_ID <- gsub("LM_", "LM", CEWE_ELISA$EH_ID)
 
 #change IFNy to IFNy_cewe to show origin of the measurement
-CEWE_ELISA <- CEWE_ELISA %>% rename(IFNy_CEWE = IFNy)
+CEWE_ELISA <- CEWE_ELISA %>% rename(IFNy_CEWE = IFNy) %>% 
+    mutate(Experim)
 
 #merge with ALL
 ALL <- join_to_ALL(CEWE_ELISA)
@@ -263,7 +264,19 @@ Gene_Expression$EH_ID <- gsub("LM_", "LM", Gene_Expression$EH_ID)
 #join to the ALL file
 ALL <- join_to_ALL(Gene_Expression)
 
+#What's next? 
+#FACS!
 
+#download and append the FACS data
+F <- OV[OV$Experiment%in%ChallengeEx, "FACS"]
+
+F <- lapply(F[c(1,2,4)], read.csv)
+
+F[[1]]
+
+
+
+#go back and add an experiment tag for the cewe_elisa files and mes_elisa!
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
