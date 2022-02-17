@@ -165,7 +165,7 @@ ALL_sum_max_dpi <- ALL %>%
     group_by(EH_ID, infection, experiment) %>%
     summarize(max(dpi)) 
 
-ALL_sum_max_dpi <- unique(ALL_Intensity)
+ALL_sum_max_dpi <- unique(ALL_sum_max_dpi)
 
 
 ##turn the table into wide format,  to see if both max dpi exists for challenge and primary
@@ -217,6 +217,8 @@ CEWE_ELISA$EH_ID <- gsub("LM_", "LM", CEWE_ELISA$EH_ID)
 
 #merge with ALL
 ALL <- left_join(ALL, unique(CEWE_ELISA), by = c(intersect(colnames(CEWE_ELISA), colnames(ALL))))
+
+##Joining data on ELISA from the mesentiarl lymphnodes
 
 #why is the variable death missing? Look back and add it 
 
