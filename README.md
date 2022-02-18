@@ -37,6 +37,7 @@ data product is structure in the following columns:
 - OO4sq: the sum of oocysts in the four counting squares
 - OOC: the overall number of oocysts in in the feces (of a particular
   weight) at this dpi
+- OPG_O: Old way of counting opg (Emanuel ask me)
 - infection_type: what kind of infection are we looking at (challenge
   or primary, homologous or heterologous immunization). This is
   differently coded to infection, as here UNI:E88 (first uninfected,
@@ -50,7 +51,25 @@ data product is structure in the following columns:
     - CXCR3
     - IRG6
     - IL.12
+
+- Sex: sex of the mouse
 - 
+
+
+Mouse_strains: (hybrid status)
+- BUSNA_STRA: inter subsp. hybrids
+- STRA_BUSNA: inter subsp. hybrids
+- SCHUNT_SCHUNT: parental strains
+- PWD_SCHUNT: inter subsp. hybrids
+- STRA_STRA: parental strains
+- STRA_SCHUNT: outbred hybrids
+- PWD_BUSNA: outbred hybrids
+- BUSNA_PWD: outbred hybrids
+- PWD_PWD: parental strains
+- SCHUNT_PWD: inter subsp. hybrids
+- SCHUNT_STRA: outbred hybrids
+- STRA_SCHUNT: outbred hybrids
+
 
 
 In order to summarize data by mouse and infection you will use code
