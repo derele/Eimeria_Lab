@@ -283,13 +283,24 @@ F <- lapply(F[c(1,2,4)], read.csv)
 ## History: What I did to overwrite the files, without the column X and with the experiment
 #tag
 #F[[1]] <- F[[1]][ -c(1) ]
-#F[[1]] %>% mutate(experiment = "P4")
-#write.csv(F[[1]], "data/Experiment_results/P4_082020_Eim_FACS.csv", row.names=FALSE)
+F[[1]] %>% mutate(experiment = "P4")
+write.csv(F[[1]], "data/Experiment_results/P4_082020_Eim_FACS.csv", row.names=FALSE)
 
 CellCount.cols <- c( "EH_ID", "Position", "CD4", "Treg", "Div_Treg", "Treg17", 
                      "Th1", "Div_Th1", "Th17", "Div_Th17", "CD8", "Act_CD8",
                      "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8", "dpi", "label", "challenge")
 
+setdiff(colnames(F[[1]]), colnames(F[[2]]))
+library(janitor)
+
+(compare_df_cols(F[[1]], F[[2]]))
+F[[1]] <- F
+F2 -> F[[2]]
+F3 -> F[[3]]
+
+colnames(F[[1]])
+
+colnames(F[[1]])
 
 #colnames(F[[2]])
 #F[[2]] <- F[[2]] %>% mutate(experiment = "E57")
