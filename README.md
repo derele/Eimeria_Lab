@@ -46,6 +46,11 @@ data product is structure in the following columns:
   b. prim_11 = mouse sacrificed on the 11th day of the primary infection
 - Eim_MC = Melting curve for eimeria
 - delta = delta ct value
+- Gene expression columns:
+    - CXCR3
+    - IRG6
+    - IL.12
+- 
 
 
 In order to summarize data by mouse and infection you will use code
