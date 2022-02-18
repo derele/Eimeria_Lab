@@ -21,6 +21,10 @@ cewe_elisa <- "IFNy_CEWE"
 
 mes_elisa <- "IFNy_MES"
 
+gene_expr <- c("CXCR3", "IRG6", "IL.12")
+
+CellCount.cols <- c("blabla")
+
 #reading the overview table. In each row there is a link to the raw data for each experiment
 OV <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv")
 
@@ -248,31 +252,14 @@ MES_ELISA <- MES_ELISA %>% rename(IFNy_MES = IFNy)
 #Now join the MES_ELISA to the ALL file
 ALL <- join_to_ALL(MES_ELISA)
 
-
 ## Moving on to the gene expression data
 #download and append the gene expression data
 G <- OV[OV$Experiment%in%ChallengeEx, "gene_expression"]
 
 G <- lapply(G[c(2,5)], read.csv)
 
-G[[1]] <- G[[1]] %>% select(EH_ID, CXCR3, IRG6, IL.12) %>%
-    mutate(experiment = "E57")
- 
-write.csv(G[[1]], "data/Experiment_results/E7_112018_Eim_CEWE_RT-qPCR.csv", row.names=FALSE)
-
-G[[2]] <- G[[2]] %>% select(EH_ID, CXCR3, IRG6, IL.12) %>%
-    mutate(experiment = "P3")
-
-write.csv(G[[2]], "data/Experiment_results/P3_112019_Eim_CEWE_RTqPCR.csv", row.names=FALSE)
-
-
 #now combine the infection intensity tables
 Gene_Expression <- Reduce(rbind, G)
-
-
-#reading from OV
-#checking for experiment tag
-#removing x column
 
 ## Corrrect wrong IDs
 Gene_Expression$EH_ID <- gsub("LM_", "LM", Gene_Expression$EH_ID)
@@ -288,11 +275,38 @@ F <- OV[OV$Experiment%in%ChallengeEx, "FACS"]
 
 F <- lapply(F[c(1,2,4)], read.csv)
 
-F[[1]]
+
+#reading from OV
+#checking for experiment tag
+#removing x column
+
+## History: What I did to overwrite the files, without the column X and with the experiment
+#tag
+#F[[1]] <- F[[1]][ -c(1) ]
+#F[[1]] %>% mutate(experiment = "P4")
+#write.csv(F[[1]], "data/Experiment_results/P4_082020_Eim_FACS.csv", row.names=FALSE)
+
+CellCount.cols <- c( "EH_ID", "Position", "CD4", "Treg", "Div_Treg", "Treg17", 
+                     "Th1", "Div_Th1", "Th17", "Div_Th17", "CD8", "Act_CD8",
+                     "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8", "dpi", "label", "challenge")
+
+
+#colnames(F[[2]])
+#F[[2]] <- F[[2]] %>% mutate(experiment = "E57")
+#write.csv(F[[2]], "data/Experiment_results/E7_112018_Eim_FACS.csv", row.names=FALSE)
 
 
 
-#go back and add an experiment tag for the cewe_elisa files and mes_elisa!
+#F[[3]] -> F11
+#F11 <- select(F11, -c(X, X.1)) 
+#F11 <- F11 %>% mutate(experiment = "E11")
+#write.csv(F11, "data/Experiment_results/E11_012021_Eim_FACS.csv", row.names=FALSE)
+
+#try to combine each of the F files with each other using another merging technique to include all columns 
+#if it works go back and write the csv for each file 
+#if not clean the files and try again!!!! 
+
+
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
