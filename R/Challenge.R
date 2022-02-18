@@ -234,17 +234,10 @@ ALL <- join_to_ALL(CEWE_ELISA)
 #C <- OV[OV$Experiment%in%ChallengeEx, "CEWE_ELISA"] 
 M <- OV[OV$Experiment%in%ChallengeEx, "MES_ELISA"]
 
-
 #I have to apply the read.csv to vector elemnts wich contain the raw data, therefore
 #I have to first select from the OV file the lines with actual links to the raw files
 #as there is only one row line with row data, lapply is not required 
-MES_ELISA <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/fb2f0082d61f598a47654add4f2d69b3c1a3d0a6/data/Experiment_results/P4_082020_Eim_MES_ELISA.csv")
-
-MES_ELISA <- MES_ELISA %>% select(EH_ID, IFNy) %>%
-    mutate(experiment = "P4")
-
-write.csv(MES_ELISA, "data/Experiment_results/P4_082020_Eim_MES_ELISA.csv", row.names=FALSE)
-
+MES_ELISA <- read.csv(M[[1]])
 
 ## Corrrect wrong IDs
 MES_ELISA$EH_ID <- gsub("LM_", "LM", MES_ELISA$EH_ID)
@@ -255,15 +248,31 @@ MES_ELISA <- MES_ELISA %>% rename(IFNy_MES = IFNy)
 #Now join the MES_ELISA to the ALL file
 ALL <- join_to_ALL(MES_ELISA)
 
+
 ## Moving on to the gene expression data
 #download and append the gene expression data
 G <- OV[OV$Experiment%in%ChallengeEx, "gene_expression"]
 
 G <- lapply(G[c(2,5)], read.csv)
 
+G[[1]] <- G[[1]] %>% select(EH_ID, CXCR3, IRG6, IL.12) %>%
+    mutate(experiment = "E57")
+ 
+write.csv(G[[1]], "data/Experiment_results/E7_112018_Eim_CEWE_RT-qPCR.csv", row.names=FALSE)
+
+G[[2]] <- G[[2]] %>% select(EH_ID, CXCR3, IRG6, IL.12) %>%
+    mutate(experiment = "P3")
+
+write.csv(G[[2]], "data/Experiment_results/P3_112019_Eim_CEWE_RTqPCR.csv", row.names=FALSE)
+
+
 #now combine the infection intensity tables
-Gene_Expression <- Reduce(rbind, G) %>%
-    select(EH_ID, CXCR3, IRG6, IL.12) #remove unecessary column X
+Gene_Expression <- Reduce(rbind, G)
+
+
+#reading from OV
+#checking for experiment tag
+#removing x column
 
 ## Corrrect wrong IDs
 Gene_Expression$EH_ID <- gsub("LM_", "LM", Gene_Expression$EH_ID)
