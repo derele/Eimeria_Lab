@@ -9,12 +9,12 @@ library(plyr)
 
 #select columns: 
 basics <- c("EH_ID", "mouse_strain", "experiment", "primary_infection", 
-            "challenge_infection", "labels", "dpi", "infection", "infection_history")
+            "challenge_infection", "labels", "dpi", "infection", "infection_history", "sex")
 
 weight_loss <- c("weight", "weight_dpi0", "relative_weight")
 
 oocysts_counts <- c("feces_weight", "oocyst_sq1", "oocyst_sq2", "oocyst_sq3",
-                    "oocyst_sq4", "dilution", "OOC", "OO4sq")
+                    "oocyst_sq4", "dilution", "OOC", "OO4sq", "OPG_O")
 
 intensity_qPCR <- c("Eim_MC", "delta")
 
@@ -24,7 +24,14 @@ mes_elisa <- "IFNy_MES"
 
 gene_expr <- c("CXCR3", "IRG6", "IL.12")
 
-CellCount.cols <- c("blabla")
+CellCount.cols <- c("Position", "CD4", "Treg", "Div_Treg", "Treg17", "Th1", "Div_Th1",
+                    "Th17", "Div_Th17", "Act_CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8",
+                    "Treg_prop", "IL17A_CD4")   
+
+what_is_this <- "IFNy_FEC" 
+
+and_this <- "Caecum"             
+   
 
 #reading the overview table. In each row there is a link to the raw data for each experiment
 OV <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv")
@@ -166,7 +173,6 @@ Intensity$Eim_MC <- gsub("neg", FALSE, Intensity$Eim_MC)
 #Eim_MC type is character, change to logical
 Intensity$Eim_MC <- as.logical(Intensity$Eim_MC)
 
-
 #Combined all of the qPCR data for the challenge infections in "Intensity"
 #Questions on how to go on: 
 #to join this data to the "ALL" file I need to match for EH_ID, Experiment and dpi
@@ -279,63 +285,18 @@ F <- list(F[[1]], F[[2]], F[[3]])
 
 FACS <- Reduce(bind_rows, F)
 
+FACS <- FACS %>% rename(OPG_O = OPG)
 
-#checking for experiment tag
-#removing x column
+## Corrrect wrong IDs
+FACS$EH_ID <- gsub("LM_", "LM", FACS$EH_ID)
 
-## History: What I did to overwrite the files, without the column X and with the experiment
-#tag
-#F[[1]] <- F[[1]][ -c(1) ]
-#F[[1]] <- F[[1]] %>% mutate(experiment = "P4")
-#write.csv(F[[1]], "data/Experiment_results/P4_082020_Eim_FACS.csv", row.names=FALSE)
+FACS <- FACS %>% select(-c("sex", "birthday", "CXCR3", "IRG6", "IL.12", "IFNy_CEWE", "delta", "mouse_strain", "labels"))
 
-CellCount.cols <- c( "EH_ID", "Position", "CD4", "Treg", "Div_Treg", "Treg17", 
-                     "Th1", "Div_Th1", "Th17", "Div_Th17", "CD8", "Act_CD8",
-                     "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8", "dpi", "label", "challenge")
-
-col_f1 <- colnames(F1)
+FACS <- FACS %>% mutate(infection = "challenge")
 
 
-setdiff(colnames(F[[1]]), colnames(F[[2]]))
-library(janitor)
+ALL2 <- ALL %>% left_join(unique(FACS), by = c("EH_ID", "experiment", "dpi", "infection"))
 
-(compare_df_cols(F[[1]], F[[2]]))
-#colnames(F1)
-#write.csv(F1, "data/Experiment_results/P4_082020_Eim_FACS.csv", row.names=FALSE)
-#please overwrite the file
-
-#F2 <- F[[2]] %>%
-  #  select(-c(Strain, HybridStatus, primary, challenge, weight, Wchange, infHistory))
-#write.csv(F2, "data/Experiment_results/E7_112018_Eim_FACS.csv", row.names=FALSE)
-
-#F3 <- F[[3]] %>%
- #   select(-c(batch, weight, relative_weight, weight_dpi0, feces_weight, dpi_dissect,
-#              infection_history, primary_infection, challenge_infection))
-#write.csv(F3, "data/Experiment_results/E11_012021_Eim_FACS.csv", row.names=FALSE)
-
-
-
-#colnames(F[[2]])
-#F[[2]] <- F[[2]] %>% mutate(experiment = "E57")
-#write.csv(F[[2]], "data/Experiment_results/E7_112018_Eim_FACS.csv", row.names=FALSE)
-
-
-
-#F[[3]] -> F11
-#F11 <- select(F11, -c(X, X.1)) 
-#F11 <- F11 %>% mutate(experiment = "E11")
-#write.csv(F11, "data/Experiment_results/E11_012021_Eim_FACS.csv", row.names=FALSE)
-
-#try to combine each of the F files with each other using another merging technique to include all columns 
-#if it works go back and write the csv for each file 
-#if not clean the files and try again!!!! 
-F <- 
-F1
-F2
-F3
-
-
-
+#more mice in ALL2 as in ALL
+#I think the problem lie
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
-
-
