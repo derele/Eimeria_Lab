@@ -46,8 +46,7 @@ data product is structure in the following columns:
   b. prim_11 = mouse sacrificed on the 11th day of the primary infection
 - Eim_MC = Melting curve for eimeria
 - delta = delta ct value
-- IFNy_CEWE = ELISA for IFNy from caecum tissue
-- IFNy_MES = ELISA for IFNy from mesenterium tissue
+
 
 In order to summarize data by mouse and infection you will use code
 similar to the below in your analysis.
