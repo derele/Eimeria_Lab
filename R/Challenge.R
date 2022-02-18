@@ -244,17 +244,8 @@ MES_ELISA <- MES_ELISA %>% select(EH_ID, IFNy)
 MES_ELISA$EH_ID <- gsub("LM_", "LM", MES_ELISA$EH_ID)
 
 #change IFNy to IFNy_cewe to show origin of the measurement
-<<<<<<< HEAD
-MES_ELISA <- MES_ELISA %>% 
-=======
-MES_ELISA <- MES_ELISA %>% rename(IFNy_MES = IFNy) %>% 
->>>>>>> 45e31f5569e102c14159f0807e54fdbd5a8362cd
-    mutate(experiment = "P4")
-
-write.csv(ALL, "data/Experiment_results/P4_082020_Eim_MES_ELISA.csv", row.names=FALSE)
-
-#change IFNy to IFNy_cewe to show origin of the measurement
 MES_ELISA <- MES_ELISA %>% rename(IFNy_MES = IFNy)
+
 #Now join the MES_ELISA to the ALL file
 ALL <- join_to_ALL(MES_ELISA)
 
