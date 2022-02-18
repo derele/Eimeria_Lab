@@ -5,6 +5,7 @@ library(magrittr)
 library(stringr)
 library(ggplot2)
 library(tidyr)
+library(plyr)
 
 #select columns: 
 basics <- c("EH_ID", "mouse_strain", "experiment", "primary_infection", 
@@ -274,33 +275,45 @@ ALL <- join_to_ALL(Gene_Expression)
 F <- OV[OV$Experiment%in%ChallengeEx, "FACS"]
 
 F <- lapply(F[c(1,2,4)], read.csv)
+F <- list(F[[1]], F[[2]], F[[3]])
+
+FACS <- Reduce(bind_rows, F)
 
 
-#reading from OV
 #checking for experiment tag
 #removing x column
 
 ## History: What I did to overwrite the files, without the column X and with the experiment
 #tag
 #F[[1]] <- F[[1]][ -c(1) ]
-F[[1]] %>% mutate(experiment = "P4")
-write.csv(F[[1]], "data/Experiment_results/P4_082020_Eim_FACS.csv", row.names=FALSE)
+#F[[1]] <- F[[1]] %>% mutate(experiment = "P4")
+#write.csv(F[[1]], "data/Experiment_results/P4_082020_Eim_FACS.csv", row.names=FALSE)
 
 CellCount.cols <- c( "EH_ID", "Position", "CD4", "Treg", "Div_Treg", "Treg17", 
                      "Th1", "Div_Th1", "Th17", "Div_Th17", "CD8", "Act_CD8",
                      "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8", "dpi", "label", "challenge")
 
+col_f1 <- colnames(F1)
+
+
 setdiff(colnames(F[[1]]), colnames(F[[2]]))
 library(janitor)
 
 (compare_df_cols(F[[1]], F[[2]]))
-F[[1]] <- F
-F2 -> F[[2]]
-F3 -> F[[3]]
+#colnames(F1)
+#write.csv(F1, "data/Experiment_results/P4_082020_Eim_FACS.csv", row.names=FALSE)
+#please overwrite the file
 
-colnames(F[[1]])
+#F2 <- F[[2]] %>%
+  #  select(-c(Strain, HybridStatus, primary, challenge, weight, Wchange, infHistory))
+#write.csv(F2, "data/Experiment_results/E7_112018_Eim_FACS.csv", row.names=FALSE)
 
-colnames(F[[1]])
+#F3 <- F[[3]] %>%
+ #   select(-c(batch, weight, relative_weight, weight_dpi0, feces_weight, dpi_dissect,
+#              infection_history, primary_infection, challenge_infection))
+#write.csv(F3, "data/Experiment_results/E11_012021_Eim_FACS.csv", row.names=FALSE)
+
+
 
 #colnames(F[[2]])
 #F[[2]] <- F[[2]] %>% mutate(experiment = "E57")
@@ -316,6 +329,10 @@ colnames(F[[1]])
 #try to combine each of the F files with each other using another merging technique to include all columns 
 #if it works go back and write the csv for each file 
 #if not clean the files and try again!!!! 
+F <- 
+F1
+F2
+F3
 
 
 
