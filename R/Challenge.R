@@ -171,6 +171,7 @@ ALL_sum_max_dpi <- ALL %>%
     group_by(EH_ID, infection, experiment) %>%
     summarize(max(dpi)) 
 
+
 ALL_sum_max_dpi <- unique(ALL_sum_max_dpi)
 
 
@@ -233,12 +234,17 @@ ALL <- join_to_ALL(CEWE_ELISA)
 #C <- OV[OV$Experiment%in%ChallengeEx, "CEWE_ELISA"] 
 M <- OV[OV$Experiment%in%ChallengeEx, "MES_ELISA"]
 
+
 #I have to apply the read.csv to vector elemnts wich contain the raw data, therefore
 #I have to first select from the OV file the lines with actual links to the raw files
 #as there is only one row line with row data, lapply is not required 
-MES_ELISA <- read.csv(M[[1]]) 
+MES_ELISA <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/fb2f0082d61f598a47654add4f2d69b3c1a3d0a6/data/Experiment_results/P4_082020_Eim_MES_ELISA.csv")
 
-MES_ELISA <- MES_ELISA %>% select(EH_ID, IFNy)
+MES_ELISA <- MES_ELISA %>% select(EH_ID, IFNy) %>%
+    mutate(experiment = "P4")
+
+write.csv(MES_ELISA, "data/Experiment_results/P4_082020_Eim_MES_ELISA.csv", row.names=FALSE)
+
 
 ## Corrrect wrong IDs
 MES_ELISA$EH_ID <- gsub("LM_", "LM", MES_ELISA$EH_ID)
