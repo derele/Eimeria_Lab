@@ -119,16 +119,17 @@ table(is.na(ALL$EH_ID))
 
 ## but feces weights are ZERO T ( when the oocyst counts are NA ->
 ## the mouse was dead)!
-table(ALL$feces_weight==0)
+table(ALL$feces_weight ==0)
 
 ##  only one prolbem remaining after asking Alice for better data...
-ALL[which(ALL$feces_weight==0 &
+ALL[which(ALL$feces_weight == 0 &
               !is.na(ALL$oocyst_sq2)), ]
 
 ALL %>% filter(!is.na(challenge_infection)) %>%
-    rowwise() %>% mutate(OO4sq = rowSums(across(starts_with("oocyst_")))) %>%
+    rowwise() %>% 
+    dplyr::mutate(OO4sq = rowSums(across(starts_with("oocyst_")))) %>%
     ## 0.1µl per square -> *10.000 to scale up to ml
-    mutate(OOC=(OO4sq/4*10000)/dilution) %>%
+    mutate(OOC = (OO4sq/4*10000)/dilution) %>%
     ## we have ZEROS in feces weight (also when we counted oocysts) so we better don't
     ## calculate OPG for now but just max (see below)
     ## mutate(OPG=OOC/feces_weight) %>%
@@ -160,8 +161,10 @@ join_to_ALL <- function(x) {
 #download and append the infection intensity tables (qPCR)
 I <- lapply(OV[OV$Experiment%in%ChallengeEx, "infection_intensity"], read.csv)
 
+
 #now combine the infection intensity tables
 Intensity <- Reduce(rbind, I)
+
 
 ## Corrrect wrong IDs
 Intensity$EH_ID <- gsub("LM_", "LM", Intensity$EH_ID)
