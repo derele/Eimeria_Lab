@@ -181,6 +181,7 @@ Intensity$Eim_MC <- as.logical(Intensity$Eim_MC)
 #to join this data to the "ALL" file I need to match for EH_ID, Experiment and dpi
 
 ##summarize for the maximum dpi for the challenge infections
+detach(package:plyr)
 ALL_sum_max_dpi <- ALL %>%
     group_by(EH_ID, infection, experiment) %>%
     summarize(max(dpi)) 
@@ -224,7 +225,7 @@ ALL <- join_to_ALL(Intensity)
 ### Step: Join the CEWE_ELISA to our challenge infections file
 ## ## download and append the CEWE_ELISA tables
 #lapply: applies a function to every element of the list
-C <- OV[OV$Experiment%in%ChallengeEx, "CEWE_ELISA"] 
+C <- OV[OV$Experiment %in% ChallengeEx, "CEWE_ELISA"] 
 
 #I have to apply the read.csv to vector elemnts wich contain the raw data, therefore
 #I have to first select from the OV file the lines with actual links to the raw files
@@ -281,7 +282,7 @@ ALL <- join_to_ALL(Gene_Expression)
 #FACS!
 
 #download and append the FACS data
-F <- OV[OV$Experiment%in%ChallengeEx, "FACS"]
+F <- OV[OV$Experiment %in% ChallengeEx, "FACS"]
 
 F <- lapply(F[c(1,2,4)], read.csv)
 F <- list(F[[1]], F[[2]], F[[3]])
@@ -293,13 +294,43 @@ FACS <- FACS %>% rename(OPG_O = OPG)
 ## Corrrect wrong IDs
 FACS$EH_ID <- gsub("LM_", "LM", FACS$EH_ID)
 
-FACS <- FACS %>% select(-c("sex", "birthday", "CXCR3", "IRG6", "IL.12", "IFNy_CEWE", "delta", "mouse_strain", "labels"))
+FACS <- FACS %>% select(-c("sex", "birthday", "CXCR3", "IRG6", "IL.12", "IFNy_CEWE", 
+                           "delta", "mouse_strain", "labels", ))
 
 FACS <- FACS %>% mutate(infection = "challenge")
 
+#select only the challenge /dpi = 8 mice
+#ALL_selection <- ALL %>%
+ #   filter(dpi == 8, infection == "challenge")
+#ALL_selection <- unique(ALL_selection) %>%
+ #   select(-c(infection, dpi))
 
-ALL2 <- ALL %>% left_join(unique(FACS), by = c("EH_ID", "experiment", "dpi", "infection"))
+
+#ALL_right <- ALL_selection %>% 
+ #   right_join(unique(FACS), by = c("EH_ID", "experiment"))
+#ALL2 <- join_to_ALL(ALL_right)
+#comparedf(ALL2, ALL)
+#anti_all <- ALL2 %>% semi_join(ALL, by = NULL)      
+
+#ALL3 <- ALL2 %>%
+ #   select(intersect(colnames(ALL), colnames(ALL2)))
+#setdiff(ALL3, ALL)
+#intersect(ALL, ALL3)
+
+
+
 
 #more mice in ALL2 as in ALL
-#I think the problem lie
+#so we have 3066 mice in ALL2 and only 2994 mice in ALL
+#anti_all <- FACS %>% anti_join(ALL, by = "EH_ID")
+#this returns 0 observations, so all the mice in FACS are included in ALL
+#how many na do we have in the position column, I smell something fishy there
+#sum(is.na(FACS$Position))
+#length(unique(FACS$EH_ID))
+#length(unique(FACS$EH_ID)) == nrow(FACS)
+#sum(duplicated(FACS$EH_ID))
+#colnames(ALL)
+#intersect(colnames(ALL), colnames(FACS))
+
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
+
