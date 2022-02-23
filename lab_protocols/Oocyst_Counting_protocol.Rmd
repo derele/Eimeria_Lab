@@ -1,0 +1,52 @@
+---
+title: "Oocyst_counting_protocol"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+### Documentation: 
+EH_ID: the unique identifier of the mouse
+experiment: the experiment as numbered in the overview table
+mouse_strain: the strain (inbred or outbred) of the mouse
+primary_infection: The Eimeria strain used for the primary infection
+challenge_infection: The Eimeria strain used for the challenge infection
+infection_history: The resulting infection history
+labels: the unique label of the fecal sample at a particular dpi
+weight: the weight of the mouse at this dpi
+weight_dpi0: the weight at the day of infection
+relative_weight: the weight of the mouse at this dpi relative to the weight at dpi0
+feces_weight: the weight of the feces collected at this dpi
+dpi: days post infection at which samples and data in this row were taken
+infection: the infection (primary or challenge) this row/dpi corresponds to
+oocyst_sq1, oocyst_sq2, oocyst_sq3, oocyst_sq4: the raw values for squared during oocyst counting
+dilution: the amount of PBS the feces (with it's relative weight) was dissolved in
+OO4sq: the sum of oocysts in the four counting squares
+OOC: the overall number of oocysts in in the feces (of a particular weight) at this dpi
+OPG_O: Old way of counting opg (Emanuel ask me)
+
+
+## Please include the following columns in your csv files: 
+oocyst.cols.wild = column names if you are using wild mice data
+oocyst.cols.lab = column names if you are using lab mice data
+```{r}
+oocyst.cols.wild     <- c("Mouse_ID", "Year", "counter", "Feces_Weight", 
+                          "Date_count", "N_oocysts_sq1", "N_oocysts_sq2",
+                          "N_oocysts_sq3",  "N_oocysts_sq4","N_oocysts_sq5",
+                          "N_oocysts_sq6", "N_oocysts_sq7","N_oocysts_sq8",
+                          "mean_neubauer", "PBS_dil_in_mL", "OPG",
+                          "Ncells")
+
+oocyst.cols.lab <- c("EH_ID", "experiment", "labels", "feces_weight", 
+                     "dpi", "oocyst_sq1", "oocyst_sq2", "oocyst_sq3",
+                     "oocyst_sq4","oocyst_sq5", "oocyst_sq6", "oocyst_sq7",
+                     "oocyst_sq8", "dilution", "OO8sq", "OPG")
+```

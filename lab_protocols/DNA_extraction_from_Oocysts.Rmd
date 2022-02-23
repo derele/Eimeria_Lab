@@ -1,0 +1,56 @@
+---
+title: "Oocyst DNA Extraktion Protocol"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## DNA extraction from Oocysts:
+### A. pellet of oocysts
+### B. supernatant (PBS + Oocysts non-sedimented)
+
+
+1. For samples
+A.) Use an equal volume of autoclaved glass beads (0.5 mm diameter)
+B.) use the equivalent to half-volume (~ 250 µl beads)
+2. Cover the beads and oocyst pellet with minimum volume of SL2 buffer (~ 100 µl) and 20 µl enhancer buffer
+3. Disrupt the oocyst in a horizontal homogenizer 100 % frequency and 2 min 
+4. Centrifuge 11.000 xg / 2 min 
+5. Resuspend with 600 µl SL2 buffer
+6. Incubate at 70°C / 5 min 
+7. Centrifuge 11.000 xg / 2 min
+8. Collect the supernatant in a 2 ml tube and continue with the protocol (Genomic NA from soil NucleoSpin Soil Macherey-Nagel)
+9. Keep the pellet and repeat 1. - 8. 
+10. Merge both aliquots during the “Bind DNA” Step
+11. Elute DNA with 30 µl incubate 5 min/RT
+12. Centrifuge 11.000 xg / 30 s and repeat the elution with the same elution product
+13.  Measure DNA concentration using the Qubit and quality with NanoDrop 260/280 and 260/230 ratios
+
+### Oocyst Cleaning
+1. 10 ml Pooled Oocyst in K₂CrO₄ (dirty) + 100 ml distilled H₂O
+2. Centrifugation 10 min/ 21°C/ 1800 rpm
+3. Remove supernatant => collect it in a 50 ml conic tube
+4. Resuspent pellet with minimum Volume possible
+5. Transfer to a 15 ml conic tube and add distilled H₂O up to 5 ml mark
+6. Centrifugation 10 min/ 21°C/ 1800 rpm
+7. Repeat step 3. - 6. two more times 
+8. Centrifugate the supernatant from washing at the same conditions, resuspend the pellet in minimum volume possible and incorporate it to the rest of 
+
+### Oocyst reflotation ( Reduced volume method) Mod from Kumar et al. 2014
+1. Add saturated salt solution to the final pellet of oocysts and dirt until 5 ml mark
+2. Vortex vigorously until all materials are well mixed
+3. Add 1 ml of distilled water on the fecal suspension, taking care of gently overload
+4. Left the sample to stand for 10-20 min
+5. Centrifuge at 750 xg/ 21°C/ 10 min 
+6. Collect the interface between saturated salt solution and the distilled water in a new 15 ml tube
+7. Repeat step 1. - 6. two more times until no material is visible at the interface
+8. Add distilled water until 5 ml mark in the 15 ml tube
+9. Centrifuge 750 xg/ 21°C/ 10 min
+10. Remove the supernatant carefully without disrupting the pellet
+-> Keep the supernatant for further microscopic screening
+11. Resuspend the pellet in minimum volume possible and transfer it to a 15 ml tube
+12. Centrifugation 600 xg/ 21°C/ 5 min and remove supernatant
+13. Add 500 µl of 1x PBS for counting and DNA extraction
+  Alternatively add 1 ml of 2% K₂CrO₄ solution and let sporulate 3 days at 27°C
