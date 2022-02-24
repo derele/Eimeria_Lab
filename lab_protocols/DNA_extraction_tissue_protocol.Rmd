@@ -24,7 +24,8 @@ output: html_document
 14. Put filter onto a tube with lid and add 200 µl Elution buffer. Centrifuge for 1 min at 11.000 xg (second elution step will increase the yield of extracted DNA)
 
 
-![Protocol page 1](dnaextractiontail1.png)
+![Protocol page 1]('Protocol_dna_extraction-1')
 
 
-![Protocol page 2](dnaextractiontail2.png)
+![Protocol page 2]('Protocol_dna_extraction-2')
+
