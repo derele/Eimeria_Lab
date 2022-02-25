@@ -294,6 +294,9 @@ F <- OV[OV$Experiment %in% ChallengeEx, "FACS"]
 
 F <- lapply(F[c(1,2,4)], read.csv)
 F <- list(F[[1]], F[[2]], F[[3]])
+F[[1]] <- F[[1]] %>% mutate(infection = "challenge") #P4
+F[[2]] <- F[[2]] %>% mutate(infection = "challenge") #E57
+F[[3]] #E11
 
 FACS <- Reduce(bind_rows, F)
 
@@ -305,19 +308,44 @@ names(FACS) <- gsub(" ", "_", names(FACS))
 
 FACS <- unique(FACS)
 
-FACS <- FACS %>% select(-c("mouse_strain", "delta", "IFNy_CEWE", "CXCR3",
-                           "IRG6", "IL.12", "birthday", "sex", "labels")) 
+FACS <- FACS %>% select(-c("delta", "IFNy_CEWE", "CXCR3",
+                           "IRG6", "IL.12", "labels", "X",
+                           "batch", "weight", "weight_dpi0", "relative_weight", "feces_weight")) 
 
-FACS <- FACS %>% mutate(infection = "challenge")
-                           
-                           #"delta", "mouse_strain", "labels"))
-ALL2 <- ALL %>% left_join(FACS, by = intersect(colnames(FACS), colnames(ALL)), keep)
+FACS <- unique(FACS)
+duplicated(FACS)
+
+length(unique(FACS$EH_ID)) #85
+sum(duplicated(FACS$EH_ID)) #73
+
+unique(FACS$EH_ID)
+duplicated(FACS$EH_ID)
+
+FACS$Position[is.na(FACS$Position)] = "not_mentioned"
+
+ALL2 <- join_to_ALL(FACS)
+library(dplyr)
 
 
-ALL2 <- unique(ALL2)
+my_summary_data <- FACS %>%
+    dplyr::group_by(EH_ID) %>%
+    dplyr::summarise(Count = n())
 
-3017 - 2994
+my_summary_data <- my_summary_data %>%
+    dplyr::group_by(Count) %>%
+    dplyr::summarise(Count2 = n())
 
+
+#52 * 1, 2 * 13, 4 * 20
+2*13 + 4 * 20
+
+
+
+
+2994 + 73 + 73
+ALL2 <- join_to_ALL(FACS)
+3140 - 2994
+146 -73
 
 ALL_select <- ALL2 %>% select(colnames(ALL))
 setdiff(ALL, ALL_select)
