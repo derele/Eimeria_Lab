@@ -9,7 +9,7 @@ library(plyr)
 
 #select columns: 
 basics <- c("EH_ID", "mouse_strain", "experiment", "primary_infection", 
-            "challenge_infection", "labels", "dpi", "infection", "infection_history", "sex")
+            "challenge_infection", "labels", "dpi", "infection", "infection_history", "sex", "death")
 
 weight_loss <- c("weight", "weight_dpi0", "relative_weight")
 
@@ -119,7 +119,7 @@ table(is.na(ALL$EH_ID))
 
 ## but feces weights are ZERO T ( when the oocyst counts are NA ->
 ## the mouse was dead)!
-table(ALL$feces_weight ==0)
+table(ALL$feces_weight == 0)
 
 ##  only one prolbem remaining after asking Alice for better data...
 ALL[which(ALL$feces_weight == 0 &
@@ -181,10 +181,10 @@ Intensity$Eim_MC <- as.logical(Intensity$Eim_MC)
 #to join this data to the "ALL" file I need to match for EH_ID, Experiment and dpi
 
 ##summarize for the maximum dpi for the challenge infections
-detach(package:plyr)
+#detach(package:plyr)
 ALL_sum_max_dpi <- ALL %>%
-    group_by(EH_ID, infection, experiment) %>%
-    summarize(max(dpi)) 
+    dplyr::group_by(EH_ID, infection, experiment) %>%
+    dplyr::summarize(max(dpi)) 
 
 
 ALL_sum_max_dpi <- unique(ALL_sum_max_dpi)
@@ -193,7 +193,7 @@ ALL_sum_max_dpi <- unique(ALL_sum_max_dpi)
 ##turn the table into wide format,  to see if both max dpi exists for challenge and primary
 ALL_sum_max_dpi <- ALL_sum_max_dpi %>%
     pivot_wider(names_from = 'max(dpi)', values_from = infection) %>%
-    rename(dpi_8 = '8', dpi_11 = '11')
+    dplyr::rename(dpi_8 = '8', dpi_11 = '11')
 
 # Make a death column to show when the mice for sacrificed
 #if it is chal_8, then the mouse was sacrificed during the secondary challenge infections
@@ -201,16 +201,24 @@ ALL_sum_max_dpi <- ALL_sum_max_dpi %>%
 #if it is chal_11, then the mouse was sacrificed during the primary infections
 # on day 11
 ALL_sum_max_dpi <- ALL_sum_max_dpi %>%
-    mutate(death = 
+    dplyr::mutate(death = 
                case_when(
                    !is.na(dpi_8) ~ "chal_8",
                    TRUE ~ "prim_11"
                ))
 
+# remove the now redundant columns
+ALL_sum_max_dpi <- ALL_sum_max_dpi %>% select(-c(dpi_8, dpi_11))
+
+#add the new column to ALL
+ALL <- ALL %>% left_join(ALL_sum_max_dpi, by = intersect(colnames(ALL), colnames(ALL_sum_max_dpi)))
+
+
+
 #now join the Intensity file to the summarized ALL_sum_max_dpi
 Intensity <- ALL_sum_max_dpi %>%
     left_join(Intensity, by = c(intersect(colnames(Intensity), colnames(ALL_sum_max_dpi)))) %>%
-    mutate(infection =
+    dplyr::mutate(infection =
                case_when(
                    death == "chal_8" ~ "challenge",
                    TRUE ~ "primary"
@@ -238,7 +246,7 @@ CEWE_ELISA <- Reduce(rbind, C)
 CEWE_ELISA$EH_ID <- gsub("LM_", "LM", CEWE_ELISA$EH_ID)
 
 #change IFNy to IFNy_cewe to show origin of the measurement
-CEWE_ELISA <- CEWE_ELISA %>% rename(IFNy_CEWE = IFNy) 
+CEWE_ELISA <- CEWE_ELISA %>% dplyr::rename(IFNy_CEWE = IFNy) 
 
 #merge with ALL
 ALL <- join_to_ALL(CEWE_ELISA)
@@ -258,7 +266,7 @@ MES_ELISA <- read.csv(M[[1]])
 MES_ELISA$EH_ID <- gsub("LM_", "LM", MES_ELISA$EH_ID)
 
 #change IFNy to IFNy_cewe to show origin of the measurement
-MES_ELISA <- MES_ELISA %>% rename(IFNy_MES = IFNy)
+MES_ELISA <- MES_ELISA %>% dplyr::rename(IFNy_MES = IFNy)
 
 #Now join the MES_ELISA to the ALL file
 ALL <- join_to_ALL(MES_ELISA)
@@ -289,17 +297,77 @@ F <- list(F[[1]], F[[2]], F[[3]])
 
 FACS <- Reduce(bind_rows, F)
 
-FACS <- FACS %>% rename(OPG_O = OPG)
+FACS <- FACS %>% dplyr::rename(OPG_O = OPG)
 
 ## Corrrect wrong IDs
 FACS$EH_ID <- gsub("LM_", "LM", FACS$EH_ID)
+names(FACS) <- gsub(" ", "_", names(FACS))
 
-FACS <- FACS %>% select(-c("sex", "birthday", "CXCR3", "IRG6", "IL.12", "IFNy_CEWE", 
-                           "delta", "mouse_strain", "labels", ))
+FACS <- unique(FACS)
+
+FACS <- FACS %>% select(-c("mouse_strain", "delta", "IFNy_CEWE", "CXCR3",
+                           "IRG6", "IL.12", "birthday", "sex", "labels")) 
 
 FACS <- FACS %>% mutate(infection = "challenge")
+                           
+                           #"delta", "mouse_strain", "labels"))
+ALL2 <- ALL %>% left_join(FACS, by = intersect(colnames(FACS), colnames(ALL)), keep)
 
-#select only the challenge /dpi = 8 mice
+
+ALL2 <- unique(ALL2)
+
+3017 - 2994
+
+
+ALL_select <- ALL2 %>% select(colnames(ALL))
+setdiff(ALL, ALL_select)
+
+to_FACS <- FACS %>% left_join(ALL, by = intersect(colnames(FACS), colnames(ALL))) 
+to_FACS <- unique(to_FACS)
+
+setdiff(ALL_select, ALL)
+
+
+2994 + 33
+FACS$dpi
+
+ALL2 <- unique(ALL2)
+
+ALL_compare <- ALL2 %>% select(c(colnames(ALL)))
+intersect(colnames(FACS), colnames(ALL))
+ALL_FACS <- FACS %>% full_join(ALL, by = c("EH_ID", "labels", "experiment"))
+ALL_FACS <- unique(ALL_FACS)
+
+ALL2 <- ALL %>% full_join(ALL_FACS, by = intersect(colnames(FACS), colnames(ALL)))
+ALL2 <- unique(ALL2)
+
+3017 - 2994 #mice in the new vs mice in the old ALL file = 23
+3049 - 2994
+length(unique(FACS$EH_ID)) #85
+sum(duplicated(FACS$EH_ID)) #33
+85 + 33 * 2 #151
+2994 + 33
+anti_all <- ALL2 %>% anti_join(ALL, by = intersect(colnames(FACS), colnames(ALL)))
+setdiff(ALL, ALL_compare)
+
+library(visdat)
+dim(ALL2)
+ALL2 <- unique(FACS %>% full_join(ALL, by = intersect(colnames(FACS), colnames(ALL))))
+anti <- ALL2 %>% anti_join(ALL)
+intersect(colnames(FACS), colnames(ALL))
+
+ALL2 <- unique(ALL2)
+intersect(colnames(FACS), colnames(ALL))
+
+2994 + 33
+3066 - 3027
+ALL3 <- join_to_ALL(ALL2)
+
+vis_miss(ALL3, cluster = FALSE, sort_miss = FALSE, show_perc = TRUE,
+         show_perc_col = TRUE, large_data_size = 9e+05,
+         warn_large_data = TRUE)
+
+#select only the challenge /dpi = 8 micFe
 #ALL_selection <- ALL %>%
  #   filter(dpi == 8, infection == "challenge")
 #ALL_selection <- unique(ALL_selection) %>%
@@ -308,7 +376,7 @@ FACS <- FACS %>% mutate(infection = "challenge")
 
 #ALL_right <- ALL_selection %>% 
  #   right_join(unique(FACS), by = c("EH_ID", "experiment"))
-#ALL2 <- join_to_ALL(ALL_right)
+
 #comparedf(ALL2, ALL)
 #anti_all <- ALL2 %>% semi_join(ALL, by = NULL)      
 
