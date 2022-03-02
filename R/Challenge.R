@@ -323,7 +323,7 @@ duplicated(FACS$EH_ID)
 
 FACS$Position[is.na(FACS$Position)] = "not_mentioned"
 
-ALL2 <- join_to_ALL(FACS)
+ALL <- join_to_ALL(FACS)
 
 my_summary_data1 <- FACS %>%
     dplyr::group_by(EH_ID) %>%
@@ -389,9 +389,9 @@ intersect(colnames(FACS), colnames(ALL))
 3066 - 3027
 ALL3 <- join_to_ALL(ALL2)
 
-vis_miss(ALL3, cluster = FALSE, sort_miss = FALSE, show_perc = TRUE,
-         show_perc_col = TRUE, large_data_size = 9e+05,
-         warn_large_data = TRUE)
+#vis_miss(ALL3, cluster = FALSE, sort_miss = FALSE, show_perc = TRUE,
+ #        show_perc_col = TRUE, large_data_size = 9e+05,
+  #       warn_large_data = TRUE)
 
 #select only the challenge /dpi = 8 micFe
 #ALL_selection <- ALL %>%
