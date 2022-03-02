@@ -324,14 +324,12 @@ duplicated(FACS$EH_ID)
 FACS$Position[is.na(FACS$Position)] = "not_mentioned"
 
 ALL2 <- join_to_ALL(FACS)
-library(dplyr)
 
-
-my_summary_data <- FACS %>%
+my_summary_data1 <- FACS %>%
     dplyr::group_by(EH_ID) %>%
     dplyr::summarise(Count = n())
 
-my_summary_data <- my_summary_data %>%
+my_summary_data2 <- my_summary_data %>%
     dplyr::group_by(Count) %>%
     dplyr::summarise(Count2 = n())
 
@@ -343,7 +341,7 @@ my_summary_data <- my_summary_data %>%
 
 
 2994 + 73 + 73
-ALL2 <- join_to_ALL(FACS)
+ALL <- join_to_ALL(FACS)
 3140 - 2994
 146 -73
 
