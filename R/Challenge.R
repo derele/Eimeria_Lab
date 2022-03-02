@@ -426,5 +426,5 @@ ALL3 <- join_to_ALL(ALL2)
 #colnames(ALL)
 #intersect(colnames(ALL), colnames(FACS))
 
-write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
+write.csv(ALL, "data_products/Challenge1_infections.csv", row.names=FALSE)
 
