@@ -208,12 +208,10 @@ ALL_sum_max_dpi <- ALL_sum_max_dpi %>%
                ))
 
 # remove the now redundant columns
-ALL_sum_max_dpi <- ALL_sum_max_dpi %>% select(-c(dpi_8, dpi_11))
+ALL_sum_max_dpi <- ALL_sum_max_dpi %>% dplyr::select(-c(dpi_8, dpi_11))
 
 #add the new column to ALL
 ALL <- ALL %>% left_join(ALL_sum_max_dpi, by = intersect(colnames(ALL), colnames(ALL_sum_max_dpi)))
-
-
 
 #now join the Intensity file to the summarized ALL_sum_max_dpi
 Intensity <- ALL_sum_max_dpi %>%
@@ -225,7 +223,7 @@ Intensity <- ALL_sum_max_dpi %>%
                )) 
 
 Intensity <- Intensity %>%
-    select(EH_ID, experiment, death, Eim_MC, delta, infection)
+    dplyr::select(EH_ID, experiment, death, Eim_MC, delta, infection)
 
 #Now join the Intensity to the ALL file, while taking account of the death variable
 ALL <- join_to_ALL(Intensity)
@@ -294,29 +292,71 @@ F <- OV[OV$Experiment %in% ChallengeEx, "FACS"]
 
 F <- lapply(F[c(1,2,4)], read.csv)
 F <- list(F[[1]], F[[2]], F[[3]])
-F[[1]] <- F[[1]] %>% mutate(infection = "challenge") #P4
-F[[2]] <- F[[2]] %>% mutate(infection = "challenge") #E57
-F[[3]] #E11
+#F[[1]] <- F[[1]] %>% mutate(infection = "challenge") #P4
+#F[[2]] <- F[[2]] %>% mutate(infection = "challenge") #E57
+F[[3]] <- F[[3]] %>% dplyr::select(-c("X", "weight", "weight_dpi0", "relative_weight", "feces_weight", "infection", "labels")) #E11
+F[[3]] <- unique(F[[3]])
+F_E11 <- F[[3]]
 
+#merge the different facs files together
 FACS <- Reduce(bind_rows, F)
 
+#rename the opg counts to opg_o = opg counts old (can compare it alter to see if they are the same with the all File)
 FACS <- FACS %>% dplyr::rename(OPG_O = OPG)
 
 ## Corrrect wrong IDs
 FACS$EH_ID <- gsub("LM_", "LM", FACS$EH_ID)
 names(FACS) <- gsub(" ", "_", names(FACS))
 
+#keep only the unique mice
 FACS <- unique(FACS)
 
-FACS <- FACS %>% select(-c("delta", "IFNy_CEWE", "CXCR3",
-                           "IRG6", "IL.12", "labels", "X",
-                           "batch", "weight", "weight_dpi0", "relative_weight", "feces_weight")) 
+
+#remove unecessary columns from the raw data. All the unecessary columns with some NAs will mess 
+#my next merges
+FACS <- FACS %>% dplyr::select(-c("labels", "delta", "IFNy_CEWE", "CXCR3",
+                           "IRG6", "IL.12")) 
 
 FACS <- unique(FACS)
-duplicated(FACS)
 
+#I assume all the mice in the facs data are in the challenge infection! 
+#THis could potentially solve my problems with merging
+FACS <- FACS %>% dplyr::mutate(infection = "challenge")
+
+#how many are duplicated?
 length(unique(FACS$EH_ID)) #85
-sum(duplicated(FACS$EH_ID)) #73
+sum(duplicated(FACS$EH_ID)) #33
+
+#I am expecting the merge to ALL to give me 
+2994 + 33 # = 3027 observations
+
+#which columns are the same and which are the different ones? 
+setdiff(colnames(ALL), colnames(FACS))
+ALL2 <- merge(ALL, FACS, all=TRUE, all.y=TRUE, by= intersect(colnames(ALL), colnames(FACS)))
+
+ALL2 <- ALL %>% full_join(unique(FACS), by = intersect(colnames(ALL), colnames(FACS)), copy = FALSE, keep = TRUE)#but it gives me 3099 observations
+ALL2 <- unique(ALL2) #this gives me 3017 obsrevations
+?full_join
+ALL2 <- ALL2 %>% dplyr:: select(colnames(ALL))
+setdiff(ALL2, ALL)
+
+FACS2 <- FACS %>% left_join(ALL, by = intersect(colnames(ALL), colnames(FACS)))
+FACS2 <- unique(FACS2)
+
+3017 - 2994 
+
+#where did the 10 mice go?
+
+#let's make some summaries of our data
+
+my_summary_data1 <- FACS %>%
+  dplyr::group_by(EH_ID) %>%
+  dplyr::summarise(Count = n())
+
+my_summary_data2 <- my_summary_data1 %>%
+  dplyr::group_by(Count) %>%
+  dplyr::summarise(Count2 = n())
+
 
 unique(FACS$EH_ID)
 duplicated(FACS$EH_ID)
@@ -369,8 +409,8 @@ ALL2 <- unique(ALL2)
 
 3017 - 2994 #mice in the new vs mice in the old ALL file = 23
 3049 - 2994
-length(unique(FACS$EH_ID)) #85
-sum(duplicated(FACS$EH_ID)) #33
+  length(unique(FACS$EH_ID)) #85
+  sum(duplicated(FACS$EH_ID)) #33
 85 + 33 * 2 #151
 2994 + 33
 anti_all <- ALL2 %>% anti_join(ALL, by = intersect(colnames(FACS), colnames(ALL)))
