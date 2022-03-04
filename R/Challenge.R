@@ -284,6 +284,8 @@ Gene_Expression$EH_ID <- gsub("LM_", "LM", Gene_Expression$EH_ID)
 #join to the ALL file
 ALL <- join_to_ALL(Gene_Expression)
 
+ALL <- unique(ALL)
+
 #What's next? 
 #FACS!
 
@@ -311,7 +313,6 @@ names(FACS) <- gsub(" ", "_", names(FACS))
 #keep only the unique mice
 FACS <- unique(FACS)
 
-
 #remove unecessary columns from the raw data. All the unecessary columns with some NAs will mess 
 #my next merges
 FACS <- FACS %>% dplyr::select(-c("labels", "delta", "IFNy_CEWE", "CXCR3",
@@ -327,144 +328,32 @@ FACS <- FACS %>% dplyr::mutate(infection = "challenge")
 length(unique(FACS$EH_ID)) #85
 sum(duplicated(FACS$EH_ID)) #33
 
-#I am expecting the merge to ALL to give me 
-2994 + 33 # = 3027 observations
-
-#which columns are the same and which are the different ones? 
-setdiff(colnames(ALL), colnames(FACS))
-ALL2 <- merge(ALL, FACS, all=TRUE, all.y=TRUE, by= intersect(colnames(ALL), colnames(FACS)))
-
-ALL2 <- ALL %>% full_join(unique(FACS), by = intersect(colnames(ALL), colnames(FACS)), copy = FALSE, keep = TRUE)#but it gives me 3099 observations
-ALL2 <- unique(ALL2) #this gives me 3017 obsrevations
-?full_join
-ALL2 <- ALL2 %>% dplyr:: select(colnames(ALL))
-setdiff(ALL2, ALL)
-
-FACS2 <- FACS %>% left_join(ALL, by = intersect(colnames(ALL), colnames(FACS)))
-FACS2 <- unique(FACS2)
-
-3017 - 2994 
-
-#where did the 10 mice go?
+#How many observations do I expect? Amount of mice + one time the duplicated ones
+2951 + 33 # = 2984 observations
 
 #let's make some summaries of our data
-
-my_summary_data1 <- FACS %>%
+my_summary_data <- FACS %>%
   dplyr::group_by(EH_ID) %>%
   dplyr::summarise(Count = n())
 
-my_summary_data2 <- my_summary_data1 %>%
+my_summary_data <- my_summary_data %>%
   dplyr::group_by(Count) %>%
   dplyr::summarise(Count2 = n())
 
-
-unique(FACS$EH_ID)
-duplicated(FACS$EH_ID)
-
-FACS$Position[is.na(FACS$Position)] = "not_mentioned"
-
-ALL <- join_to_ALL(FACS)
-
-my_summary_data1 <- FACS %>%
-    dplyr::group_by(EH_ID) %>%
-    dplyr::summarise(Count = n())
-
-my_summary_data2 <- my_summary_data %>%
-    dplyr::group_by(Count) %>%
-    dplyr::summarise(Count2 = n())
+#indeed we have 33 duplicates of the EH_ID. This is to be expected, as for some mice 
+#we had replicates, as we measured from two positions the Immune measures
 
 
-#52 * 1, 2 * 13, 4 * 20
-2*13 + 4 * 20
+#how many columns do I expect?
+length(colnames(ALL)) #ALL has 28 columns
+length(colnames(FACS)) #FACS has 24 columns
+length(intersect(colnames(ALL), colnames(FACS))) #they have 4 common columns
 
+28 + 24 - 4 #I expect 48 columns in my new merged file
 
+ALL <- ALL %>% left_join(unique(FACS), by = intersect(colnames(ALL), colnames(FACS)), copy = FALSE)
 
-
-2994 + 73 + 73
-ALL <- join_to_ALL(FACS)
-3140 - 2994
-146 -73
-
-ALL_select <- ALL2 %>% select(colnames(ALL))
-setdiff(ALL, ALL_select)
-
-to_FACS <- FACS %>% left_join(ALL, by = intersect(colnames(FACS), colnames(ALL))) 
-to_FACS <- unique(to_FACS)
-
-setdiff(ALL_select, ALL)
-
-
-2994 + 33
-FACS$dpi
-
-ALL2 <- unique(ALL2)
-
-ALL_compare <- ALL2 %>% select(c(colnames(ALL)))
-intersect(colnames(FACS), colnames(ALL))
-ALL_FACS <- FACS %>% full_join(ALL, by = c("EH_ID", "labels", "experiment"))
-ALL_FACS <- unique(ALL_FACS)
-
-ALL2 <- ALL %>% full_join(ALL_FACS, by = intersect(colnames(FACS), colnames(ALL)))
-ALL2 <- unique(ALL2)
-
-3017 - 2994 #mice in the new vs mice in the old ALL file = 23
-3049 - 2994
-  length(unique(FACS$EH_ID)) #85
-  sum(duplicated(FACS$EH_ID)) #33
-85 + 33 * 2 #151
-2994 + 33
-anti_all <- ALL2 %>% anti_join(ALL, by = intersect(colnames(FACS), colnames(ALL)))
-setdiff(ALL, ALL_compare)
-
-library(visdat)
-dim(ALL2)
-ALL2 <- unique(FACS %>% full_join(ALL, by = intersect(colnames(FACS), colnames(ALL))))
-anti <- ALL2 %>% anti_join(ALL)
-intersect(colnames(FACS), colnames(ALL))
-
-ALL2 <- unique(ALL2)
-intersect(colnames(FACS), colnames(ALL))
-
-2994 + 33
-3066 - 3027
-ALL3 <- join_to_ALL(ALL2)
-
-#vis_miss(ALL3, cluster = FALSE, sort_miss = FALSE, show_perc = TRUE,
- #        show_perc_col = TRUE, large_data_size = 9e+05,
-  #       warn_large_data = TRUE)
-
-#select only the challenge /dpi = 8 micFe
-#ALL_selection <- ALL %>%
- #   filter(dpi == 8, infection == "challenge")
-#ALL_selection <- unique(ALL_selection) %>%
- #   select(-c(infection, dpi))
-
-
-#ALL_right <- ALL_selection %>% 
- #   right_join(unique(FACS), by = c("EH_ID", "experiment"))
-
-#comparedf(ALL2, ALL)
-#anti_all <- ALL2 %>% semi_join(ALL, by = NULL)      
-
-#ALL3 <- ALL2 %>%
- #   select(intersect(colnames(ALL), colnames(ALL2)))
-#setdiff(ALL3, ALL)
-#intersect(ALL, ALL3)
-
-
-
-
-#more mice in ALL2 as in ALL
-#so we have 3066 mice in ALL2 and only 2994 mice in ALL
-#anti_all <- FACS %>% anti_join(ALL, by = "EH_ID")
-#this returns 0 observations, so all the mice in FACS are included in ALL
-#how many na do we have in the position column, I smell something fishy there
-#sum(is.na(FACS$Position))
-#length(unique(FACS$EH_ID))
-#length(unique(FACS$EH_ID)) == nrow(FACS)
-#sum(duplicated(FACS$EH_ID))
-#colnames(ALL)
-#intersect(colnames(ALL), colnames(FACS))
+length(colnames(ALL)) #indeed 48!
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
