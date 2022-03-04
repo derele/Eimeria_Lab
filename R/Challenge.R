@@ -24,14 +24,11 @@ mes_elisa <- "IFNy_MES"
 
 gene_expr <- c("CXCR3", "IRG6", "IL.12")
 
-CellCount.cols <- c("Position", "CD4", "Treg", "Div_Treg", "Treg17", "Th1", "Div_Th1",
-                    "Th17", "Div_Th17", "Act_CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8",
-                    "Treg_prop", "IL17A_CD4")   
+CellCount.cols <- c("Position", "CD4", "Treg", "Div_Treg", "Treg17", "Th1", "Div_Th1", "Th17", 
+                    "Div_Th17", "CD8", "Act_CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8",  
+                    "Treg_prop", "IL17A_CD4", "batch")  
 
-what_is_this <- "IFNy_FEC" 
-
-and_this <- "Caecum"             
-   
+IFNy_faeces <- c("IFNy_FEC", "Caecum")
 
 #reading the overview table. In each row there is a link to the raw data for each experiment
 OV <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/Eimeria_Lab_overview.csv")
@@ -157,14 +154,11 @@ join_to_ALL <- function(x) {
     left_join(ALL, unique(x), by = c(intersect(colnames(x), colnames(ALL)))) 
 }
 
-
 #download and append the infection intensity tables (qPCR)
 I <- lapply(OV[OV$Experiment%in%ChallengeEx, "infection_intensity"], read.csv)
 
-
 #now combine the infection intensity tables
 Intensity <- Reduce(rbind, I)
-
 
 ## Corrrect wrong IDs
 Intensity$EH_ID <- gsub("LM_", "LM", Intensity$EH_ID)
@@ -177,11 +171,17 @@ Intensity$Eim_MC <- gsub("neg", FALSE, Intensity$Eim_MC)
 Intensity$Eim_MC <- as.logical(Intensity$Eim_MC)
 
 #Combined all of the qPCR data for the challenge infections in "Intensity"
-#Questions on how to go on: 
-#to join this data to the "ALL" file I need to match for EH_ID, Experiment and dpi
 
-##summarize for the maximum dpi for the challenge infections
-#detach(package:plyr)
+#We want to create the variable death. The variable death will show when the mice died 
+#To be expected: If the mouse was sacrificed during the primary infection 
+#the tag will be prim_11 (dpi = 11)
+#If in the other case the mouse was sacrificed on day 8 as planned in the challenge infections
+#it will get the tag chal_8
+#In this way we will know to which observation the experimental data should match
+#according to the day the mice was sacrificed
+
+
+#summarize for the maximum dpi for the challenge infections
 ALL_sum_max_dpi <- ALL %>%
     dplyr::group_by(EH_ID, infection, experiment) %>%
     dplyr::summarize(max(dpi)) 
@@ -189,17 +189,12 @@ ALL_sum_max_dpi <- ALL %>%
 
 ALL_sum_max_dpi <- unique(ALL_sum_max_dpi)
 
-
 ##turn the table into wide format,  to see if both max dpi exists for challenge and primary
 ALL_sum_max_dpi <- ALL_sum_max_dpi %>%
     pivot_wider(names_from = 'max(dpi)', values_from = infection) %>%
     dplyr::rename(dpi_8 = '8', dpi_11 = '11')
 
-# Make a death column to show when the mice for sacrificed
-#if it is chal_8, then the mouse was sacrificed during the secondary challenge infections
-# on day 8
-#if it is chal_11, then the mouse was sacrificed during the primary infections
-# on day 11
+#Now we can create the death column signifiyng when the mouse died
 ALL_sum_max_dpi <- ALL_sum_max_dpi %>%
     dplyr::mutate(death = 
                case_when(
@@ -225,7 +220,7 @@ Intensity <- ALL_sum_max_dpi %>%
 Intensity <- Intensity %>%
     dplyr::select(EH_ID, experiment, death, Eim_MC, delta, infection)
 
-#Now join the Intensity to the ALL file, while taking account of the death variable
+#Join the Intensity to the ALL file, while taking account of the death variable
 ALL <- join_to_ALL(Intensity)
 
 ### Step: Join the CEWE_ELISA to our challenge infections file
@@ -233,17 +228,17 @@ ALL <- join_to_ALL(Intensity)
 #lapply: applies a function to every element of the list
 C <- OV[OV$Experiment %in% ChallengeEx, "CEWE_ELISA"] 
 
-#I have to apply the read.csv to vector elemnts wich contain the raw data, therefore
-#I have to first select from the OV file the lines with actual links to the raw files
+#I have to apply the read.csv to vector elements which contain the raw data, therefore
+#I have to first select from the OV file the lines with actual link to the raw files
 C <- lapply(C[c(1,2,5)], read.csv)
 
 CEWE_ELISA <- Reduce(rbind, C)
 
-#next step clean the Mouse ID
+#Next step clean the Mouse ID
 ## IDs sometimes with "_" sometimes without
 CEWE_ELISA$EH_ID <- gsub("LM_", "LM", CEWE_ELISA$EH_ID)
 
-#change IFNy to IFNy_cewe to show origin of the measurement
+#Change IFNy to IFNy_cewe to show origin of the measurement
 CEWE_ELISA <- CEWE_ELISA %>% dplyr::rename(IFNy_CEWE = IFNy) 
 
 #merge with ALL
@@ -252,12 +247,11 @@ ALL <- join_to_ALL(CEWE_ELISA)
 ##Joining data on ELISA from the mesenterial lymphnodes
 #download and append the data from the ELISA's - Mesentrial Lymphnodes
 #step by step, as there are empty spaces and this won't work
-#C <- OV[OV$Experiment%in%ChallengeEx, "CEWE_ELISA"] 
 M <- OV[OV$Experiment%in%ChallengeEx, "MES_ELISA"]
 
-#I have to apply the read.csv to vector elemnts wich contain the raw data, therefore
+#I have to apply the read.csv to vector elements which contain the raw data, therefore
 #I have to first select from the OV file the lines with actual links to the raw files
-#as there is only one row line with row data, lapply is not required 
+#as there is only one row line with row data, lapply is not required here
 MES_ELISA <- read.csv(M[[1]])
 
 ## Corrrect wrong IDs
@@ -284,6 +278,7 @@ Gene_Expression$EH_ID <- gsub("LM_", "LM", Gene_Expression$EH_ID)
 #join to the ALL file
 ALL <- join_to_ALL(Gene_Expression)
 
+#remove the duplicates from the "ALL" file
 ALL <- unique(ALL)
 
 #What's next? 
@@ -298,7 +293,6 @@ F <- list(F[[1]], F[[2]], F[[3]])
 #F[[2]] <- F[[2]] %>% mutate(infection = "challenge") #E57
 F[[3]] <- F[[3]] %>% dplyr::select(-c("X", "weight", "weight_dpi0", "relative_weight", "feces_weight", "infection", "labels")) #E11
 F[[3]] <- unique(F[[3]])
-F_E11 <- F[[3]]
 
 #merge the different facs files together
 FACS <- Reduce(bind_rows, F)
