@@ -54,6 +54,7 @@ allTab[[3]]$EH_ID[!allTab[[3]]$EH_ID%in%allTab[[1]]$EH_ID]
 ## hah, they just have some whitspces around them!!!
 ## We fix it and then do the merge again!!
 allTab[[3]]$EH_ID <- gsub(" *", "", allTab[[3]]$EH_ID)
+allTab[[3]]$primary_infection <- gsub(" *", "", allTab[[3]]$primary_infection)
 
 AT <- Reduce(merge, allTab)
 
@@ -72,10 +73,12 @@ AT <- AT[order(AT$EH_ID, AT$dpi), ]
 ## working with (first)
 unique(AT[AT$primary_infection%in%"E88", "EH_ID"])
 
+nrow(AT[AT$primary_infection%in%"E88", ])
 ## here is a function to find a particular sample
 
 gimmeSample <- function (x) { 
-    AT[grepl(x, AT$labels), c("EH_ID", "labels", "dpi", "infection")]
+    AT[grepl(x, AT$labels), c("EH_ID", "labels", "dpi",
+                              "infection", "primary_infection")]
 }
 
 gimmeSample("ACU")
