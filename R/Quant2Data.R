@@ -20,9 +20,45 @@ allTab <- lapply(files, read.csv)
 allTab[[1]]$experiment <- gsub("E5|E7", "E57", allTab[[1]]$experiment)
 allTab[[3]]$experiment <- gsub("E5|E7", "E57", allTab[[3]]$experiment)
 
-
 ## ## merge those files (the lazy way)
 AT <- Reduce(merge, allTab)
+
+lapply(allTab, nrow)
+nrow(AT)
+## -> Yes the merge loses exactly 300 samples!
+
+### Which samples are those? My guess is they have different labels
+### (or mouse IDs) in the shedding and weight data. 
+setdiff(allTab[[1]]$labels, allTab[[2]]$labels)
+## -> no this is not the case!
+
+setdiff(allTab[[1]]$EH_ID, allTab[[3]]$EH_ID)
+## oh, wow 25 mouse IDs don't overlap between weight data and
+## experimental design
+
+table(allTab[[1]]$EH_ID%in%allTab[[3]]$EH_ID)
+## 300 samples (a number exactly matching the missing samples) have a
+## mouse ID that's not in the design
+
+## What are those?
+unique(allTab[[1]]$EH_ID[!allTab[[1]]$EH_ID%in%allTab[[3]]$EH_ID])
+
+table(allTab[[3]]$EH_ID%in%allTab[[1]]$EH_ID)
+## the design has 27 mouse IDs that are not in the weight
+
+## What are those?
+allTab[[3]]$EH_ID[!allTab[[3]]$EH_ID%in%allTab[[1]]$EH_ID]
+
+## hah, they just have some whitspces around them!!!
+## We fix it and then do the merge again!!
+allTab[[3]]$EH_ID <- gsub(" *", "", allTab[[3]]$EH_ID)
+
+AT <- Reduce(merge, allTab)
+
+lapply(allTab, nrow)
+nrow(AT)
+## fixed, sorry for missing this! I guess this created a lot of
+## additional work...
 
 ## limit to ony primary infection
 AT <- AT[AT$infection%in%"primary", ]
