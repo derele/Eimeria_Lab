@@ -30,9 +30,11 @@ nrow(AT)
 ### Which samples are those? My guess is they have different labels
 ### (or mouse IDs) in the shedding and weight data. 
 setdiff(allTab[[1]]$labels, allTab[[2]]$labels)
+setdiff(allTab[[2]]$labels, allTab[[1]]$labels)
 ## -> no this is not the case!
 
 setdiff(allTab[[1]]$EH_ID, allTab[[3]]$EH_ID)
+setdiff(allTab[[3]]$EH_ID, allTab[[1]]$EH_ID)
 ## oh, wow 25 mouse IDs don't overlap between weight data and
 ## experimental design
 
