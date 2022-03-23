@@ -83,5 +83,13 @@ gimmeSample <- function (x) {
 
 gimmeSample("ACU")
 
+sapply(c("ACU", "MOY", "COW"), gimmeSample)
+
 ## and we write a new data product
 write.csv(AT, "data_products/Quant2_E57.csv")
+
+
+### expand this: 
+selected_mice <- c("LM0227", "LM0188")
+
+AT[AT$EH_ID%in%selected_mice, 1:9]
