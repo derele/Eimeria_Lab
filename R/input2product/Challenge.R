@@ -195,6 +195,7 @@ ALL_sum_max_dpi <- ALL_sum_max_dpi %>%
     dplyr::rename(dpi_8 = '8', dpi_11 = '11')
 
 #Now we can create the death column signifiyng when the mouse died
+#instead of using a string, paste from the values of the other columns 
 ALL_sum_max_dpi <- ALL_sum_max_dpi %>%
     dplyr::mutate(death = 
                case_when(
@@ -348,6 +349,19 @@ length(intersect(colnames(ALL), colnames(FACS))) #they have 4 common columns
 ALL <- ALL %>% left_join(unique(FACS), by = intersect(colnames(ALL), colnames(FACS)), copy = FALSE)
 
 length(colnames(ALL)) #indeed 48!
+
+glimpse(ALL)
+
+#check the primary and challenge infection columns
+colnames(ALL)
+
+#check the unique values of each column
+unique(ALL$primary_infection)
+#"E88"   "E64"   "Eflab" "E139"  "UNI"  
+#check if Eflab ise E88
+
+#Remove column OPG_O with not checked old oocyst counts
+
 
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
