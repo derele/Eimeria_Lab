@@ -1,0 +1,69 @@
+---
+title: "Heat_Map_Challenge"
+author: "Fay"
+date: "28/03/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+```
+## PHeatmap out of the data of challenge infections
+
+These are my first steps to visualize the data out of the compiled challenge 
+infections.
+
+I have been following the tutorial: https://towardsdatascience.com/pheatmap-draws-pretty-heatmaps-483dab9a3cc
+I will start with loading the necessary libraries
+```{r, recho=FALSE}
+library(pheatmap)
+library(tidyverse)
+library(matrixStats)
+library(tidyr)
+```
+
+### Import the data:
+```{r, echo=FALSE}
+Challenge <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data_products/Challenge_infections.csv")
+```
+
+#Divide the data into groups
+```{r}
+df <- Challenge %>% 
+  select(c("EH_ID", "infection", "infection_history", "dpi", "CD4", "Treg", "Div_Treg", "Treg17", "Th1", "Div_Th1", "Th17", 
+                    "Div_Th17", "CD8", "Act_CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8",  
+                    "Treg_prop", "IL17A_CD4"))
+#remove nas from rows
+df <- df[complete.cases(df), ]  
+
+df <- df %>% select(-c(dpi, infection))
+
+#change the format to longer
+df2 <- df %>% pivot_longer()
+colnames(Challenge)
+```
+
+```{r}
+Challenge_num <- Challenge %>% dplyr::select(where(is.numeric))
+
+#Which columns do we have now?
+colnames(Challenge_num)
+
+#remove the unecessary columns
+Challenge_num <- Challenge_num %>% dplyr::select(-c(dpi, dilution, OPG_O))
+
+#here is a matrix of the numeric values of our compiled data
+Challenge_num <- as.matrix(Challenge_num)
+```
+
+```{r}
+pheatmap(Challenge_num, main = "pheatmap default")
+```
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r, echo=FALSE}
+Challenge <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data_products/Challenge_infections.csv")
+```
