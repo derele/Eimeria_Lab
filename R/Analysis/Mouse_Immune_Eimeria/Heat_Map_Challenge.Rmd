@@ -34,14 +34,14 @@ Challenge <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/mast
 ### Clean and prepare the data:
 ```{r, echo=FALSE}
 df <- Challenge %>% 
-  select(c("EH_ID", "infection", "infection_history", "dpi", "CD4", "Treg", "Div_Treg", "Treg17", "Th1", "Div_Th1", "Th17", 
+  select(c("EH_ID", "infection", "infection_history", "experiment","dpi", "CD4", "Treg", "Div_Treg", "Treg17", "Th1", "Div_Th1", "Th17", 
                     "Div_Th17", "CD8", "Act_CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8",  
                     "Treg_prop", "IL17A_CD4","CXCR3", "IRG6", "IL.12"))
 #remove nas from rows
 df <- df[complete.cases(df), ]  
 
 #drop the unecessary columns
-df <- df %>% select(-c(dpi, infection))
+df <- df %>% select(-c(dpi, infection, experiment))
 
 #turn the data frame into a matrix 
 ## and transpose it. We want to have each cell type as a row name 
@@ -72,13 +72,17 @@ heatmap_data[] <- lapply(heatmap_data, function(x) as.numeric(as.character(x)))
 heatmap_data %>% 
   pheatmap()
 
-#make a dataframe out of the infection history 
+#make a matrix out of the infection history 
 inf_hist <- as.matrix(df[1, ])
 
+#transpose the matrix so that the values of the infection history 
+#become row names
 inf_hist <- as.data.frame(t(inf_hist))
 
+#now assign the rownames to be the same as the column names
 rownames(inf_hist) <- colnames(df)
 
+#create the heatmap with the infection history as the annotation
 heatmap_data %>% 
   pheatmap(annotation_col = inf_hist)
 
