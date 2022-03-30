@@ -34,30 +34,42 @@ Challenge <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/mast
 ### Clean and prepare the data:
 ```{r, echo=FALSE}
 df <- Challenge %>% 
-  select(c("EH_ID", "infection", "infection_history", "experiment","dpi", "CD4", "Treg", "Div_Treg", "Treg17", "Th1", "Div_Th1", "Th17", 
-                    "Div_Th17", "CD8", "Act_CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8",  
-                    "Treg_prop", "IL17A_CD4","CXCR3", "IRG6", "IL.12"))
-#remove nas from rows
-df <- df[complete.cases(df), ]  
+  select(c("EH_ID", "primary_infection", "Position", "challenge_infection", "infection", "infection_history", "experiment","dpi", "CD4", "Treg", "Div_Treg", "Treg17", "Th1", "Div_Th1", "Th17", 
+                    "Div_Th17", "CD8", "Act_CD8", "Div_Act_CD8", "IFNy_CD4", "IFNy_CD8", "Treg_prop", "IL17A_CD4", "mouse_strain", "relative_weight"))
+
+#Replace the na in position with mln
+df$Position[is.na(df$Position)] <- "mLN"
+
+#select the measurements from the mesenterial lymphnodes
+df_mln <- df %>% filter(Position == "mLN") %>%
+  select(-c("Treg_prop", "IL17A_CD4")) #remove columns with NAs
+
+#remove the rows that only contain nas
+df_mln <- df_mln[complete.cases(df_mln), ]  
+
+#select the columns necessary for the annotation columns
+annotation_df <- df_mln %>% select(c("EH_ID", "primary_infection", 
+                                     "challenge_infection", "infection_history",
+                                     "mouse_strain", "relative_weight"))
 
 #drop the unecessary columns
-df <- df %>% select(-c(dpi, infection, experiment))
+df_mln <- df_mln %>% select(-c(primary_infection, challenge_infection,dpi, infection, experiment, Position, mouse_strain, relative_weight))
 
 #turn the data frame into a matrix 
 ## and transpose it. We want to have each cell type as a row name 
-df <- t(as.matrix(df))
+df_mln <- t(as.matrix(df_mln))
 
 #switch the matrix back to a data frame format
-df <- as.data.frame(df)
+df_mln <- as.data.frame(df_mln)
 
 #turn the first row into column names
-df %>%
-  row_to_names(row_number = 1) -> df
+df_mln %>%
+  row_to_names(row_number = 1) -> df_mln
 
 
 #Now further prepare the data frame for plotting by removing the first row
 ## and convert the column to row names with the cells 
-df[-1, ] -> heatmap_data
+df_mln[-1, ] -> heatmap_data
 
 #How do our data look like?
 glimpse(heatmap_data) #alll columns appear to be numeric
@@ -67,117 +79,25 @@ heatmap_data[] <- lapply(heatmap_data, function(x) as.numeric(as.character(x)))
 
 ```
 
-### Apply the pheatmap function
+### Prepare the annotation columns for the heatmap
 ```{r}
-heatmap_data %>% 
-  pheatmap()
+annotation_df
+rownames(annotation_df) <- annotation_df$EH_ID
+#remove the extra column
+annotation_df <- annotation_df %>% select(-EH_ID, )
+rownames(annotation_df) <- colnames(df_mln)
 
-#make a matrix out of the infection history 
-inf_hist <- as.matrix(df[1, ])
-
-#transpose the matrix so that the values of the infection history 
-#become row names
-inf_hist <- as.data.frame(t(inf_hist))
-
-#now assign the rownames to be the same as the column names
-rownames(inf_hist) <- colnames(df)
-
+```
+### Heatmap heat heat map
+```{r}
 #create the heatmap with the infection history as the annotation
+
+png("heatmap_facs.png", width = 12, height = 12)
 heatmap_data %>% 
-  pheatmap(annotation_col = inf_hist)
-
-```
-### Add another level of infection history for each sample
-```{r}
-infection_history <- as.matrix(df[1 , ])
+  pheatmap(annotation_col = annotation_df, scale = "row")
+dev.off()
 
 
-
-data.frame(row.names = colnames(heatmap_data),
-           Infection_history = factor(grepl("Ctrl", colnames(heatmap_data)),
-                                      levels = c(T
 ```
 
 
-## Pheatmap out of the field infections 
-
-
-### Import the data:
-```{r, echo=FALSE}
-Field <- read.csv("https://raw.githubusercontent.com/derele/Mouse_Eimeria_Field/master/data_products/SOTA_Data_Product.csv")
-```
-
-### Clean and prepare the data:
-```{r, echo=FALSE}
-
-basics          <- c("Mouse_ID", "Address", "Sex", "Longitude", 
-                     "Latitude", "Year", "HI", "HI_NLoci")
-
-Gene.Exp.cols   <- c("IFNy", "IL.12", "IRG6", "CXCR3", "IL.6", "GBP2",
-                     "IL.10", "IL.13", "IL.10", "IL.13", "IL1RN",
-                     "CXCR3", "CASP1", "CXCL9", 
-                     "IDO1", "IRGM1", "MPO", "MUC2", "MUC5AC", "MYD88", 
-                     "NCR1", "PRF1", "RETNLB", "SOCS1", "TICAM1", "TNF")
-
-House.Keeping.cols <- c("GAPDH", "PPIB", "B.actin", "B-actin")
-
-CellCount.cols <- c( "Treg", "CD4", "Treg17", "Th1", "Th17", "CD8",
-                     "Act_CD8", "IFNy_CD4", "IL17A_CD4", "IFNy_CD8")
-
-oocyst.cols     <- c("counter", "Feces_Weight", "Date_count", "N_oocysts_sq1",
-                     "N_oocysts_sq2", "N_oocysts_sq3",  "N_oocysts_sq4",
-                     "N_oocysts_sq5", "N_oocysts_sq6", "N_oocysts_sq7",
-                     "N_oocysts_sq8", "mean_neubauer", "PBS_dil_in_mL", 
-                     "OPG", "Ncells")
-
-EqPCR.cols      <- c("delta_ct_ilwe_MminusE", "delta_ct_cewe_MminusE", "MC.Eimeria", "Ct.Eimeria", "Ct.Mus")
-
-Field_gene <- Field %>% 
-  select(c("Mouse_ID", "Address", "Sex", "Longitude", "Latitude", "Year", "HI",
-           "HI_NLoci", "IFNy","CXCR3", "IL.6","IL.10",
-           "IL.13", "IL.10", "IL.13", "IL1RN","CXCR3", "CASP1", "CXCL9", "IDO1",
-           "IRGM1", "MPO", "MUC2", "MUC5AC", "MYD88", "NCR1", "PRF1", "RETNLB",
-           "SOCS1", "TICAM1", "TNF", "OPG"))
-?pheatmap
-#remove nas from rows
-Field_gene[rowSums(is.na(Field_gene %>% select(-OPG))) != ncol(Field_gene), ]
-
-Field_gene <- Field_gene[complete.cases(Field_gene), ]  
-
-#drop the unecessary columns
-df <- df %>% select(-c(dpi, infection))
-
-#turn the data frame into a matrix 
-## and transpose it. We want to have each cell type as a row name 
-df <- t(as.matrix(df))
-
-#switch the matrix back to a data frame format
-df <- as.data.frame(df)
-
-#turn the first row into column names
-df %>%
-  row_to_names(row_number = 1) -> df
-
-#Now further prepare the data frame for plotting by removing the first row
-## and convert the column to row names with the cells 
-df[-1, ] -> heatmap_data
-
-#How do our data look like?
-glimpse(heatmap_data) #alll columns appear to be numeric
-
-#turn the columns to numeric other wise the heatmap function will not work
-heatmap_data[] <- lapply(heatmap_data, function(x) as.numeric(as.character(x)))
-
-```
-
-### Apply the pheatmap function
-```{r}
-heatmap_data %>% 
-  pheatmap()
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-```{r, echo=FALSE}
-Challenge <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data_products/Challenge_infections.csv")
-```
