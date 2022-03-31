@@ -358,7 +358,11 @@ colnames(ALL)
 #check the unique values of each column
 unique(ALL$primary_infection)
 #"E88"   "E64"   "Eflab" "E139"  "UNI"  
-#check if Eflab ise E88
+#check if Eflab ise E88 - checked!
+
+#In column position - replace nas with Mln, as the nas are coming from the 
+#mesenterial lymphnodes
+ALL$Position[is.na(ALL$Position)] <- "mLN"
 
 #Remove column OPG_O with not checked old oocyst counts
 
