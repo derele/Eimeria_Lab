@@ -366,6 +366,6 @@ ALL$Position[is.na(ALL$Position)] <- "mLN"
 
 #Remove column OPG_O with not checked old oocyst counts
 
-
+#check the missing sex in the design
 write.csv(ALL, "data_products/Challenge_infections.csv", row.names=FALSE)
 
