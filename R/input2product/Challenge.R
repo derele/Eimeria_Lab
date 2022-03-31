@@ -447,7 +447,24 @@ IFC_NE <- IFC %>% mutate(Norm =  geometric.mean(IFC$GAPDH, na.rm = TRUE), # buil
                          TNF    =  Norm - TNF)
 
 # Merge to ALL
-ALL <- join_to_ALL(IFC_NE)
+# I have to find out when the mice died to merge to ALL
+Cha_dpi_chal <- ALL %>% filter(infection == "challenge") %>%
+  filter(dpi == "8") 
+
+Cha_dpi_chal <- Cha_dpi_chal %>% left_join(IFC_NE, by = "EH_ID") %>%
+  rename(c("CXCR3.x" = "CXCR3.rtqpcr", "CXCR3.y" = "CXCR3.biomarker"))
+
+Cha_dpi_prim  <- ALL %>% filter(death == "prim_11") %>%
+  filter(dpi == "11")
+
+Cha_dpi_prim <- Cha_dpi_prim %>% left_join(IFC_NE, by = "EH_ID") %>% 
+  rename(c("CXCR3.x" = "CXCR3.rtqpcr", "CXCR3.y" = "CXCR3.biomarker"))
+
+Cha_deat <- rbind(Cha_dpi_prim, Cha_dpi_chal)
+
+
+ALL <- join_to_ALL(Cha_deat)
+
 #Remove column OPG_O with not checked old oocyst counts
 
 #check the missing sex in the design
