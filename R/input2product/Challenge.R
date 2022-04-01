@@ -303,6 +303,117 @@ rm(Cha_dpi_chal)
 #remove the duplicates from the "ALL" file
 ALL <- unique(ALL)
 
+
+
+# Add the gene expression data
+## using part of Finn's code
+#### 2016-2019 (Luke)
+IFC1 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC1.csv")
+IFC2 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC2.csv")
+IFC3 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC3.csv")
+IFC4 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC4.csv")
+IFC5 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC5.csv")
+IFC  <- bind_rows(IFC1, IFC2, IFC3, IFC4, IFC5)
+rm(IFC1)
+rm(IFC2)
+rm(IFC3)
+rm(IFC4)
+rm(IFC5)
+
+# filter out AA
+IFC <- IFC %>% filter(str_starts(EH_ID, "LM"))
+
+
+## remove unsuccessful amplifications 
+## == 999, equivalent to bad quality, should not be used
+## Luke's Version:
+IFC <- subset(IFC, IFC$Value != 999)
+IFC <- IFC %>% dplyr::group_by(EH_ID, Target) %>% 
+  dplyr::summarise(Ct = mean(Value)) 
+IFC <- distinct(IFC)
+
+## separate data using the pivot_wider()
+## turns Gene Expression Markers into individual columns (from Target),
+## values taken (from Ct)
+IFC <- pivot_wider(IFC, names_from = "Target", values_from = "Ct")
+
+## We need to add Variance and n() again - if I add variance before pivoting, 
+# it will lead to numerous lines, because we have numerous variances for the different markers, 
+# same for the n()... either we create a variance variable for EACH marker individually 
+# or we don't include it for the pivoting... 
+
+
+## rename columns that have incorrect column names
+colnames(IFC)[colnames(IFC)%in%"IL6"]   <- "IL.6"
+colnames(IFC)[colnames(IFC)%in%"IL10"]  <- "IL.10"
+colnames(IFC)[colnames(IFC)%in%"IL12A"]  <- "IL.12A"
+colnames(IFC)[colnames(IFC)%in%"IL13"]  <- "IL.13"
+colnames(IFC)[colnames(IFC)%in%"IL17A"]  <- "IL.17A"
+colnames(IFC)[colnames(IFC)%in%"IFNG"]  <- "IFNy"
+
+#### NORMALIZING GENE EXPRESSION WITH HOUSEKEEPING GENES
+# Luke used 2 housekeeping genes for normalization, PPIB and GAPDH
+# in order to normalize for these two, we will take the geometric mean and
+# subtract that number per each individual mouse
+IFC_NE <- IFC %>% mutate(Norm =  geometric.mean(IFC$GAPDH, na.rm = TRUE), # building geometric mean
+                         CASP1 =  Norm - CASP1,
+                         CXCL9 =  Norm - CXCL9,
+                         CXCR3 =  Norm - CXCR3,
+                         IDO1  =  Norm - IDO1,
+                         IFNy  =  Norm - IFNy,
+                         IL.6  =  Norm - IL.6,
+                         IL.10 =  Norm - IL.10,
+                         IL.12A =  Norm - IL.12A,
+                         IL.13  =  Norm - IL.13,
+                         IL.17A =  Norm - IL.17A,
+                         IL1RN =  Norm - IL1RN,
+                         IRGM1 =  Norm - IRGM1,
+                         MPO   =  Norm - MPO,
+                         MUC2  =  Norm - MUC2,
+                         MUC5AC =  Norm - MUC5AC,
+                         MYD88  =  Norm - MYD88,
+                         NCR1   =  Norm - NCR1,
+                         PRF1   =  Norm - PRF1,
+                         RETNLB =  Norm - RETNLB,
+                         SOCS1  =  Norm - SOCS1,
+                         TICAM1 =  Norm - TICAM1,
+                         TNF    =  Norm - TNF)
+
+IFC_NE <- unique(IFC_NE)
+
+# Merge to ALL
+# I have to find out when the mice died to merge to ALL
+Cha_dpi_chal <- ALL %>% filter(infection == "challenge") 
+
+#Check if every mice died on the 8 day
+unique(Cha_dpi_chal$death)
+
+Cha_dpi_chal <- Cha_dpi_chal %>% filter(dpi == "8")
+
+Cha_dpi_chal <- distinct(IFC_NE) %>% left_join(distinct(Cha_dpi_chal), by = c("EH_ID")) 
+
+Cha_dpi_chal <- unique(Cha_dpi_chal)
+
+Cha_dpi_chal <- Cha_dpi_chal %>% drop_na(death)
+
+# I have to find out when the mice died to merge to ALL
+Cha_dpi_prim <- ALL %>% filter(infection == "primary") %>%
+  filter(death == "prim_11")
+
+#Check if every mice died on the 8 day
+unique(Cha_dpi_prim$death)
+
+Cha_dpi_prim <- Cha_dpi_prim %>% 
+  filter(dpi == "11") 
+
+Cha_dpi_prim <- IFC_NE %>% left_join(Cha_dpi_prim, by = "EH_ID") 
+
+Cha_dpi_prim <- Cha_dpi_prim %>% drop_na(death)
+
+Cha_ifc <- rbind(Cha_dpi_prim, Cha_dpi_chal) %>%
+  rename(c("CXCR3.x" = "CXCR3.rtqpcr", "CXCR3.y" = "CXCR3.biomarker"))
+
+ALL <- join_to_ALL(Cha_ifc)
 #What's next? 
 #FACS!
 
@@ -385,104 +496,7 @@ unique(ALL$primary_infection)
 #mesenterial lymphnodes
 ALL$Position[is.na(ALL$Position)] <- "mLN"
 
-# Add the gene expression data
-## using part of Finn's code
-#### 2016-2019 (Luke)
-IFC1 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC1.csv")
-IFC2 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC2.csv")
-IFC3 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC3.csv")
-IFC4 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC4.csv")
-IFC5 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC5.csv")
-IFC  <- bind_rows(IFC1, IFC2, IFC3, IFC4, IFC5)
-rm(IFC1)
-rm(IFC2)
-rm(IFC3)
-rm(IFC4)
-rm(IFC5)
 
-# filter out AA
-IFC <- IFC %>% filter(str_starts(EH_ID, "LM"))
-
-
-## remove unsuccessful amplifications 
-## == 999, equivalent to bad quality, should not be used
-## Luke's Version:
-IFC <- subset(IFC, IFC$Value != 999)
-IFC <- IFC %>% dplyr::group_by(EH_ID, Target) %>% 
-  dplyr::summarise(Ct = mean(Value)) 
-IFC <- distinct(IFC)
-
-## separate data using the pivot_wider()
-## turns Gene Expression Markers into individual columns (from Target),
-## values taken (from Ct)
-IFC <- pivot_wider(IFC, names_from = "Target", values_from = "Ct")
-
-## We need to add Variance and n() again - if I add variance before pivoting, 
-# it will lead to numerous lines, because we have numerous variances for the different markers, 
-# same for the n()... either we create a variance variable for EACH marker individually 
-# or we don't include it for the pivoting... 
-
-
-## rename columns that have incorrect column names
-colnames(IFC)[colnames(IFC)%in%"IL6"]   <- "IL.6"
-colnames(IFC)[colnames(IFC)%in%"IL10"]  <- "IL.10"
-colnames(IFC)[colnames(IFC)%in%"IL12A"]  <- "IL.12A"
-colnames(IFC)[colnames(IFC)%in%"IL13"]  <- "IL.13"
-colnames(IFC)[colnames(IFC)%in%"IL17A"]  <- "IL.17A"
-colnames(IFC)[colnames(IFC)%in%"IFNG"]  <- "IFNy"
-
-#### NORMALIZING GENE EXPRESSION WITH HOUSEKEEPING GENES
-# Luke used 2 housekeeping genes for normalization, PPIB and GAPDH
-# in order to normalize for these two, we will take the geometric mean and
-# subtract that number per each individual mouse
-IFC_NE <- IFC %>% mutate(Norm =  geometric.mean(IFC$GAPDH, na.rm = TRUE), # building geometric mean
-                         CASP1 =  Norm - CASP1,
-                         CXCL9 =  Norm - CXCL9,
-                         CXCR3 =  Norm - CXCR3,
-                         IDO1  =  Norm - IDO1,
-                         IFNy  =  Norm - IFNy,
-                         IL.6  =  Norm - IL.6,
-                         IL.10 =  Norm - IL.10,
-                         IL.12A =  Norm - IL.12A,
-                         IL.13  =  Norm - IL.13,
-                         IL.17A =  Norm - IL.17A,
-                         IL1RN =  Norm - IL1RN,
-                         IRGM1 =  Norm - IRGM1,
-                         MPO   =  Norm - MPO,
-                         MUC2  =  Norm - MUC2,
-                         MUC5AC =  Norm - MUC5AC,
-                         MYD88  =  Norm - MYD88,
-                         NCR1   =  Norm - NCR1,
-                         PRF1   =  Norm - PRF1,
-                         RETNLB =  Norm - RETNLB,
-                         SOCS1  =  Norm - SOCS1,
-                         TICAM1 =  Norm - TICAM1,
-                         TNF    =  Norm - TNF)
-
-# Merge to ALL
-# I have to find out when the mice died to merge to ALL
-Cha_dpi_chal <- ALL %>% filter(infection == "challenge") 
-
-#Check if every mice died on the 8 day
-unique(Cha_dpi_chal$death)
-
-Cha_dpi_chal <- Cha_dpi_chal %>% 
-  filter(dpi == "8") 
-  
-Cha_dpi_chal <- Gene_Expression %>% left_join(Cha_dpi_chal, by = c("EH_ID")) 
-
-Cha_dpi_chal <- unique(Cha_dpi_chal)
-
-Cha_dpi_prim  <- ALL %>% filter(death == "prim_11") %>%
-  right_join(Gene_Expression, by = c("EH_ID")) 
-
-Cha_dpi_prim <- Cha_dpi_prim %>% left_join(IFC_NE, by = "EH_ID") %>% 
-  rename(c("CXCR3.x" = "CXCR3.rtqpcr", "CXCR3.y" = "CXCR3.biomarker"))
-
-Cha_deat <- rbind(Cha_dpi_prim, Cha_dpi_chal)
-
-
-ALL <- join_to_ALL(Cha_deat)
 
 #Remove column OPG_O with not checked old oocyst counts
 
