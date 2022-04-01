@@ -284,9 +284,22 @@ Gene_Expression <- Reduce(rbind, G)
 ## Corrrect wrong IDs
 Gene_Expression$EH_ID <- gsub("LM_", "LM", Gene_Expression$EH_ID)
 
-#join to the ALL file
-ALL <- join_to_ALL(Gene_Expression)
+# Merge to ALL
+# I have to find out when the mice died to merge to ALL
+Cha_dpi_chal <- ALL %>% filter(infection == "challenge") 
 
+#Check if every mice died on the 8 day
+unique(Cha_dpi_chal$death)
+
+Cha_dpi_chal <- Cha_dpi_chal %>% 
+  filter(dpi == "8") 
+
+Cha_dpi_chal <- Gene_Expression %>% left_join(Cha_dpi_chal, by = c("EH_ID", "experiment")) 
+
+Cha_dpi_chal <- unique(Cha_dpi_chal)
+
+ALL <- join_to_ALL(Cha_dpi_chal)
+rm(Cha_dpi_chal)
 #remove the duplicates from the "ALL" file
 ALL <- unique(ALL)
 
@@ -448,14 +461,20 @@ IFC_NE <- IFC %>% mutate(Norm =  geometric.mean(IFC$GAPDH, na.rm = TRUE), # buil
 
 # Merge to ALL
 # I have to find out when the mice died to merge to ALL
-Cha_dpi_chal <- ALL %>% filter(infection == "challenge") %>%
-  filter(dpi == "8") 
+Cha_dpi_chal <- ALL %>% filter(infection == "challenge") 
 
-Cha_dpi_chal <- Cha_dpi_chal %>% left_join(IFC_NE, by = "EH_ID") %>%
-  rename(c("CXCR3.x" = "CXCR3.rtqpcr", "CXCR3.y" = "CXCR3.biomarker"))
+#Check if every mice died on the 8 day
+unique(Cha_dpi_chal$death)
+
+Cha_dpi_chal <- Cha_dpi_chal %>% 
+  filter(dpi == "8") 
+  
+Cha_dpi_chal <- Gene_Expression %>% left_join(Cha_dpi_chal, by = c("EH_ID")) 
+
+Cha_dpi_chal <- unique(Cha_dpi_chal)
 
 Cha_dpi_prim  <- ALL %>% filter(death == "prim_11") %>%
-  filter(dpi == "11")
+  right_join(Gene_Expression, by = c("EH_ID")) 
 
 Cha_dpi_prim <- Cha_dpi_prim %>% left_join(IFC_NE, by = "EH_ID") %>% 
   rename(c("CXCR3.x" = "CXCR3.rtqpcr", "CXCR3.y" = "CXCR3.biomarker"))
