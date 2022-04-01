@@ -328,14 +328,14 @@ IFC <- IFC %>% filter(str_starts(EH_ID, "LM"))
 ## == 999, equivalent to bad quality, should not be used
 ## Luke's Version:
 IFC <- subset(IFC, IFC$Value != 999)
-IFC <- IFC %>% dplyr::group_by(EH_ID, Target) %>% 
+IFC_S <- IFC %>% dplyr::group_by(EH_ID, Target) %>% 
   dplyr::summarise(Ct = mean(Value)) 
-IFC <- distinct(IFC)
+## IFC <- distinct(IFC)
 
 ## separate data using the pivot_wider()
 ## turns Gene Expression Markers into individual columns (from Target),
 ## values taken (from Ct)
-IFC <- pivot_wider(IFC, names_from = "Target", values_from = "Ct")
+IFC <- pivot_wider(IFC_S, names_from = "Target", values_from = "Ct")
 
 ## We need to add Variance and n() again - if I add variance before pivoting, 
 # it will lead to numerous lines, because we have numerous variances for the different markers, 
@@ -352,32 +352,32 @@ colnames(IFC)[colnames(IFC)%in%"IL17A"]  <- "IL.17A"
 colnames(IFC)[colnames(IFC)%in%"IFNG"]  <- "IFNy"
 
 #### NORMALIZING GENE EXPRESSION WITH HOUSEKEEPING GENES
-# Luke used 2 housekeeping genes for normalization, PPIB and GAPDH
+# Luke used 2 housekeeping genes for normalization, PPIB and PPIB
 # in order to normalize for these two, we will take the geometric mean and
 # subtract that number per each individual mouse
-IFC_NE <- IFC %>% mutate(Norm =  geometric.mean(IFC$GAPDH, na.rm = TRUE), # building geometric mean
-                         CASP1 =  Norm - CASP1,
-                         CXCL9 =  Norm - CXCL9,
-                         CXCR3 =  Norm - CXCR3,
-                         IDO1  =  Norm - IDO1,
-                         IFNy  =  Norm - IFNy,
-                         IL.6  =  Norm - IL.6,
-                         IL.10 =  Norm - IL.10,
-                         IL.12A =  Norm - IL.12A,
-                         IL.13  =  Norm - IL.13,
-                         IL.17A =  Norm - IL.17A,
-                         IL1RN =  Norm - IL1RN,
-                         IRGM1 =  Norm - IRGM1,
-                         MPO   =  Norm - MPO,
-                         MUC2  =  Norm - MUC2,
-                         MUC5AC =  Norm - MUC5AC,
-                         MYD88  =  Norm - MYD88,
-                         NCR1   =  Norm - NCR1,
-                         PRF1   =  Norm - PRF1,
-                         RETNLB =  Norm - RETNLB,
-                         SOCS1  =  Norm - SOCS1,
-                         TICAM1 =  Norm - TICAM1,
-                         TNF    =  Norm - TNF)
+IFC_NE <- IFC %>% 
+  mutate(CASP1_N =  PPIB - CASP1,
+         CXCL9_N =  PPIB - CXCL9,
+                         CXCR3_N =  PPIB - CXCR3,
+                         IDO1_N  =  PPIB - IDO1,
+                         IFNy_N  =  PPIB - IFNy,
+                         IL.6_N  =  PPIB - IL.6,
+                         IL.10_N =  PPIB - IL.10,
+                         IL.12A_N =  PPIB - IL.12A,
+                         IL.13_N  =  PPIB - IL.13,
+                         IL.17A_N =  PPIB - IL.17A,
+                         IL1RN_N =  PPIB - IL1RN,
+                         IRGM1_N =  PPIB - IRGM1,
+                         MPO_N   =  PPIB - MPO,
+                         MUC2_N  =  PPIB - MUC2,
+                         MUC5AC_N =  PPIB - MUC5AC,
+                         MYD88_N  =  PPIB - MYD88,
+                         NCR1_N   =  PPIB - NCR1,
+                         PRF1_N   =  PPIB - PRF1,
+                         RETNLB_N =  PPIB - RETNLB,
+                         SOCS1_N  =  PPIB - SOCS1,
+                         TICAM1_N =  PPIB - TICAM1,
+                         TNF_N    =  PPIB - TNF)
 
 IFC_NE <- unique(IFC_NE)
 
