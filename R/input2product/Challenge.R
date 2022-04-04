@@ -185,49 +185,7 @@ Intensity$Eim_MC <- as.logical(Intensity$Eim_MC)
 
 ALL <- join_to_ALL(Intensity)
 
-#Combined all of the qPCR data for the challenge infections in "Intensity"
 
-#We want to create the variable death. The variable death will show when the mice died 
-#To be expected: If the mouse was sacrificed during the primary infection 
-#the tag will be prim_11 (dpi = 11)
-#If in the other case the mouse was sacrificed on day 8 as planned in the challenge infections
-#it will get the tag chal_8
-#In this way we will know to which observation the experimental data should match
-#according to the day the mice was sacrificed
-
-# death = challenge / primary (did the mouse die during the primary or 
-# during the challenge infection
-
-# summarize data by mouse and infection 
-# and then creat the variables:
-#max_dpi = maximum dpi that the mouse that the mouse reached for each infection
-# challenge or primara
-# maximum oocysts for each infection type 
-# maximum weight loss for each infection type 
-mouse_infection <- as_tibble(ALL) %>%
-  dplyr::group_by(EH_ID, infection) %>%
-  dplyr::summarise(max_dpi = max(dpi, na.rm = TRUE),
-                   max_OOC = max(OOC, na.rm=TRUE),
-                   max_WL = min(relative_weight, na.rm=TRUE))
-
-# select mice that only appear once
-# these mice have died in the primary infection
-A <- as_tibble(mouse_infection) %>%
-  filter(EH_ID %in% mouse_infection$EH_ID
-         [which(!(duplicated(mouse_infection$EH_ID) |
-                    duplicated(mouse_infection$EH_ID, fromLast = TRUE)))]) %>%
-  #now create a new column that shows that the mice died in the primary infection
-  mutate(death = "primary")
-           
-B <- mouse_infection[!(mouse_infection$infection == "primary"),] %>%
-  mutate(death = "challenge")
-  
-di <- rbind(A, B)
-  
-# join to ALL
-ALL <- join_to_ALL(di)
-
-rm(A, B, mouse_infection, di)
 
 ### Step: Join the CEWE_ELISA to our challenge infections file
 ## ## download and append the CEWE_ELISA tables
@@ -452,7 +410,53 @@ unique(ALL$primary_infection)
 #mesenterial lymphnodes
 ALL$Position[is.na(ALL$Position)] <- "mLN"
 
+#Combined all of the qPCR data for the challenge infections in "Intensity"
 
+#We want to create the variable death. The variable death will show when the mice died 
+#To be expected: If the mouse was sacrificed during the primary infection 
+#the tag will be prim_11 (dpi = 11)
+#If in the other case the mouse was sacrificed on day 8 as planned in the challenge infections
+#it will get the tag chal_8
+#In this way we will know to which observation the experimental data should match
+#according to the day the mice was sacrificed
+
+# death = challenge / primary (did the mouse die during the primary or 
+# during the challenge infection
+
+# summarize data by mouse and infection 
+# and then creat the variables:
+#max_dpi = maximum dpi that the mouse that the mouse reached for each infection
+# challenge or primara
+# maximum oocysts for each infection type 
+# maximum weight loss for each infection type 
+mouse_infection <- as_tibble(ALL) %>%
+  dplyr::group_by(EH_ID, infection) %>%
+  dplyr::summarise(max_dpi = max(dpi, na.rm = TRUE),
+                   max_OOC = max(OOC, na.rm=TRUE),
+                   max_WL = min(relative_weight, na.rm=TRUE))
+
+
+#death variable
+# select mice that only appear once
+# these mice have died in the primary infection
+A <- as_tibble(mouse_infection) %>%
+  filter(EH_ID %in% mouse_infection$EH_ID
+         [which(!(duplicated(mouse_infection$EH_ID) |
+                    duplicated(mouse_infection$EH_ID, fromLast = TRUE)))]) %>%
+  #now create a new column that shows that the mice died in the primary infection
+  mutate(death = "primary")
+
+B <- mouse_infection[!(mouse_infection$infection == "primary"),] %>%
+  mutate(death = "challenge")
+
+di <- rbind(A, B) %>%
+  select(-infection)
+
+
+# join to ALL
+ALL2 <- ALL %>% left_join(di, by = "EH_ID")
+
+rm(A, B, mouse_infection, di)
 #Remove column OPG_O with not checked old oocyst counts
 
 #check the missing sex in the design
