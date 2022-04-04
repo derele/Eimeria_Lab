@@ -454,7 +454,7 @@ di <- rbind(A, B) %>%
 
 
 # join to ALL
-ALL2 <- ALL %>% left_join(di, by = "EH_ID")
+ALL <- ALL %>% left_join(di, by = "EH_ID")
 
 rm(A, B, mouse_infection, di)
 #Remove column OPG_O with not checked old oocyst counts
