@@ -42,9 +42,10 @@ data product is structure in the following columns:
   or primary, homologous or heterologous immunization). This is
   differently coded to infection, as here UNI:E88 (first uninfected,
   then infected with E88) would count as a "primaryE88" infection
-- death = day of death
-  a. chal_8 = mouse sacrificed on the 8th day of the challenge infection
-  b. prim_11 = mouse sacrificed on the 11th day of the primary infection
+- max_dpi = maximum dpi that the mouse that the mouse reached for each infection challenge or primary (group_by EH_ID and infection (primary/challenge) to get the value
+- maximum oocysts for each infection type (group_by EH_ID and infection (primary/challenge) to get the value)
+- maximum weight loss for each infection type (group_by EH_ID and infection (primary/challenge) to get the value)
+- death = challenge/primary (in which infection did the mouse die
 - Eim_MC = Melting curve for eimeria
 - delta = delta ct value
 - Gene expression columns:
