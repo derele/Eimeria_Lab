@@ -56,11 +56,13 @@ W <- lapply(OV[OV$Experiment%in%ChallengeEx, "weight"], read.csv)
 #with the 3rd element and so on
 #we apply in this case the function rbind
 Weight <- Reduce(rbind, W)
+rm(W)
 
 ## ## Same for shedding
 O <- lapply(OV[OV$Experiment%in%ChallengeEx, "shedding"], read.csv)
 
 Oocysts <- Reduce(rbind, O)
+rm(O)
 
 ## ## some don't agree
 table(Oocysts$labels%in%Weight$labels)
@@ -89,6 +91,8 @@ D <- lapply(OV[OV$Experiment%in%ChallengeEx, "design"], read.csv)
 Des.cols <- Reduce(intersect, lapply(D, colnames))
 
 Design <- Reduce(rbind, lapply(D, "[", Des.cols))
+
+rm(D)
 
 ## remove all whitespaces
 Design %>%
@@ -167,6 +171,7 @@ I <- lapply(OV[OV$Experiment%in%ChallengeEx, "infection_intensity"], read.csv)
 
 #now combine the infection intensity tables
 Intensity <- Reduce(rbind, I)
+rm(I)
 
 ## Corrrect wrong IDs
 Intensity$EH_ID <- gsub("LM_", "LM", Intensity$EH_ID)
@@ -178,6 +183,8 @@ Intensity$Eim_MC <- gsub("neg", FALSE, Intensity$Eim_MC)
 #Eim_MC type is character, change to logical
 Intensity$Eim_MC <- as.logical(Intensity$Eim_MC)
 
+ALL <- join_to_ALL(Intensity)
+
 #Combined all of the qPCR data for the challenge infections in "Intensity"
 
 #We want to create the variable death. The variable death will show when the mice died 
@@ -188,49 +195,39 @@ Intensity$Eim_MC <- as.logical(Intensity$Eim_MC)
 #In this way we will know to which observation the experimental data should match
 #according to the day the mice was sacrificed
 
+# death = challenge / primary (did the mouse die during the primary or 
+# during the challenge infection
 
-#summarize for the maximum dpi for the challenge infections
-ALL_sum_max_dpi <- ALL %>%
-    dplyr::group_by(EH_ID, infection, experiment) %>%
-    dplyr::summarize(max(dpi)) 
+# summarize data by mouse and infection 
+# and then creat the variables:
+#max_dpi = maximum dpi that the mouse that the mouse reached for each infection
+# challenge or primara
+# maximum oocysts for each infection type 
+# maximum weight loss for each infection type 
+mouse_infection <- as_tibble(ALL) %>%
+  dplyr::group_by(EH_ID, infection) %>%
+  dplyr::summarise(max_dpi = max(dpi, na.rm = TRUE),
+                   max_OOC = max(OOC, na.rm=TRUE),
+                   max_WL = min(relative_weight, na.rm=TRUE))
 
+# select mice that only appear once
+# these mice have died in the primary infection
+A <- as_tibble(mouse_infection) %>%
+  filter(EH_ID %in% mouse_infection$EH_ID
+         [which(!(duplicated(mouse_infection$EH_ID) |
+                    duplicated(mouse_infection$EH_ID, fromLast = TRUE)))]) %>%
+  #now create a new column that shows that the mice died in the primary infection
+  mutate(death = "primary")
+           
+B <- mouse_infection[!(mouse_infection$infection == "primary"),] %>%
+  mutate(death = "challenge")
+  
+di <- rbind(A, B)
+  
+# join to ALL
+ALL <- join_to_ALL(di)
 
-ALL_sum_max_dpi <- unique(ALL_sum_max_dpi)
-
-##turn the table into wide format,  to see if both max dpi exists for challenge and primary
-ALL_sum_max_dpi <- ALL_sum_max_dpi %>%
-    pivot_wider(names_from = 'max(dpi)', values_from = infection) %>%
-    dplyr::rename(dpi_8 = '8', dpi_11 = '11')
-
-#Now we can create the death column signifiyng when the mouse died
-#instead of using a string, paste from the values of the other columns 
-ALL_sum_max_dpi <- ALL_sum_max_dpi %>%
-    dplyr::mutate(death = 
-               case_when(
-                   !is.na(dpi_8) ~ "chal_8",
-                   TRUE ~ "prim_11"
-               ))
-
-# remove the now redundant columns
-ALL_sum_max_dpi <- ALL_sum_max_dpi %>% dplyr::select(-c(dpi_8, dpi_11))
-
-#add the new column to ALL
-ALL <- ALL %>% left_join(ALL_sum_max_dpi, by = intersect(colnames(ALL), colnames(ALL_sum_max_dpi)))
-
-#now join the Intensity file to the summarized ALL_sum_max_dpi
-Intensity <- ALL_sum_max_dpi %>%
-    left_join(Intensity, by = c(intersect(colnames(Intensity), colnames(ALL_sum_max_dpi)))) %>%
-    dplyr::mutate(infection =
-               case_when(
-                   death == "chal_8" ~ "challenge",
-                   TRUE ~ "primary"
-               )) 
-
-Intensity <- Intensity %>%
-    dplyr::select(EH_ID, experiment, death, Eim_MC, delta, infection)
-
-#Join the Intensity to the ALL file, while taking account of the death variable
-ALL <- join_to_ALL(Intensity)
+rm(A, B, mouse_infection, di)
 
 ### Step: Join the CEWE_ELISA to our challenge infections file
 ## ## download and append the CEWE_ELISA tables
@@ -242,6 +239,8 @@ C <- OV[OV$Experiment %in% ChallengeEx, "CEWE_ELISA"]
 C <- lapply(C[c(1,2,5)], read.csv)
 
 CEWE_ELISA <- Reduce(rbind, C)
+
+rm(C)
 
 #Next step clean the Mouse ID
 ## IDs sometimes with "_" sometimes without
@@ -262,6 +261,7 @@ M <- OV[OV$Experiment%in%ChallengeEx, "MES_ELISA"]
 #I have to first select from the OV file the lines with actual links to the raw files
 #as there is only one row line with row data, lapply is not required here
 MES_ELISA <- read.csv(M[[1]])
+rm(M)
 
 ## Corrrect wrong IDs
 MES_ELISA$EH_ID <- gsub("LM_", "LM", MES_ELISA$EH_ID)
@@ -281,29 +281,16 @@ G <- lapply(G[c(2,5)], read.csv)
 #now combine the infection intensity tables
 Gene_Expression <- Reduce(rbind, G)
 
+rm(G)
+
 ## Corrrect wrong IDs
 Gene_Expression$EH_ID <- gsub("LM_", "LM", Gene_Expression$EH_ID)
 
 # Merge to ALL
-# I have to find out when the mice died to merge to ALL
-Cha_dpi_chal <- ALL %>% filter(infection == "challenge") 
+ALL <- join_to_ALL(Gene_Expression)
 
-#Check if every mice died on the 8 day
-unique(Cha_dpi_chal$death)
-
-Cha_dpi_chal <- Cha_dpi_chal %>% 
-  filter(dpi == "8") 
-
-Cha_dpi_chal <- Gene_Expression %>% left_join(Cha_dpi_chal, by = c("EH_ID", "experiment")) 
-
-Cha_dpi_chal <- unique(Cha_dpi_chal)
-
-ALL <- join_to_ALL(Cha_dpi_chal)
-rm(Cha_dpi_chal)
 #remove the duplicates from the "ALL" file
 ALL <- unique(ALL)
-
-
 
 # Add the gene expression data
 ## using part of Finn's code
@@ -313,29 +300,26 @@ IFC2 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/da
 IFC3 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC3.csv")
 IFC4 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC4.csv")
 IFC5 <- read.csv("https://raw.githubusercontent.com/derele/Eimeria_Lab/master/data/Experiment_results/IFC5.csv")
+
 IFC  <- bind_rows(IFC1, IFC2, IFC3, IFC4, IFC5)
-rm(IFC1)
-rm(IFC2)
-rm(IFC3)
-rm(IFC4)
-rm(IFC5)
+
+rm(IFC1, IFC2, IFC3, IFC4, IFC5)
 
 # filter out AA
 IFC <- IFC %>% filter(str_starts(EH_ID, "LM"))
-
 
 ## remove unsuccessful amplifications 
 ## == 999, equivalent to bad quality, should not be used
 ## Luke's Version:
 IFC <- subset(IFC, IFC$Value != 999)
-IFC_S <- IFC %>% dplyr::group_by(EH_ID, Target) %>% 
+IFC <- IFC %>% dplyr::group_by(EH_ID, Target) %>% 
   dplyr::summarise(Ct = mean(Value)) 
 ## IFC <- distinct(IFC)
 
 ## separate data using the pivot_wider()
 ## turns Gene Expression Markers into individual columns (from Target),
 ## values taken (from Ct)
-IFC <- pivot_wider(IFC_S, names_from = "Target", values_from = "Ct")
+IFC <- pivot_wider(IFC, names_from = "Target", values_from = "Ct")
 
 ## We need to add Variance and n() again - if I add variance before pivoting, 
 # it will lead to numerous lines, because we have numerous variances for the different markers, 
@@ -358,62 +342,35 @@ colnames(IFC)[colnames(IFC)%in%"IFNG"]  <- "IFNy"
 IFC_NE <- IFC %>% 
   mutate(CASP1_N =  PPIB - CASP1,
          CXCL9_N =  PPIB - CXCL9,
-                         CXCR3_N =  PPIB - CXCR3,
-                         IDO1_N  =  PPIB - IDO1,
-                         IFNy_N  =  PPIB - IFNy,
-                         IL.6_N  =  PPIB - IL.6,
-                         IL.10_N =  PPIB - IL.10,
-                         IL.12A_N =  PPIB - IL.12A,
-                         IL.13_N  =  PPIB - IL.13,
-                         IL.17A_N =  PPIB - IL.17A,
-                         IL1RN_N =  PPIB - IL1RN,
-                         IRGM1_N =  PPIB - IRGM1,
-                         MPO_N   =  PPIB - MPO,
-                         MUC2_N  =  PPIB - MUC2,
-                         MUC5AC_N =  PPIB - MUC5AC,
-                         MYD88_N  =  PPIB - MYD88,
-                         NCR1_N   =  PPIB - NCR1,
-                         PRF1_N   =  PPIB - PRF1,
-                         RETNLB_N =  PPIB - RETNLB,
-                         SOCS1_N  =  PPIB - SOCS1,
-                         TICAM1_N =  PPIB - TICAM1,
-                         TNF_N    =  PPIB - TNF)
+         CXCR3_N =  PPIB - CXCR3,
+         IDO1_N  =  PPIB - IDO1,
+         IFNy_N  =  PPIB - IFNy,
+         IL.6_N  =  PPIB - IL.6,
+         IL.10_N =  PPIB - IL.10,
+         IL.12A_N =  PPIB - IL.12A,
+         IL.13_N  =  PPIB - IL.13,
+         IL.17A_N =  PPIB - IL.17A,
+         IL1RN_N =  PPIB - IL1RN,
+         IRGM1_N =  PPIB - IRGM1,
+         MPO_N   =  PPIB - MPO,
+         MUC2_N  =  PPIB - MUC2,
+         MUC5AC_N =  PPIB - MUC5AC,
+         MYD88_N  =  PPIB - MYD88,
+         NCR1_N   =  PPIB - NCR1,
+         PRF1_N   =  PPIB - PRF1,
+         RETNLB_N =  PPIB - RETNLB,
+         SOCS1_N  =  PPIB - SOCS1,
+         TICAM1_N =  PPIB - TICAM1,
+         TNF_N    =  PPIB - TNF)
 
-IFC_NE <- unique(IFC_NE)
+# In this assay the gene CXCR3 has been measured. It is already included in ALL
+# as it has been measured with Real time qpcr before
+IFC_NE <- dplyr::rename(IFC_NE, CXCR3_bio = CXCR3)
 
-# Merge to ALL
-# I have to find out when the mice died to merge to ALL
-Cha_dpi_chal <- ALL %>% filter(infection == "challenge") 
+ALL <- join_to_ALL(IFC_NE)
 
-#Check if every mice died on the 8 day
-unique(Cha_dpi_chal$death)
+rm(IFC)
 
-Cha_dpi_chal <- Cha_dpi_chal %>% filter(dpi == "8")
-
-Cha_dpi_chal <- distinct(IFC_NE) %>% left_join(distinct(Cha_dpi_chal), by = c("EH_ID")) 
-
-Cha_dpi_chal <- unique(Cha_dpi_chal)
-
-Cha_dpi_chal <- Cha_dpi_chal %>% drop_na(death)
-
-# I have to find out when the mice died to merge to ALL
-Cha_dpi_prim <- ALL %>% filter(infection == "primary") %>%
-  filter(death == "prim_11")
-
-#Check if every mice died on the 8 day
-unique(Cha_dpi_prim$death)
-
-Cha_dpi_prim <- Cha_dpi_prim %>% 
-  filter(dpi == "11") 
-
-Cha_dpi_prim <- IFC_NE %>% left_join(Cha_dpi_prim, by = "EH_ID") 
-
-Cha_dpi_prim <- Cha_dpi_prim %>% drop_na(death)
-
-Cha_ifc <- rbind(Cha_dpi_prim, Cha_dpi_chal) %>%
-  rename(c("CXCR3.x" = "CXCR3.rtqpcr", "CXCR3.y" = "CXCR3.biomarker"))
-
-ALL <- join_to_ALL(Cha_ifc)
 #What's next? 
 #FACS!
 
@@ -430,6 +387,8 @@ F[[3]] <- unique(F[[3]])
 #merge the different facs files together
 FACS <- Reduce(bind_rows, F)
 
+rm(F)
+
 #rename the opg counts to opg_o = opg counts old (can compare it alter to see if they are the same with the all File)
 FACS <- FACS %>% dplyr::rename(OPG_O = OPG)
 
@@ -444,8 +403,6 @@ FACS <- unique(FACS)
 #my next merges
 FACS <- FACS %>% dplyr::select(-c("labels", "delta", "IFNy_CEWE", "CXCR3",
                            "IRG6", "IL.12")) 
-
-FACS <- unique(FACS)
 
 #I assume all the mice in the facs data are in the challenge infection! 
 #THis could potentially solve my problems with merging
@@ -472,17 +429,16 @@ my_summary_data <- my_summary_data %>%
 
 
 #how many columns do I expect?
-length(colnames(ALL)) #ALL has 28 columns
+length(colnames(ALL)) #ALL has 77 columns
 length(colnames(FACS)) #FACS has 24 columns
 length(intersect(colnames(ALL), colnames(FACS))) #they have 4 common columns
 
-28 + 24 - 4 #I expect 48 columns in my new merged file
+77 + 24 - 4 #I expect 97 columns in my new merged file
 
 ALL <- ALL %>% left_join(unique(FACS), by = intersect(colnames(ALL), colnames(FACS)), copy = FALSE)
 
-length(colnames(ALL)) #indeed 48!
+length(colnames(ALL)) #indeed 97!
 
-glimpse(ALL)
 
 #check the primary and challenge infection columns
 colnames(ALL)
@@ -495,7 +451,6 @@ unique(ALL$primary_infection)
 #In column position - replace nas with Mln, as the nas are coming from the 
 #mesenterial lymphnodes
 ALL$Position[is.na(ALL$Position)] <- "mLN"
-
 
 
 #Remove column OPG_O with not checked old oocyst counts
