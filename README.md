@@ -42,6 +42,8 @@ data product is structure in the following columns:
   or primary, homologous or heterologous immunization). This is
   differently coded to infection, as here UNI:E88 (first uninfected,
   then infected with E88) would count as a "primaryE88" infection
+  
+ The next values max_dpi until maximum_weight are calculated for the infection type in which the mice died
 - max_dpi = maximum dpi that the mouse that the mouse reached for each infection challenge or primary (group_by EH_ID and infection (primary/challenge) to get the value
 - maximum oocysts for each infection type (group_by EH_ID and infection (primary/challenge) to get the value)
 - maximum weight loss for each infection type (group_by EH_ID and infection (primary/challenge) to get the value)
