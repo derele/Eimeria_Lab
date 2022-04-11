@@ -60,7 +60,7 @@ Prepare the primers and make aliquots
 #### Master master mix: Prepare in Eppendorf Tubes
 n = sample + negative control number 
 ```{r}
-n = 32
+n = 16
 STBR = 10 * 4 * n
 cat("STBR = ", STBR,"µL")
 FP = 0.8 * 4 * n
@@ -72,9 +72,10 @@ cat("H20 = ", H20,"µL")
 ```
 
 #### Master mix: Prepare in epis or strips
-76 µL MMM + 4 µL DNA template
-Finally pipette 20 µL in each well of the 96 plate for the reaction
-File saved as: qPCR_eimeria_field_faeces______________________________________.eds in the thermofisher cloud
+* 76 µL MMM + 4 µL DNA template
+* Use a plate cooler with your plate
+* Finally pipette 20 µL in each well of the 96 plate for the reaction
+* File saved as: qPCR_eimeria_field_faeces______________________________________.eds in the thermofisher cloud
 
 ### PCR machine:
 * either in the ABI7300 Real-Time PCR system (Applied Biosystems, USA)
@@ -87,7 +88,7 @@ DNAs from mock samples, floated oocysts and faecal DNA derived from the infectio
 
 ### Cycling conditions:
 Arrange the plate begore in Thermofischer.com
-Design Analysis new --> set up pkate --> comparative cd - SYBR
+Design Analysis new --> set up plate --> comparative cd - SYBR
 
 1. initial denaturation at **95°C** for **2 min**
 2. **40 cycles** of denaturation at **95°C** for **15 s**
@@ -105,7 +106,7 @@ Amplifications were performed by triplicate and each run included a non-template
 
 ### Analysis and interpretation
 
-Samples with all three replicates showing Tm in the range 74.1 ± 1.78 °C (observed on positive controls, Additional file 2: Figure S1) were labelled as “qPCR positive”, samples with only one or two of the triplicates showing peaks were designated as negative samples.
+Samples with all three replicates showing Tm (Melting curve temperature) in the range 74.1 ± 1.78 °C (observed on positive controls, Additional file 2: Figure S1) were labelled as “qPCR positive”, samples with only one or two of the triplicates showing peaks were designated as negative samples.
 
 
 For qPCR negative samples, genome copies per gram of faeces were set to 0.  ict genome equivalents from Ct. 
