@@ -45,13 +45,13 @@ Prepare the primers and make aliquots
 
 * Take out the samples /primers from the freezer and put them on ice
 * Prepare the layout of your plate 
-* for every sample we have triplicates and a negative control, which contains all the reagents without DNA
+* for every sample we have triplicates and a negative control per plate, which contains all the reagents without DNA (Water, SYBR and primers)
 * set up the plate and the run before you start on: https://apps.thermofisher.com/
 
 ![96 well layout ](96-Well_plate.png){height=200px width=300px}
 
-#### Recipe for one Reaction: 
-1. STBR: 10 µL 
+#### Recipe for one Reaction: (20 µL per well)
+1. SYBR: 10 µL 
 2. Forward primer: 0.8 µL 
 3. Reverse primer: 0.8 µL 
 4. H20: 7.4 µL 
@@ -60,7 +60,7 @@ Prepare the primers and make aliquots
 #### Master master mix: Prepare in Eppendorf Tubes
 n = sample + negative control number 
 ```{r}
-n = 16
+n = 32
 STBR = 10 * 4 * n
 cat("STBR = ", STBR,"µL")
 FP = 0.8 * 4 * n
@@ -80,6 +80,7 @@ File saved as: qPCR_eimeria_field_faeces______________________________________.e
 * either in the ABI7300 Real-Time PCR system (Applied Biosystems, USA)
 * or in a MasterCycler® RealPlex2 (Eppendorf, Germany) 
 * or in in the CFX96TM Touch System (Bio-Rad, USA) 
+* QuantStudio 1 (Thermofisher)
 
 ### Material used:
 DNAs from mock samples, floated oocysts and faecal DNA derived from the infection experiment
