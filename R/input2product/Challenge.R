@@ -465,16 +465,16 @@ rm(A, B, mouse_infection, di)
 ### Categorizing mouse strains by hybrid status
 # Mouse_strains: (hybrid status)
 
-# BUSNA_STRA: inter subsp. hybrids
-# STRA_BUSNA: inter subsp. hybrids
+# BUSNA_STRA: outbred hybrids
+# STRA_BUSNA: outbred hybrids
 # SCHUNT_SCHUNT: parental strains
-# PWD_SCHUNT: inter subsp. hybrids
+# PWD_SCHUNT: outbred hybrids
 # STRA_STRA: parental strains
 # STRA_SCHUNT: outbred hybrids
 # PWD_BUSNA: outbred hybrids
 # BUSNA_PWD: outbred hybrids
 # PWD_PWD: parental strains
-# SCHUNT_PWD: inter subsp. hybrids
+# SCHUNT_PWD: outbred hybrids
 # SCHUNT_STRA: outbred hybrids
 # STRA_SCHUNT: outbred hybrids
 
@@ -482,16 +482,16 @@ rm(A, B, mouse_infection, di)
 ALL <- ALL %>% 
   group_by(EH_ID) %>%
   dplyr::mutate(hybrid_status = case_when(
-    mouse_strain == "BUSNA_STRA" ~ "inter subsp. hybrids",
-    mouse_strain == "STRA_BUSNA" ~ "inter subsp. hybrids",
+    mouse_strain == "BUSNA_STRA" ~ "outbred hybrids",
+    mouse_strain == "STRA_BUSNA" ~ "outbred hybrids",
     mouse_strain == "SCHUNT_SCHUNT" ~ "parental strains",
-    mouse_strain == "PWD_SCHUNT" ~ "inter subsp. hybrids",
+    mouse_strain == "PWD_SCHUNT" ~ "outbred hybrids",
     mouse_strain == "STRA_STRA" ~ "parental strains",
     mouse_strain == "STRA_SCHUNT" ~ "outbred hybrids",
     mouse_strain == "PWD_BUSNA" ~ "outbred hybrids",
     mouse_strain == "BUSNA_PWD" ~ "outbred hybrids",
     mouse_strain == "PWD_PWD" ~ "parental strains",
-    mouse_strain == "SCHUNT_PWD" ~ "inter subsp. hybrids",
+    mouse_strain == "SCHUNT_PWD" ~ "outbred hybrids",
     mouse_strain == "SCHUNT_STRA" ~ "outbred hybrids",
     mouse_strain == "STRA_SCHUNT" ~ "outbred hybrids",
     TRUE ~ ""))
