@@ -483,17 +483,19 @@ ALL <- ALL %>%
   group_by(EH_ID) %>%
   dplyr::mutate(hybrid_status = case_when(
     mouse_strain == "BUSNA_STRA" ~ "outbred hybrids",
-    mouse_strain == "STRA_BUSNA" ~ "outbred hybrids",
-    mouse_strain == "SCHUNT_SCHUNT" ~ "parental strains",
-    mouse_strain == "PWD_SCHUNT" ~ "outbred hybrids",
-    mouse_strain == "STRA_STRA" ~ "parental strains",
-    mouse_strain == "STRA_SCHUNT" ~ "outbred hybrids",
-    mouse_strain == "PWD_BUSNA" ~ "outbred hybrids",
-    mouse_strain == "BUSNA_PWD" ~ "outbred hybrids",
-    mouse_strain == "PWD_PWD" ~ "parental strains",
-    mouse_strain == "SCHUNT_PWD" ~ "outbred hybrids",
-    mouse_strain == "SCHUNT_STRA" ~ "outbred hybrids",
-    mouse_strain == "STRA_SCHUNT" ~ "outbred hybrids",
+    mouse_strain == "STRA_BUSNA" ~ "F1 hybrid",
+    mouse_strain == "SCHUNT_SCHUNT" ~ "F0 M. m. domesticus",
+    mouse_strain == "PWD_SCHUNT" ~ "F1 hybrid",
+    mouse_strain == "STRA_STRA" ~ "F0 M. m. domesticus",
+    mouse_strain == "STRA_SCHUNT" ~ "F1 M. m. domesticus",
+    mouse_strain == "PWD_BUSNA" ~ "F1 M. m. musculus",
+    mouse_strain == "BUSNA_PWD" ~ "F1 M. m. musculus",
+    mouse_strain == "PWD_PWD" ~ "F0 M. m. musculus",
+    mouse_strain == "SCHUNT_PWD" ~ "F1 hybrid",
+    mouse_strain == "SCHUNT_STRA" ~ "F1 M. m. domesticus",
+    mouse_strain == "STRA_SCHUNT" ~ "F1 M. m. domesticus",
+    mouse_strain == "BUSNA_BUSNA" ~ "F0 M. m. musculus",
+    mouse_strain == "NMRI" ~ "other",
     TRUE ~ ""))
 
 
