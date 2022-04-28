@@ -496,6 +496,7 @@ ALL <- ALL %>%
     mouse_strain == "STRA_SCHUNT" ~ "F1 M. m. domesticus",
     mouse_strain == "BUSNA_BUSNA" ~ "F0 M. m. musculus",
     mouse_strain == "NMRI" ~ "other",
+    mouse_strain == "BUSNA_STRA" ~ "F1 hybrid",
     TRUE ~ ""))
 
 
