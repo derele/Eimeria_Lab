@@ -482,7 +482,7 @@ rm(A, B, mouse_infection, di)
 ALL <- ALL %>% 
   group_by(EH_ID) %>%
   dplyr::mutate(hybrid_status = case_when(
-    mouse_strain == "BUSNA_STRA" ~ "outbred hybrids",
+    mouse_strain == "BUSNA_STRA" ~ "F1 hybrid",
     mouse_strain == "STRA_BUSNA" ~ "F1 hybrid",
     mouse_strain == "SCHUNT_SCHUNT" ~ "F0 M. m. domesticus",
     mouse_strain == "PWD_SCHUNT" ~ "F1 hybrid",
