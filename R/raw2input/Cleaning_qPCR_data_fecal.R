@@ -1,74 +1,50 @@
+## RUN SCRIPTS FROM THE ROOT OF THE REPOSITORY: Eimeria_Lab
+
 library(tidyr)
 library(dplyr)
 library(tidyverse)
 
+#### Load the E88 data (include mice & flotation data)
+E88 <- read.csv("data_products/Quant2_E57.csv")
 
-#### Reading the qPCR data that have already been merged 
-## read the experimental design data 
-ed <- read.csv("data_products/Quant2_E57.csv")
+### Load qPCR data (lab_fecal)
+qPCR <- read.csv("data/Experiment_results/Quant_Eimeria/qPCR_faeces/Results/Results_files/qPCR_fecal_lab_merged.csv")
 
-## let's filter out the mice infected with E. ferrisi (E64)
-ed <- ed %>% 
+## Filter out the E64 (E. ferrisi) mice
+E88 <- E88 %>% 
   dplyr::filter(!primary_infection == "E64") %>%
   dplyr::select(-X)
 
-## These qpcr reads have emerged from laboratory mice, from the faeces 
-rq <- read.csv("data/Experiment_results/Quant_Eimeria/qPCR_faeces/Results/Results_files/qPCR_faeces_lab_merged.csv")
-
-### Look at the data!
-str(rq)
-glimpse(rq)
-
-# how many nas do we have?
-sapply(rq, function(x) sum(is.na(x)))
-
-### Cleaning:
-# change the columns to match the Challenge infections df /quant eimeria df 
-# preference would be to match the challenge infections 
-rq <- rq %>% 
+### adapt all data in files to allow merge into challenge_infection file:
+# this includes changing column names of files to match that of challenge_infection file
+# change column name 'Sample' to 'labels' of qPCR file
+qPCR <- qPCR %>% 
   rename(labels = Sample)
 
-# compare the columns between the df
-colnames(ed)
-colnames(rq)
-intersect(colnames(ed), colnames(rq))
-
-rq <- rq %>%
+#entries under column require the characters 'E57a' to allow cohesive merge
+qPCR <- qPCR %>%
   dplyr::mutate(labels = case_when(
     labels == "E57INR" ~ "E57aINR",
     TRUE ~ labels
    ))
+qPCR$labels[239:415] <- paste0('E57a', qPCR$labels[239:415])
+qPCR$labels[196:198] <- paste0('E57a', qPCR$labels[196:198])
 
-# we have some labels that are incorrect, missing prefix E57a 
-# we select the specific rows and add the prefix to the labels 
-rq$labels[239:415] <- paste0('E57a', rq$labels[239:415])
+### adapt all data in files to allow consistency with Victors R script:
+#change column name of qPCR from 'Ct' to 'Cq'.
+#according to Bustin et al., 2009 (https://doi.org/10.1373/clinchem.2008.112797) 
+#both terms refer to the same value
+#line 95 of Victors data_prepartion R script
+qPCR = rename(qPCR, c(Ct = Cq, Ct_mean = Cq.Mean, Sd_Ct = Cq.SD, Tm = Tm1))
 
-# what happens with the nas in the labels? 
+##### this point onwards: logically replicate Victor's script to produce Figure 2 of his paper 
 
+##Define numeric and factor variables 
+num.vars1 <- c("Ct", "Tm")
+fac.vars1 <- c("labels", "plate")  #........tbc
 
-#https://www.google.com/search?q=data+cleaning+steps&oq=data+cleaning+steps&aqs=chrome..69i57j0i22i30l9.3172j0j7&sourceid=chrome&ie=UTF-8
-# https://www.tableau.com/learn/articles/what-is-data-cleaning
+##### ask Professor the following: 
+##found code to ' Estimate mean Eimeria Tm' in Victors script line 331
+# What do we do with Tm2, Tm3,Tm4 - nothing found on Victor clarify 
+# Think of a way to organise the repeated qPCR
 
-#Step 1: Remove duplicate or irrelevant observations
-
-
-# look at VIctor's script and see how he dealt with the triplicates 
-# otherwise it will cause "issues" later in the merging, for example you will 
-# get many more observations
-
-
-#Step 2: Fix structural errors
-# what about the columns sq in Victor's df
-# look at what type is every column (use glimpse or typeof(), and then make
-#changes if necessary) (numeric? , character?)
-
-#Step 4: Handle missing data # if you wont handle then document 
-
-#Step 5: Validate and QA
-# join the two data frames- 
-# example functions left_join /full_join / right_join
-# https://www.youtube.com/watch?v=Yg-pNqzDuN4
-
-#validate everything
-# see if you created duplicated
-# count 
