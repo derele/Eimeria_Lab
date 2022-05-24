@@ -43,8 +43,8 @@ qPCR = rename(qPCR, c(Ct = Cq, Ct_mean = Cq.Mean, Sd_Ct = Cq.SD, Tm = Tm1))
 num.vars1 <- c("Ct", "Tm")
 fac.vars1 <- c("labels", "plate")  #........tbc
 
-##### ask Professor the following: 
+##### ask Professor the following : 
 ##found code to ' Estimate mean Eimeria Tm' in Victors script line 331
-# What do we do with Tm2, Tm3,Tm4 - nothing found on Victor clarify 
+# What do we do with Tm2, Tm3,Tm4 - nothing found on Victor to clarify 
 # Think of a way to organise the repeated qPCR
 
