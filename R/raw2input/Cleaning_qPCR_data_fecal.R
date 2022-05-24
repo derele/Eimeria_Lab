@@ -37,11 +37,13 @@ qPCR$labels[196:198] <- paste0('E57a', qPCR$labels[196:198])
 #line 95 of Victors data_prepartion R script
 qPCR = rename(qPCR, c(Ct = Cq, Ct_mean = Cq.Mean, Sd_Ct = Cq.SD, Tm = Tm1))
 
-##### this point onwards: logically replicate Victor's script to produce Figure 2 of his paper 
+##### this point onwards: logically replicate Victor's script 'data_preparation' to produce Figure 2 of his paper 
 
-##Define numeric and factor variables 
+##Define numeric and factor variables (line 98)  
 num.vars1 <- c("Ct", "Tm")
-fac.vars1 <- c("labels", "plate")  #........tbc
+fac.vars1 <- c("labels", "plate")  
+
+### Estimate mean Eimeria Tm for positive controls (lines 525 - 556) #........tbc
 
 ##### ask Professor the following : 
 ##found code to ' Estimate mean Eimeria Tm' in Victors script line 331
