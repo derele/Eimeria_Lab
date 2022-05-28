@@ -269,7 +269,7 @@ lrtest(DNAbyOPG, DNAbyOPGxdpi) #--> Report this table in the results
 lrtest(DNAbyOPG_dpi, DNAbyOPGxdpi) #--> Report this table in the results 
 
 ###Model 4: GLMM with dpi as random factor
-require(lme4)
+require(lme4)      
 
 DNAbyOPG_dpi_glmm <- lmer(log10(Genome_copies_gFaeces)~log10(OPG) + (1|dpi),
                           data = sdt.nozero, na.action = na.exclude, REML=TRUE)
