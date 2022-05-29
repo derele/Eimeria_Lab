@@ -155,19 +155,10 @@ sdt%>%
   stat_compare_means(label= "p.signif", method = "wilcox.test", ref.group = "0", paired = F, na.rm = TRUE)-> C
 
 ##Figure 2: Course of Eimeria Infection in genome copies, OPG, and weight loss
-pdf(file = "data/Experiment_results/Quant_Eimeria/Figures/Figure_2.pdf", width = 10, height = 15)
+#pdf(file = "data/Experiment_results/Quant_Eimeria/Figures/Figure_2.pdf", width = 10, height = 15)
 grid.arrange(A,B,C)
 dev.off()
-rm(A,B,C, x, stats.test)
-
-
-#####STOPPED SCRIPT APPLICATION AT THIS POINT################ -Dilé
-
--------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------
-
-
-
+#rm(A,B,C, x, stats.test)
 
 
 ### 2) Correlation among Eimeria quantification methods
@@ -190,8 +181,8 @@ sdt.nozero$residualsM1 <- residuals(DNAbyOPG) # Save the residual values
 
 ##Plot model
 ##Assign the colors for dpi and keep consistency with previous plots
-colores<- c("4"="#00BD5C", "5"= "#00C1A7", "6"= "#00BADE", "7"= "#00A6FF", 
-            "8" = "#B385FF", "9"= "#EF67EB", "10" = "#FF63B6")
+colores<- c("4"="#B7A034", "5"= "#00BD5C", "6"= "#00C1A7", "7"= "#00BADE", 
+            "8" = "#00A6FF", "9"= "#B385FF", "10" = "#EF67EB", "11" = "#FF63B6")
 
 ####Genome copies modeled by OPGs 
 sdt.nozero%>%
@@ -222,7 +213,7 @@ sdt.nozero%>%
   group_by(dpi) %>% 
   summarise(residualsM1_mean = mean(na.omit(residualsM1)))%>%
   inner_join(sdt.nozero, by= "dpi")%>%
-  filter(dpi%in%c("0","1","2","3","4", "5","6", "7", "8", "9", "10"))%>%
+  filter(dpi%in%c("0","1","2","3","4", "5","6", "7", "8", "9", "10", "11"))%>%
   dplyr::select(dpi, residualsM1, residualsM1_mean)%>%
   dplyr::arrange(dpi)%>% ##for comparison 
   mutate(residualim= 0)%>%
@@ -255,10 +246,10 @@ summary(DNAbyOPGxdpi)
 ### Plot and extract estimates
 sjPlot:: tab_model(DNAbyOPGxdpi, 
                    terms = c("log10(OPG):dpi5", "log10(OPG):dpi6", "log10(OPG):dpi7", 
-                             "log10(OPG):dpi8", "log10(OPG):dpi9", "log10(OPG):dpi10"))
+                             "log10(OPG):dpi8", "log10(OPG):dpi9", "log10(OPG):dpi10", "log10(OPG):dpi11"))
 
 plot_model(DNAbyOPGxdpi, terms = c("log10(OPG):dpi5", "log10(OPG):dpi6", "log10(OPG):dpi7", 
-                                   "log10(OPG):dpi8", "log10(OPG):dpi9", "log10(OPG):dpi10"))-> tmp.fig.1
+                                   "log10(OPG):dpi8", "log10(OPG):dpi9", "log10(OPG):dpi10", "log10(OPG):dpi11"))-> tmp.fig.1
 
 #ggsave(filename = "Rplots.pdf", tmp.fig.1)
 
@@ -285,7 +276,7 @@ plot_model(DNAbyOPG_dpi_glmm, type = "re", show.values = TRUE)-> tmp.fig.2
 ##Plot model by DPI
 sdt.nozero%>%
   mutate(dpi = fct_relevel(dpi, "0","1", "2", "3", "4", "5", 
-                                   "6", "7", "8", "9", "10"))%>%
+                                   "6", "7", "8", "9", "10","11"))%>%
   ggplot(aes(OPG, Genome_copies_gFaeces, fill=dpi))+
   geom_point(shape=21, size=5) +
   geom_smooth(method = lm, se=FALSE, aes(OPG, Genome_copies_gFaeces, color=dpi))+
@@ -320,7 +311,7 @@ x%>%
   arrange(dpi)%>%
   filter(term != "(Intercept)")-> fitted_models_dpi
 
-#write.csv(fitted_models_dpi, "Tables/Q1_OPG_DNA_estimates_DPI.csv",  row.names = F)
+write.csv(fitted_models_dpi, "data/Experiment_results/Quant_Eimeria/Tables/Q1_OPG_DNA_estimates_DPI.csv",  row.names = F)
 
 sdt.nozero%>% 
   nest(-dpi)%>% 
