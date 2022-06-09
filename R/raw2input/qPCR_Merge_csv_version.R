@@ -3,7 +3,9 @@ library(dplyr)
 library(janitor)
 library(readr)
 
-setwd("/Users/vinuri/Documents/GitHub/Eimeria_Lab/data/Experiment_results/Quant_Eimeria/qPCR_faeces/Results/Results_files/qPCR_csv")
+#Ms. Fay Webster's function was adpated to merge all qPCR files into one
+
+setwd("/data/Experiment_results/Quant_Eimeria/qPCR_faeces/Results/Results_files/qPCR_csv")
 
 #all individual qPCR.csv files form a list
 list_faeces <- as.list(list.files())
@@ -31,7 +33,7 @@ df_results <- Reduce(rbind, list_results)
 #removes duplicates
 df_results <- unique(df_results)  
 
-setwd("/Users/vinuri/Documents/GitHub/Eimeria_Lab/data/Experiment_results/Quant_Eimeria/qPCR_faeces/Results/Results_files/")
+setwd("/data/Experiment_results/Quant_Eimeria/qPCR_faeces/Results/Results_files/")
 write.csv(df_results, "qPCR_fecal_lab_merged.csv", row.names=FALSE)
 
 
