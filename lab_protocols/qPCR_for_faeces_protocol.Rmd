@@ -24,11 +24,18 @@ knitr::opts_chunk$set(echo = TRUE)
 * Save them on a usb stick
 
 #### Standardizing the samples:
-* Easy way: Use this webbsite to calculate the sample dilutions
-  * http://www.desiquintans.com/dilutioncalc
-* Add the desired final volume
-* In this case: 50 ng of DNA 
-* 10 ng per µL (5 µL of sample = 50 ng of DNA)
+* c1 = initial sample concentration
+* v1 = volume from initial stock
+* c2 = final concentration -- 50 ng/ µl
+* v2 = final volume  -- 50 µl would be nice if possible
+
+v1 = C2*v2 / c1
+volume of water = v2 - v1
+
+Easy way out:
+Add your results of the dna concentrations to an excel table and
+calculate your results with these equation 
+
 
 #### Eimeria specific primers: 
 Prepare the primers and make aliquots

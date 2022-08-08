@@ -14,6 +14,20 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Quantitative real-time PCR for tissue samples
 
+#### Standardizing the samples:
+* c1 = initial sample concentration
+* v1 = volume from initial stock
+* c2 = final concentration -- 50 ng/ µl
+* v2 = final volume  -- 50 µl would be nice if possible
+
+v1 = C2*v2 / c1
+volume of water = v2 - v1
+
+Easy way out:
+Add your results of the dna concentrations to an excel table and
+calculate your results with these equation 
+
+
 ## Eimeria specific primers: 
 
 
