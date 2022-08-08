@@ -1,6 +1,8 @@
 ---
 title: "DNA_tissue_extraction_protocol"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 **12 samples maximum**
