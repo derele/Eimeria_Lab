@@ -386,14 +386,14 @@ blank</li>
 <div id="standardizing-the-samples" class="section level4">
 <h4>Standardizing the samples:</h4>
 <ul>
-<li>Easy way: Use this webbsite to calculate the sample dilutions
-<ul>
-<li><a href="http://www.desiquintans.com/dilutioncalc" class="uri">http://www.desiquintans.com/dilutioncalc</a></li>
-</ul></li>
-<li>Add the desired final volume</li>
-<li>In this case: 50 ng of DNA</li>
-<li>10 ng per µL (5 µL of sample = 50 ng of DNA)</li>
+<li>c1 = initial sample concentration</li>
+<li>v1 = volume from initial stock</li>
+<li>c2 = final concentration – 50 ng/ µl</li>
+<li>v2 = final volume – 50 µl would be nice if possible</li>
 </ul>
+<p>v1 = C2*v2 / c1 volume of water = v2 - v1</p>
+<p>Easy way out: Add your results of the dna concentrations to an excel
+table and calculate your results with these equation</p>
 </div>
 <div id="eimeria-specific-primers" class="section level4">
 <h4>Eimeria specific primers:</h4>
@@ -437,19 +437,19 @@ primers)</li>
 <div id="master-master-mix-prepare-in-eppendorf-tubes" class="section level4">
 <h4>Master master mix: Prepare in Eppendorf Tubes</h4>
 <p>n = sample + negative control number</p>
-<pre class="r"><code>n = 13
+<pre class="r"><code>n = 17
 STBR = 10 * 4 * n
 cat(&quot;STBR = &quot;, STBR,&quot;µL&quot;)</code></pre>
-<pre><code>## STBR =  520 µL</code></pre>
+<pre><code>## STBR =  680 µL</code></pre>
 <pre class="r"><code>FP = 0.8 * 4 * n
 cat(&quot;Forward Primer = &quot;, FP,&quot;µL&quot;)</code></pre>
-<pre><code>## Forward Primer =  41.6 µL</code></pre>
+<pre><code>## Forward Primer =  54.4 µL</code></pre>
 <pre class="r"><code>RP = 0.8 * 4 * n
 cat(&quot;Reverse Primer = &quot;, RP,&quot;µL&quot;)</code></pre>
-<pre><code>## Reverse Primer =  41.6 µL</code></pre>
+<pre><code>## Reverse Primer =  54.4 µL</code></pre>
 <pre class="r"><code>H20 = 7.4 * 4 * n
 cat(&quot;H20 = &quot;, H20,&quot;µL&quot;)</code></pre>
-<pre><code>## H20 =  384.8 µL</code></pre>
+<pre><code>## H20 =  503.2 µL</code></pre>
 </div>
 <div id="master-mix-prepare-in-epis-or-strips" class="section level4">
 <h4>Master mix: Prepare in epis or strips</h4>

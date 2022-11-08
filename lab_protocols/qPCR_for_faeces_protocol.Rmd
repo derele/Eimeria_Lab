@@ -67,7 +67,7 @@ Prepare the primers and make aliquots
 #### Master master mix: Prepare in Eppendorf Tubes
 n = sample + negative control number 
 ```{r}
-n = 13
+n = 17
 STBR = 10 * 4 * n
 cat("STBR = ", STBR,"µL")
 FP = 0.8 * 4 * n

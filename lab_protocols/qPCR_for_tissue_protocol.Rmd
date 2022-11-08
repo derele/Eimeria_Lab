@@ -2,10 +2,15 @@
 title: "Eimeria detection in tissue by qPCR"
 author: "Fay"
 date: "23/01/2022"
-Included in Publication: "Víctor Hugo Jarquín-Díaz, Alice Balard, Jenny Jost, Julia Kraft, Mert Naci Dikmen, Jana Kvičerová Emanuel Heitlinger, Detection and quantification of house mouse Eimeria at the species level – Challenges and solutions for the assessment of coccidia in wildlife, International Journal for Parasitology. Parasites and Wildlife, Volume 10, 2019, https://doi.org/10.1016/j.ijppaw.2019.07.00"
-output: 
-    html_document:
-        theme: cerulean
+output:
+  pdf_document: default
+  html_document:
+    theme: cerulean
+Included in Publication: Víctor Hugo Jarquín-Díaz, Alice Balard, Jenny Jost, Julia
+  Kraft, Mert Naci Dikmen, Jana Kvičerová Emanuel Heitlinger, Detection and quantification
+  of house mouse Eimeria at the species level – Challenges and solutions for the assessment
+  of coccidia in wildlife, International Journal for Parasitology. Parasites and Wildlife,
+  Volume 10, 2019, https://doi.org/10.1016/j.ijppaw.2019.07.00
 ---
 
 ```{r setup, include=FALSE}
@@ -63,9 +68,9 @@ DNAs from tissue samples (Caecum / Jejunum)
 
 Melting curves were analysed to detect eventual primer dimer formation or non-specific amplification. As internal reference for relative quantification the CDC42 gene from the nuclear genome of the house mouse was amplified (Ms_gDNA_CDC42_F CTCTCCTCCCCTCTGTCTTG; Ms_gDNA_CDC42_R TCCTTTTGGGTTGAGTTTCC).
 
-Infection intensity was estimated as the ΔCt between mouse and Eimeria amplification (CtMouse- CtEimeria). 
+Infection intensity was estimated as the DCt between mouse and Eimeria amplification (CtMouse- CtEimeria). 
 
-To correct for background noise a detection threshold was estimated at "ΔCt = −5" and only results above this value were considered infected
+To correct for background noise a detection threshold was estimated at "DCt = -5" and only results above this value were considered infected
 ### Positioning on the plate
 
 Amplifications were performed by triplicate and each run included a non-template control (NTC). 
