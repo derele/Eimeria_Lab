@@ -3,9 +3,6 @@ title: "qPCR_for_faeces_protocol"
 author: "Fay"
 date: "23/01/2022"
 output:
-  html_document:
-    theme: cerulean
-  word_document: default
   pdf_document: default
 Publication: Quantification_of_coccidia_EH1208
 ---
@@ -44,7 +41,7 @@ Prepare the primers and make aliquots
 
 ### Each reaction contains: (20 µL)
 
-* 1X iTaqTM Universal SYBRⓇ Green Supermix (Bio-Rad, USA)
+* 1X iTaqTM Universal SYBR Green Supermix (Bio-Rad, USA)
 * 400 nM forward and reverse primers 
 * 50 ng template gDNA 
 
