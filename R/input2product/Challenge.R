@@ -270,10 +270,11 @@ IFC <- IFC %>% filter(str_starts(EH_ID, "LM"))
 ## remove unsuccessful amplifications 
 ## == 999, equivalent to bad quality, should not be used
 ## Luke's Version:
-IFC <- subset(IFC, IFC$Value != 999)
+IFC <- subset(IFC, IFC$Call != "Flag")
+
 IFC <- IFC %>% dplyr::group_by(EH_ID, Target) %>% 
   dplyr::summarise(Ct = mean(Value)) 
-## IFC <- distinct(IFC)
+ IFC <- distinct(IFC)
 
 ## separate data using the pivot_wider()
 ## turns Gene Expression Markers into individual columns (from Target),
@@ -294,39 +295,12 @@ colnames(IFC)[colnames(IFC)%in%"IL13"]  <- "IL.13"
 colnames(IFC)[colnames(IFC)%in%"IL17A"]  <- "IL.17A"
 colnames(IFC)[colnames(IFC)%in%"IFNG"]  <- "IFNy"
 
-#### NORMALIZING GENE EXPRESSION WITH HOUSEKEEPING GENES
-# Luke used 2 housekeeping genes for normalization, PPIB and PPIB
-# in order to normalize for these two, we will take the geometric mean and
-# subtract that number per each individual mouse
-IFC_NE <- IFC %>% 
-  mutate(CASP1_N =  PPIB - CASP1,
-         CXCL9_N =  PPIB - CXCL9,
-         CXCR3_N =  PPIB - CXCR3,
-         IDO1_N  =  PPIB - IDO1,
-         IFNy_N  =  PPIB - IFNy,
-         IL.6_N  =  PPIB - IL.6,
-         IL.10_N =  PPIB - IL.10,
-         IL.12A_N =  PPIB - IL.12A,
-         IL.13_N  =  PPIB - IL.13,
-         IL.17A_N =  PPIB - IL.17A,
-         IL1RN_N =  PPIB - IL1RN,
-         IRGM1_N =  PPIB - IRGM1,
-         MPO_N   =  PPIB - MPO,
-         MUC2_N  =  PPIB - MUC2,
-         MUC5AC_N =  PPIB - MUC5AC,
-         MYD88_N  =  PPIB - MYD88,
-         NCR1_N   =  PPIB - NCR1,
-         PRF1_N   =  PPIB - PRF1,
-         RETNLB_N =  PPIB - RETNLB,
-         SOCS1_N  =  PPIB - SOCS1,
-         TICAM1_N =  PPIB - TICAM1,
-         TNF_N    =  PPIB - TNF)
+sapply(IFC, function(x) sum(is.na(x)))
 
-# In this assay the gene CXCR3 has been measured. It is already included in ALL
-# as it has been measured with Real time qpcr before
-IFC_NE <- dplyr::rename(IFC_NE, CXCR3_bio = CXCR3)
+IFC <- IFC %>%
+  dplyr::rename(CXCR3_bio = CXCR3)
 
-ALL <- join_to_ALL(IFC_NE)
+ALL <- join_to_ALL(IFC)
 
 rm(IFC)
 
