@@ -270,7 +270,9 @@ IFC <- IFC %>% filter(str_starts(EH_ID, "LM"))
 ## remove unsuccessful amplifications 
 ## == 999, equivalent to bad quality, should not be used
 ## Luke's Version:
-IFC <- subset(IFC, IFC$Call != "Flag")
+IFC <- subset(IFC, IFC$Value != "999")
+
+#IFC <- subset(IFC, IFC$Call != "Flag")
 
 IFC <- IFC %>% dplyr::group_by(EH_ID, Target) %>% 
   dplyr::summarise(Ct = mean(Value)) 
